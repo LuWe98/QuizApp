@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/white"
+        app:cardElevation="@dimen/defaultElevation"
+        android:layout_marginHorizontal="@dimen/grid_2"
+        android:layout_marginTop="@dimen/grid_3"
+        app:cardCornerRadius="7.5dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/defaultMinCardHeight"
+            android:layout_margin="@dimen/grid_2">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/selectionButtonRing"
+                app:srcCompat="@drawable/shape_ring"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="@dimen/grid_1" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:id="@+id/checkIcon"
+                app:srcCompat="@drawable/ic_check"
+                android:tint="?colorAccent"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="@id/selectionButtonRing"
+                app:layout_constraintStart_toStartOf="@id/selectionButtonRing"
+                app:layout_constraintEnd_toEndOf="@id/selectionButtonRing"
+                app:layout_constraintBottom_toBottomOf="@id/selectionButtonRing" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="30dp"
+                android:id="@+id/answerEditText"
+                android:gravity="center_vertical"
+                app:layout_constraintStart_toEndOf="@id/selectionButtonRing"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:hint="@string/typeYourAnswer"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:background="@android:color/transparent"
+                android:layout_marginStart="@dimen/grid_2"
+                app:layout_constraintEnd_toStartOf="@+id/deleteButton" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/deleteButton"
+                app:srcCompat="@drawable/ic_cross"
+                android:padding="7.5dp"
+                android:background="?attr/actionBarItemBackground"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="@dimen/grid_2"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

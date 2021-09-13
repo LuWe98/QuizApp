@@ -1,0 +1,57 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base theme. -->
+    <style name="Theme.QuizApp" parent="Theme.QuizApp.Dark"/>
+    <!-- Base BottomSheetDialogTheme. -->
+    <style name="Theme.QuizApp.BottomSheetDialog" parent="Theme.QuizApp.BottomSheetDialog.Dark"/>
+    <!-- Base DialogFragmentTheme. -->
+    <style name="Theme.QuizApp.DialogFragment" parent="Theme.QuizApp.DialogFragment.Dark"/>
+
+
+
+    <!-- Dark Base theme. -->
+    <style name="Theme.QuizApp.Dark" parent="Theme.QuizApp.Light">
+        <!-- Colors -->
+        <item name="colorPrimary">@color/darkColorPrimary</item>
+        <item name="colorPrimaryVariant">@color/darkColorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/darkColorOnPrimary</item>
+
+        <item name="colorSecondary">@color/darkColorSecondary</item>
+        <item name="colorSecondaryVariant">@color/darkColorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/darkColorOnSecondary</item>
+
+        <item name="colorAccent">@color/darkColorAccent</item>
+
+        <item name="android:colorBackground">@color/darkBackgroundColor</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="mainTransparencyColor">@color/blackAlpha</item>
+    </style>
+
+
+    <!-- Dark BottomSheetDialogTheme. -->
+    <style name= "Theme.QuizApp.BottomSheetDialog.Dark"  parent="@style/Theme.QuizApp.BottomSheetDialog.Light">
+        <!-- Colors -->
+        <item name="colorPrimary">@color/lightColorPrimary</item>
+        <item name="colorPrimaryVariant">@color/lightColorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/lightColorOnPrimary</item>
+
+        <item name="colorSecondary">@color/lightColorSecondary</item>
+        <item name="colorSecondaryVariant">@color/lightColorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/lightColorOnSecondary</item>
+    </style>
+
+
+    <!-- Dark DialogFragmentTheme. -->
+    <style name="Theme.QuizApp.DialogFragment.Dark" parent="Theme.QuizApp.DialogFragment.Light">
+        <!-- Colors -->
+        <item name="colorPrimary">@color/lightColorPrimary</item>
+        <item name="colorPrimaryVariant">@color/lightColorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/lightColorOnPrimary</item>
+
+        <item name="colorSecondary">@color/lightColorSecondary</item>
+        <item name="colorSecondaryVariant">@color/lightColorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/lightColorOnSecondary</item>
+    </style>
+</resources>

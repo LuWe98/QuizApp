@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="home_tab_names">
+        <item>Online</item>
+        <item>Cached</item>
+        <item>Created</item>
+    </string-array>
+</resources>

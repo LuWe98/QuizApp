@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:elevation="@dimen/defaultElevation"
+        android:background="@drawable/background_round_corners_15dp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="?attr/actionBarItemBackground"
+            android:id="@+id/voiceSearchButton"
+            android:src="@drawable/ic_voice"
+            android:padding="7.5dp"
+            android:layout_marginStart="@dimen/grid_1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/searchTextIngredient"
+            app:layout_constraintBottom_toBottomOf="@id/searchTextIngredient" />
+
+    <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:id="@+id/searchTextIngredient"
+            android:hint="Suche"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@id/voiceSearchButton"
+            app:layout_constraintEnd_toStartOf="@+id/filterButton"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@null" />
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="?attr/actionBarItemBackground"
+            android:id="@+id/filterButton"
+            android:src="@drawable/ic_filter"
+            android:padding="8dp"
+            android:layout_marginEnd="@dimen/grid_1"
+            app:layout_constraintTop_toTopOf="@id/searchTextIngredient"
+            app:layout_constraintBottom_toBottomOf="@id/searchTextIngredient"
+            app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

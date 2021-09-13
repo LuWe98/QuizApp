@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="defaultAnimDuration">300</integer>
+    <integer name="defaultListLoadDelay">350</integer>
+    <integer name="shortlistLoadDelay">125</integer>
+
+    <integer name="recyclerViewItemAnimationDuration">300</integer>
+    <integer name="defaultProgressAnimDuration">150</integer>
+
+
+    <integer name="indicatorProgressBarThicknessRatio">16</integer>
+</resources>

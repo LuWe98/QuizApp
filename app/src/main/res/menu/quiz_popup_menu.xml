@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:id="@+id/menu_item_delete_given_answers"
+            android:title="Delete given Answers" />
+
+    <item
+            android:id="@+id/menu_item_hide_completed_questions"
+            android:title="Hide Completed Questions" />
+
+    <item
+            android:id="@+id/menu_item_allow_show_answers_directly"
+            android:title="Show Answers directly"
+            android:checkable="true"/>
+</menu>

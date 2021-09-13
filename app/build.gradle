@@ -1,0 +1,109 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'androidx.navigation.safeargs'
+    id 'kotlin-parcelize'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        applicationId "com.example.quizzapp"
+        minSdk 23
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
+        dataBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains:annotations:$jetBrainsAnnotationVersion"
+    implementation "androidx.appcompat:appcompat:$appCompatVersion"
+    implementation "androidx.core:core-ktx:$androidXCoreVersion"
+    implementation "androidx.legacy:legacy-support-v4:$androidXLegacyVersion"
+    implementation "com.google.android.material:material:$materialDesignVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
+    implementation "androidx.dynamicanimation:dynamicanimation:$dynamicAnimationVersion"
+
+
+    //Fragments
+    implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
+
+
+    //Livecycle
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$liveCycleVersion"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$liveCycleVersion"
+    implementation "androidx.lifecycle:lifecycle-extensions:$liveCycleVersionOlder"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$liveCycleComposeVersion"
+
+
+    //Room Database
+    implementation("androidx.room:room-ktx:$roomVersionAlpha")
+    implementation "androidx.room:room-runtime:$roomVersionAlpha"
+    kapt "androidx.room:room-compiler:$roomVersionAlpha"
+
+
+    //Navigation Component
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$navigationVersion"
+
+
+    // Dagger Hilt
+    implementation "com.google.dagger:hilt-android:$hiltVersion"
+    kapt "com.google.dagger:hilt-android-compiler:$hiltVersion"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltAndroidXVersion"
+    kapt "androidx.hilt:hilt-compiler:$hiltAndroidXVersion"
+    implementation "androidx.hilt:hilt-navigation-fragment:$hiltFragmentVersion"
+
+
+    //Paging 3
+    implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
+    testImplementation "androidx.paging:paging-common-ktx:$pagingVersion"
+
+
+    //Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion"
+
+
+    //Settings-Preferences
+    implementation "androidx.preference:preference-ktx:$preferencesVersion"
+
+
+    //Preference-Datastore
+    implementation "androidx.datastore:datastore-preferences:$preferenceDatastoreVersion"
+
+
+    //Testing
+    testImplementation "junit:junit:$jUnitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidJUnitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+}

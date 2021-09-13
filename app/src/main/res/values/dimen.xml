@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="defaultElevation">5dp</dimen>
+    <dimen name="defaultBackgroundCardCornerRadius">15dp</dimen>
+
+    <dimen name="grid_0_5">2dp</dimen>
+    <dimen name="grid_1">4dp</dimen>
+    <dimen name="grid_1_5">6dp</dimen>
+    <dimen name="grid_2">8dp</dimen>
+    <dimen name="grid_3">12dp</dimen>
+    <dimen name="grid_4">16dp</dimen>
+    <dimen name="grid_6">24dp</dimen>
+    <dimen name="grid_8">32dp</dimen>
+
+    <dimen name="quizTopLayoutHeight">265dp</dimen>
+    <dimen name="defaultMinCardHeight">70dp</dimen>
+
+    <dimen name="maxHeaderTextSize">18sp</dimen>
+</resources>

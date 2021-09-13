@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">QuizApp</string>
+
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="settings">Settings</string>
+
+
+    <string name="title">Title</string>
+    <string name="addQuestionnaire">Add Questionnaire</string>
+    <string name="editQuestionnaire">Edit Questionnaire</string>
+    <string name="addQuestion">Add Question</string>
+    <string name="editQuestion">Edit Question</string>
+    <string name="questionnaire">Questionnaire</string>
+    <string name="questionnaires">Questionnaires</string>
+    <string name="questionnaireName">Questionnaire Name</string>
+    <string name="subject">Subject</string>
+    <string name="courseOfStudies">Course of Studies</string>
+
+    <string name="questions">Questions</string>
+    <string name="answers">Answers</string>
+
+    <string name="noQuestionsYet">No Questions yet</string>
+    <string name="noAnswersYet">No Answers yet</string>
+
+
+    <string name="typeYourAnswer">Click to type your Answer!</string>
+    <string name="typeYourQuestion">Click to type your Question!</string>
+
+
+    <string name="multipleChoice">Multiple Choice</string>
+    <string name="singleChoice">Single Choice</string>
+
+    <string name="pleaseAnswerAllQuestionsText">Please answer all Questions first!</string>
+    <string name="undo">Undo</string>
+    <string name="answersDeleted">Answers deleted</string>
+    <string name="answerDeleted">Answer deleted</string>
+    <string name="questionsDeleted">Questions deleted</string>
+    <string name="questionDeleted">Question deleted</string>
+    <string name="checkResults">Check Results</string>
+
+    <!-- Strings for voice Search functionality -->
+    <string name="voiceSearchStartTalking">Sprechen Sie los…</string>
+    <string name="voiceSearchIDidNotGetThat">Das habe ich nicht verstanden, versuche es nochmal…</string>
+    <string name="voiceSearchTimeout">Zeitüberschreitung…</string>
+    <string name="voiceSearchAudioError">Fehler bei der Audioaufnahme</string>
+    <string name="voiceSearchInsufficientPermission">Unzureichende Berechtihungen!</string>
+    <string name="voiceSearchSpeechRecognizerNotAvailable">Speech Recognizer ist nicht verfügbar!</string>
+
+
+
+    <!-- Transition Names -->
+    <string name="questionClickedTransitionName">questionClickedTransitionName</string>
+</resources>

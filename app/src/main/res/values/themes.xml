@@ -1,0 +1,86 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base theme. -->
+    <style name="Theme.QuizApp" parent="Theme.QuizApp.Light"/>
+    <!-- Base BottomSheetDialogTheme. -->
+    <style name="Theme.QuizApp.BottomSheetDialog" parent="Theme.QuizApp.BottomSheetDialog.Light"/>
+    <!-- Base DialogFragmentTheme. -->
+    <style name="Theme.QuizApp.DialogFragment" parent="Theme.QuizApp.DialogFragment.Light"/>
+
+
+
+    <!-- Light Base theme. -->
+    <style name="Theme.QuizApp.Light" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Colors -->
+        <item name="colorPrimary">@color/lightColorPrimary</item>
+        <item name="colorPrimaryVariant">@color/lightColorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/lightColorOnPrimary</item>
+
+        <item name="colorSecondary">@color/lightColorSecondary</item>
+        <item name="colorSecondaryVariant">@color/lightColorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/lightColorOnSecondary</item>
+
+        <item name="colorAccent">@color/lightColorAccent</item>
+
+        <item name="android:colorBackground">@color/lightBackgroundColor</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="mainTransparencyColor">@color/whiteAlpha</item>
+
+        <item name="colorControlActivated">@color/lightColorControlActivated</item>
+
+        <!-- Customization -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.QuizApp.BottomSheetDialog</item>
+        <item name="android:dialogTheme">@style/Theme.QuizApp.DialogFragment</item>
+        <item name="dialogTheme">@style/Theme.QuizApp.DialogFragment</item>
+
+<!--       <item name="textInputStyle">@style/Style.QuizApp.TextInputLayout</item>-->
+
+    </style>
+
+
+    <!-- Light BottomSheetDialogTheme. -->
+    <style name= "Theme.QuizApp.BottomSheetDialog.Light"  parent="@style/Theme.MaterialComponents.DayNight.BottomSheetDialog">
+        <!-- Colors -->
+        <item name="colorPrimary">@color/lightColorPrimary</item>
+        <item name="colorPrimaryVariant">@color/lightColorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/lightColorOnPrimary</item>
+
+        <item name="colorSecondary">@color/lightColorSecondary</item>
+        <item name="colorSecondaryVariant">@color/lightColorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/lightColorOnSecondary</item>
+
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Customization -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="bottomSheetStyle">@style/Style.ModalBottomSheet.Transparent</item>
+    </style>
+
+
+
+    <!-- Light DialogFragmentTheme. -->
+    <style name="Theme.QuizApp.DialogFragment.Light" parent="Theme.MaterialComponents.DayNight.Dialog">
+        <!-- Colors -->
+        <item name="colorPrimary">@color/lightColorPrimary</item>
+        <item name="colorPrimaryVariant">@color/lightColorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/lightColorOnPrimary</item>
+
+        <item name="colorSecondary">@color/lightColorSecondary</item>
+        <item name="colorSecondaryVariant">@color/lightColorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/lightColorOnSecondary</item>
+
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+        <!-- Customization -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- <item name="android:windowMinWidthMinor">90%</item> -->
+        <!-- <item name="android:windowMinWidthMajor">90%</item> -->
+    </style>
+</resources>

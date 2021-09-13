@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Standard Colors -->
+    <color name="black">#FF000000</color>
+    <color name="blackAlpha">#bb000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="whiteAlpha">#bbffffff</color>
+    <color name="red">#ff24</color>
+    <color name="green">#078F45</color>
+    <color name="lightGreen">#87A96B </color>
+
+    <!--    #558b2f-->
+
+    <color name="unselectedColor">#DDDDDD</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- Light Theme Colors -->
+    <color name="lightColorPrimary">#FF6200EE</color>
+    <color name="lightColorPrimaryVariant">#FF3700B3</color>
+    <color name="lightColorOnPrimary">@color/white</color>
+    <color name="lightColorSecondary">#FF03DAC5</color>
+    <color name="lightColorSecondaryVariant">#FF018786</color>
+    <color name="lightColorOnSecondary">@color/black</color>
+    <color name="lightColorAccent">#add8e6</color>
+    <color name="lightBackgroundColor">#f0f1f5</color>
+    <color name="lightColorControlActivated">#89000000</color>
+
+    <!-- Dark Theme Colors -->
+    <color name="darkColorPrimary">#FF6200EE</color>
+    <color name="darkColorPrimaryVariant">#FF3700B3</color>
+    <color name="darkColorOnPrimary">@color/white</color>
+    <color name="darkColorSecondary">#FF03DAC5</color>
+    <color name="darkColorSecondaryVariant">#FF018786</color>
+    <color name="darkColorOnSecondary">@color/black</color>
+    <color name="darkColorAccent">#add8e6</color>
+    <color name="darkBackgroundColor">#f0f1f5</color>
+</resources>

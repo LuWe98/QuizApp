@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Style.ModalBottomSheet.Transparent" parent="@style/Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+
+    <style name="Style.QuizApp.TabLayout.TextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+    <style name="Style.QuizApp.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="android:background">@drawable/background_round_corners_15dp</item>
+        <item name="background">@drawable/background_round_corners_15dp</item>
+        <item name="elevation">@dimen/defaultElevation</item>
+        <!--        <item name="materialThemeOverlay">@style/Style.QuizApp.TextInputEditText.ThemeOverlay</item>-->
+    </style>
+
+    <style name="Style.QuizApp.TextInputEditText.ThemeOverlay">
+        <item name="editTextStyle">@style/Style.QuizApp.TextInputEditText</item>
+    </style>
+
+    <style name="Style.QuizApp.TextInputEditText" parent="@style/Widget.MaterialComponents.TextInputEditText.FilledBox.Dense">
+        <item name="android:background">@color/transparent</item>
+    </style>
+</resources>

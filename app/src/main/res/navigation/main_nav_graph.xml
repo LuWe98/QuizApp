@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main_nav_graph"
+        app:startDestination="@id/fragmentHome">
+
+
+    <!-- REGULAR FRAGMENTS -->
+    <fragment
+            android:id="@+id/fragmentSettings"
+            android:name="com.example.quizapp.ui.fragments.settingsscreen.FragmentSettings"
+            android:label="FragmentSettings"
+            tools:layout="@layout/fragment_settings" />
+
+    <fragment
+            android:id="@+id/fragmentSearch"
+            android:name="com.example.quizapp.ui.fragments.searchscreen.FragmentSearch"
+            android:label="FragmentSearch"
+            tools:layout="@layout/fragment_search" />
+
+
+    <fragment
+            android:id="@+id/fragmentHome"
+            android:name="com.example.quizapp.ui.fragments.homescreen.FragmentHome"
+            android:label="FragmentHome"
+            tools:layout="@layout/fragment_home">
+        <action
+                android:id="@+id/action_fragmentHome_to_fragmentQuizOverview"
+                app:destination="@id/quiz_nav_graph" />
+    </fragment>
+
+
+
+    <!--TAKE QUIZ FUNCTIONALITY NAV GRAPH-->
+    <navigation
+            android:id="@+id/quiz_nav_graph"
+            app:startDestination="@id/fragmentQuizOverview">
+        <argument
+                android:name="questionnaireId"
+                app:argType="long" />
+        <fragment
+                android:id="@+id/fragmentQuizOverview"
+                android:name="com.example.quizapp.ui.fragments.quizscreen.FragmentQuizOverview"
+                android:label="FragmentQuiz"
+                tools:layout="@layout/fragment_quiz_overview">
+            <action
+                    android:id="@+id/action_fragmentQuizOverview_to_fragmentQuizContainer"
+                    app:destination="@id/fragmentQuizContainer" />
+        </fragment>
+
+        <fragment
+                android:id="@+id/fragmentQuizContainer"
+                android:name="com.example.quizapp.ui.fragments.quizscreen.FragmentQuizQuestionsContainer"
+                android:label="FragmentQuizContainer"
+                tools:layout="@layout/fragment_quiz_questions_container">
+            <argument
+                    android:name="questionPosition"
+                    app:argType="integer" />
+        </fragment>
+    </navigation>
+
+
+
+    <!--ADD QUESTIONNAIRE FUNCTIONALITY NAV GRAPH-->
+    <navigation
+            android:id="@+id/add_nav_graph"
+            app:startDestination="@id/fragmentAddQuestionnaire">
+        <argument
+                android:name="questionnaireId"
+                app:argType="long"/>
+
+        <fragment
+                android:id="@+id/fragmentAddQuestionnaire"
+                android:name="com.example.quizapp.ui.fragments.addquestionnairescreen.FragmentAddQuestionnaire"
+                android:label="FragmentAddQuestionnaire"
+                tools:layout="@layout/fragment_add_questionnaire" >
+            <action
+                    android:id="@+id/action_fragmentAddQuestionnaire_to_fragmentAddQuestion"
+                    app:destination="@id/fragmentAddQuestion" />
+        </fragment>
+
+        <fragment
+                android:id="@+id/fragmentAddQuestion"
+                android:name="com.example.quizapp.ui.fragments.addquestionnairescreen.FragmentAddQuestion"
+                android:label="FragmentAddQuestion"
+                tools:layout="@layout/fragment_add_question">
+            <argument
+                    android:name="questionPosition"
+                    app:argType="integer" />
+            <argument
+                    android:name="questionWithAnswers"
+                    app:argType="com.example.quizapp.model.room.junctions.QuestionWithAnswers" />
+        </fragment>
+    </navigation>
+
+
+
+    <!--GLOBAL ACTIONS-->
+    <action
+            android:id="@+id/action_global_add_nav_graph"
+            app:destination="@id/add_nav_graph" />
+</navigation>
