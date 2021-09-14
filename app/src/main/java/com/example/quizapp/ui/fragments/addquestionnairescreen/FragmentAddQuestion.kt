@@ -72,9 +72,7 @@ class FragmentAddQuestion : BindingFragment<FragmentAddQuestionBinding>() {
             vmEditQuestion.onFabConfirmClicked()
         }
 
-        binding.isMultipleChoiceSwitch.setOnCheckedChangeListener { _, checked ->
-            vmEditQuestion.onSwitchChanged(checked)
-        }
+        binding.isMultipleChoiceSwitch.onCheckedChange(vmEditQuestion::onSwitchChanged)
 
         binding.questionEditText.onTextChanged(vmEditQuestion::onQuestionEditTextChanged)
     }

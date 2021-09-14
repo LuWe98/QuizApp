@@ -4,16 +4,29 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.map
+import com.example.quizapp.extensions.launch
+import com.example.quizapp.model.room.LocalRepository
+import com.example.quizapp.model.room.entities.Answer
+import com.example.quizapp.model.room.entities.EntityMarker
 import com.example.quizapp.ui.fragments.quizscreen.FragmentQuizQuestionsContainerArgs
+import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.FragmentQuizOverviewEvent.*
+import com.example.quizapp.viewpager.adapter.VpaQuiz
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class VmQuizQuestionsContainer @Inject constructor(
+    private val localRepository: LocalRepository,
     private val state: SavedStateHandle
 ) : ViewModel() {
 
     private val args = FragmentQuizQuestionsContainerArgs.fromSavedStateHandle(state)
+
+    private val fragmentEventChannel = Channel<FragmentQuizOverviewEvent>()
+
+    val fragmentEventChannelFlow get() = fragmentEventChannel.receiveAsFlow()
 
     var lastAdapterPosition = state.get<Int>(LAST_ADAPTER_POSITION_KEY) ?: args.questionPosition
         set(value) {
@@ -23,13 +36,11 @@ class VmQuizQuestionsContainer @Inject constructor(
 
     private val questionIdListLiveData = state.getLiveData<MutableList<Long>>(QUESTION_ID_LIST_KEY, mutableListOf())
 
-    fun questionIdLiveData(questionId: Long) = questionIdListLiveData.map {
-        it.firstOrNull { id -> id == questionId }
-    }.distinctUntilChanged()
-
     private val questionIdList get() = questionIdListLiveData.value!!
 
-    fun addOrRemoveQuestionToDisplaySolution(questionId : Long){
+    fun questionIdLiveData(questionId: Long) = questionIdListLiveData.map { it.firstOrNull { id -> id == questionId } }.distinctUntilChanged()
+
+    private fun addOrRemoveQuestionToDisplaySolution(questionId : Long){
         if(questionIdList.contains(questionId)){
             questionIdList.remove(questionId)
         } else {
@@ -38,7 +49,56 @@ class VmQuizQuestionsContainer @Inject constructor(
         state.set(QUESTION_ID_LIST_KEY, questionIdList)
     }
 
-    fun isQuestionIdInsideShouldDisplayList(questionId: Long) = questionIdList.contains(questionId)
+    fun shouldDisplayQuestionSolution(questionId: Long) = questionIdList.contains(questionId)
+
+
+
+    fun onViewPagerPageSelected(position : Int){
+        lastAdapterPosition = position
+    }
+
+    fun onSelectPreviousPageButtonClicked(){
+        if(lastAdapterPosition != 0){
+            launch {
+                fragmentEventChannel.send(SelectDifferentPage(lastAdapterPosition - 1))
+            }
+        }
+    }
+
+    fun onSelectNextPageButtonClicked(vpaQuiz: VpaQuiz){
+        if(lastAdapterPosition != vpaQuiz.itemCount -1){
+            launch {
+                fragmentEventChannel.send(SelectDifferentPage(lastAdapterPosition + 1))
+            }
+        }
+    }
+
+    fun onCheckResultsButtonClicked(){
+        launch {
+            fragmentEventChannel.send(CheckResultsEvent)
+        }
+    }
+
+    fun onShowSolutionButtonClicked(vpaQuiz: VpaQuiz){
+        launch {
+            vpaQuiz.getFragment(lastAdapterPosition).questionId.let {
+                addOrRemoveQuestionToDisplaySolution(it)
+                fragmentEventChannel.send(ChangeSolutionButtonTint(shouldDisplayQuestionSolution(it)))
+            }
+        }
+    }
+
+    fun onAnswerItemClicked(list: List<Answer>){
+        launch { localRepository.update(list) }
+    }
+
+
+
+    sealed class FragmentQuizOverviewEvent {
+        object CheckResultsEvent : FragmentQuizOverviewEvent()
+        data class SelectDifferentPage(val newPosition : Int) : FragmentQuizOverviewEvent()
+        data class ChangeSolutionButtonTint(val show : Boolean) : FragmentQuizOverviewEvent()
+    }
 
     companion object {
         const val LAST_ADAPTER_POSITION_KEY = "currentVpaPosition"

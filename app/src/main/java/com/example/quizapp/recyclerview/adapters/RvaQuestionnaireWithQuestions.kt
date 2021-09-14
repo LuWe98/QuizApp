@@ -1,6 +1,5 @@
 package com.example.quizapp.recyclerview.adapters
 
-import androidx.cardview.widget.CardView
 import com.example.quizapp.databinding.RviQuestionnaireBinding
 import com.example.quizapp.extensions.setDrawableSize
 import com.example.quizapp.model.room.entities.Questionnaire
@@ -14,17 +13,19 @@ class RvaQuestionnaireWithQuestions : BindingPagingDataAdapter<QuestionnaireWith
     var onItemLongClick: ((Questionnaire) -> (Unit))? = null
 
     override fun initListeners(binding: RviQuestionnaireBinding, vh: BindingPagingDataAdapterViewHolder) {
-        binding.root.setOnClickListener {
-            getItem(vh.bindingAdapterPosition)?.let {
-                onItemClick?.invoke(it.questionnaire)
+        binding.apply {
+            root.setOnClickListener {
+                getItem(vh.bindingAdapterPosition)?.let {
+                    onItemClick?.invoke(it.questionnaire)
+                }
             }
-        }
 
-        binding.root.setOnLongClickListener {
-            getItem(vh.bindingAdapterPosition)?.let {
-                onItemLongClick?.invoke(it.questionnaire)
+            root.setOnLongClickListener {
+                getItem(vh.bindingAdapterPosition)?.let {
+                    onItemLongClick?.invoke(it.questionnaire)
+                }
+                return@setOnLongClickListener true
             }
-            return@setOnLongClickListener true
         }
     }
 

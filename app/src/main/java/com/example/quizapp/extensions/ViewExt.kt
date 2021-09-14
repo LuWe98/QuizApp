@@ -5,10 +5,8 @@ import android.content.res.ColorStateList
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
+import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -19,30 +17,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.quizapp.R
 import com.example.quizapp.recyclerview.impl.CustomItemTouchHelperCallback
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 fun View.makeFullScreen() = apply {
     layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, context.resources.displayMetrics.heightPixels)
-}
-
-fun applyStatusBarPaddingTop(vararg views: View) {
-    views.forEach {
-        it.apply {
-            setPadding(paddingLeft, paddingTop + context.statusBarHeight, paddingRight, paddingBottom)
-        }
-    }
-}
-
-fun shiftStatusBarHeightTop(vararg views: View) {
-    views.forEach {
-        it.apply {
-            (it.layoutParams as ViewGroup.MarginLayoutParams).apply {
-//                setMargins(marginLeft, marginTop - it.context.statusBarHeight, marginRight, marginBottom)
-//                it.context.showToast("MARGIN TOP $marginTop")
-            }
-        }
-    }
 }
 
 fun TabLayout.attachToViewPager(viewPager: ViewPager2, tabConfigurationStrategy: TabLayoutMediator.TabConfigurationStrategy) =
@@ -123,8 +103,27 @@ fun TextView.textAsFloat() = text.toString().toFloat()
 
 fun TextView.textAsDouble() = text.toString().toDouble()
 
+
 fun EditText.onTextChanged(action : (String) -> (Unit)) {
     doOnTextChanged { text, _, _, _ ->  action.invoke(text.toString())}
 }
 
+fun SwitchMaterial.onCheckedChange(action : (Boolean) -> (Unit)) {
+    setOnCheckedChangeListener { _, checked ->  action.invoke(checked)}
+}
+
+fun ViewPager2.onPageSelected(action : (Int) -> (Unit)){
+    registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            action.invoke(position)
+        }
+    })
+}
+
+fun View.findDrawableWith(@DrawableRes res : Int) = ContextCompat.getDrawable(context, res)
+
+fun View.findColor(@ColorRes res : Int) = ContextCompat.getColor(context, res)
+
+fun View.getThemeColor(@AttrRes res : Int) = context.getThemeColor(res)
 

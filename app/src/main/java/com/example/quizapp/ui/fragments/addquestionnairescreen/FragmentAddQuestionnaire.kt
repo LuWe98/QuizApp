@@ -68,17 +68,11 @@ class FragmentAddQuestionnaire : BindingFragment<FragmentAddQuestionnaireBinding
             vmAdd.onAddQuestionButtonClicked()
         }
 
-        binding.editTextName.onTextChanged {
-            vmAdd.onQuestionnaireTitleTextChanged(it)
-        }
+        binding.editTextName.onTextChanged(vmAdd::onQuestionnaireTitleTextChanged)
 
-        binding.editTextCourseOfStudies.onTextChanged {
-            vmAdd.onQuestionnaireCourseOfStudiesTextChanged(it)
-        }
+        binding.editTextCourseOfStudies.onTextChanged(vmAdd::onQuestionnaireCourseOfStudiesTextChanged)
 
-        binding.editTextSubject.onTextChanged {
-            vmAdd.onQuestionnaireSubjectTextChanged(it)
-        }
+        binding.editTextSubject.onTextChanged(vmAdd::onQuestionnaireSubjectTextChanged)
     }
 
     private fun initObservers(){

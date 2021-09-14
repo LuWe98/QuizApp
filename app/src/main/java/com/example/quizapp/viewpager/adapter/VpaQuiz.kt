@@ -8,8 +8,10 @@ import com.example.quizapp.ui.fragments.quizscreen.FragmentQuizQuestion
 class VpaQuiz(fragment: Fragment, questions : List<Question>) : FragmentStateAdapter(fragment) {
 
     private val fragments = Array(questions.size) {
-        FragmentQuizQuestion.newInstance(questions[it].id, questions[it].isMultipleChoice)
+        FragmentQuizQuestion.newInstance(questions[it])
     }
+
+    fun getFragment(position: Int) = fragments[position]
 
     override fun getItemCount() = fragments.size
 

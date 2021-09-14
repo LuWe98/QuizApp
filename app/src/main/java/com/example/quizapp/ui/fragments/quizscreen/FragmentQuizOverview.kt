@@ -14,17 +14,20 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizOverviewBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestionsAndAnswers
-import com.example.quizapp.recyclerview.adapters.RvaQuestionWithAnswers
+import com.example.quizapp.recyclerview.adapters.RvaQuestionWithAnswersQuiz
 import com.example.quizapp.ui.fragments.bindingfragmentsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmQuiz
+import com.example.quizapp.viewmodel.VmQuiz.*
+import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
+@SuppressLint("SetTextI18n")
 @AndroidEntryPoint
 class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), PopupMenu.OnMenuItemClickListener {
 
     val viewModel: VmQuiz by hiltNavGraphViewModels(R.id.quiz_nav_graph)
 
-    private lateinit var rvAdapter: RvaQuestionWithAnswers
+    private lateinit var rvAdapter: RvaQuestionWithAnswersQuiz
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,7 +38,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
     }
 
     private fun initRecyclerView() {
-        rvAdapter = RvaQuestionWithAnswers(viewModel).apply {
+        rvAdapter = RvaQuestionWithAnswersQuiz(viewModel).apply {
             onItemClick = { position, questionId, card ->
                 //navigator.navigateToQuizContainerScreenWithQuestionCardClick(position, questionId, card)
                 navigator.navigateToQuizContainerScreen(position)
@@ -60,7 +63,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         }
 
         binding.buttonMoreOptions.setOnClickListener {
-            viewModel.onMoreOptionsClicked()
+            viewModel.onMoreOptionsItemClicked()
         }
 
         binding.fabCheckResults.setOnClickListener {
@@ -68,13 +71,14 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun initObservers() {
         viewModel.questionnaireLiveData.observe(viewLifecycleOwner) {
-            binding.questionnaireTitle.text = it.title
-            binding.authorName.text = it.author
-            binding.courseOfStudiesText.text = it.courseOfStudies
-            binding.subjectName.text = it.subject
+            binding.apply {
+                questionnaireTitle.text = it.title
+                authorName.text = it.author
+                courseOfStudiesText.text = it.courseOfStudies
+                subjectName.text = it.subject
+            }
         }
 
         viewModel.questionsWithAnswersLiveData.observe(viewLifecycleOwner) { questionsWithAnswers ->
@@ -103,17 +107,17 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
         viewModel.fragmentEventChannelFlow.collect(lifecycleScope) { event ->
             when (event) {
-                VmQuiz.FragmentQuizEvent.ShowCompleteAllAnswersToast -> {
+                ShowCompleteAllAnswersToast -> {
                     showToast(R.string.pleaseAnswerAllQuestionsText)
                 }
-                VmQuiz.FragmentQuizEvent.ShowPopupMenu -> {
+                ShowPopupMenu -> {
                     PopupMenu(requireContext(), binding.buttonMoreOptions).apply {
                         inflate(R.menu.quiz_popup_menu)
                         setOnMenuItemClickListener(this@FragmentQuizOverview)
                         show()
                     }
                 }
-                is VmQuiz.FragmentQuizEvent.ShowUndoDeleteGivenAnswersSnackBack -> {
+                is ShowUndoDeleteGivenAnswersSnackBack -> {
                     showSnackBar(R.string.answersDeleted, viewToAttachTo = binding.contentContainer, actionTextRes = R.string.undo) {
                         viewModel.onUndoDeleteGivenAnswersClick(event)
                     }
@@ -123,17 +127,17 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
     }
 
     private fun onShouldDisplaySolutionChanged(shouldDisplay: Boolean, completeQuestionnaire: QuestionnaireWithQuestionsAndAnswers) {
-        val correctQuestionsPercentage = completeQuestionnaire.correctQuestionsPercentage
+        val cqp = completeQuestionnaire.correctQuestionsPercentage
         binding.apply {
-            progressCorrect.setProgressWithAnimation(if (shouldDisplay) correctQuestionsPercentage else 0)
-            progressIncorrect.setProgressWithAnimation(if (shouldDisplay) 100 - correctQuestionsPercentage else 0)
+            progressCorrect.setProgressWithAnimation(if (shouldDisplay) cqp else 0)
+            progressIncorrect.setProgressWithAnimation(if (shouldDisplay) 100 - cqp else 0)
             fabCheckResults.setDrawableTint(getThemeColor(if (shouldDisplay) R.attr.colorPrimary else R.attr.colorControlActivated))
 
             questionsAnsweredText.isVisible = !shouldDisplay
             resultIcon.isVisible = shouldDisplay
 
             if(shouldDisplay){
-                val isEverythingCorrect = correctQuestionsPercentage == 100
+                val isEverythingCorrect = cqp == 100
                 resultIcon.setImageDrawable(if (isEverythingCorrect) R.drawable.ic_check else R.drawable.ic_cross)
                 resultIcon.setDrawableTintWithRes(if (isEverythingCorrect) R.color.green else R.color.red)
             }

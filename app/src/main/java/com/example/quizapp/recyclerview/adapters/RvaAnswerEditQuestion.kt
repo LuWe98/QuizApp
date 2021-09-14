@@ -1,13 +1,12 @@
 package com.example.quizapp.recyclerview.adapters
 
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import com.example.quizapp.R
-import com.example.quizapp.databinding.RviAnswerBinding
 import com.example.quizapp.databinding.RviAnswerEditBinding
-import com.example.quizapp.extensions.*
+import com.example.quizapp.extensions.onTextChanged
+import com.example.quizapp.extensions.setDrawableTintWithRes
+import com.example.quizapp.extensions.setImageDrawable
+import com.example.quizapp.extensions.setTextColorWithRes
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.recyclerview.impl.BindingListAdapter
 import com.example.quizapp.viewmodel.VmEditQuestion
@@ -23,24 +22,26 @@ class RvaAnswerEditQuestion(
     var onAnswerTextChanged: ((Int, String) -> (Unit))? = null
 
     override fun initListeners(binding: RviAnswerEditBinding, vh: BindingListAdapterViewHolder) {
-        binding.root.setOnClickListener {
-            getItem(vh.bindingAdapterPosition).let { answer ->
-                if (vmEditQuestion.isMultipleChoice) {
-                    handleMultipleChoiceClick(vh.bindingAdapterPosition, answer)
-                } else if (!answer.isAnswerCorrect) {
-                    handleSingleChoiceClick(vh.bindingAdapterPosition)
+        binding.apply {
+            root.setOnClickListener {
+                getItem(vh.bindingAdapterPosition).let { answer ->
+                    if (vmEditQuestion.isMultipleChoice) {
+                        handleMultipleChoiceClick(vh.bindingAdapterPosition, answer)
+                    } else if (!answer.isAnswerCorrect) {
+                        handleSingleChoiceClick(vh.bindingAdapterPosition)
+                    }
                 }
             }
-        }
 
-        binding.deleteButton.setOnClickListener {
-            getItem(vh.bindingAdapterPosition).let {
-                onDeleteButtonClick?.invoke(it)
+            deleteButton.setOnClickListener {
+                getItem(vh.bindingAdapterPosition).let {
+                    onDeleteButtonClick?.invoke(it)
+                }
             }
-        }
 
-        binding.answerEditText.doOnTextChanged { text, _, _, _ ->
-            onAnswerTextChanged?.invoke(vh.bindingAdapterPosition, text.toString())
+            answerEditText.onTextChanged { text ->
+                onAnswerTextChanged?.invoke(vh.bindingAdapterPosition, text)
+            }
         }
     }
 
@@ -69,7 +70,7 @@ class RvaAnswerEditQuestion(
 
             checkIcon.apply {
                 isVisible = item.isAnswerCorrect
-                setImageDrawable(AppCompatResources.getDrawable(context, if (vmEditQuestion.isMultipleChoice) R.drawable.ic_check else R.drawable.ic_circle))
+                setImageDrawable(if (vmEditQuestion.isMultipleChoice) R.drawable.ic_check else R.drawable.ic_circle)
                 setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
             }
         }

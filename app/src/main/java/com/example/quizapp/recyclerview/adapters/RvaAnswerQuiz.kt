@@ -1,13 +1,9 @@
 package com.example.quizapp.recyclerview.adapters
 
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviAnswerBinding
-import com.example.quizapp.extensions.getThemeColor
-import com.example.quizapp.extensions.setDrawableTint
-import com.example.quizapp.extensions.setTextColorWithRes
+import com.example.quizapp.extensions.*
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.recyclerview.impl.BindingListAdapter
 import com.example.quizapp.viewmodel.VmQuiz
@@ -51,20 +47,19 @@ class RvaAnswerQuiz(
         binding.apply {
             answerText.text = item.text
 
-            if (vmQuiz.shouldDisplaySolution || vmQuizQuestionsContainer.isQuestionIdInsideShouldDisplayList(item.questionId)) {
+            if (vmQuiz.shouldDisplaySolution || vmQuizQuestionsContainer.shouldDisplayQuestionSolution(item.questionId)) {
                 answerText.setTextColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
+                selectionButtonRing.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
+                checkIcon.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
             } else {
                 answerText.setTextColorWithRes(R.color.black)
+                checkIcon.setDrawableTint(getThemeColor(R.attr.colorAccent))
+                selectionButtonRing.setDrawableTint(if (item.isAnswerSelected) getThemeColor(R.attr.colorAccent) else getColor(R.color.unselectedColor))
             }
-
-            selectionButtonRing.setDrawableTint(
-                if (item.isAnswerSelected) root.context.getThemeColor(R.attr.colorAccent)
-                else ContextCompat.getColor(root.context, R.color.unselectedColor)
-            )
 
             checkIcon.apply {
                 isVisible = item.isAnswerSelected
-                setImageDrawable(AppCompatResources.getDrawable(context, if (isMultipleChoice) R.drawable.ic_check else R.drawable.ic_circle))
+                setImageDrawable(if (isMultipleChoice) R.drawable.ic_check else R.drawable.ic_circle)
             }
         }
     }

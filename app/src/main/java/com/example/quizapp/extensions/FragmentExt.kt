@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.speech.RecognizerIntent
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
