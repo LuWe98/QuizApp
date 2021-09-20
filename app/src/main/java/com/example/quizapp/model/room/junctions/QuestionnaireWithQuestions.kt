@@ -5,8 +5,6 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.model.room.entities.Questionnaire
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 data class QuestionnaireWithQuestions(
     @Embedded

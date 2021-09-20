@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:srcCompat="@drawable/ic_person_add"
+            app:tint="@color/black"
+            android:padding="25dp"
+            android:visibility="gone"
+            android:background="@drawable/shape_circle"
+            android:backgroundTint="@color/white"
+            android:elevation="@dimen/defaultElevation"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/inputLayoutName" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:id="@+id/buttonBack"
+            android:background="?attr/actionBarItemBackground"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_arrow_back"
+            android:padding="6dp"
+            android:layout_marginTop="@dimen/grid_3"
+            android:layout_marginStart="@dimen/grid_1_5" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/questionnaireTitle"
+            android:text="@string/register"
+            android:gravity="center_horizontal"
+            android:textSize="24sp"
+            android:maxLines="3"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@+id/buttonBack"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/inputLayoutName"
+            style="@style/Style.QuizApp.TextInputLayout"
+            android:hint="@string/userName"
+            android:elevation="@dimen/defaultElevation"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            app:startIconDrawable="@drawable/ic_person"
+            app:layout_constraintVertical_bias="0.175"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/editTextName"
+                style="@style/Style.QuizApp.TextInputEditText"
+                android:inputType="textPersonName" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/inputLayoutEmail"
+            style="@style/Style.QuizApp.TextInputLayout"
+            android:hint="@string/email"
+            android:elevation="@dimen/defaultElevation"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            android:layout_marginTop="@dimen/grid_4"
+            app:startIconDrawable="@drawable/ic_email"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutName">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/editTextEmail"
+                style="@style/Style.QuizApp.TextInputEditText"
+                android:inputType="textEmailAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/inputLayoutCourseOfStudies"
+            style="@style/Style.QuizApp.TextInputLayout"
+            android:hint="@string/courseOfStudies"
+            android:elevation="@dimen/defaultElevation"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            android:layout_marginTop="@dimen/grid_4"
+
+            app:startIconDrawable="@drawable/ic_domain"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutEmail">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/editTextCourseOfStudies"
+                style="@style/Style.QuizApp.TextInputEditText"
+                android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/inputLayoutPassword"
+            style="@style/Style.QuizApp.TextInputLayout"
+            android:hint="@string/password"
+            android:elevation="@dimen/defaultElevation"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            android:layout_marginTop="@dimen/grid_4"
+            app:startIconDrawable="@drawable/ic_password"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutCourseOfStudies">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/editTextPassword"
+                style="@style/Style.QuizApp.TextInputEditText"
+                android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/inputLayoutConfirmPassword"
+            style="@style/Style.QuizApp.TextInputLayout"
+            android:hint="@string/confirmPassword"
+            android:elevation="@dimen/defaultElevation"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            android:layout_marginTop="@dimen/grid_4"
+            app:startIconDrawable="@drawable/ic_password"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutPassword">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/editTextConfirmPassword"
+                style="@style/Style.QuizApp.TextInputEditText"
+                android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:id="@+id/registerButton"
+            android:text="@string/register"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@drawable/background_round_corners_45dp"
+            android:backgroundTint="@color/black"
+            android:elevation="@dimen/defaultElevation"
+            android:layout_marginTop="@dimen/grid_6"
+            app:layout_constraintTop_toBottomOf="@id/inputLayoutConfirmPassword"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:id="@+id/goToLoginButton"
+            android:text="@string/alreadyGotAccount"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/registerButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/grid_2" />
+</androidx.constraintlayout.widget.ConstraintLayout>

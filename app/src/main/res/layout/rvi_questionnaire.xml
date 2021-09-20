@@ -16,17 +16,20 @@
             android:layout_height="@dimen/defaultMinCardHeight"
             android:layout_margin="@dimen/grid_2">
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:id="@+id/progressIndicator"
-                android:indeterminateOnly="false"
-                tools:progress="100"
-                android:progressDrawable="@drawable/circular_indicator_progress_bar"
+                app:indicatorSize="40dp"
+                app:indicatorColor="?colorAccent"
+                app:trackColor="@color/unselectedColor"
+                app:trackThickness="3.5dp"
+                app:trackCornerRadius="5dp"
+                tools:progress="60"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginStart="@dimen/grid_1"/>
+                android:layout_marginStart="@dimen/grid_1" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="20dp"
@@ -58,7 +61,7 @@
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:id="@+id/facultyName"
+                android:id="@+id/courseOfStudiesName"
                 tools:text="Faculty"
                 android:textSize="14sp"
                 android:gravity="center_vertical"
@@ -80,7 +83,7 @@
                 app:drawableStartCompat="@drawable/ic_person"
                 app:layout_constraintTop_toBottomOf="@id/questionnaireTitle"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/facultyName"
+                app:layout_constraintStart_toEndOf="@id/courseOfStudiesName"
                 android:layout_marginStart="@dimen/grid_3"/>
 
         <com.google.android.material.textview.MaterialTextView

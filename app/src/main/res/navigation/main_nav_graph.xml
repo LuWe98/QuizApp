@@ -8,12 +8,6 @@
 
     <!-- REGULAR FRAGMENTS -->
     <fragment
-            android:id="@+id/fragmentSettings"
-            android:name="com.example.quizapp.ui.fragments.settingsscreen.FragmentSettings"
-            android:label="FragmentSettings"
-            tools:layout="@layout/fragment_settings" />
-
-    <fragment
             android:id="@+id/fragmentSearch"
             android:name="com.example.quizapp.ui.fragments.searchscreen.FragmentSearch"
             android:label="FragmentSearch"
@@ -28,7 +22,37 @@
         <action
                 android:id="@+id/action_fragmentHome_to_fragmentQuizOverview"
                 app:destination="@id/quiz_nav_graph" />
+        <action
+                android:id="@+id/action_fragmentHome_to_fragmentLogin"
+                app:destination="@id/fragmentLogin" />
+        <action
+                android:id="@+id/action_fragmentHome_to_fragmentSearch"
+                app:destination="@id/fragmentSearch" />
     </fragment>
+
+
+    <fragment
+            android:id="@+id/fragmentSettings"
+            android:name="com.example.quizapp.ui.fragments.settingsscreen.FragmentSettings"
+            android:label="FragmentSettings"
+            tools:layout="@layout/fragment_settings" />
+
+
+    <fragment
+            android:id="@+id/fragmentLogin"
+            android:name="com.example.quizapp.ui.fragments.loginscreen.FragmentLogin"
+            android:label="FragmentLogin"
+            tools:layout="@layout/fragment_login">
+        <action
+                android:id="@+id/action_fragmentLogin_to_fragmentRegister"
+                app:destination="@id/fragmentRegister" />
+    </fragment>
+
+    <fragment
+            android:id="@+id/fragmentRegister"
+            android:name="com.example.quizapp.ui.fragments.loginscreen.FragmentRegister"
+            android:label="FragmentRegister"
+            tools:layout="@layout/fragment_register"/>
 
 
 

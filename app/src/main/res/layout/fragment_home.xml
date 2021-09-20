@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         app:cardBackgroundColor="@color/white"
@@ -30,38 +29,59 @@
                     android:textSize="@dimen/maxHeaderTextSize"
                     android:textStyle="bold"
                     android:paddingTop="@dimen/grid_1"
+                    android:visibility="gone"
                     app:layout_constraintTop_toTopOf="parent"
                     android:id="@+id/materialTextView" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:id="@+id/buttonMoreOptions"
-                    android:background="?attr/actionBarItemBackground"
-                    app:srcCompat="@drawable/ic_more"
-                    android:padding="6dp"
-                    android:layout_marginEnd="@dimen/grid_1_5"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:id="@+id/searchLayout"
+                    android:background="@drawable/background_round_corners_10dp"
+                    android:backgroundTint="?android:colorBackground"
+                    android:layout_marginTop="@dimen/grid_4"
+                    android:layout_marginHorizontal="@dimen/grid_6"
+                    android:elevation="@dimen/defaultElevation"
+                    app:layout_constraintTop_toBottomOf="@+id/materialTextView">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="45dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/searchIcon"
+                        app:srcCompat="@drawable/ic_search"
+                        android:padding="10dp"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:hint="@string/searchForQuestionnaires"
+                        android:gravity="center_vertical"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toEndOf="@id/searchIcon"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <com.google.android.material.tabs.TabLayout
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:layout_marginHorizontal="@dimen/grid_4"
-                    android:layout_marginBottom="@dimen/grid_3"
-                    android:layout_marginTop="@dimen/grid_2"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="@dimen/grid_8"
+                    android:layout_marginBottom="@dimen/grid_2"
+                    android:layout_marginTop="@dimen/grid_1"
                     android:id="@+id/tabLayout"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:backgroundTint="@android:color/transparent"
-                    app:tabIndicatorHeight="0dp"
+                    app:tabTextColor="@color/tab_layout_color_selector"
+                    app:tabIndicatorHeight="2.5dp"
+                    app:tabRippleColor="@color/transparent"
                     app:tabGravity="fill"
                     app:tabIndicatorAnimationMode="elastic"
                     app:tabIndicatorGravity="bottom"
                     app:tabIndicator="@drawable/tab_indicator"
-                    app:tabIndicatorColor="@color/black"
+                    app:tabIndicatorColor="?colorAccent"
                     app:tabTextAppearance="@style/Style.QuizApp.TabLayout.TextAppearance"
-                    app:layout_constraintTop_toBottomOf="@+id/materialTextView"
-                    tools:layout_editor_absoluteX="16dp" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/searchLayout" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.viewpager2.widget.ViewPager2

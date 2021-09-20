@@ -10,7 +10,7 @@ import com.example.quizapp.model.room.entities.EntityMarker
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -54,7 +54,7 @@ class VmQuiz @Inject constructor(
         launch { localRepository.update(entity) }
     }
 
-    fun onCheckResultsClick() {
+    fun onShowSolutionClick() {
         completeQuestionnaire?.let {
             if (it.areAllQuestionsAnswered) {
                 setShouldDisplaySolution(!shouldDisplaySolution)
@@ -85,7 +85,6 @@ class VmQuiz @Inject constructor(
     }
 
 
-
     sealed class FragmentQuizEvent {
         object ShowCompleteAllAnswersToast : FragmentQuizEvent()
         data class ShowUndoDeleteGivenAnswersSnackBack(val lastAnswerValues: List<Answer>) : FragmentQuizEvent()
@@ -95,4 +94,26 @@ class VmQuiz @Inject constructor(
     companion object {
         const val SHOULD_DISPLAY_SOLUTION = "shouldDisplaySolutionKey"
     }
+
+
+
+//    private val completeQuestionnaireStateFlow = localRepository.completeQuestionnaireStateFlow(args.questionnaireId)
+//
+//    val completeQuestionnaireStateFlowOpen = localRepository.completeQuestionnaireStateFlow(args.questionnaireId).filterNotNull().distinctUntilChanged()
+//
+//    fun getQuestionWithAnswersFlow(questionId: Long) = completeQuestionnaireStateFlow.mapNotNull { it?.getQuestionWithAnswers(questionId) }.distinctUntilChanged()
+//
+//    val completeQuestionnaireFlowValue get() = completeQuestionnaireStateFlow.value
+//
+//    val questionnaireFlow get() = completeQuestionnaireStateFlow.mapNotNull { it?.questionnaire }.distinctUntilChanged()
+//
+//    val questionsWithAnswersFlow get() = completeQuestionnaireStateFlow.mapNotNull { it?.questionsWithAnswers }.distinctUntilChanged()
+//
+//    val answeredQuestionsPercentageFlow get() = completeQuestionnaireStateFlow.mapNotNull { it?.answeredQuestionsPercentage }.distinctUntilChanged()
+//
+//    val allQuestionsAnsweredFlow get() = answeredQuestionsPercentageFlow.map { it == 100 }.distinctUntilChanged()
+//
+//    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+
 }

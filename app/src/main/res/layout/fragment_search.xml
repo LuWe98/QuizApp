@@ -1,16 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        app:cardBackgroundColor="?android:colorBackground"
+        app:cardBackgroundColor="@color/white"
         app:cardElevation="0dp"
         app:cardCornerRadius="@dimen/defaultBackgroundCardCornerRadius"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/topHeader"
+                android:background="@color/white"
+                android:elevation="@dimen/defaultElevation"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/buttonBack"
+                    android:background="?attr/actionBarItemBackground"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_back"
+                    android:padding="6dp"
+                    android:layout_marginVertical="@dimen/grid_3"
+                    android:layout_marginStart="@dimen/grid_1_5" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:id="@+id/searchQueryEditText"
+                    android:hint="@string/searchForQuestionnaires"
+                    android:background="@android:color/transparent"
+                    android:layout_marginEnd="@dimen/grid_1"
+                    android:layout_marginStart="@dimen/grid_4"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textSize="16sp"
+                    app:layout_constraintTop_toTopOf="@+id/buttonBack"
+                    app:layout_constraintBottom_toBottomOf="@+id/buttonBack"
+                    app:layout_constraintStart_toEndOf="@+id/buttonBack"
+                    app:layout_constraintEnd_toStartOf="@+id/buttonVoiceSearch" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/buttonVoiceSearch"
+                    android:background="?attr/actionBarItemBackground"
+                    app:srcCompat="@drawable/ic_voice"
+                    android:padding="6dp"
+                    android:layout_marginHorizontal="@dimen/grid_1"
+                    app:layout_constraintTop_toTopOf="@id/searchQueryEditText"
+                    app:layout_constraintBottom_toBottomOf="@id/searchQueryEditText"
+                    app:layout_constraintEnd_toStartOf="@+id/buttonFilter" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/buttonFilter"
+                    android:background="?attr/actionBarItemBackground"
+                    app:srcCompat="@drawable/ic_filter"
+                    android:padding="8.5dp"
+                    android:layout_marginEnd="@dimen/grid_1"
+                    app:layout_constraintTop_toTopOf="@id/searchQueryEditText"
+                    app:layout_constraintBottom_toBottomOf="@id/searchQueryEditText"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="@dimen/grid_1"
+                android:background="?android:colorBackground"
+                tools:listitem="@layout/rvi_questionnaire"
+                app:layout_constraintTop_toBottomOf="@id/topHeader"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

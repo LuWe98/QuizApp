@@ -79,7 +79,7 @@ class FragmentAddQuestion : BindingFragment<FragmentAddQuestionBinding>() {
 
     private fun initObservers(){
         vmEditQuestion.answersLiveData.observe(viewLifecycleOwner) {
-            binding.noDataLayout.isVisible = it.isEmpty()
+            //binding.noDataLayout.isVisible = it.isEmpty()
             rvAdapter.submitList(it)
         }
 

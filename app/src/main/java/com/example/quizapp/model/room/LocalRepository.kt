@@ -1,20 +1,33 @@
 package com.example.quizapp.model.room
 
-import com.example.quizapp.model.room.dao.BaseDao
+import androidx.lifecycle.LiveData
+import com.example.quizapp.model.room.dao.*
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.EntityMarker
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.model.room.entities.Questionnaire
+import com.example.quizapp.model.room.junctions.QuestionWithAnswers
+import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestions
+import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestionsAndAnswers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalRepository @Inject constructor(roomDatabase: LocalDatabase) {
-
-    private val questionnaireDao = roomDatabase.getQuestionaryDao()
-    private val questionDao = roomDatabase.getQuestionDao()
-    private val answerDao = roomDatabase.getAnswerDao()
-
+class LocalRepository @Inject constructor(
+    private val applicationScope : CoroutineScope,
+    private val questionnaireDao: QuestionnaireDao,
+    private val questionDao: QuestionDao,
+    private val answerDao: AnswerDao,
+    private val userDao: UserDao,
+    private val userRoleDao: UserRoleDao,
+    private val facultyDao: FacultyDao,
+    private val courseOfStudiesDao: CourseOfStudiesDao,
+    private val subjectDao: SubjectDao
+) {
 
     suspend fun <T : EntityMarker> insert(entity: T) = getBaseDaoWith(entity).insert(entity)
 
@@ -39,16 +52,12 @@ class LocalRepository @Inject constructor(roomDatabase: LocalDatabase) {
     } as BaseDao<T>)
 
 
-
-
-    //Questionnaire
+    //QUESTIONNAIRE
     suspend fun getAllQuestionnaires() = questionnaireDao.getAllQuestionnaires()
 
     val allQuestionnairesFlow get() = questionnaireDao.allQuestionnairesFlow
 
     val allQuestionnairesWithQuestions get() = questionnaireDao.getAllQuestionnairesWithQuestions()
-
-    fun getQuestionnaireWithFaculty(faculty: String) = questionnaireDao.getQuestionnaireWithFaculty(faculty)
 
     suspend fun getCompleteQuestionnaireWithId(questionnaireId: Long) = questionnaireDao.getCompleteQuestionnaireWithId(questionnaireId)
 
@@ -56,22 +65,28 @@ class LocalRepository @Inject constructor(roomDatabase: LocalDatabase) {
 
     val allQuestionnairesWithQuestionsPagingSource get() = questionnaireDao.getAllQuestionnairesWithQuestionsPagingSource()
 
+    val allQuestionnairesWithQuestionsLiveData get() = questionnaireDao.getAllQuestionnairesWithQuestionsLiveData()
 
-    //Question
+    fun completeQuestionnaireStateFlow(questionnaireId: Long) = questionnaireDao.getCompleteQuestionnaireWithIdFlow(questionnaireId)
+        .stateIn(applicationScope, SharingStarted.WhileSubscribed(),  null)
+
+
+    //QUESTION
     suspend fun getAllQuestions() = questionDao.getAllQuestions()
 
     val getAllQuestionsFlow get() = questionDao.allQuestionsFlow
 
-    suspend fun getQuestionsOfQuestionnaire(questionnaireId : Long) = questionDao.getQuestionsOfQuestionnaireFlow(questionnaireId)
+    fun getQuestionsOfQuestionnaire(questionnaireId: Long) = questionDao.getQuestionsOfQuestionnaireFlow(questionnaireId)
 
-    fun deleteQuestionsWith(questionnaireId: Long) { questionDao.deleteQuestionsWith(questionnaireId)}
+    fun deleteQuestionsWith(questionnaireId: Long) {
+        questionDao.deleteQuestionsWith(questionnaireId)
+    }
 
 
-
-    //Answer
+    //ANSWER
     suspend fun allAnswers() = answerDao.getAllAnswers()
 
     val allAnswersFlow get() = answerDao.allAnswersFlow
 
-    suspend fun getAnswersOfQuestion(questionId : Long) = answerDao.getAnswersOfQuestionFlow(questionId)
+    fun getAnswersOfQuestion(questionId: Long) = answerDao.getAnswersOfQuestionFlow(questionId)
 }

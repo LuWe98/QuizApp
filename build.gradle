@@ -22,7 +22,7 @@ buildscript {
         hiltAndroidXVersion = "1.0.0-alpha03"
         hiltFragmentVersion = '1.0.0'
 
-        liveCycleVersion = '2.3.1'
+        liveCycleVersion = '2.4.0-alpha03'
         liveCycleVersionOlder = '2.2.0'
         liveCycleComposeVersion = '1.0.0-alpha07'
 
@@ -38,6 +38,8 @@ buildscript {
         preferencesVersion = '1.1.1'
 
         preferenceDatastoreVersion = '1.0.0'
+
+        ktorVersion = '1.6.3'
 
         jetBrainsAnnotationVersion = '20.1.0'
         jUnitVersion = '4.13.2'

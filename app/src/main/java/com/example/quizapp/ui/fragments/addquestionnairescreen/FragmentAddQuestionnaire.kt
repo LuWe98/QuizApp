@@ -77,7 +77,7 @@ class FragmentAddQuestionnaire : BindingFragment<FragmentAddQuestionnaireBinding
 
     private fun initObservers(){
         vmAdd.questionsWithAnswersLiveData.observe(viewLifecycleOwner) {
-            binding.noDataLayout.isVisible = it.isEmpty()
+            //binding.noDataLayout.isVisible = it.isEmpty()
             rvAdapter.submitList(it)
         }
 

@@ -73,7 +73,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/ic_arrow_back"
                 android:padding="6dp"
-                android:elevation="@dimen/defaultElevation"
+                android:elevation="10dp"
                 android:layout_marginStart="@dimen/grid_1_5"
                 android:layout_marginTop="@dimen/grid_3" />
 
@@ -84,7 +84,7 @@
                 android:backgroundTint="?colorControlActivated"
                 app:srcCompat="@drawable/ic_question_mark"
                 android:padding="6dp"
-                android:elevation="@dimen/defaultElevation"
+                android:elevation="10dp"
                 android:layout_marginEnd="@dimen/grid_1_5"
                 android:layout_marginTop="@dimen/grid_3"
                 app:layout_constraintTop_toTopOf="parent"

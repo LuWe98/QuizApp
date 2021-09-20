@@ -15,8 +15,8 @@
     <style name="Style.QuizApp.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
         <item name="boxStrokeWidth">0dp</item>
         <item name="boxStrokeWidthFocused">0dp</item>
-        <item name="android:background">@drawable/background_round_corners_15dp</item>
-        <item name="background">@drawable/background_round_corners_15dp</item>
+        <item name="android:background">@drawable/background_round_corners_10dp</item>
+        <item name="background">@drawable/background_round_corners_10dp</item>
         <item name="elevation">@dimen/defaultElevation</item>
         <!--        <item name="materialThemeOverlay">@style/Style.QuizApp.TextInputEditText.ThemeOverlay</item>-->
     </style>

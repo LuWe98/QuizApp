@@ -8,7 +8,7 @@ import kotlin.random.Random
 
 object RandomQuestionnaireCreatorUtil {
 
-    suspend fun generateData(
+    suspend fun generateAndInsertRandomData(
         localRepo: LocalRepository,
         questionnaireAmount: Int,
         maxQuestionsPerQuestionnaire: Int,

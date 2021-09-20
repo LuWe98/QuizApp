@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import com.example.quizapp.R
-import com.example.quizapp.databinding.RviQuestionBinding
+import com.example.quizapp.databinding.RviQuestionQuizBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
 import com.example.quizapp.recyclerview.impl.BindingListAdapter
@@ -12,11 +12,11 @@ import com.example.quizapp.viewmodel.VmQuiz
 
 class RvaQuestionWithAnswersQuiz(
     private val vmQuiz: VmQuiz
-) : BindingListAdapter<QuestionWithAnswers, RviQuestionBinding>(QuestionWithAnswers.DIFF_CALLBACK) {
+) : BindingListAdapter<QuestionWithAnswers, RviQuestionQuizBinding>(QuestionWithAnswers.DIFF_CALLBACK) {
 
     var onItemClick: ((Int, Long, CardView) -> (Unit))? = null
 
-    override fun initListeners(binding: RviQuestionBinding, vh: BindingListAdapterViewHolder) {
+    override fun initListeners(binding: RviQuestionQuizBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
             root.setOnClickListener {
                 onItemClick?.invoke(vh.bindingAdapterPosition, getItem(vh.bindingAdapterPosition).question.id, root)
@@ -25,7 +25,7 @@ class RvaQuestionWithAnswersQuiz(
     }
 
     @SuppressLint("SetTextI18n")
-    override fun bindViews(binding: RviQuestionBinding, item: QuestionWithAnswers, position: Int) {
+    override fun bindViews(binding: RviQuestionQuizBinding, item: QuestionWithAnswers, position: Int) {
         binding.apply {
             questionNumberText.text = "${position + 1})"
             questionTitle.text = item.question.text

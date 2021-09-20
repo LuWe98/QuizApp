@@ -3,14 +3,22 @@
 
     <item
             android:id="@+id/menu_item_delete_given_answers"
-            android:title="Delete given Answers" />
+            android:title="@string/deleteGivenAnswers"
+            android:icon="@drawable/ic_delete"/>
+
+    <item
+            android:id="@+id/menu_item_shuffle_questions"
+            android:title="@string/shuffleQuestions"/>
 
     <item
             android:id="@+id/menu_item_hide_completed_questions"
-            android:title="Hide Completed Questions" />
+            android:icon="@drawable/ic_hide"
+            android:title="@string/hideCompletedQuestions"
+            android:checkable="true"/>
 
     <item
-            android:id="@+id/menu_item_allow_show_answers_directly"
-            android:title="Show Answers directly"
+            android:id="@+id/menu_item_allow_show_answers"
+            android:title="@string/showSolution"
+            android:icon="@drawable/ic_question_mark"
             android:checkable="true"/>
 </menu>

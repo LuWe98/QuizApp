@@ -16,12 +16,14 @@
     <string name="questionnaireName">Questionnaire Name</string>
     <string name="subject">Subject</string>
     <string name="courseOfStudies">Course of Studies</string>
-
     <string name="questions">Questions</string>
     <string name="answers">Answers</string>
 
-    <string name="noQuestionsYet">No Questions yet</string>
-    <string name="noAnswersYet">No Answers yet</string>
+    <string name="noQuestionsYet">No Questions here</string>
+    <string name="noAnswersYet">No Answers here</string>
+    <string name="noQuestionnairesHere">No Questionnaires here</string>
+    <string name="noInternetConnection">No Internet Connection :(</string>
+    <string name="noQuestionnairesCreatedYet">No Questionnaires created yet</string>
 
 
     <string name="typeYourAnswer">Click to type your Answer!</string>
@@ -31,6 +33,17 @@
     <string name="multipleChoice">Multiple Choice</string>
     <string name="singleChoice">Single Choice</string>
 
+
+    <string name="password">Password</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="userName">Username</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="registerHere">Register here</string>
+    <string name="email">Email</string>
+    <string name="alreadyGotAccount">Already got an account? Login</string>
+
+
     <string name="pleaseAnswerAllQuestionsText">Please answer all Questions first!</string>
     <string name="undo">Undo</string>
     <string name="answersDeleted">Answers deleted</string>
@@ -39,6 +52,34 @@
     <string name="questionDeleted">Question deleted</string>
     <string name="checkResults">Check Results</string>
 
+
+    <string name="searchForQuestionnaires">Search for Questionnaires</string>
+
+
+    <!-- Settings-->
+    <string name="darkMode">Dark Mode</string>
+    <string name="language">Language</string>
+    <string name="showSolutionDirectly">Show Solution directly</string>
+    <string name="hideCompletedQuestions">Hide completed Questions</string>
+    <string name="preference">Preferences</string>
+    <string name="statistics">Statistics</string>
+
+    <string name="startedQuestionnaires">Started Questionnaires</string>
+    <string name="completedQuestionnaires">Completed Questionnaires</string>
+    <string name="givenQuestionsAmount">Given Question amount</string>
+    <string name="correctlyGivenQuestionAmount">Correctly given Question amount</string>
+    <string name="createdQuestionnaires">Created Questionnaires</string>
+
+    <string name="user">User</string>
+    <string name="logout">Logout</string>
+    <string name="adminFunctionality">Admin Functionality</string>
+    <string name="promoteUserToAdmin">Promote User to Admin</string>
+
+    <!-- Quiz Screen-->
+    <string name="showSolution">Show Solution</string>
+    <string name="deleteGivenAnswers">Delete given Answers</string>
+    <string name="shuffleQuestions">Shuffle Questions</string>
+
     <!-- Strings for voice Search functionality -->
     <string name="voiceSearchStartTalking">Sprechen Sie los…</string>
     <string name="voiceSearchIDidNotGetThat">Das habe ich nicht verstanden, versuche es nochmal…</string>
@@ -46,7 +87,6 @@
     <string name="voiceSearchAudioError">Fehler bei der Audioaufnahme</string>
     <string name="voiceSearchInsufficientPermission">Unzureichende Berechtihungen!</string>
     <string name="voiceSearchSpeechRecognizerNotAvailable">Speech Recognizer ist nicht verfügbar!</string>
-
 
 
     <!-- Transition Names -->

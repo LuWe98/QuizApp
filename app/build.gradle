@@ -11,7 +11,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.example.quizzapp"
+        applicationId "com.hfu.quizzapp"
         minSdk 23
         targetSdk 31
         versionCode 1
@@ -46,8 +46,9 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains:annotations:$jetBrainsAnnotationVersion"
     implementation "androidx.appcompat:appcompat:$appCompatVersion"
-    implementation "androidx.core:core-ktx:$androidXCoreVersion"
     implementation "androidx.legacy:legacy-support-v4:$androidXLegacyVersion"
+
+    implementation "androidx.core:core-ktx:$androidXCoreVersion"
     implementation "com.google.android.material:material:$materialDesignVersion"
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
     implementation "androidx.dynamicanimation:dynamicanimation:$dynamicAnimationVersion"
@@ -59,9 +60,11 @@ dependencies {
 
     //Livecycle
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$liveCycleVersion"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$liveCycleVersion"
     implementation "androidx.lifecycle:lifecycle-common-java8:$liveCycleVersion"
     implementation "androidx.lifecycle:lifecycle-extensions:$liveCycleVersionOlder"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$liveCycleComposeVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$liveCycleVersion"
+    implementation "androidx.lifecycle:lifecycle-process:$liveCycleVersion"
 
 
     //Room Database
@@ -100,6 +103,14 @@ dependencies {
 
     //Preference-Datastore
     implementation "androidx.datastore:datastore-preferences:$preferenceDatastoreVersion"
+
+
+    //Ktor
+    implementation "io.ktor:ktor-client-core:$ktorVersion"
+    implementation "io.ktor:ktor-client-android:$ktorVersion"
+    implementation "io.ktor:ktor-client-okhttp:$ktorVersion"
+    implementation "io.ktor:ktor-client-json:$ktorVersion"
+    implementation "io.ktor:ktor-client-gson:$ktorVersion"
 
 
     //Testing

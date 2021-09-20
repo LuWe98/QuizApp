@@ -1,6 +1,5 @@
 package com.example.quizapp.model.room.entities
 
-import androidx.recyclerview.widget.DiffUtil
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -25,16 +24,15 @@ import kotlinx.parcelize.Parcelize
 )
 @Parcelize
 data class Question(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) override val id: Long,
     val questionnaireId: Long,
     val text: String,
-    val isMultipleChoice : Boolean = true,
-    val position : Int
-) : EntityMarker() {
+    val isMultipleChoice: Boolean = true,
+    val position: Int
+) : EntityMarker(id) {
+
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Question>(){
-            override fun areItemsTheSame(oldItem: Question, newItem: Question) = oldItem.id == newItem.id
-            override fun areContentsTheSame(oldItem: Question, newItem: Question) = oldItem == newItem
-        }
+        val DIFF_CALLBACK = createBasicDiffUtil<Question>()
     }
+
 }

@@ -4,12 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.quizapp.model.room.dao.AnswerDao
-import com.example.quizapp.model.room.dao.QuestionDao
-import com.example.quizapp.model.room.dao.QuestionnaireDao
-import com.example.quizapp.model.room.entities.Answer
-import com.example.quizapp.model.room.entities.Question
-import com.example.quizapp.model.room.entities.Questionnaire
+import com.example.quizapp.model.room.dao.*
+import com.example.quizapp.model.room.entities.*
 import com.example.quizapp.utils.RandomQuestionnaireCreatorUtil
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -24,7 +20,12 @@ import javax.inject.Singleton
     entities = [
         Answer::class,
         Question::class,
-        Questionnaire::class
+        Questionnaire::class,
+        User::class,
+        UserRole::class,
+        Faculty::class,
+        CourseOfStudies::class,
+        Subject::class
     ],
     version = 1,
     exportSchema = false
@@ -34,7 +35,11 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun getQuestionaryDao(): QuestionnaireDao
     abstract fun getQuestionDao(): QuestionDao
     abstract fun getAnswerDao(): AnswerDao
-
+    abstract fun getUserDao() : UserDao
+    abstract fun getUserRoleDao() : UserRoleDao
+    abstract fun getFacultyDao() : FacultyDao
+    abstract fun getCourseOfStudiesDao() : CourseOfStudiesDao
+    abstract fun getSubjectDao() : SubjectDao
 
     class Callback @Inject constructor(
         private val repoProvider: Provider<LocalRepository>,
@@ -43,9 +48,9 @@ abstract class LocalDatabase : RoomDatabase() {
     ) : RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
-            repoProvider.get().apply {
+            repoProvider.get().let { repo ->
                 scope.launch(Dispatchers.IO) {
-                    RandomQuestionnaireCreatorUtil.generateData(this@apply, 100, 20, 5)
+                    RandomQuestionnaireCreatorUtil.generateAndInsertRandomData(repo, 100, 15, 5)
                 }
             }
         }

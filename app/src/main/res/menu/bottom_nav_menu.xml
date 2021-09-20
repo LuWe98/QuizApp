@@ -5,15 +5,7 @@
             android:icon="@drawable/ic_home"
             android:title="@string/home" />
     <item
-            android:id="@+id/fragmentSearch"
-            android:icon="@drawable/ic_search"
-            android:title="@string/search"/>
-    <item
             android:id="@+id/fragmentSettings"
             android:icon="@drawable/ic_settings"
             android:title="@string/settings" />
-    <item
-            android:id="@+id/fragmentAdd"
-            android:enabled="false"
-            android:title=""/>
 </menu>

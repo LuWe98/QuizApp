@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/statisticsCard"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        android:layout_margin="@dimen/grid_2"
+        app:layout_constraintTop_toTopOf="parent"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:id="@+id/statisticsHeader"
+                android:text="@string/statistics"
+                android:textStyle="bold"
+                android:background="@drawable/background_round_corners_10dp"
+                android:backgroundTint="?android:colorBackground"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/grid_4"
+                android:textSize="18sp"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/completedQuestionnairesText"
+                android:text="@string/completedQuestionnaires"
+                android:drawableStart="@drawable/ic_questions"
+                android:gravity="center_vertical"
+                android:drawablePadding="@dimen/grid_3"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="@dimen/grid_3"
+                app:layout_constraintTop_toBottomOf="@+id/statisticsHeader" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/givenQuestionsAmount"
+                android:text="@string/givenQuestionsAmount"
+                android:drawableStart="@drawable/ic_question"
+                android:gravity="center_vertical"
+                android:drawablePadding="@dimen/grid_3"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="@dimen/grid_3"
+                app:layout_constraintTop_toBottomOf="@+id/completedQuestionnairesText" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/createdQuestionsAmount"
+                android:text="@string/createdQuestionnaires"
+                android:drawableStart="@drawable/ic_edit_list"
+                android:gravity="center_vertical"
+                android:drawablePadding="@dimen/grid_3"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="@dimen/grid_3"
+                app:layout_constraintTop_toBottomOf="@id/givenQuestionsAmount" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

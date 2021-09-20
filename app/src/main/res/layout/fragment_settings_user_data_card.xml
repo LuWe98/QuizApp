@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/userCard"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        android:layout_margin="@dimen/grid_2"
+        app:layout_constraintTop_toBottomOf="@+id/preferencesCard"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/statisticsCard">
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:id="@+id/userDataHeader"
+                android:text="@string/user"
+                android:background="@drawable/background_round_corners_10dp"
+                android:backgroundTint="?android:colorBackground"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/grid_4"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/userNameText"
+                android:text="@string/userName"
+                android:drawableStart="@drawable/ic_person"
+                android:gravity="center_vertical"
+                android:drawablePadding="@dimen/grid_3"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="@dimen/grid_3"
+                app:layout_constraintTop_toBottomOf="@+id/userDataHeader" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/emailText"
+                android:text="@string/email"
+                android:drawableStart="@drawable/ic_email"
+                android:gravity="center_vertical"
+                android:drawablePadding="@dimen/grid_3"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="@dimen/grid_3"
+                app:layout_constraintTop_toBottomOf="@+id/userNameText" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/passwordText"
+                android:text="@string/password"
+                android:drawableStart="@drawable/ic_password"
+                android:gravity="center_vertical"
+                android:drawablePadding="@dimen/grid_3"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="@dimen/grid_3"
+                app:layout_constraintTop_toBottomOf="@+id/emailText" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/logoutText"
+                android:text="@string/logout"
+                android:drawableStart="@drawable/ic_logout"
+                android:gravity="center_vertical"
+                android:drawablePadding="@dimen/grid_3"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="@dimen/grid_3"
+                app:layout_constraintTop_toBottomOf="@+id/passwordText" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

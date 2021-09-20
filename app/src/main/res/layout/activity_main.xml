@@ -19,7 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            app:backgroundTint="@color/white"
+            android:background="@drawable/background_transparent"
+            app:background="@drawable/background_transparent"
             app:hideOnScroll="false"
             app:elevation="@dimen/defaultElevation"
             app:fabAnimationMode="scale"
@@ -33,7 +34,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/bottomNavView"
-                    app:labelVisibilityMode="selected"
+                    app:labelVisibilityMode="unlabeled"
+                    android:visibility="invisible"
                     app:menu="@menu/bottom_nav_menu"
                     android:background="@drawable/background_transparent"
                     app:background="@drawable/background_transparent"
@@ -43,46 +45,109 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:paddingHorizontal="20dp"/>
 
-<!--            <com.google.android.material.bottomnavigation.BottomNavigationView-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:id="@+id/bottomNavView"-->
-<!--                    app:menu="@menu/bottom_nav_menu"-->
-<!--                    app:labelVisibilityMode="labeled"-->
-<!--                    app:itemIconTint="@color/bottom_nav_bar_color_selector"-->
-<!--                    app:itemTextColor="@color/bottom_nav_bar_color_selector"-->
-<!--                    android:background="@drawable/background_transparent"-->
-<!--                    app:background="@drawable/background_transparent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    android:paddingHorizontal="20dp"/>-->
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/addButton"
-                    android:layout_width="50dp"
-                    android:layout_height="32.5dp"
-                    android:src="@drawable/ic_add"
-                    android:visibility="gone"
-                    android:background="@drawable/background_round_corners_10dp"
-                    android:backgroundTint="@color/black"
-                    app:tint="@color/white"
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.0001dp"
+                    android:background="?android:colorBackground"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:id="@+id/bottomNavViewDivider"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:elevation="@dimen/defaultElevation"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:padding="7.5dp"
-                    android:elevation="8dp"
-                    app:layout_constraintHorizontal_bias="0.9"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                <com.google.android.material.card.MaterialCardView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:id="@+id/homeCard"
+                        app:cardBackgroundColor="?attr/colorAccent"
+                        app:cardCornerRadius="12.5dp"
+                        app:cardElevation="0dp"
+                        app:rippleColor="?colorAccent"
+                        app:layout_constraintEnd_toStartOf="@id/searchCard"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/homeIcon"
+                            app:srcCompat="@drawable/ic_home"
+                            app:tint="@color/white"
+                            android:padding="10dp" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:id="@+id/searchCard"
+                        app:cardBackgroundColor="@color/transparent"
+                        app:cardCornerRadius="12.5dp"
+                        app:cardElevation="0dp"
+                        android:visibility="gone"
+                        app:rippleColor="?colorAccent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/addCard"
+                        app:layout_constraintStart_toEndOf="@+id/homeCard">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:srcCompat="@drawable/ic_search"
+                            android:id="@+id/searchIcon"
+                            app:tint="@color/black"
+                            android:padding="10dp" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:id="@+id/addCard"
+                        app:cardBackgroundColor="@color/transparent"
+                        app:cardCornerRadius="12.5dp"
+                        app:cardElevation="0dp"
+                        app:rippleColor="?colorAccent"
+                        app:layout_constraintStart_toEndOf="@id/searchCard"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/settingsCard">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:srcCompat="@drawable/ic_add"
+                            app:tint="@color/black"
+                            android:padding="10dp" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:id="@+id/settingsCard"
+                        app:cardBackgroundColor="@color/transparent"
+                        app:cardCornerRadius="12.5dp"
+                        app:cardElevation="0dp"
+                        app:rippleColor="?colorAccent"
+                        app:layout_constraintStart_toEndOf="@id/addCard"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/settingsIcon"
+                            app:srcCompat="@drawable/ic_settings"
+                            app:tint="@color/black"
+                            android:padding="10dp" />
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.bottomappbar.BottomAppBar>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/fab"
-            android:visibility="visible"
-            android:src="@drawable/ic_add"
-            app:tint="@color/white"
-            app:layout_anchor="@id/bottomAppBar" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

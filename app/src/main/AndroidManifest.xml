@@ -12,8 +12,16 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+
+    <!--    TEMPORÄR FÜRS TESTEN-->
+    <!--    android:usesCleartextTraffic="true"-->
+
+
     <application
             tools:ignore="AllowBackup"
+
+            android:usesCleartextTraffic="true"
+
             android:allowBackup="true"
             android:name=".QuizApplication"
             android:icon="@mipmap/ic_launcher"
@@ -25,6 +33,7 @@
                 android:name=".ui.ActivityMain"
                 android:exported="true"
                 tools:ignore="LockedOrientationActivity"
+                android:windowSoftInputMode="adjustPan"
                 android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

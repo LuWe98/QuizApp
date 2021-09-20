@@ -5,11 +5,19 @@
     <color name="blackAlpha">#bb000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="whiteAlpha">#bbffffff</color>
-    <color name="red">#ff24</color>
-    <color name="green">#078F45</color>
+    <color name="red">#de1738</color>
+    <color name="green">#73ba73</color>
     <color name="lightGreen">#87A96B </color>
 
-    <!--    #558b2f-->
+
+<!--    <color name="green">#078F45</color>-->
+<!--    <color name="red">#ff24</color>-->
+
+
+    <color name="niceWhite">#fcfbfc</color>
+    <color name="whiteBackground">#f6f6f6</color>
+    <color name="niceBlack">#262626</color>
+
 
     <color name="unselectedColor">#DDDDDD</color>
     <color name="transparent">#00000000</color>
@@ -22,7 +30,7 @@
     <color name="lightColorSecondaryVariant">#FF018786</color>
     <color name="lightColorOnSecondary">@color/black</color>
     <color name="lightColorAccent">#add8e6</color>
-    <color name="lightBackgroundColor">#f0f1f5</color>
+    <color name="lightBackgroundColor">#f6f6f6</color>
     <color name="lightColorControlActivated">#89000000</color>
 
     <!-- Dark Theme Colors -->
@@ -33,5 +41,5 @@
     <color name="darkColorSecondaryVariant">#FF018786</color>
     <color name="darkColorOnSecondary">@color/black</color>
     <color name="darkColorAccent">#add8e6</color>
-    <color name="darkBackgroundColor">#f0f1f5</color>
+    <color name="darkBackgroundColor">#f6f6f6</color>
 </resources>

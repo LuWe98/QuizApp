@@ -2,7 +2,7 @@ package com.example.quizapp.recyclerview.adapters
 
 import androidx.core.view.isVisible
 import com.example.quizapp.R
-import com.example.quizapp.databinding.RviAnswerBinding
+import com.example.quizapp.databinding.RviAnswerQuizBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.recyclerview.impl.BindingListAdapter
@@ -13,11 +13,11 @@ class RvaAnswerQuiz(
     private val vmQuiz: VmQuiz,
     private val vmQuizQuestionsContainer: VmQuizQuestionsContainer,
     private val isMultipleChoice: Boolean
-) : BindingListAdapter<Answer, RviAnswerBinding>(Answer.DIFF_CALLBACK) {
+) : BindingListAdapter<Answer, RviAnswerQuizBinding>(Answer.DIFF_CALLBACK) {
 
     var onItemClick: ((List<Answer>) -> (Unit))? = null
 
-    override fun initListeners(binding: RviAnswerBinding, vh: BindingListAdapterViewHolder) {
+    override fun initListeners(binding: RviAnswerQuizBinding, vh: BindingListAdapterViewHolder) {
         binding.root.setOnClickListener {
             getItem(vh.bindingAdapterPosition).let { answer ->
                 if (isMultipleChoice) {
@@ -43,7 +43,7 @@ class RvaAnswerQuiz(
         }
     }
 
-    override fun bindViews(binding: RviAnswerBinding, item: Answer, position: Int) {
+    override fun bindViews(binding: RviAnswerQuizBinding, item: Answer, position: Int) {
         binding.apply {
             answerText.text = item.text
 

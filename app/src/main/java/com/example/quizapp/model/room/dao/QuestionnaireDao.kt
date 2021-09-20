@@ -10,6 +10,8 @@ import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestions
 import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestionsAndAnswers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Dao
 abstract class QuestionnaireDao : BaseDao<Questionnaire> {
@@ -23,6 +25,10 @@ abstract class QuestionnaireDao : BaseDao<Questionnaire> {
     @Transaction
     @Query("SELECT * FROM questionaryTable ORDER BY title")
     abstract fun getAllQuestionnairesWithQuestions() : Flow<List<QuestionnaireWithQuestions>>
+
+    @Transaction
+    @Query("SELECT * FROM questionaryTable ORDER BY title")
+    abstract fun getAllQuestionnairesWithQuestionsLiveData() : LiveData<List<QuestionnaireWithQuestions>>
 
     @Transaction
     @Query("SELECT * FROM questionaryTable ORDER BY title")
@@ -40,6 +46,7 @@ abstract class QuestionnaireDao : BaseDao<Questionnaire> {
     @Query("SELECT * FROM questionaryTable WHERE id = :questionnaireId")
     abstract fun getCompleteQuestionnaireWithIdLiveData(questionnaireId: Long) : LiveData<QuestionnaireWithQuestionsAndAnswers>
 
-    @Query("SELECT * FROM questionaryTable WHERE faculty =:faculty ORDER BY title")
-    abstract fun getQuestionnaireWithFaculty(faculty: String) : Flow<List<Questionnaire>>
+    @Transaction
+    @Query("SELECT * FROM questionaryTable WHERE id = :questionnaireId")
+    abstract fun getCompleteQuestionnaireWithIdFlow(questionnaireId: Long) : Flow<QuestionnaireWithQuestionsAndAnswers>
 }

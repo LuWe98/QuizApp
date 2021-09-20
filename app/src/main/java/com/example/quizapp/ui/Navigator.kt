@@ -27,17 +27,19 @@ class Navigator @Inject constructor(private val navHostFragmentWeakReference: We
     val currentFragment: Fragment get() = naHostFragment.childFragmentManager.fragments.first()
     val currentDestination get() = navController.currentDestination
     val currentDestinationId get() = currentDestination?.id
+    val currentBackStackEntry get() = navController.currentBackStackEntry
+    val currentSaveStateHandle get() = currentBackStackEntry!!.savedStateHandle
+    val previousBackStackEntry get() = navController.previousBackStackEntry
+    val previousSaveStateHandle get() = previousBackStackEntry!!.savedStateHandle
 
-    private val destinationChangedActions = emptyList<NavController.OnDestinationChangedListener>().toMutableList()
 
-    fun addOnDestinationChangedAction(listener : NavController.OnDestinationChangedListener){
+    fun addOnDestinationChangedListener(listener : NavController.OnDestinationChangedListener){
         navController.addOnDestinationChangedListener(listener)
     }
 
     fun navigate(@IdRes id: Int){ navController.navigate(id) }
 
     fun popBackStack(){ navController.popBackStack() }
-
 
 
     fun navigateToAddQuestionnaireScreen(questionnaireId: Long = NO_QUESTIONNAIRE_ID){
@@ -52,6 +54,10 @@ class Navigator @Inject constructor(private val navHostFragmentWeakReference: We
         navController.navigate(FragmentHomeDirections.actionFragmentHomeToFragmentQuizOverview(questionnaireId))
     }
 
+    fun navigateToQuizContainerScreen(questionPosition : Int = FIRST_QUESTION_POSITION){
+        navController.navigate(FragmentQuizOverviewDirections.actionFragmentQuizOverviewToFragmentQuizContainer(questionPosition))
+    }
+
     fun navigateToQuizContainerScreenWithQuestionCardClick(questionPosition : Int, questionId : Long, clickedCard : CardView){
         currentFragment.apply {
             initMaterialElevationScale()
@@ -61,9 +67,15 @@ class Navigator @Inject constructor(private val navHostFragmentWeakReference: We
         }
     }
 
-    fun navigateToQuizContainerScreen(questionPosition : Int = FIRST_QUESTION_POSITION){
-        navController.navigate(FragmentQuizOverviewDirections.actionFragmentQuizOverviewToFragmentQuizContainer(questionPosition))
+
+    fun navigateToLogin(){
+        navController.navigate(FragmentHomeDirections.actionFragmentHomeToFragmentLogin())
     }
+
+    fun navigateToSearchScreen() {
+        navController.navigate(FragmentHomeDirections.actionFragmentHomeToFragmentSearch())
+    }
+
 
     companion object {
         const val NO_QUESTIONNAIRE_ID = 0L

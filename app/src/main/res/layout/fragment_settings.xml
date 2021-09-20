@@ -3,14 +3,129 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        app:cardBackgroundColor="?android:colorBackground"
+        app:cardBackgroundColor="@color/white"
         app:cardElevation="0dp"
         app:cardCornerRadius="@dimen/defaultBackgroundCardCornerRadius"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/appBarLayout"
+                app:liftOnScroll="true"
+                app:layout_constraintTop_toTopOf="parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/topLayout"
+                    android:background="@color/white"
+                    android:elevation="0dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:paddingVertical="@dimen/grid_3">
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings"
+                        android:gravity="center_horizontal"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:id="@+id/materialTextView" />
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:id="@+id/progress"
+                        android:visibility="gone"
+                        app:indicatorSize="150dp"
+                        app:indicatorColor="?colorAccent"
+                        app:trackColor="@color/unselectedColor"
+                        app:trackThickness="10dp"
+                        app:trackCornerRadius="5dp"
+                        tools:progress="60"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/materialTextView"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="10dp"
+                android:paddingBottom="75dp"
+                android:id="@+id/rv"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:layout_marginHorizontal="@dimen/grid_1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="10dp"
+                android:visibility="gone"
+                android:paddingBottom="75dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:layout_marginHorizontal="@dimen/grid_1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="20dp"
+                    android:clipToPadding="false">
+
+                <include
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/preferencesCard"
+                        layout="@layout/fragment_settings_preferences_card"
+                        android:layout_marginHorizontal="@dimen/grid_2"
+                        android:layout_marginTop="@dimen/grid_2"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                <include
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/userCard"
+                        layout="@layout/fragment_settings_user_data_card"
+                        android:layout_marginHorizontal="@dimen/grid_2"
+                        android:layout_marginTop="@dimen/grid_4"
+                        app:layout_constraintTop_toBottomOf="@+id/preferencesCard" />
+
+                <include
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/statisticsCard"
+                        layout="@layout/fragment_settings_statistics_card"
+                        android:layout_marginTop="@dimen/grid_4"
+                        android:layout_marginHorizontal="@dimen/grid_2"
+                        app:layout_constraintTop_toBottomOf="@id/userCard" />
+
+                <include
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/adminCard"
+                        layout="@layout/fragment_settings_admin_card"
+                        android:layout_marginHorizontal="@dimen/grid_2"
+                        android:layout_marginTop="@dimen/grid_4"
+                        app:layout_constraintTop_toBottomOf="@+id/statisticsCard" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </com.google.android.material.card.MaterialCardView>

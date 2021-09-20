@@ -146,14 +146,27 @@ inline fun <reified VM : ViewModel> Fragment.hiltNavDestinationViewModels(
     @IdRes destinationId: Int
 ) = lazy {
     findNavController().getBackStackEntry(destinationId).let {
-        ViewModelProvider(it, HiltViewModelFactory(requireContext(), it)).get(VM::class.java)
+        ViewModelProvider(it, HiltViewModelFactory(requireContext(), it))[VM::class.java]
     }
 }
 
 @MainThread
-inline fun <reified VM : ViewModel> Fragment.activityViewModel() = lazy {
-    ViewModelProvider(requireActivity()).get(VM::class.java)
+inline fun <reified VM : ViewModel> Fragment.activityViewModels() = lazy {
+    ViewModelProvider(requireActivity())[VM::class.java]
 }
+
+
+fun Fragment.showKeyboard(view: View) {
+    requireContext().showKeyboard(view)
+}
+
+fun Fragment.hideKeyboard(view: View) {
+    requireContext().hideKeyboard(view)
+}
+
+
+
+
 
 
 
