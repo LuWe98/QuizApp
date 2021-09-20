@@ -44,77 +44,77 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "org.jetbrains:annotations:$jetBrainsAnnotationVersion"
-    implementation "androidx.appcompat:appcompat:$appCompatVersion"
-    implementation "androidx.legacy:legacy-support-v4:$androidXLegacyVersion"
+    implementation("org.jetbrains:annotations:$jetBrainsAnnotationVersion")
+    implementation("androidx.appcompat:appcompat:$appCompatVersion")
+    implementation("androidx.legacy:legacy-support-v4:$androidXLegacyVersion")
 
-    implementation "androidx.core:core-ktx:$androidXCoreVersion"
-    implementation "com.google.android.material:material:$materialDesignVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
-    implementation "androidx.dynamicanimation:dynamicanimation:$dynamicAnimationVersion"
+    implementation("androidx.core:core-ktx:$androidXCoreVersion")
+    implementation("com.google.android.material:material:$materialDesignVersion")
+    implementation("androidx.constraintlayout:constraintlayout:$constraintLayoutVersion")
+    implementation("androidx.dynamicanimation:dynamicanimation:$dynamicAnimationVersion")
 
 
     //Fragments
-    implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
+    implementation("androidx.fragment:fragment-ktx:$fragmentVersion")
 
 
     //Livecycle
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$liveCycleVersion"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$liveCycleVersion"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$liveCycleVersion"
-    implementation "androidx.lifecycle:lifecycle-extensions:$liveCycleVersionOlder"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$liveCycleVersion"
-    implementation "androidx.lifecycle:lifecycle-process:$liveCycleVersion"
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$liveCycleVersion")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$liveCycleVersion")
+    implementation("androidx.lifecycle:lifecycle-common-java8:$liveCycleVersion")
+    implementation("androidx.lifecycle:lifecycle-extensions:$liveCycleVersionOlder")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$liveCycleVersion")
+    implementation("androidx.lifecycle:lifecycle-process:$liveCycleVersion")
 
 
     //Room Database
     implementation("androidx.room:room-ktx:$roomVersionAlpha")
-    implementation "androidx.room:room-runtime:$roomVersionAlpha"
-    kapt "androidx.room:room-compiler:$roomVersionAlpha"
+    implementation("androidx.room:room-runtime:$roomVersionAlpha")
+    kapt("androidx.room:room-compiler:$roomVersionAlpha")
 
 
     //Navigation Component
-    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
-    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
-    implementation "androidx.navigation:navigation-dynamic-features-fragment:$navigationVersion"
+    implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:$navigationVersion")
 
 
     // Dagger Hilt
-    implementation "com.google.dagger:hilt-android:$hiltVersion"
-    kapt "com.google.dagger:hilt-android-compiler:$hiltVersion"
-    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltAndroidXVersion"
-    kapt "androidx.hilt:hilt-compiler:$hiltAndroidXVersion"
-    implementation "androidx.hilt:hilt-navigation-fragment:$hiltFragmentVersion"
+    implementation("com.google.dagger:hilt-android:$hiltVersion")
+    kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
+    implementation("androidx.hilt:hilt-lifecycle-viewmodel:$hiltAndroidXVersion")
+    kapt("androidx.hilt:hilt-compiler:$hiltAndroidXVersion")
+    implementation("androidx.hilt:hilt-navigation-fragment:$hiltFragmentVersion")
 
 
     //Paging 3
-    implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
-    testImplementation "androidx.paging:paging-common-ktx:$pagingVersion"
+    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
+    testImplementation("androidx.paging:paging-common-ktx:$pagingVersion")
 
 
     //Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion"
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion")
 
 
     //Settings-Preferences
-    implementation "androidx.preference:preference-ktx:$preferencesVersion"
+    implementation("androidx.preference:preference-ktx:$preferencesVersion")
 
 
     //Preference-Datastore
-    implementation "androidx.datastore:datastore-preferences:$preferenceDatastoreVersion"
+    implementation("androidx.datastore:datastore-preferences:$preferenceDatastoreVersion")
 
 
     //Ktor
-    implementation "io.ktor:ktor-client-core:$ktorVersion"
-    implementation "io.ktor:ktor-client-android:$ktorVersion"
-    implementation "io.ktor:ktor-client-okhttp:$ktorVersion"
-    implementation "io.ktor:ktor-client-json:$ktorVersion"
-    implementation "io.ktor:ktor-client-gson:$ktorVersion"
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-android:$ktorVersion")
+    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+    implementation("io.ktor:ktor-client-json:$ktorVersion")
+    implementation("io.ktor:ktor-client-gson:$ktorVersion")
 
 
     //Testing
-    testImplementation "junit:junit:$jUnitVersion"
-    androidTestImplementation "androidx.test.ext:junit:$androidJUnitVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    testImplementation("junit:junit:$jUnitVersion")
+    androidTestImplementation("androidx.test.ext:junit:$androidJUnitVersion")
+    androidTestImplementation("androidx.test.espresso:espresso-core:$espressoVersion")
 }
