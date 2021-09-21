@@ -11,6 +11,7 @@
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 
     <!--    TEMPORÄR FÜRS TESTEN-->
@@ -30,7 +31,7 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.QuizApp">
         <activity
-                android:name=".ui.ActivityMain"
+                android:name=".view.ActivityMain"
                 android:exported="true"
                 tools:ignore="LockedOrientationActivity"
                 android:windowSoftInputMode="adjustPan"

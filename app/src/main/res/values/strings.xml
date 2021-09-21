@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">QuizApp</string>
+    <string name="app_name" translatable="false">QuizApp</string>
 
     <string name="home">Home</string>
     <string name="search">Search</string>
@@ -54,6 +54,13 @@
 
 
     <string name="searchForQuestionnaires">Search for Questionnaires</string>
+
+
+    <!-- Response Message Items -->
+    <string name="userAlreadyExists">User already Exists!</string>
+    <string name="userLoggedInSuccessfully">Logged in Successfully!</string>
+    <string name="userNameOrPassWordWrong">Username or Password wrong!</string>
+    <string name="userRegisteredSuccessfully">User registered successfully!</string>
 
 
     <!-- Settings-->

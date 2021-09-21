@@ -7,7 +7,7 @@ import androidx.lifecycle.map
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
-import com.example.quizapp.ui.fragments.addquestionnairescreen.FragmentAddQuestionArgs
+import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionArgs
 import com.example.quizapp.viewmodel.VmEditQuestion.FragmentEditQuestionEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

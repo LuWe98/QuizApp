@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import com.example.quizapp.R
-import com.example.quizapp.ui.ActivityMain
-import com.example.quizapp.ui.Navigator
+import com.example.quizapp.view.ActivityMain
+import com.example.quizapp.view.Navigator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

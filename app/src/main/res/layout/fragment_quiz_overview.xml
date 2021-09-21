@@ -154,7 +154,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
                     android:layout_marginHorizontal="@dimen/grid_1"
-                    android:layout_marginVertical="@dimen/grid_1_5">
+                    android:layout_marginVertical="@dimen/grid_1">
+
 
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="0dp"
@@ -254,7 +255,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:clipToPadding="false"
-                android:paddingTop="40dp"
+                android:paddingTop="30dp"
                 android:paddingBottom="100dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

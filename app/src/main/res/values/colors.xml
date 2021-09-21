@@ -22,9 +22,11 @@
     <color name="unselectedColor">#DDDDDD</color>
     <color name="transparent">#00000000</color>
 
+
+
     <!-- Light Theme Colors -->
-    <color name="lightColorPrimary">#FF6200EE</color>
-    <color name="lightColorPrimaryVariant">#FF3700B3</color>
+    <color name="lightColorPrimary">#0070ba</color>
+    <color name="lightColorPrimaryVariant">#1570ab</color>
     <color name="lightColorOnPrimary">@color/white</color>
     <color name="lightColorSecondary">#FF03DAC5</color>
     <color name="lightColorSecondaryVariant">#FF018786</color>
@@ -34,8 +36,8 @@
     <color name="lightColorControlActivated">#89000000</color>
 
     <!-- Dark Theme Colors -->
-    <color name="darkColorPrimary">#FF6200EE</color>
-    <color name="darkColorPrimaryVariant">#FF3700B3</color>
+    <color name="darkColorPrimary">#0070ba</color>
+    <color name="darkColorPrimaryVariant">#1570ab</color>
     <color name="darkColorOnPrimary">@color/white</color>
     <color name="darkColorSecondary">#FF03DAC5</color>
     <color name="darkColorSecondaryVariant">#FF018786</color>

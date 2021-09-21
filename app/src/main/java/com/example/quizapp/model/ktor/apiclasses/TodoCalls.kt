@@ -1,11 +1,10 @@
 package com.example.quizapp.model.ktor.apiclasses
 
 import com.example.quizapp.model.Todo
-import com.example.quizapp.model.ktor.requests.GetTodoRequest
-import com.example.quizapp.utils.Constants
+import com.example.quizapp.model.ktor.requests.QuestionnairesRequest
 import io.ktor.client.*
 import io.ktor.client.request.*
-import io.ktor.http.*
+import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,10 +13,9 @@ class TodoCalls @Inject constructor(
     private val ktorClient: HttpClient
 ) {
 
-    suspend fun getTodos(): List<Todo> = ktorClient.get("${Constants.EXTERNAL_DATABASE_URL}/todos")
+    suspend fun getTodos(): List<Todo> = ktorClient.get("/todos")
 
-    suspend fun getTodo(todoId: Int): Todo = ktorClient.post("${Constants.EXTERNAL_DATABASE_URL}/todo") {
-        contentType(ContentType.Application.Json)
-        body = GetTodoRequest(todoId.toString())
+    suspend fun getTodo(todoId: Int): Todo = ktorClient.post("/todo") {
+        body = QuestionnairesRequest(todoId.toString())
     }
 }

@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.quizapp.R
-import com.example.quizapp.recyclerview.impl.CustomItemTouchHelperCallback
+import com.example.quizapp.view.recyclerview.impl.CustomItemTouchHelperCallback
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -127,3 +127,8 @@ fun View.findColor(@ColorRes res : Int) = ContextCompat.getColor(context, res)
 
 fun View.getThemeColor(@AttrRes res : Int) = context.getThemeColor(res)
 
+fun View.onClick(action : () -> (Unit)) {
+    setOnClickListener {
+        action.invoke()
+    }
+}

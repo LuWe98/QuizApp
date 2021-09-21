@@ -34,7 +34,6 @@ import kotlinx.parcelize.Parcelize
     ],
     indices = [
         Index(value = ["email"], unique = true),
-        Index(value = ["userName"], unique = true),
         Index(value = ["roleId"]),
         Index(value = ["facultyId"]),
         Index(value = ["courseOfStudiesId"])
@@ -42,9 +41,9 @@ import kotlinx.parcelize.Parcelize
 )
 @Parcelize
 data class User(
-    @PrimaryKey(autoGenerate = true) override val id: Long,
+    @PrimaryKey override val id: Long,
     val email: String,
-    val userName: String,
+    val password : String,
     val roleId: Long?,
     val facultyId: Long?,
     val courseOfStudiesId: Long?,

@@ -84,11 +84,21 @@ class VmQuiz @Inject constructor(
         }
     }
 
+    fun onFabClicked(){
+        if(shouldDisplaySolution){
+            setShouldDisplaySolution(false)
+        }
+        launch {
+            fragmentEventChannel.send(NavigateToQuizScreen)
+        }
+    }
+
 
     sealed class FragmentQuizEvent {
         object ShowCompleteAllAnswersToast : FragmentQuizEvent()
         data class ShowUndoDeleteGivenAnswersSnackBack(val lastAnswerValues: List<Answer>) : FragmentQuizEvent()
         object ShowPopupMenu : FragmentQuizEvent()
+        object NavigateToQuizScreen : FragmentQuizEvent()
     }
 
     companion object {

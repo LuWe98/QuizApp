@@ -9,14 +9,14 @@
     <!-- REGULAR FRAGMENTS -->
     <fragment
             android:id="@+id/fragmentSearch"
-            android:name="com.example.quizapp.ui.fragments.searchscreen.FragmentSearch"
+            android:name="com.example.quizapp.view.fragments.searchscreen.FragmentSearch"
             android:label="FragmentSearch"
             tools:layout="@layout/fragment_search" />
 
 
     <fragment
             android:id="@+id/fragmentHome"
-            android:name="com.example.quizapp.ui.fragments.homescreen.FragmentHome"
+            android:name="com.example.quizapp.view.fragments.homescreen.FragmentHome"
             android:label="FragmentHome"
             tools:layout="@layout/fragment_home">
         <action
@@ -33,14 +33,14 @@
 
     <fragment
             android:id="@+id/fragmentSettings"
-            android:name="com.example.quizapp.ui.fragments.settingsscreen.FragmentSettings"
+            android:name="com.example.quizapp.view.fragments.settingsscreen.FragmentSettings"
             android:label="FragmentSettings"
             tools:layout="@layout/fragment_settings" />
 
 
     <fragment
             android:id="@+id/fragmentLogin"
-            android:name="com.example.quizapp.ui.fragments.loginscreen.FragmentLogin"
+            android:name="com.example.quizapp.view.fragments.authscreen.FragmentLogin"
             android:label="FragmentLogin"
             tools:layout="@layout/fragment_login">
         <action
@@ -50,7 +50,7 @@
 
     <fragment
             android:id="@+id/fragmentRegister"
-            android:name="com.example.quizapp.ui.fragments.loginscreen.FragmentRegister"
+            android:name="com.example.quizapp.view.fragments.authscreen.FragmentRegister"
             android:label="FragmentRegister"
             tools:layout="@layout/fragment_register"/>
 
@@ -65,7 +65,7 @@
                 app:argType="long" />
         <fragment
                 android:id="@+id/fragmentQuizOverview"
-                android:name="com.example.quizapp.ui.fragments.quizscreen.FragmentQuizOverview"
+                android:name="com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverview"
                 android:label="FragmentQuiz"
                 tools:layout="@layout/fragment_quiz_overview">
             <action
@@ -75,7 +75,7 @@
 
         <fragment
                 android:id="@+id/fragmentQuizContainer"
-                android:name="com.example.quizapp.ui.fragments.quizscreen.FragmentQuizQuestionsContainer"
+                android:name="com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainer"
                 android:label="FragmentQuizContainer"
                 tools:layout="@layout/fragment_quiz_questions_container">
             <argument
@@ -96,7 +96,7 @@
 
         <fragment
                 android:id="@+id/fragmentAddQuestionnaire"
-                android:name="com.example.quizapp.ui.fragments.addquestionnairescreen.FragmentAddQuestionnaire"
+                android:name="com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaire"
                 android:label="FragmentAddQuestionnaire"
                 tools:layout="@layout/fragment_add_questionnaire" >
             <action
@@ -106,7 +106,7 @@
 
         <fragment
                 android:id="@+id/fragmentAddQuestion"
-                android:name="com.example.quizapp.ui.fragments.addquestionnairescreen.FragmentAddQuestion"
+                android:name="com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestion"
                 android:label="FragmentAddQuestion"
                 tools:layout="@layout/fragment_add_question">
             <argument

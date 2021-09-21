@@ -47,10 +47,22 @@ dependencies {
     implementation("org.jetbrains:annotations:$jetBrainsAnnotationVersion")
     implementation("androidx.appcompat:appcompat:$appCompatVersion")
     implementation("androidx.legacy:legacy-support-v4:$androidXLegacyVersion")
-
     implementation("androidx.core:core-ktx:$androidXCoreVersion")
+
+
+    //Material Design
     implementation("com.google.android.material:material:$materialDesignVersion")
+
+
+    //Constraint- and MotionLayout
     implementation("androidx.constraintlayout:constraintlayout:$constraintLayoutVersion")
+
+
+    //SwipeRefreshLayout
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:$swipeRefreshLayoutVersion")
+
+
+    //Dynamic animations -> List overscroll bounce etc.
     implementation("androidx.dynamicanimation:dynamicanimation:$dynamicAnimationVersion")
 
 
@@ -101,16 +113,21 @@ dependencies {
     implementation("androidx.preference:preference-ktx:$preferencesVersion")
 
 
-    //Preference-Datastore
-    implementation("androidx.datastore:datastore-preferences:$preferenceDatastoreVersion")
-
-
     //Ktor
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-android:$ktorVersion")
     implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
     implementation("io.ktor:ktor-client-gson:$ktorVersion")
+
+
+    //Preference-Datastore
+    implementation("androidx.datastore:datastore-preferences:$preferenceDatastoreVersion")
+
+    
+    //Kotlin Serialisation
+    implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialisationVersion")
 
 
     //Testing

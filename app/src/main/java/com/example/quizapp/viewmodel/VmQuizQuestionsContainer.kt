@@ -7,10 +7,9 @@ import androidx.lifecycle.map
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.Answer
-import com.example.quizapp.model.room.entities.EntityMarker
-import com.example.quizapp.ui.fragments.quizscreen.FragmentQuizQuestionsContainerArgs
+import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerArgs
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.FragmentQuizOverviewEvent.*
-import com.example.quizapp.viewpager.adapter.VpaQuiz
+import com.example.quizapp.view.viewpager.adapter.VpaQuiz
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
