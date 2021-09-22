@@ -57,10 +57,19 @@
 
 
     <!-- Response Message Items -->
-    <string name="userAlreadyExists">User already Exists!</string>
+    <string name="errorUserAlreadyExists">User already Exists!</string>
     <string name="userLoggedInSuccessfully">Logged in Successfully!</string>
-    <string name="userNameOrPassWordWrong">Username or Password wrong!</string>
-    <string name="userRegisteredSuccessfully">User registered successfully!</string>
+    <string name="errorUserNameOrPassWordWrong">Username or Password wrong!</string>
+    <string name="userRegisteredSuccessfully">Registered successfully!</string>
+
+
+    <!-- Auth Messages -->
+    <string name="errorSomeFieldsAreEmpty">Some fields are empty</string>
+    <string name="errorPasswordsDoNotMatch">Passwords do not match</string>
+    <string name="errorEnterValidEmail">Please enter valid Email!</string>
+    <string name="errorOccurredWhileRegisteringUser">Error occurred while registering User!</string>
+    <string name="errorOccurredWhileLoggingInUser">Error occurred while logging in User!</string>
+    <string name="errorFieldsContainWhitespaces">Some fields contain whitespaces!</string>
 
 
     <!-- Settings-->

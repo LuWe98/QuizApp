@@ -8,6 +8,7 @@ import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.utils.ConnectivityHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -15,14 +16,14 @@ import javax.inject.Inject
 class VmMain @Inject constructor(
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
-    private val preferencesRepository: PreferencesRepository,
+    val preferencesRepository: PreferencesRepository,
     val encryptionUtil: EncryptionUtil,
     val connectivityHelper: ConnectivityHelper
 ) : ViewModel() {
 
-    val userFlow get() = preferencesRepository.userFlow
+    val userFlow get() = preferencesRepository.userCredentialsFlow
 
-    val currentTheme get() = runBlocking {
+    val currentTheme get() = runBlocking(Dispatchers.IO) {
         preferencesRepository.getTheme()
     }
 

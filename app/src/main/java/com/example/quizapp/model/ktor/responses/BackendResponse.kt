@@ -19,7 +19,7 @@ sealed class BackendResponse {
     ) : BackendResponse() {
         enum class LoginResponseType constructor(@StringRes val messageRes: Int) {
             LOGIN_SUCCESSFUL(R.string.userLoggedInSuccessfully),
-            USER_NAME_OR_PASSWORD_WRONG(R.string.userNameOrPassWordWrong)
+            USER_NAME_OR_PASSWORD_WRONG(R.string.errorUserNameOrPassWordWrong)
         }
     }
 
@@ -31,7 +31,7 @@ sealed class BackendResponse {
     ) : BackendResponse() {
         enum class RegisterResponseType constructor(@StringRes val messageRes: Int) {
             REGISTER_SUCCESSFUL(R.string.userRegisteredSuccessfully),
-            USER_ALREADY_EXISTS(R.string.userAlreadyExists)
+            USER_ALREADY_EXISTS(R.string.errorUserAlreadyExists)
         }
     }
 }

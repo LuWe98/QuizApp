@@ -27,13 +27,13 @@ class RvaQuestionWithAnswersQuiz(
     @SuppressLint("SetTextI18n")
     override fun bindViews(binding: RviQuestionQuizBinding, item: QuestionWithAnswers, position: Int) {
         binding.apply {
-            questionNumberText.text = "${position + 1})"
-            questionTitle.text = item.question.text
+            tvNumber.text = "${position + 1})"
+            tvTitle.text = item.question.text
 
             val tint: Int
 
             if (item.isAnswered) {
-                checkMarkIcon.isVisible = vmQuiz.shouldDisplaySolution
+                ivResultIcon.isVisible = vmQuiz.shouldDisplaySolution
                 if (vmQuiz.shouldDisplaySolution) {
                     val drawableRes: Int
                     if (item.isAnsweredCorrectly) {
@@ -43,16 +43,16 @@ class RvaQuestionWithAnswersQuiz(
                         drawableRes = R.drawable.ic_cross
                         tint = getColor(R.color.red)
                     }
-                    checkMarkIcon.setImageDrawable(drawableRes)
-                    checkMarkIcon.setDrawableTint(tint)
+                    ivResultIcon.setImageDrawable(drawableRes)
+                    ivResultIcon.setDrawableTint(tint)
                 } else {
                     tint = context.getThemeColor(R.attr.colorAccent)
                 }
             } else {
-                checkMarkIcon.isVisible = false
+                ivResultIcon.isVisible = false
                 tint = getColor(R.color.unselectedColor)
             }
-            progressIndicator.setDrawableTint(tint)
+            ivRing.setDrawableTint(tint)
         }
     }
 }

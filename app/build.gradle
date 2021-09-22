@@ -46,8 +46,9 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation("org.jetbrains:annotations:$jetBrainsAnnotationVersion")
     implementation("androidx.appcompat:appcompat:$appCompatVersion")
-    implementation("androidx.legacy:legacy-support-v4:$androidXLegacyVersion")
     implementation("androidx.core:core-ktx:$androidXCoreVersion")
+
+//    implementation("androidx.legacy:legacy-support-v4:$androidXLegacyVersion")
 
 
     //Material Design

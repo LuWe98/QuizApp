@@ -36,23 +36,13 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
 
         initViews()
         navigator.addOnDestinationChangedListener(this)
-
-        viewModel.connectivityHelper.observeConnectivity(this) {
-            showToast("Network Available: $it")
-            log("Network Available: $it")
-        }
     }
 
     private fun initViews() {
         binding.apply {
             bottomNavView.setupWithNavController(navigator.navController)
 
-            homeCard.setOnClickListener {
-                launch {
-                    val response = viewModel.loginUser("Hallo@gmx.de", "1234")
-                    log("Response: $response")
-                }
-
+            cardHome.setOnClickListener {
                 bottomNavView.selectedItemId = R.id.fragmentHome
             }
 
@@ -69,27 +59,29 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
                 //navigator.navigateToAddQuestionnaireScreen()
             }
 
-            settingsCard.setOnClickListener { bottomNavView.selectedItemId = R.id.fragmentSettings }
+            cardSettings.setOnClickListener {
+                bottomNavView.selectedItemId = R.id.fragmentSettings
+            }
 
-            searchCard.setOnClickListener { bottomNavView.selectedItemId = R.id.fragmentSearch }
+            cardSearch.setOnClickListener { bottomNavView.selectedItemId = R.id.fragmentSearch }
         }
     }
 
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
         when (destination.id) {
-            R.id.fragmentQuizOverview, R.id.fragmentQuizContainer, R.id.fragmentAddQuestionnaire, R.id.fragmentAddQuestion, R.id.fragmentLogin, R.id.fragmentSearch -> {
+            R.id.fragmentQuizOverview, R.id.fragmentQuizContainer, R.id.fragmentAddQuestionnaire, R.id.fragmentAddQuestion, R.id.fragmentAuth, R.id.fragmentSearch -> {
                 binding.bottomAppBar.performHide()
                 changeBottomAppBarVisibility(false)
             }
             R.id.fragmentHome -> {
                 binding.apply {
-                    changeCustomBottomNavBarVisibility(homeCard, homeIcon)
+                    changeCustomBottomNavBarVisibility(cardHome, ivHome)
                 }
                 changeBottomAppBarVisibility(true)
             }
             R.id.fragmentSettings -> {
                 binding.apply {
-                    changeCustomBottomNavBarVisibility(settingsCard, settingsIcon)
+                    changeCustomBottomNavBarVisibility(cardSettings, ivSettings)
                 }
                 changeBottomAppBarVisibility(true)
             }
@@ -100,12 +92,12 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
         binding.apply {
             bottomAppBar.performShow()
 
-            homeCard.setCardBackgroundColor(getColor(R.color.transparent))
-            homeIcon.setDrawableTintWithRes(R.color.black)
-            searchCard.setCardBackgroundColor(getColor(R.color.transparent))
-            searchIcon.setDrawableTintWithRes(R.color.black)
-            settingsCard.setCardBackgroundColor(getColor(R.color.transparent))
-            settingsIcon.setDrawableTintWithRes(R.color.black)
+            cardHome.setCardBackgroundColor(getColor(R.color.transparent))
+            ivHome.setDrawableTintWithRes(R.color.black)
+            cardSearch.setCardBackgroundColor(getColor(R.color.transparent))
+            ivSearch.setDrawableTintWithRes(R.color.black)
+            cardSettings.setCardBackgroundColor(getColor(R.color.transparent))
+            ivSettings.setDrawableTintWithRes(R.color.black)
         }
 
         cardToShow.setCardBackgroundColor(getThemeColor(R.attr.colorAccent))

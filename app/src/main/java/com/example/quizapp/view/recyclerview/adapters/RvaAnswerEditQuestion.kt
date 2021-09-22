@@ -3,10 +3,7 @@ package com.example.quizapp.view.recyclerview.adapters
 import androidx.core.view.isVisible
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviAnswerEditBinding
-import com.example.quizapp.extensions.onTextChanged
-import com.example.quizapp.extensions.setDrawableTintWithRes
-import com.example.quizapp.extensions.setImageDrawable
-import com.example.quizapp.extensions.setTextColorWithRes
+import com.example.quizapp.extensions.*
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 import com.example.quizapp.viewmodel.VmEditQuestion
@@ -33,13 +30,13 @@ class RvaAnswerEditQuestion(
                 }
             }
 
-            deleteButton.setOnClickListener {
+            btnDelete.onClick {
                 getItem(vh.bindingAdapterPosition).let {
                     onDeleteButtonClick?.invoke(it)
                 }
             }
 
-            answerEditText.onTextChanged { text ->
+            etAnswer.onTextChanged { text ->
                 onAnswerTextChanged?.invoke(vh.bindingAdapterPosition, text)
             }
         }
@@ -62,13 +59,13 @@ class RvaAnswerEditQuestion(
 
     override fun bindViews(binding: RviAnswerEditBinding, item: Answer, position: Int) {
         binding.apply {
-            val lastSelectionPos = answerEditText.selectionStart
-            answerEditText.setText(item.text)
-            answerEditText.setSelection(lastSelectionPos)
-            answerEditText.setTextColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.black)
-            selectionButtonRing.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
+            val lastSelectionPos = etAnswer.selectionStart
+            etAnswer.setText(item.text)
+            etAnswer.setSelection(lastSelectionPos)
+            etAnswer.setTextColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.black)
+            ivRing.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
 
-            checkIcon.apply {
+            ivSelectedIcon.apply {
                 isVisible = item.isAnswerCorrect
                 setImageDrawable(if (vmEditQuestion.isMultipleChoice) R.drawable.ic_check else R.drawable.ic_circle)
                 setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)

@@ -54,11 +54,9 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
     private fun initClickListener() {
         binding.apply {
-            buttonBack.setOnClickListener { navigator.popBackStack() }
-
-            fab.setOnClickListener { viewModel.onFabClicked() }
-
-            buttonMoreOptions.setOnClickListener { viewModel.onMoreOptionsItemClicked() }
+            btnBack.onClick(navigator::popBackStack)
+            fabStart.onClick(viewModel::onFabClicked)
+            btnMoreOptions.onClick(viewModel::onMoreOptionsItemClicked)
         }
     }
 
@@ -66,10 +64,10 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         viewModel.apply {
             questionnaireLiveData.observe(viewLifecycleOwner) {
                 binding.apply {
-                    questionnaireTitle.text = it.title
-                    authorName.text = it.author
-                    courseOfStudiesText.text = it.courseOfStudies
-                    subjectName.text = it.subject
+                    tvTitle.text = it.title
+                    tvAuthor.text = it.author
+                    tvCourseOfStudies.text = it.courseOfStudies
+                    tvSubject.text = it.subject
                 }
             }
 
@@ -80,7 +78,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             }
 
             completeQuestionnaireLiveData.observe(viewLifecycleOwner) {
-                binding.questionsAnsweredText.text = "${it.answeredQuestionsAmount} / ${it.questionsAmount}"
+                binding.tvQuestionsAnswered.text = "${it.answeredQuestionsAmount} / ${it.questionsAmount}"
                 onShouldDisplaySolutionChanged(shouldDisplaySolution, it)
             }
 
@@ -101,12 +99,12 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             collectWhenStarted(fragmentEventChannelFlow) { event ->
                 when (event) {
                     is ShowUndoDeleteGivenAnswersSnackBack -> {
-                        showSnackBar(R.string.answersDeleted, viewToAttachTo = binding.contentContainer, actionTextRes = R.string.undo) {
+                        showSnackBar(R.string.answersDeleted, viewToAttachTo = binding.coordRoot, actionTextRes = R.string.undo) {
                             onUndoDeleteGivenAnswersClick(event)
                         }
                     }
                     ShowPopupMenu -> {
-                        PopupMenu(requireContext(), binding.buttonMoreOptions).apply {
+                        PopupMenu(requireContext(), binding.btnMoreOptions).apply {
                             inflate(R.menu.quiz_popup_menu)
                             setOnMenuItemClickListener(this@FragmentQuizOverview)
                             menu.findItem(R.id.menu_item_allow_show_answers).isChecked = viewModel.shouldDisplaySolution
@@ -126,13 +124,13 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             progressCorrect.setProgressWithAnimation(if (shouldDisplay) cqp else 0)
             progressIncorrect.setProgressWithAnimation(if (shouldDisplay) 100 - cqp else 0)
 
-            questionsAnsweredText.isVisible = !shouldDisplay
-            resultIcon.isVisible = shouldDisplay
+            tvQuestionsAnswered.isVisible = !shouldDisplay
+            ivResultIcon.isVisible = shouldDisplay
 
             if (shouldDisplay) {
                 val isEverythingCorrect = cqp == 100
-                resultIcon.setImageDrawable(if (isEverythingCorrect) R.drawable.ic_check else R.drawable.ic_cross)
-                resultIcon.setDrawableTintWithRes(if (isEverythingCorrect) R.color.green else R.color.red)
+                ivResultIcon.setImageDrawable(if (isEverythingCorrect) R.drawable.ic_check else R.drawable.ic_cross)
+                ivResultIcon.setDrawableTintWithRes(if (isEverythingCorrect) R.color.green else R.color.red)
             }
 
             rv.updateAllViewHolders()
@@ -141,12 +139,8 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
     override fun onMenuItemClick(item: MenuItem?) = item?.let {
         when (item.itemId) {
-            R.id.menu_item_delete_given_answers -> {
-                viewModel.onClearGivenAnswersClicked()
-            }
-            R.id.menu_item_allow_show_answers -> {
-                viewModel.onShowSolutionClick()
-            }
+            R.id.menu_item_delete_given_answers -> viewModel.onClearGivenAnswersClicked()
+            R.id.menu_item_allow_show_answers -> viewModel.onShowSolutionClick()
             R.id.menu_item_hide_completed_questions -> {
 
             }

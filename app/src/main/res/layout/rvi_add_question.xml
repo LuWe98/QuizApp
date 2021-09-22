@@ -20,7 +20,7 @@
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:id="@+id/questionTypeIcon"
+                android:id="@+id/ivQuestionType"
                 app:srcCompat="@drawable/ic_check_circle"
                 android:padding="7.5dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -31,9 +31,9 @@
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="30dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/questionNumberText"
+                android:id="@+id/tvNumber"
                 android:gravity="center_vertical"
-                app:layout_constraintStart_toEndOf="@id/questionTypeIcon"
+                app:layout_constraintStart_toEndOf="@id/ivQuestionType"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="1)"
@@ -44,12 +44,12 @@
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/questionTitle"
+                android:id="@+id/tvTitle"
                 android:gravity="center_vertical"
-                app:layout_constraintStart_toEndOf="@+id/questionNumberText"
+                app:layout_constraintStart_toEndOf="@+id/tvNumber"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/goToQuestionnaireButton"
+                app:layout_constraintEnd_toStartOf="@id/btnOpen"
                 android:hint="@string/questions"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
@@ -57,7 +57,7 @@
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:id="@+id/goToQuestionnaireButton"
+                android:id="@+id/btnOpen"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

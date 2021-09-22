@@ -45,29 +45,23 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
                 setCurrentItem(vmContainer.lastAdapterPosition, false)
             }
 
-            progressText.text = "${vmContainer.lastAdapterPosition + 1} / ${vpaAdapter.itemCount}"
+            tvProgress.text = "${vmContainer.lastAdapterPosition + 1} / ${vpaAdapter.itemCount}"
         }
     }
 
     private fun initClickListeners() {
         binding.apply {
-            buttonBack.setOnClickListener {
-                navigator.popBackStack()
-            }
+            btnBack.onClick(navigator::popBackStack)
 
-            previousQuestionButton.setOnClickListener {
-                vmContainer.onSelectPreviousPageButtonClicked()
-            }
+            btnPreviousQuestion.onClick(vmContainer::onSelectPreviousPageButtonClicked)
 
-            nextQuestionButton.setOnClickListener {
+            btnCheckResults.onClick(vmContainer::onCheckResultsButtonClicked)
+
+            btnNextQuestion.onClick {
                 vmContainer.onSelectNextPageButtonClicked(vpaAdapter)
             }
 
-            checkResultsButton.setOnClickListener {
-                vmContainer.onCheckResultsButtonClicked()
-            }
-
-            showSolutionButton.setOnClickListener {
+            btnShowSolution.onClick {
                 vmContainer.onShowSolutionButtonClicked(vpaAdapter)
                 //vmQuiz.onCheckResultsClick()
             }
@@ -76,7 +70,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
 
     private fun initObservers() {
         vmQuiz.allQuestionsAnsweredLiveData.observe(viewLifecycleOwner) { allAnswered ->
-            binding.checkResultsButton.isVisible = allAnswered
+            binding.btnCheckResults.isVisible = allAnswered
         }
 
         vmContainer.fragmentEventChannelFlow.collect(lifecycleScope) { event ->
@@ -95,14 +89,14 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
         vmContainer.onViewPagerPageSelected(position)
 
         binding.apply {
-            progressText.text = "${position + 1} / ${vpaAdapter.itemCount}"
+            tvProgress.text = "${position + 1} / ${vpaAdapter.itemCount}"
             progressIndicator.setProgressWithAnimation(((position + 1) * 100f / vpaAdapter.itemCount).toInt())
 
             vpaAdapter.createFragment(position).let { currentFragment ->
                 changeShowSolutionButtonTint(vmContainer.shouldDisplayQuestionSolution(currentFragment.questionId))
                 currentFragment.isMultipleChoice.let {
-                    questionTypeTv.text = getString(if (it) R.string.multipleChoice else R.string.singleChoice)
-                    questionTypeIcon.setImageDrawable(if (it) R.drawable.ic_check_circle else R.drawable.ic_radio_button)
+                    tvQuestionType.text = getString(if (it) R.string.multipleChoice else R.string.singleChoice)
+                    ivQuestionType.setImageDrawable(if (it) R.drawable.ic_check_circle else R.drawable.ic_radio_button)
                 }
             }
         }
@@ -111,9 +105,9 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
     private fun changeShowSolutionButtonTint(isSelected: Boolean) {
         binding.apply {
             if (vmQuiz.shouldDisplaySolution) {
-                showSolutionButton.setDrawableTint(getThemeColor(R.attr.colorPrimary))
+                btnShowSolution.setDrawableTint(getThemeColor(R.attr.colorPrimary))
             } else {
-                showSolutionButton.setDrawableTint(getThemeColor(if (isSelected) R.attr.colorPrimary else R.attr.colorControlActivated))
+                btnShowSolution.setDrawableTint(getThemeColor(if (isSelected) R.attr.colorPrimary else R.attr.colorControlActivated))
             }
         }
     }

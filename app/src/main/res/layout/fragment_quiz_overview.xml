@@ -12,11 +12,11 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/contentContainer">
+            android:id="@+id/coordRoot">
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/quizTopLayoutHeight"
-                android:id="@+id/topLayout"
+                android:id="@+id/clHeader"
                 android:elevation="@dimen/defaultElevation"
                 android:background="?colorOnPrimary"
                 app:layout_constraintTop_toTopOf="parent"
@@ -25,7 +25,7 @@
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:id="@+id/buttonBack"
+                    android:id="@+id/btnBack"
                     android:background="?attr/actionBarItemBackground"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +37,7 @@
             <com.google.android.material.textview.MaterialTextView
                     android:layout_width="0dp"
                     android:layout_height="65dp"
-                    android:id="@+id/questionnaireTitle"
+                    android:id="@+id/tvTitle"
                     tools:text="Questionnaire Title"
                     android:gravity="center_horizontal"
                     app:autoSizeMaxTextSize="@dimen/maxHeaderTextSize"
@@ -47,9 +47,9 @@
                     android:maxLines="3"
                     android:textStyle="bold"
                     android:paddingTop="@dimen/grid_1"
-                    app:layout_constraintTop_toTopOf="@+id/buttonBack"
-                    app:layout_constraintStart_toEndOf="@+id/buttonBack"
-                    app:layout_constraintEnd_toStartOf="@+id/buttonMoreOptions" />
+                    app:layout_constraintTop_toTopOf="@+id/btnBack"
+                    app:layout_constraintStart_toEndOf="@+id/btnBack"
+                    app:layout_constraintEnd_toStartOf="@+id/btnMoreOptions" />
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:layout_width="135dp"
@@ -63,7 +63,7 @@
                     tools:progress="60"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/questionnaireTitle" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:layout_width="135dp"
@@ -95,7 +95,7 @@
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:id="@+id/resultIcon"
+                    android:id="@+id/ivResultIcon"
                     android:visibility="gone"
                     tools:visibility="gone"
                     app:layout_constraintTop_toTopOf="@id/progress"
@@ -108,7 +108,7 @@
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:id="@+id/buttonMoreOptions"
+                    android:id="@+id/btnMoreOptions"
                     android:src="@drawable/ic_more"
                     app:backgroundTint="?colorControlActivated"
                     android:padding="6dp"
@@ -120,7 +120,7 @@
             <com.google.android.material.textview.MaterialTextView
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/questionsAnsweredText"
+                    android:id="@+id/tvQuestionsAnswered"
                     tools:text="0 / 20"
                     android:gravity="center"
                     android:textStyle="bold"
@@ -142,25 +142,22 @@
                 app:cardElevation="10dp"
                 app:cardCornerRadius="15dp"
                 android:layout_marginHorizontal="@dimen/grid_2"
-                app:layout_constraintBottom_toBottomOf="@+id/topLayout"
-                app:layout_constraintTop_toBottomOf="@+id/topLayout"
+                app:layout_constraintBottom_toBottomOf="@+id/clHeader"
+                app:layout_constraintTop_toBottomOf="@+id/clHeader"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:id="@+id/materialCardView"
-                app:layout_anchor="@id/topLayout"
+                app:layout_anchor="@id/clHeader"
                 app:layout_anchorGravity="bottom">
-
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
                     android:layout_marginHorizontal="@dimen/grid_1"
                     android:layout_marginVertical="@dimen/grid_1">
 
-
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:id="@+id/courseOfStudiesText"
+                        android:id="@+id/tvCourseOfStudies"
                         tools:text="WI"
                         android:textStyle="bold"
                         app:autoSizeMaxTextSize="14sp"
@@ -181,8 +178,8 @@
                 <View
                         android:layout_width="0.75dp"
                         android:layout_height="match_parent"
-                        app:layout_constraintEnd_toStartOf="@+id/subjectName"
-                        app:layout_constraintStart_toEndOf="@+id/courseOfStudiesText"
+                        app:layout_constraintEnd_toStartOf="@+id/tvSubject"
+                        app:layout_constraintStart_toEndOf="@+id/tvCourseOfStudies"
                         android:background="@color/unselectedColor"
                         android:layout_marginVertical="@dimen/grid_1"
                         android:id="@+id/separatorOne" />
@@ -190,7 +187,7 @@
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:id="@+id/subjectName"
+                        android:id="@+id/tvSubject"
                         tools:text="Promod"
                         android:textStyle="bold"
                         app:autoSizeMaxTextSize="14sp"
@@ -212,15 +209,15 @@
                         android:layout_width="0.75dp"
                         android:layout_height="match_parent"
                         android:id="@+id/separatorTwo"
-                        app:layout_constraintStart_toEndOf="@+id/subjectName"
-                        app:layout_constraintEnd_toStartOf="@+id/authorName"
+                        app:layout_constraintStart_toEndOf="@+id/tvSubject"
+                        app:layout_constraintEnd_toStartOf="@+id/tvAuthor"
                         android:layout_marginVertical="@dimen/grid_1"
                         android:background="@color/unselectedColor" />
 
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:id="@+id/authorName"
+                        android:id="@+id/tvAuthor"
                         tools:text="John"
                         android:textStyle="bold"
                         app:autoSizeMaxTextSize="14sp"
@@ -250,10 +247,6 @@
                 android:background="?android:colorBackground"
                 android:layoutAnimation="@anim/recyclerview_layout_animation"
                 tools:listitem="@layout/rvi_question_quiz"
-                app:layout_constraintTop_toBottomOf="@id/topLayout"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:clipToPadding="false"
                 android:paddingTop="30dp"
                 android:paddingBottom="100dp" />
@@ -261,7 +254,7 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:id="@+id/fab"
+                android:id="@+id/fabStart"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_margin="@dimen/grid_6"

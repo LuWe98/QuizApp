@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.example.quizapp.QuizNavGraphArgs
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.extensions.log
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.EntityMarker
@@ -19,6 +20,10 @@ class VmQuiz @Inject constructor(
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle
 ) : AndroidViewModel(application) {
+
+    init {
+        log("STATE ${state.get<String>(SHOULD_DISPLAY_SOLUTION)}")
+    }
 
     private val args = QuizNavGraphArgs.fromSavedStateHandle(state)
 

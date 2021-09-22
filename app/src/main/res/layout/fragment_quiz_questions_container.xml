@@ -17,7 +17,7 @@
         <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/quizTopLayoutHeight"
-                android:id="@+id/topLayout"
+                android:id="@+id/header"
                 android:background="@color/white"
                 android:elevation="@dimen/defaultElevation"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -25,34 +25,34 @@
         <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:id="@+id/bottomLayout"
+                android:id="@+id/rvBackground"
                 android:layout_marginHorizontal="@dimen/grid_1"
                 android:background="?android:colorBackground"
-                app:layout_constraintTop_toBottomOf="@id/topLayout"
+                app:layout_constraintTop_toBottomOf="@id/header"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:id="@+id/questionTypeTv"
+                android:id="@+id/tvQuestionType"
                 android:elevation="@dimen/defaultElevation"
                 android:text="@string/multipleChoice"
                 android:gravity="center_vertical"
                 android:layout_marginEnd="@dimen/grid_2"
-                app:layout_constraintTop_toTopOf="@+id/showSolutionButton"
-                app:layout_constraintEnd_toStartOf="@+id/showSolutionButton"
-                app:layout_constraintBottom_toBottomOf="@+id/showSolutionButton" />
+                app:layout_constraintTop_toTopOf="@+id/btnShowSolution"
+                app:layout_constraintEnd_toStartOf="@+id/btnShowSolution"
+                app:layout_constraintBottom_toBottomOf="@+id/btnShowSolution" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:id="@+id/questionTypeIcon"
+                android:id="@+id/ivQuestionType"
                 android:elevation="@dimen/defaultElevation"
                 android:padding="7.5dp"
                 app:srcCompat="@drawable/ic_check_circle"
-                app:layout_constraintEnd_toStartOf="@+id/questionTypeTv"
-                app:layout_constraintBottom_toBottomOf="@+id/questionTypeTv"
-                app:layout_constraintTop_toTopOf="@+id/questionTypeTv" />
+                app:layout_constraintEnd_toStartOf="@+id/tvQuestionType"
+                app:layout_constraintBottom_toBottomOf="@+id/tvQuestionType"
+                app:layout_constraintTop_toTopOf="@+id/tvQuestionType" />
 
         <androidx.viewpager2.widget.ViewPager2
                 android:layout_width="match_parent"
@@ -67,7 +67,7 @@
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:id="@+id/buttonBack"
+                android:id="@+id/btnBack"
                 android:background="?attr/actionBarItemBackground"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -80,7 +80,7 @@
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:id="@+id/showSolutionButton"
+                android:id="@+id/btnShowSolution"
                 android:backgroundTint="?colorControlActivated"
                 app:srcCompat="@drawable/ic_question_mark"
                 android:padding="6dp"
@@ -97,8 +97,8 @@
                 app:cardElevation="10dp"
                 app:cardCornerRadius="45dp"
                 android:layout_marginHorizontal="@dimen/grid_3"
-                app:layout_constraintBottom_toBottomOf="@+id/topLayout"
-                app:layout_constraintTop_toBottomOf="@+id/topLayout"
+                app:layout_constraintBottom_toBottomOf="@+id/header"
+                app:layout_constraintTop_toBottomOf="@+id/header"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -110,7 +110,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="35dp"
                         android:layout_height="35dp"
-                        android:id="@+id/previousQuestionButton"
+                        android:id="@+id/btnPreviousQuestion"
                         app:srcCompat="@drawable/ic_arrow_left"
                         android:elevation="1dp"
                         android:background="?attr/actionBarItemBackground"
@@ -123,7 +123,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="35dp"
                         android:layout_height="35dp"
-                        android:id="@+id/nextQuestionButton"
+                        android:id="@+id/btnNextQuestion"
                         app:srcCompat="@drawable/ic_arrow_right"
                         android:elevation="1dp"
                         android:background="?attr/actionBarItemBackground"
@@ -146,13 +146,13 @@
                         android:layout_marginHorizontal="@dimen/grid_2"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/previousQuestionButton"
-                        app:layout_constraintEnd_toStartOf="@+id/nextQuestionButton" />
+                        app:layout_constraintStart_toEndOf="@+id/btnPreviousQuestion"
+                        app:layout_constraintEnd_toStartOf="@+id/btnNextQuestion" />
 
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/progressText"
+                        android:id="@+id/tvProgress"
                         tools:text="1 / 20"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
@@ -166,7 +166,7 @@
         <com.google.android.material.card.MaterialCardView
                 android:layout_width="200dp"
                 android:layout_height="50dp"
-                android:id="@+id/checkResultsButton"
+                android:id="@+id/btnCheckResults"
                 app:cardBackgroundColor="?colorPrimary"
                 app:cardCornerRadius="45dp"
                 android:visibility="gone"

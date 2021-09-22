@@ -19,8 +19,8 @@ class UserApi @Inject constructor(
         }
 
 
-    suspend fun registerUser(email: String, username: String, password: String): RegisterResponse<Nothing> =
+    suspend fun registerUser(email: String, password: String, courseOfStudies : String): RegisterResponse<Nothing> =
         ktorClient.post("/register") {
-            body = RegisterUserRequest(email, username, password)
+            body = RegisterUserRequest(email, password, courseOfStudies)
         }
 }

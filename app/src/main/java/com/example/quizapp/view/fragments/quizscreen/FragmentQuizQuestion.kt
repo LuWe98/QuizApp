@@ -50,7 +50,7 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
 
     private fun initObservers(){
         vmQuiz.getQuestionWithAnswersLiveData(questionId).observe(viewLifecycleOwner) {
-            binding.questionName.text = it.question.text
+            binding.tvQuestion.text = it.question.text
             rvaAdapter.submitList(it.answers)
         }
 

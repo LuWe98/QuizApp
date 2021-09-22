@@ -19,7 +19,7 @@ object ActivityModule {
 
     @Provides
     fun provideNavHostFragment(@ActivityContext context: Context) =
-        (context as AppCompatActivity).supportFragmentManager.findFragmentById(if(context is ActivityMain) R.id.mainActivityNavHost else -1) as NavHostFragment
+        (context as AppCompatActivity).supportFragmentManager.findFragmentById(if(context is ActivityMain) R.id.navHost else -1) as NavHostFragment
 
     @Provides
     fun provideNavController(navHostFragment: NavHostFragment) = navHostFragment.navController

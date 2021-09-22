@@ -3,17 +3,9 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/main_nav_graph"
-        app:startDestination="@id/fragmentHome">
-
+        app:startDestination="@id/fragmentAuth">
 
     <!-- REGULAR FRAGMENTS -->
-    <fragment
-            android:id="@+id/fragmentSearch"
-            android:name="com.example.quizapp.view.fragments.searchscreen.FragmentSearch"
-            android:label="FragmentSearch"
-            tools:layout="@layout/fragment_search" />
-
-
     <fragment
             android:id="@+id/fragmentHome"
             android:name="com.example.quizapp.view.fragments.homescreen.FragmentHome"
@@ -22,9 +14,6 @@
         <action
                 android:id="@+id/action_fragmentHome_to_fragmentQuizOverview"
                 app:destination="@id/quiz_nav_graph" />
-        <action
-                android:id="@+id/action_fragmentHome_to_fragmentLogin"
-                app:destination="@id/fragmentLogin" />
         <action
                 android:id="@+id/action_fragmentHome_to_fragmentSearch"
                 app:destination="@id/fragmentSearch" />
@@ -35,25 +24,23 @@
             android:id="@+id/fragmentSettings"
             android:name="com.example.quizapp.view.fragments.settingsscreen.FragmentSettings"
             android:label="FragmentSettings"
-            tools:layout="@layout/fragment_settings" />
-
+            tools:layout="@layout/fragment_settings"/>
 
     <fragment
-            android:id="@+id/fragmentLogin"
-            android:name="com.example.quizapp.view.fragments.authscreen.FragmentLogin"
-            android:label="FragmentLogin"
-            tools:layout="@layout/fragment_login">
+            android:id="@+id/fragmentSearch"
+            android:name="com.example.quizapp.view.fragments.searchscreen.FragmentSearch"
+            android:label="FragmentSearch"
+            tools:layout="@layout/fragment_search" />
+
+    <fragment
+            android:id="@+id/fragmentAuth"
+            android:name="com.example.quizapp.view.fragments.authscreen.FragmentAuth"
+            android:label="FragmentAuth"
+            tools:layout="@layout/fragment_auth" >
         <action
-                android:id="@+id/action_fragmentLogin_to_fragmentRegister"
-                app:destination="@id/fragmentRegister" />
+                android:id="@+id/action_fragmentAuth_to_fragmentHome"
+                app:destination="@id/fragmentHome" />
     </fragment>
-
-    <fragment
-            android:id="@+id/fragmentRegister"
-            android:name="com.example.quizapp.view.fragments.authscreen.FragmentRegister"
-            android:label="FragmentRegister"
-            tools:layout="@layout/fragment_register"/>
-
 
 
     <!--TAKE QUIZ FUNCTIONALITY NAV GRAPH-->
@@ -124,4 +111,6 @@
     <action
             android:id="@+id/action_global_add_nav_graph"
             app:destination="@id/add_nav_graph" />
+    <action android:id="@+id/action_global_fragmentAuth"
+            app:destination="@id/fragmentAuth"/>
 </navigation>

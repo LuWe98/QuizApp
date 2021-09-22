@@ -8,15 +8,16 @@ import com.example.quizapp.view.fragments.homescreen.FragmentHomeCreatedQuestion
 
 class VpaHome(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-    private val fragments = arrayOfNulls<Fragment>(3)
-
-    init {
-        fragments[0] = FragmentHomeBrowseQuestionnaires()
-        fragments[1] = FragmentHomeCachedQuestionnaires()
-        fragments[2] = FragmentHomeCreatedQuestionnaires()
+    private val fragments = Array<Fragment>(3) {
+        when(it){
+            0 -> FragmentHomeBrowseQuestionnaires()
+            1 -> FragmentHomeCachedQuestionnaires()
+            2 -> FragmentHomeCreatedQuestionnaires()
+            else -> throw IllegalStateException()
+        }
     }
 
     override fun getItemCount() = fragments.size
 
-    override fun createFragment(position: Int) = fragments[position]!!
+    override fun createFragment(position: Int) = fragments[position]
 }

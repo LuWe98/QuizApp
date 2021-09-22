@@ -190,7 +190,7 @@ fun Fragment.initContainerTransitionAnimation(parsedStartView: View, animationDu
 
 fun Fragment.initSharedElementTransitionAnimation(animationDuration: Long = resources.getInteger(R.integer.defaultAnimDuration).toLong()) {
     sharedElementEnterTransition = MaterialContainerTransform().apply {
-        drawingViewId = R.id.mainActivityNavHost
+        drawingViewId = R.id.navHost
         duration = animationDuration
         scrimColor = Color.TRANSPARENT
         setAllContainerColors(getThemeColor(R.attr.backgroundColor))

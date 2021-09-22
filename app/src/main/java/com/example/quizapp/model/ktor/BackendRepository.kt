@@ -28,5 +28,5 @@ class BackendRepository @Inject constructor(
     // USER CALLS
     suspend fun loginUser(email : String, password : String) = userApi.loginUser(email, password)
 
-    suspend fun registerUser(email: String, username: String, password: String) = userApi.registerUser(email, username, password)
+    suspend fun registerUser(email: String, password: String, courseOfStudies : String) = userApi.registerUser(email, password, courseOfStudies)
 }

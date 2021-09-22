@@ -45,7 +45,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>(){
                 }
             }
 
-            searchLayout.setOnClickListener {
+            clSearch.setOnClickListener {
                 navigator.navigateToSearchScreen()
             }
         }

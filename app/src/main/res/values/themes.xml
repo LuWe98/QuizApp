@@ -23,6 +23,7 @@
         <item name="colorAccent">@color/lightColorAccent</item>
 
         <item name="android:colorBackground">@color/lightBackgroundColor</item>
+<!--        <item name="colorOnSurface">@color/white</item>-->
 
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>

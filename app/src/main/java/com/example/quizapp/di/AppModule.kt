@@ -92,7 +92,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpAuthInterceptor() = OkHttpAuthInterceptor()
+    fun provideOkHttpAuthInterceptor(preferencesRepository: PreferencesRepository) = OkHttpAuthInterceptor(preferencesRepository)
+
 
     @Provides
     @Singleton
@@ -132,11 +133,9 @@ object AppModule {
     )
 
 
-
     @Provides
     @Singleton
     fun provideConnectivityHelper(@ApplicationContext context: Context) = ConnectivityHelper(context)
-
 
 
 //    Ktor Different Settings

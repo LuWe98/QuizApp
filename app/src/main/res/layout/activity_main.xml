@@ -13,7 +13,7 @@
             android:name="androidx.navigation.fragment.NavHostFragment"
             app:defaultNavHost="true"
             app:navGraph="@navigation/main_nav_graph"
-            android:id="@+id/mainActivityNavHost" />
+            android:id="@+id/navHost" />
     <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
             android:layout_width="match_parent"
@@ -45,12 +45,6 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:paddingHorizontal="20dp"/>
 
-            <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.0001dp"
-                    android:background="?android:colorBackground"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:id="@+id/bottomNavViewDivider"/>
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
                     android:layout_height="60dp"
@@ -62,12 +56,12 @@
                 <com.google.android.material.card.MaterialCardView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:id="@+id/homeCard"
+                        android:id="@+id/cardHome"
                         app:cardBackgroundColor="?attr/colorAccent"
                         app:cardCornerRadius="12.5dp"
                         app:cardElevation="0dp"
                         app:rippleColor="?colorAccent"
-                        app:layout_constraintEnd_toStartOf="@id/searchCard"
+                        app:layout_constraintEnd_toStartOf="@id/cardSearch"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent">
@@ -75,7 +69,7 @@
                     <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/homeIcon"
+                            android:id="@+id/ivHome"
                             app:srcCompat="@drawable/ic_home"
                             app:tint="@color/white"
                             android:padding="10dp" />
@@ -84,7 +78,7 @@
                 <com.google.android.material.card.MaterialCardView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:id="@+id/searchCard"
+                        android:id="@+id/cardSearch"
                         app:cardBackgroundColor="@color/transparent"
                         app:cardCornerRadius="12.5dp"
                         app:cardElevation="0dp"
@@ -93,13 +87,13 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/addCard"
-                        app:layout_constraintStart_toEndOf="@+id/homeCard">
+                        app:layout_constraintStart_toEndOf="@+id/cardHome">
 
                     <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             app:srcCompat="@drawable/ic_search"
-                            android:id="@+id/searchIcon"
+                            android:id="@+id/ivSearch"
                             app:tint="@color/black"
                             android:padding="10dp" />
                 </com.google.android.material.card.MaterialCardView>
@@ -112,10 +106,10 @@
                         app:cardCornerRadius="12.5dp"
                         app:cardElevation="0dp"
                         app:rippleColor="?colorAccent"
-                        app:layout_constraintStart_toEndOf="@id/searchCard"
+                        app:layout_constraintStart_toEndOf="@id/cardSearch"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/settingsCard">
+                        app:layout_constraintEnd_toStartOf="@+id/cardSettings">
 
                     <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="match_parent"
@@ -128,7 +122,7 @@
                 <com.google.android.material.card.MaterialCardView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:id="@+id/settingsCard"
+                        android:id="@+id/cardSettings"
                         app:cardBackgroundColor="@color/transparent"
                         app:cardCornerRadius="12.5dp"
                         app:cardElevation="0dp"
@@ -141,7 +135,7 @@
                     <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/settingsIcon"
+                            android:id="@+id/ivSettings"
                             app:srcCompat="@drawable/ic_settings"
                             app:tint="@color/black"
                             android:padding="10dp" />

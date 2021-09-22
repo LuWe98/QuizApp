@@ -22,9 +22,9 @@ class RvaQuestionWithAnswersAddQuestionnaire : BindingListAdapter<QuestionWithAn
     @SuppressLint("SetTextI18n")
     override fun bindViews(binding: RviAddQuestionBinding, item: QuestionWithAnswers, position: Int) {
         binding.apply {
-            questionNumberText.text = "${position+1})"
-            questionTitle.text = item.question.text
-            questionTypeIcon.setImageDrawable(if(item.question.isMultipleChoice) R.drawable.ic_check_circle else R.drawable.ic_radio_button)
+            tvNumber.text = "${position+1})"
+            tvTitle.text = item.question.text
+            ivQuestionType.setImageDrawable(if(item.question.isMultipleChoice) R.drawable.ic_check_circle else R.drawable.ic_radio_button)
         }
     }
 }

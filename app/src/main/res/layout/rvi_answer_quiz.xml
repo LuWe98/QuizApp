@@ -19,7 +19,7 @@
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:id="@+id/selectionButtonRing"
+                android:id="@+id/ivRing"
                 app:srcCompat="@drawable/shape_ring"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -29,21 +29,21 @@
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:id="@+id/checkIcon"
+                android:id="@+id/ivSelectedIcon"
                 app:srcCompat="@drawable/ic_check"
                 android:tint="?colorAccent"
                 android:visibility="gone"
-                app:layout_constraintTop_toTopOf="@id/selectionButtonRing"
-                app:layout_constraintStart_toStartOf="@id/selectionButtonRing"
-                app:layout_constraintEnd_toEndOf="@id/selectionButtonRing"
-                app:layout_constraintBottom_toBottomOf="@id/selectionButtonRing" />
+                app:layout_constraintTop_toTopOf="@id/ivRing"
+                app:layout_constraintStart_toStartOf="@id/ivRing"
+                app:layout_constraintEnd_toEndOf="@id/ivRing"
+                app:layout_constraintBottom_toBottomOf="@id/ivRing" />
 
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/answerText"
+                android:id="@+id/tvAnswerText"
                 android:gravity="center_vertical"
-                app:layout_constraintStart_toEndOf="@id/selectionButtonRing"
+                app:layout_constraintStart_toEndOf="@id/ivRing"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="Answer"

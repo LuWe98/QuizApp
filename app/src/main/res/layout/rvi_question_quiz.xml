@@ -20,7 +20,7 @@
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:id="@+id/progressIndicator"
+                android:id="@+id/ivRing"
                 app:srcCompat="@drawable/shape_ring"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -30,21 +30,21 @@
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:id="@+id/checkMarkIcon"
+                android:id="@+id/ivResultIcon"
                 app:srcCompat="@drawable/ic_check"
                 android:tint="?colorAccent"
                 android:visibility="gone"
-                app:layout_constraintTop_toTopOf="@id/progressIndicator"
-                app:layout_constraintStart_toStartOf="@id/progressIndicator"
-                app:layout_constraintEnd_toEndOf="@id/progressIndicator"
-                app:layout_constraintBottom_toBottomOf="@id/progressIndicator"/>
+                app:layout_constraintTop_toTopOf="@id/ivRing"
+                app:layout_constraintStart_toStartOf="@id/ivRing"
+                app:layout_constraintEnd_toEndOf="@id/ivRing"
+                app:layout_constraintBottom_toBottomOf="@id/ivRing"/>
 
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="30dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/questionNumberText"
+                android:id="@+id/tvNumber"
                 android:gravity="center_vertical"
-                app:layout_constraintStart_toEndOf="@id/progressIndicator"
+                app:layout_constraintStart_toEndOf="@id/ivRing"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="1)"
@@ -56,12 +56,12 @@
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/questionTitle"
+                android:id="@+id/tvTitle"
                 android:gravity="center_vertical"
-                app:layout_constraintStart_toEndOf="@+id/questionNumberText"
+                app:layout_constraintStart_toEndOf="@+id/tvNumber"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/goToQuestionnaireButton"
+                app:layout_constraintEnd_toStartOf="@id/btnOpen"
                 tools:text="Question"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
@@ -69,7 +69,7 @@
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:id="@+id/goToQuestionnaireButton"
+                android:id="@+id/btnOpen"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

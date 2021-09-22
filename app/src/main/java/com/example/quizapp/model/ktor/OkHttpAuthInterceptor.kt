@@ -1,17 +1,21 @@
 package com.example.quizapp.model.ktor
 
+import com.example.quizapp.model.datastore.PreferencesRepository
 import io.ktor.http.*
 import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.Response
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class OkHttpAuthInterceptor : Interceptor {
+class OkHttpAuthInterceptor @Inject constructor(
+    private val preferencesRepository: PreferencesRepository
+) : Interceptor {
 
-    val email: String = "Hallo@gmx.de"
-    val password: String = "1234"
+//    var userEmail: String = ""
+//    var userPassword: String = ""
 
     override fun intercept(chain: Interceptor.Chain): Response {
         chain.run {
@@ -20,13 +24,15 @@ class OkHttpAuthInterceptor : Interceptor {
             }
 
             return proceed(request().newBuilder().run {
-                header(HttpHeaders.Authorization, Credentials.basic(email, password))
-                build()
+                preferencesRepository.getUserCredentials().let { credentials ->
+                    header(HttpHeaders.Authorization, Credentials.basic(credentials.email, credentials.password))
+                    build()
+                }
             })
         }
     }
 
-    private fun shouldIgnoreUrl(url : HttpUrl) = url.encodedPath in URLS_TO_IGNORE
+    private fun shouldIgnoreUrl(url: HttpUrl) = url.encodedPath in URLS_TO_IGNORE
 
     companion object {
         val URLS_TO_IGNORE = listOf(

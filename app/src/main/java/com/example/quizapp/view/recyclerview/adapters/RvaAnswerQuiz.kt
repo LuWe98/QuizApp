@@ -45,19 +45,19 @@ class RvaAnswerQuiz(
 
     override fun bindViews(binding: RviAnswerQuizBinding, item: Answer, position: Int) {
         binding.apply {
-            answerText.text = item.text
+            tvAnswerText.text = item.text
 
             if (vmQuiz.shouldDisplaySolution || vmQuizQuestionsContainer.shouldDisplayQuestionSolution(item.questionId)) {
-                answerText.setTextColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
-                selectionButtonRing.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
-                checkIcon.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
+                tvAnswerText.setTextColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
+                ivSelectedIcon.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
+                ivRing.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
             } else {
-                answerText.setTextColorWithRes(R.color.black)
-                checkIcon.setDrawableTint(getThemeColor(R.attr.colorAccent))
-                selectionButtonRing.setDrawableTint(if (item.isAnswerSelected) getThemeColor(R.attr.colorAccent) else getColor(R.color.unselectedColor))
+                tvAnswerText.setTextColorWithRes(R.color.black)
+                ivSelectedIcon.setDrawableTint(getThemeColor(R.attr.colorAccent))
+                ivRing.setDrawableTint(if (item.isAnswerSelected) getThemeColor(R.attr.colorAccent) else getColor(R.color.unselectedColor))
             }
 
-            checkIcon.apply {
+            ivSelectedIcon.apply {
                 isVisible = item.isAnswerSelected
                 setImageDrawable(if (isMultipleChoice) R.drawable.ic_check else R.drawable.ic_circle)
             }
