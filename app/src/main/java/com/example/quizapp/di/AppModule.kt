@@ -8,7 +8,7 @@ import androidx.room.Room
 import com.example.quizapp.R
 import com.example.quizapp.model.datastore.EncryptionUtil
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.ktor.OkHttpAuthInterceptor
+import com.example.quizapp.model.ktor.OkHttpBasicAuthInterceptor
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.apiclasses.TodoCalls
 import com.example.quizapp.model.ktor.apiclasses.UserApi
@@ -92,12 +92,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpAuthInterceptor(preferencesRepository: PreferencesRepository) = OkHttpAuthInterceptor(preferencesRepository)
+    fun provideOkHttpAuthInterceptor(preferencesRepository: PreferencesRepository) = OkHttpBasicAuthInterceptor(preferencesRepository)
 
 
     @Provides
     @Singleton
-    fun provideKtorClient(authInterceptor: OkHttpAuthInterceptor): HttpClient = HttpClient(OkHttp) {
+    fun provideKtorClient(basicAuthInterceptor: OkHttpBasicAuthInterceptor): HttpClient = HttpClient(OkHttp) {
         install(DefaultRequest) {
             url.takeFrom(URLBuilder().takeFrom(Constants.BACKEND_URL).apply {
                 encodedPath += url.encodedPath
@@ -119,7 +119,7 @@ object AppModule {
             config {
                 connectTimeout(60, TimeUnit.SECONDS)
             }
-            addInterceptor(authInterceptor)
+            addInterceptor(basicAuthInterceptor)
         }
     }
 

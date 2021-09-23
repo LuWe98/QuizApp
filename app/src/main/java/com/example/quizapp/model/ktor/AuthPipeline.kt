@@ -14,7 +14,7 @@ class AuthPipeline(httpClient: HttpClient) {
 
     init {
         httpClient.receivePipeline.intercept(HttpReceivePipeline.Before) { response ->
-            if(response.request.url.encodedPath in OkHttpAuthInterceptor.URLS_TO_IGNORE){
+            if(response.request.url.encodedPath in OkHttpBasicAuthInterceptor.URLS_TO_IGNORE){
                 proceed()
                 return@intercept
             }

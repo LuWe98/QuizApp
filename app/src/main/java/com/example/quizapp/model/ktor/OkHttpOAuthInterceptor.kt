@@ -10,12 +10,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class OkHttpAuthInterceptor @Inject constructor(
+class OkHttpOAuthInterceptor @Inject constructor(
     private val preferencesRepository: PreferencesRepository
 ) : Interceptor {
-
-//    var userEmail: String = ""
-//    var userPassword: String = ""
 
     override fun intercept(chain: Interceptor.Chain): Response {
         chain.run {
@@ -23,6 +20,7 @@ class OkHttpAuthInterceptor @Inject constructor(
                 return proceed(request())
             }
 
+            //TODO -> Change Logic to OAuth instead of basic
             return proceed(request().newBuilder().run {
                 preferencesRepository.getUserCredentials().let { credentials ->
                     header(HttpHeaders.Authorization, Credentials.basic(credentials.email, credentials.password))
