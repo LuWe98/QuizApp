@@ -21,30 +21,9 @@ class VmMain @Inject constructor(
     val connectivityHelper: ConnectivityHelper
 ) : ViewModel() {
 
-    val userFlow get() = preferencesRepository.userCredentialsFlow
-
     val currentTheme get() = runBlocking(Dispatchers.IO) {
         preferencesRepository.getTheme()
     }
-
-    fun updateThemeValue(newThemeValue: Int) {
-        launch {
-            preferencesRepository.updateTheme(newThemeValue)
-        }
-    }
-
-    fun updateUserEmail(newValue: String) {
-        launch {
-            preferencesRepository.updateUserEmail(newValue)
-        }
-    }
-
-    fun updateUserPassword(newValue: String) {
-        launch {
-            preferencesRepository.updateUserPassword(newValue)
-        }
-    }
-
 
     fun getTodosKtor() = backendRepository.getTodos()
 
@@ -53,5 +32,4 @@ class VmMain @Inject constructor(
     suspend fun loginUser(email: String, password: String) = backendRepository.loginUser(email, password)
 
     suspend fun registerUser(email: String, username: String, password: String) = backendRepository.registerUser(email, username, password)
-
 }

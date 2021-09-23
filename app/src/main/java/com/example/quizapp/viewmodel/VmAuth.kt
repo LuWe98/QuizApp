@@ -70,8 +70,7 @@ class VmAuth @Inject constructor(
             }
 
             if(loginResponse.isSuccessful){
-                preferencesRepository.updateUserEmail(currentLoginEmail)
-                preferencesRepository.updateUserPassword(currentLoginPassword)
+                preferencesRepository.updateUserCredentials(currentLoginEmail,currentLoginPassword)
                 fragmentEventChannel.send(NavigateToHomeScreen)
             }
 
@@ -144,7 +143,6 @@ class VmAuth @Inject constructor(
                 return@launch
             }
 
-            // TODO --> Check Email
             if (!currentRegisterEmail.isValidEmail) {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorEnterValidEmail))
                 return@launch

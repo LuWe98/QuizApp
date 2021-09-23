@@ -51,7 +51,7 @@ class Navigator @Inject constructor(
 
 
     fun navigateToAddQuestionnaireScreen(questionnaireId: Long = NO_QUESTIONNAIRE_ID) {
-        navController.navigate(MainNavGraphDirections.actionGlobalAddNavGraph(questionnaireId))
+        navController.navigate(MainNavGraphDirections.actionGlobalGoToAddQuestionnaireScreen(questionnaireId))
     }
 
     fun navigateToEditQuestionScreen(questionPosition: Int, questionWithAnswers: QuestionWithAnswers) {
@@ -59,7 +59,7 @@ class Navigator @Inject constructor(
     }
 
     fun navigateToQuizScreen(questionnaireId: Long) {
-        navController.navigate(FragmentHomeDirections.actionFragmentHomeToFragmentQuizOverview(questionnaireId))
+        navController.navigate(MainNavGraphDirections.actionGlobalGoToQuizScreen(questionnaireId))
     }
 
     fun navigateToQuizContainerScreen(questionPosition: Int = FIRST_QUESTION_POSITION) {
@@ -78,7 +78,7 @@ class Navigator @Inject constructor(
 
     fun navigateToLoginScreen() {
         val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentHome, true).build()
-        navController.navigate(MainNavGraphDirections.actionGlobalFragmentAuth(), navOptions)
+        navController.navigate(MainNavGraphDirections.actionGlobalGoToAuthScreen(), navOptions)
     }
 
     fun navigateToHomeScreen() {

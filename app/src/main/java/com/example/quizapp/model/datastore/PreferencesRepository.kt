@@ -40,15 +40,10 @@ class PreferencesRepository @Inject constructor(
         UserCredentialsWrapper(decryptedEmail, decryptedPassword)
     }
 
-    suspend fun updateUserEmail(newValue: String) {
+    suspend fun updateUserCredentials(email: String, password: String) {
         dataStore.edit {
-            it[USER_EMAIL_KEY] = encryptionUtil.encrypt(newValue)
-        }
-    }
-
-    suspend fun updateUserPassword(newValue: String) {
-        dataStore.edit {
-            it[USER_PASSWORD_KEY] = encryptionUtil.encrypt(newValue)
+            it[USER_EMAIL_KEY] = encryptionUtil.encrypt(email)
+            it[USER_PASSWORD_KEY] = encryptionUtil.encrypt(password)
         }
     }
 

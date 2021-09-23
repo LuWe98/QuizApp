@@ -19,8 +19,7 @@ class VmSettings @Inject constructor(
 
     fun onLogoutClicked() {
         launch {
-            preferencesRepository.updateUserEmail("")
-            preferencesRepository.updateUserPassword("")
+            preferencesRepository.updateUserCredentials("", "")
             fragmentSettingsEventChannel.send(FragmentSettingsEvent.NavigateToLoginScreen)
         }
     }

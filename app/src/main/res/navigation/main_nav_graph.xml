@@ -12,9 +12,6 @@
             android:label="FragmentHome"
             tools:layout="@layout/fragment_home">
         <action
-                android:id="@+id/action_fragmentHome_to_fragmentQuizOverview"
-                app:destination="@id/quiz_nav_graph" />
-        <action
                 android:id="@+id/action_fragmentHome_to_fragmentSearch"
                 app:destination="@id/fragmentSearch" />
     </fragment>
@@ -50,6 +47,7 @@
         <argument
                 android:name="questionnaireId"
                 app:argType="long" />
+
         <fragment
                 android:id="@+id/fragmentQuizOverview"
                 android:name="com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverview"
@@ -109,8 +107,12 @@
 
     <!--GLOBAL ACTIONS-->
     <action
-            android:id="@+id/action_global_add_nav_graph"
+            android:id="@+id/actionGlobalGoToAddQuestionnaireScreen"
             app:destination="@id/add_nav_graph" />
-    <action android:id="@+id/action_global_fragmentAuth"
+
+    <action android:id="@+id/actionGlobalGoToAuthScreen"
             app:destination="@id/fragmentAuth"/>
+
+    <action android:id="@+id/actionGlobalGoToQuizScreen"
+            app:destination="@id/quiz_nav_graph"/>
 </navigation>
