@@ -16,17 +16,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tilEmail" />
+            app:layout_constraintBottom_toTopOf="@id/tilUserName" />
 
     <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/tilEmail"
+            android:id="@+id/tilUserName"
             style="@style/Style.QuizApp.TextInputLayout"
-            android:hint="@string/email"
+            android:hint="@string/userName"
             android:elevation="@dimen/defaultElevation"
             android:layout_marginHorizontal="@dimen/grid_6"
-            app:startIconDrawable="@drawable/ic_email"
+            app:startIconDrawable="@drawable/ic_person"
             app:layout_constraintVertical_bias="0.375"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -36,7 +36,7 @@
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:id="@+id/etEmail"
+                android:id="@+id/etUserName"
                 style="@style/Style.QuizApp.TextInputEditText"
                 android:inputType="textPersonName" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -54,7 +54,7 @@
             app:passwordToggleEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tilEmail">
+            app:layout_constraintTop_toBottomOf="@+id/tilUserName">
 
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"

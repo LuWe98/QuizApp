@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.quizapp.utils.Constants
+import com.example.quizapp.utils.DiffUtilHelper
 import kotlinx.parcelize.Parcelize
 
 @Entity(
@@ -13,13 +14,13 @@ import kotlinx.parcelize.Parcelize
     ]
 )
 @Parcelize
-data class UserRole(
-    @PrimaryKey(autoGenerate = true) override val id: Long,
+data class Role(
+    @PrimaryKey(autoGenerate = true) val id: Long,
     val name: String
-) : EntityMarker(id) {
+) : EntityMarker {
 
     companion object {
-        val DIFF_CALLBACK = createBasicDiffUtil<UserRole>()
+        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<Role> { o, o2 ->  o.id == o2.id}
     }
 
 }

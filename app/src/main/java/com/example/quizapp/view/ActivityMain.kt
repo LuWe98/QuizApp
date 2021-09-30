@@ -63,7 +63,9 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
                 bottomNavView.selectedItemId = R.id.fragmentSettings
             }
 
-            cardSearch.setOnClickListener { bottomNavView.selectedItemId = R.id.fragmentSearch }
+            cardSearch.setOnClickListener {
+                bottomNavView.selectedItemId = R.id.fragmentSearch
+            }
         }
     }
 
@@ -100,7 +102,7 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
             ivSettings.setDrawableTintWithRes(R.color.black)
         }
 
-        cardToShow.setCardBackgroundColor(getThemeColor(R.attr.colorAccent))
+        cardToShow.setCardBackgroundColor(getThemeColor(R.attr.colorPrimary))
         imageViewToChangeTintOf.setDrawableTintWithRes(R.color.white)
     }
 

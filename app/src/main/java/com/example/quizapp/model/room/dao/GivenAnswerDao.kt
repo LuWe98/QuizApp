@@ -3,10 +3,10 @@ package com.example.quizapp.model.room.dao
 import androidx.room.Dao
 import androidx.room.Query
 import com.example.quizapp.model.room.entities.Answer
-import com.example.quizapp.model.room.entities.User
+import com.example.quizapp.model.room.entities.GivenAnswer
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class UserDao : BaseDao<User> {
+abstract class GivenAnswerDao : BaseDao<GivenAnswer> {
 
 }

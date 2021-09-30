@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.quizapp.model.datastore.User
 import com.example.quizapp.model.room.dao.*
 import com.example.quizapp.model.room.entities.*
 import com.example.quizapp.utils.RandomQuestionnaireCreatorUtil
@@ -19,10 +20,10 @@ import javax.inject.Singleton
 @Database(
     entities = [
         Answer::class,
+        GivenAnswer::class,
         Question::class,
         Questionnaire::class,
-        User::class,
-        UserRole::class,
+        Role::class,
         Faculty::class,
         CourseOfStudies::class,
         Subject::class
@@ -35,8 +36,8 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun getQuestionaryDao(): QuestionnaireDao
     abstract fun getQuestionDao(): QuestionDao
     abstract fun getAnswerDao(): AnswerDao
-    abstract fun getUserDao() : UserDao
-    abstract fun getUserRoleDao() : UserRoleDao
+    abstract fun getGivenAnswersDao() : GivenAnswerDao
+    abstract fun getUserRoleDao() : RoleDao
     abstract fun getFacultyDao() : FacultyDao
     abstract fun getCourseOfStudiesDao() : CourseOfStudiesDao
     abstract fun getSubjectDao() : SubjectDao

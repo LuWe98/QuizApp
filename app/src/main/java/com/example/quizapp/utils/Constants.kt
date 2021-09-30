@@ -7,6 +7,7 @@ object Constants {
     const val ROOM_DATABASE_NAME = "quizRoomDatabase"
 
     const val ANSWER_TABLE_NAME = "answerTable"
+    const val GIVEN_ANSWER_TABLE_NAME = "givenAnswerTable"
     const val QUESTION_TABLE_NAME = "questionTable"
     const val QUESTIONARY_TABLE_NAME = "questionaryTable"
     const val USER_TABLE_NAME = "userTable"

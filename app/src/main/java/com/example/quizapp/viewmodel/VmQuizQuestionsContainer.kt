@@ -51,7 +51,6 @@ class VmQuizQuestionsContainer @Inject constructor(
     fun shouldDisplayQuestionSolution(questionId: Long) = questionIdList.contains(questionId)
 
 
-
     fun onViewPagerPageSelected(position : Int){
         lastAdapterPosition = position
     }

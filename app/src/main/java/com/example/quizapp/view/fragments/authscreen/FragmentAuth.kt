@@ -52,7 +52,7 @@ class FragmentAuth : BindingFragment<FragmentAuthBinding>() {
                 }
                 is SetLoginCredentials -> {
                     vpaAdapter.loginFragment.binding.apply {
-                        etEmail.setText(event.email)
+                        etUserName.setText(event.email)
                         etPassword.setText(event.password)
                     }
                 }

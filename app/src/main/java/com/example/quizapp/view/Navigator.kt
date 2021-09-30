@@ -15,7 +15,6 @@ import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQues
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
 import com.example.quizapp.view.fragments.homescreen.FragmentHomeDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
-import com.example.quizapp.view.fragments.settingsscreen.FragmentSettingsDirections
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 import javax.inject.Singleton

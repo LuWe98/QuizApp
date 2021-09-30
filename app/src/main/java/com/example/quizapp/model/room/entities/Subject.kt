@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.quizapp.utils.Constants
+import com.example.quizapp.utils.DiffUtilHelper
 import kotlinx.parcelize.Parcelize
 
 @Entity(
@@ -14,12 +15,12 @@ import kotlinx.parcelize.Parcelize
 )
 @Parcelize
 data class Subject(
-    @PrimaryKey(autoGenerate = true) override val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long,
     val name: String
-) : EntityMarker(id) {
+) : EntityMarker {
 
     companion object {
-        val DIFF_CALLBACK = createBasicDiffUtil<Subject>()
+        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<Subject> { o, o2 ->  o.id == o2.id}
     }
 
 }

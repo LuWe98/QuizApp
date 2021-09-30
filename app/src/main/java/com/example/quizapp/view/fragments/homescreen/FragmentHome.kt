@@ -20,7 +20,6 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //navigator.navigateToLogin()
         initViews()
     }
 

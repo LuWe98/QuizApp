@@ -13,19 +13,19 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-        initClickListeners()
+        initListeners()
     }
 
     private fun initViews(){
         binding.apply {
-            searchQueryEditText.requestFocus()
-            showKeyboard(searchQueryEditText)
+            etSearchQuery.requestFocus()
+            showKeyboard(etSearchQuery)
         }
     }
 
-    private fun initClickListeners(){
+    private fun initListeners(){
         binding.apply {
-            buttonBack.setOnClickListener {
+            btnBack.setOnClickListener {
                 navigator.popBackStack()
             }
         }

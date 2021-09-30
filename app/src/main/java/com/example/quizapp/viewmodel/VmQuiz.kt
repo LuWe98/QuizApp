@@ -1,17 +1,18 @@
 package com.example.quizapp.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
 import com.example.quizapp.QuizNavGraphArgs
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.extensions.log
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.Answer
-import com.example.quizapp.model.room.entities.EntityMarker
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,10 +21,6 @@ class VmQuiz @Inject constructor(
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle
 ) : AndroidViewModel(application) {
-
-    init {
-        log("STATE ${state.get<String>(SHOULD_DISPLAY_SOLUTION)}")
-    }
 
     private val args = QuizNavGraphArgs.fromSavedStateHandle(state)
 
@@ -55,10 +52,6 @@ class VmQuiz @Inject constructor(
         shouldDisplaySolutionLiveData.value = shouldDisplaySolution
     }
 
-    private fun update(entity: List<EntityMarker>) {
-        launch { localRepository.update(entity) }
-    }
-
     fun onShowSolutionClick() {
         completeQuestionnaire?.let {
             if (it.areAllQuestionsAnswered) {
@@ -74,7 +67,8 @@ class VmQuiz @Inject constructor(
     }
 
     fun onUndoDeleteGivenAnswersClick(event: ShowUndoDeleteGivenAnswersSnackBack) {
-        update(event.lastAnswerValues)
+        launch { localRepository.update(event.lastAnswerValues) }
+
     }
 
     fun onClearGivenAnswersClicked(){
@@ -83,7 +77,11 @@ class VmQuiz @Inject constructor(
                 questionsWithAnswers.forEach { qwa -> list.addAll(qwa.answers) }
                 launch {
                     fragmentEventChannel.send(ShowUndoDeleteGivenAnswersSnackBack(list))
-                    list.map { it.copy(isAnswerSelected = false) }.also { update(it) }
+                    list.map {
+                        it.copy(isAnswerSelected = false)
+                    }.also {
+                        localRepository.update(it)
+                    }
                 }
             }
         }
@@ -129,6 +127,5 @@ class VmQuiz @Inject constructor(
 //    val allQuestionsAnsweredFlow get() = answeredQuestionsPercentageFlow.map { it == 100 }.distinctUntilChanged()
 //
 //    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-
 
 }

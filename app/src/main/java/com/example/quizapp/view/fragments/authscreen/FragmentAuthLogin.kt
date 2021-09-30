@@ -24,7 +24,7 @@ class FragmentAuthLogin : BindingFragment<FragmentAuthLoginBinding>() {
 
     private fun initViews(){
         binding.apply {
-            etEmail.setText(viewModel.currentLoginEmail)
+            etUserName.setText(viewModel.currentLoginEmail)
             etPassword.setText(viewModel.currentLoginPassword)
         }
     }
@@ -33,7 +33,7 @@ class FragmentAuthLogin : BindingFragment<FragmentAuthLoginBinding>() {
         binding.apply {
             btnGoToRegister.onClick(viewModel::onGoToRegisterButtonClicked)
             btnLogin.onClick(viewModel::onLoginButtonClicked)
-            etEmail.onTextChanged(viewModel::onLoginEmailEditTextChanged)
+            etUserName.onTextChanged(viewModel::onLoginEmailEditTextChanged)
             etPassword.onTextChanged(viewModel::onLoginPasswordEditTextChanged)
         }
     }

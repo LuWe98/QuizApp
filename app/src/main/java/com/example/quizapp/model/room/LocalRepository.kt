@@ -1,18 +1,9 @@
 package com.example.quizapp.model.room
 
-import androidx.lifecycle.LiveData
 import com.example.quizapp.model.room.dao.*
-import com.example.quizapp.model.room.entities.Answer
-import com.example.quizapp.model.room.entities.EntityMarker
-import com.example.quizapp.model.room.entities.Question
-import com.example.quizapp.model.room.entities.Questionnaire
-import com.example.quizapp.model.room.junctions.QuestionWithAnswers
-import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestions
-import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestionsAndAnswers
+import com.example.quizapp.model.room.entities.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,8 +13,8 @@ class LocalRepository @Inject constructor(
     private val questionnaireDao: QuestionnaireDao,
     private val questionDao: QuestionDao,
     private val answerDao: AnswerDao,
-    private val userDao: UserDao,
-    private val userRoleDao: UserRoleDao,
+    private val givenAnswerDao: GivenAnswerDao,
+    private val roleDao: RoleDao,
     private val facultyDao: FacultyDao,
     private val courseOfStudiesDao: CourseOfStudiesDao,
     private val subjectDao: SubjectDao
@@ -46,8 +37,13 @@ class LocalRepository @Inject constructor(
     @Suppress("UNCHECKED_CAST")
     private fun <T : EntityMarker> getBaseDaoWith(entity: T) = (when (entity) {
         is Answer -> answerDao
+        is GivenAnswer -> givenAnswerDao
         is Question -> questionDao
         is Questionnaire -> questionnaireDao
+        is Role -> roleDao
+        is Faculty -> facultyDao
+        is CourseOfStudies -> courseOfStudiesDao
+        is Subject -> subjectDao
         else -> throw IllegalArgumentException("Object does not implement EntityMarker Interface!")
     } as BaseDao<T>)
 

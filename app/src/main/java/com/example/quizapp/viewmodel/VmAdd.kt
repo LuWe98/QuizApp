@@ -4,9 +4,7 @@ import androidx.lifecycle.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.AddNavGraphArgs
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.extensions.log
 import com.example.quizapp.model.room.LocalRepository
-import com.example.quizapp.model.room.entities.EntityMarker
 import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
 import com.example.quizapp.viewmodel.VmAdd.FragmentAddQuestionnaireEvent.*
@@ -14,7 +12,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 

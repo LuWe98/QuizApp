@@ -83,14 +83,6 @@ fun Fragment.getStringArray(@ArrayRes id: Int): Array<String> = resources.getStr
 
 fun Fragment.getThemeColor(@AttrRes themeAttrId: Int) = requireContext().getThemeColor(themeAttrId)
 
-fun Fragment.initVoiceSearch(actionToPerform: (String) -> (Unit)) = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-    if (result.resultCode == Activity.RESULT_OK) {
-        result.data?.apply {
-            actionToPerform.invoke(getStringExtra(RecognizerIntent.EXTRA_RESULTS) ?: "")
-        }
-    }
-}
-
 
 inline fun Fragment.launch(
     scope: CoroutineScope = lifecycleScope,
