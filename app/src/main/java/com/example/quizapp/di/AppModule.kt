@@ -8,8 +8,9 @@ import androidx.room.Room
 import com.example.quizapp.R
 import com.example.quizapp.model.datastore.EncryptionUtil
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.ktor.OkHttpBasicAuthInterceptor
+import com.example.quizapp.model.ktor.authentification.OkHttpBasicAuthInterceptor
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.apiclasses.QuestionnaireApi
 import com.example.quizapp.model.ktor.apiclasses.TodoCalls
 import com.example.quizapp.model.ktor.apiclasses.UserApi
 import com.example.quizapp.model.room.LocalDatabase
@@ -62,8 +63,7 @@ object AppModule {
     fun provideRoomDatabase(
         @ApplicationContext context: Context,
         callback: LocalDatabase.Callback
-    ) =
-        Room.databaseBuilder(context, LocalDatabase::class.java, Constants.ROOM_DATABASE_NAME)
+    ) = Room.databaseBuilder(context, LocalDatabase::class.java, Constants.ROOM_DATABASE_NAME)
             .fallbackToDestructiveMigration()
             .addCallback(callback)
             .build()
@@ -117,7 +117,7 @@ object AppModule {
 
         engine {
             config {
-                connectTimeout(60, TimeUnit.SECONDS)
+                connectTimeout(30, TimeUnit.SECONDS)
             }
             addInterceptor(basicAuthInterceptor)
         }
@@ -127,15 +127,18 @@ object AppModule {
     @Provides
     @Singleton
     fun provideBackendRepository(ktorClient: HttpClient) = BackendRepository(
-        ktorClient,
         TodoCalls(ktorClient),
-        UserApi(ktorClient)
+        UserApi(ktorClient),
+        QuestionnaireApi(ktorClient)
     )
-
 
     @Provides
     @Singleton
     fun provideConnectivityHelper(@ApplicationContext context: Context) = ConnectivityHelper(context)
+
+
+    //TODO -> Noch einbauen
+    fun provideRealmDatabase() = null
 
 
 //    Ktor Different Settings

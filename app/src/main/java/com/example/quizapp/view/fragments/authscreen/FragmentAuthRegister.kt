@@ -24,7 +24,7 @@ class FragmentAuthRegister : BindingFragment<FragmentAuthRegisterBinding>() {
 
     private fun initViews() {
         binding.apply {
-            etUserName.setText(viewModel.currentRegisterEmail)
+            etUserName.setText(viewModel.currentRegisterUserName)
             etCourseOfStudies.setText(viewModel.currentRegisterCourseOfStudies)
             etPassword.setText(viewModel.currentRegisterPassword)
             etConfirmPassword.setText(viewModel.currentRegisterPasswordConfirm)

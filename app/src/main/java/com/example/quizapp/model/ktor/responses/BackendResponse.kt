@@ -5,7 +5,6 @@ import com.example.quizapp.R
 
 sealed class BackendResponse {
 
-
     data class BasicResponse(
         val isSuccessful: Boolean,
         val message : String

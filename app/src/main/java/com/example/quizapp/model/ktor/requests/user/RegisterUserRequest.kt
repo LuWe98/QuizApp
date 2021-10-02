@@ -1,7 +1,7 @@
-package com.example.quizapp.model.ktor.requests
+package com.example.quizapp.model.ktor.requests.user
 
 data class RegisterUserRequest(
-    val email: String,
+    val userName: String,
     val password: String,
     val courseOfStudies : String
 )

@@ -10,14 +10,15 @@ import com.example.quizapp.utils.BindingUtils.getBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import javax.inject.Inject
 
-abstract class BindingBottomSheetDialogFragment <VM : ViewBinding> : BottomSheetDialogFragment() {
+abstract class BindingBottomSheetDialogFragment <VB : ViewBinding> : BottomSheetDialogFragment() {
 
     @Inject lateinit var navigator: Navigator
 
-    private var _binding: VM? = null
+    private var _binding: VB? = null
     val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)  = getBinding().also{ _binding = it }.root
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+        getBinding(this).also{ _binding = it }.root
 
     override fun onDestroyView() {
         super.onDestroyView()

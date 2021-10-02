@@ -24,7 +24,7 @@ class FragmentAuthLogin : BindingFragment<FragmentAuthLoginBinding>() {
 
     private fun initViews(){
         binding.apply {
-            etUserName.setText(viewModel.currentLoginEmail)
+            etUserName.setText(viewModel.currentLoginUserName)
             etPassword.setText(viewModel.currentLoginPassword)
         }
     }

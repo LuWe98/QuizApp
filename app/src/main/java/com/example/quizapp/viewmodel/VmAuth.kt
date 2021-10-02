@@ -5,7 +5,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.quizapp.R
 import com.example.quizapp.extensions.containsWhiteSpaces
-import com.example.quizapp.extensions.isValidEmail
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
@@ -29,7 +28,7 @@ class VmAuth @Inject constructor(
     val fragmentEventChannelFlow get() = fragmentEventChannel.receiveAsFlow()
 
     fun checkIfLoggedIn() {
-        if (preferencesRepository.getUserCredentials().isValid) {
+        if (preferencesRepository.getUserCredentials().isGiven) {
             launch {
                 fragmentEventChannel.send(NavigateToHomeScreen)
             }
@@ -37,9 +36,9 @@ class VmAuth @Inject constructor(
     }
 
     //LOGIN STUFF
-    var currentLoginEmail = state.get<String>(LOGIN_EMAIL) ?: ""
+    var currentLoginUserName = state.get<String>(LOGIN_USERNAME) ?: ""
         set(value) {
-            state.set(LOGIN_EMAIL, value)
+            state.set(LOGIN_USERNAME, value)
             field = value
         }
 
@@ -57,20 +56,20 @@ class VmAuth @Inject constructor(
 
     fun onLoginButtonClicked() {
         launch {
-            if (currentLoginEmail.isEmpty() || currentLoginPassword.isEmpty()) {
+            if (currentLoginUserName.isEmpty() || currentLoginPassword.isEmpty()) {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
                 return@launch
             }
 
             val loginResponse = try {
-                backendRepository.loginUser(currentLoginEmail, currentLoginPassword)
+                backendRepository.loginUser(currentLoginUserName, currentLoginPassword)
             } catch (e : Exception) {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileLoggingInUser))
                 return@launch
             }
 
             if(loginResponse.isSuccessful){
-                preferencesRepository.updateUserCredentials(currentLoginEmail,currentLoginPassword)
+                preferencesRepository.updateUserCredentials(currentLoginUserName,currentLoginPassword)
                 fragmentEventChannel.send(NavigateToHomeScreen)
             }
 
@@ -79,7 +78,7 @@ class VmAuth @Inject constructor(
     }
 
     fun onLoginEmailEditTextChanged(newValue: String) {
-        currentLoginEmail = newValue.trim()
+        currentLoginUserName = newValue.trim()
     }
 
     fun onLoginPasswordEditTextChanged(newValue: String) {
@@ -88,9 +87,9 @@ class VmAuth @Inject constructor(
 
 
     //REGISTER STUFF
-    var currentRegisterEmail = state.get<String>(REGISTER_EMAIL) ?: ""
+    var currentRegisterUserName = state.get<String>(REGISTER_USERNAME) ?: ""
         set(value) {
-            state.set(REGISTER_EMAIL, value)
+            state.set(REGISTER_USERNAME, value)
             field = value
         }
 
@@ -120,7 +119,7 @@ class VmAuth @Inject constructor(
 
     fun onRegisterButtonClicked() {
         launch {
-            if (currentRegisterEmail.isEmpty() ||
+            if (currentRegisterUserName.isEmpty() ||
                 currentRegisterCourseOfStudies.isEmpty() ||
                 currentRegisterPassword.isEmpty() ||
                 currentRegisterPasswordConfirm.isEmpty()
@@ -129,7 +128,7 @@ class VmAuth @Inject constructor(
                 return@launch
             }
 
-            if (currentRegisterEmail.containsWhiteSpaces ||
+            if (currentRegisterUserName.containsWhiteSpaces ||
                 currentRegisterCourseOfStudies.containsWhiteSpaces ||
                 currentRegisterPassword.containsWhiteSpaces ||
                 currentRegisterPasswordConfirm.containsWhiteSpaces
@@ -143,21 +142,15 @@ class VmAuth @Inject constructor(
                 return@launch
             }
 
-            if (!currentRegisterEmail.isValidEmail) {
-                fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorEnterValidEmail))
-                return@launch
-            }
-
-
             val registerResponse = try {
-                backendRepository.registerUser(currentRegisterEmail, currentRegisterPassword, currentRegisterCourseOfStudies)
+                backendRepository.registerUser(currentRegisterUserName, currentRegisterPassword, currentRegisterCourseOfStudies)
             } catch (e: Exception) {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileRegisteringUser))
                 return@launch
             }
 
             if (registerResponse.isSuccessful) {
-                fragmentEventChannel.send(SetLoginCredentials(currentRegisterEmail, currentRegisterPassword))
+                fragmentEventChannel.send(SetLoginCredentials(currentRegisterUserName, currentRegisterPassword))
                 fragmentEventChannel.send(SwitchPage(0))
             }
 
@@ -166,7 +159,7 @@ class VmAuth @Inject constructor(
     }
 
     fun onRegisterEmailEditTextChanged(newValue: String) {
-        currentRegisterEmail = newValue.trim()
+        currentRegisterUserName = newValue.trim()
     }
 
     fun onRegisterCourseOfStudiesEditTextChanged(newValue: String) {
@@ -191,9 +184,9 @@ class VmAuth @Inject constructor(
 
 
     companion object {
-        private const val LOGIN_EMAIL = "loginUserEmail"
+        private const val LOGIN_USERNAME = "loginUserEmail"
         private const val LOGIN_PASSWORD = "loginUserPassword"
-        private const val REGISTER_EMAIL = "registerUserEmail"
+        private const val REGISTER_USERNAME = "registerUserEmail"
         private const val REGISTER_COURSE_OF_STUDIES = "registerUserCourseOfStudies"
         private const val REGISTER_PASSWORD = "registerUserPassword"
         private const val REGISTER_PASSWORD_CONFIRM = "registerUserPasswordConfirm"

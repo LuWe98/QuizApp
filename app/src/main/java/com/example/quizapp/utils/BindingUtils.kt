@@ -13,7 +13,6 @@ import java.lang.reflect.ParameterizedType
 @Suppress("UNCHECKED_CAST")
 object BindingUtils {
     private const val INFLATE_METHOD = "inflate"
-    private const val FROM_BUNDLE_METHOD = "fromBundle"
 
     private fun findGenericTypeWith(classInstance: Any, genericClassToFind: Class<*>, relativePosition : Int): Class<*> {
         return try {
@@ -39,11 +38,15 @@ object BindingUtils {
             .invoke(null, LayoutInflater.from(parent.context), parent, false) as T
 
 
-    fun <VM : ViewBinding> BindingActivity<VM>.getBinding(relativePosition : Int = 0) = getBindingWith(this, layoutInflater, relativePosition) as VM
+    fun <VB : ViewBinding> getBinding(fragment: BindingFragment<VB>, relativePosition : Int = 0) =
+        getBindingWith(fragment, fragment.layoutInflater, relativePosition) as VB
 
-    fun <VM : ViewBinding> BindingFragment<VM>.getBinding(relativePosition : Int = 0) = getBindingWith(this, layoutInflater, relativePosition) as VM
+    fun <VB : ViewBinding> getBinding(fragment: BindingDialogFragment<VB>, relativePosition : Int = 0) =
+        getBindingWith(fragment, fragment.layoutInflater, relativePosition) as VB
 
-    fun <VM : ViewBinding> BindingDialogFragment<VM>.getBinding(relativePosition : Int = 0) = getBindingWith(this, layoutInflater, relativePosition) as VM
+    fun <VB : ViewBinding> getBinding(fragment: BindingBottomSheetDialogFragment<VB>, relativePosition : Int = 0) =
+        getBindingWith(fragment, fragment.layoutInflater, relativePosition) as VB
 
-    fun <VM : ViewBinding> BindingBottomSheetDialogFragment<VM>.getBinding(relativePosition : Int = 0) = getBindingWith(this, layoutInflater, relativePosition) as VM
+    fun <VB : ViewBinding> getBinding(activity: BindingActivity<VB>, relativePosition : Int = 0) =
+        getBindingWith(activity, activity.layoutInflater, relativePosition) as VB
 }

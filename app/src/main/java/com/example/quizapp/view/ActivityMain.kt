@@ -12,7 +12,9 @@ import androidx.navigation.NavDestination
 import androidx.navigation.ui.setupWithNavController
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityMainBinding
-import com.example.quizapp.extensions.*
+import com.example.quizapp.extensions.getColor
+import com.example.quizapp.extensions.getThemeColor
+import com.example.quizapp.extensions.setDrawableTintWithRes
 import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmMain
 import com.google.android.material.card.MaterialCardView
@@ -38,6 +40,7 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
         navigator.addOnDestinationChangedListener(this)
     }
 
+
     private fun initViews() {
         binding.apply {
             bottomNavView.setupWithNavController(navigator.navController)
@@ -46,25 +49,16 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
                 bottomNavView.selectedItemId = R.id.fragmentHome
             }
 
-            addCard.setOnClickListener {
-                launch {
-                    try {
-                        val response = viewModel.getTodoKtor(43)
-                        log("Response: $response")
-                    } catch (e : Exception) {
-                        log("EXCEPTION : $e")
-                    }
-                }
-
-                //navigator.navigateToAddQuestionnaireScreen()
-            }
-
             cardSettings.setOnClickListener {
                 bottomNavView.selectedItemId = R.id.fragmentSettings
             }
 
             cardSearch.setOnClickListener {
                 bottomNavView.selectedItemId = R.id.fragmentSearch
+            }
+
+            addCard.setOnClickListener {
+                navigator.navigateToAddQuestionnaireScreen()
             }
         }
     }
@@ -127,3 +121,61 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
         })
     }
 }
+
+
+
+//        result = realmRepo.getQuestionnaireResultsWith("6155d3654e300b57025e3bff")
+//        result.addChangeListener { t, changeSet ->
+//            log("${t.asJSON()}")
+//        }
+
+
+//            val answers1 = MongoAnswer(answerText = "Answer 1")
+//            val answers2 = MongoAnswer(answerText = "Answer 2")
+//            val answers3 = MongoAnswer(answerText = "Answer 3")
+//            val question = MongoQuestion(id = "6155d8508b1b2b6a1bd585bb", questionText = "Question 1", answers = RealmList(answers1, answers2, answers3))
+//            realmRepo.insertTest(MongoQuestionnaire(id = "6155d3654e300b57025e3bff", title = "HANS Peter", questions = RealmList(question)))
+
+//            launchForBackgroundRealm {
+////                    val a = realmRepo.deleteQuestionnaireWithId("6155d3654e300b57025e3bff")
+//                val a = realmRepo.deleteQuestionWith("6155d8508b1b2b6a1bd585bb")
+//                log("HALLO: $a")
+//            }
+////                launch {
+////                    try {
+////                        val response = viewModel.getTodoKtor(43)
+////                        log("Response: $response")
+////                    } catch (e: Exception) {
+////                        log("EXCEPTION : $e")
+////                    }
+////                }
+
+//                launchForBackgroundRealm {
+////                    val a = realmRepo.getQuestionnaireWithId("6155d3654e300b57025e3bff")
+//                    val a = realmRepo.getQuestionWithId("6155d8508b1b2b6a1bd585bb")
+//                    log("HALLO: $a")
+//                }//            val answers1 = MongoAnswer(answerText = "Answer 1")
+////            val answers2 = MongoAnswer(answerText = "Answer 2")
+////            val answers3 = MongoAnswer(answerText = "Answer 3")
+////            val question = MongoQuestion(id = "6155d8508b1b2b6a1bd585bb", questionText = "Question 1", answers = RealmList(answers1, answers2, answers3))
+////            realmRepo.insertTest(MongoQuestionnaire(id = "6155d3654e300b57025e3bff", title = "HANS Peter", questions = RealmList(question)))
+//
+////            launchForBackgroundRealm {
+//////                    val a = realmRepo.deleteQuestionnaireWithId("6155d3654e300b57025e3bff")
+////                val a = realmRepo.deleteQuestionWith("6155d8508b1b2b6a1bd585bb")
+////                log("HALLO: $a")
+////            }
+//////                launch {
+//////                    try {
+//////                        val response = viewModel.getTodoKtor(43)
+//////                        log("Response: $response")
+//////                    } catch (e: Exception) {
+//////                        log("EXCEPTION : $e")
+//////                    }
+//////                }
+//
+//            //                launchForBackgroundRealm {
+//////                    val a = realmRepo.getQuestionnaireWithId("6155d3654e300b57025e3bff")
+////                    val a = realmRepo.getQuestionWithId("6155d8508b1b2b6a1bd585bb")
+////                    log("HALLO: $a")
+////                }

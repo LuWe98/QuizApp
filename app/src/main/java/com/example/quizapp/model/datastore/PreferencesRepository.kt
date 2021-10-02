@@ -22,7 +22,7 @@ class PreferencesRepository @Inject constructor(
         if (exception is IOException) emit(emptyPreferences()) else throw exception
     }
 
-    val themeFlow = dataFlow.map { preferences ->
+    private val themeFlow = dataFlow.map { preferences ->
         preferences[THEME_KEY] ?: AppCompatDelegate.MODE_NIGHT_NO
     }
 
@@ -34,15 +34,17 @@ class PreferencesRepository @Inject constructor(
         }
     }
 
+
+
     val userCredentialsFlow = dataFlow.map { preferences ->
-        val decryptedEmail: String = preferences[USER_EMAIL_KEY]?.let { encryptionUtil.decrypt(it) } ?: ""
+        val decryptedEmail: String = preferences[USER_NAME_KEY]?.let { encryptionUtil.decrypt(it) } ?: ""
         val decryptedPassword: String = preferences[USER_PASSWORD_KEY]?.let { encryptionUtil.decrypt(it) } ?: ""
         UserCredentialsWrapper(decryptedEmail, decryptedPassword)
     }
 
-    suspend fun updateUserCredentials(email: String, password: String) {
+    suspend fun updateUserCredentials(name: String, password: String) {
         dataStore.edit {
-            it[USER_EMAIL_KEY] = encryptionUtil.encrypt(email)
+            it[USER_NAME_KEY] = encryptionUtil.encrypt(name)
             it[USER_PASSWORD_KEY] = encryptionUtil.encrypt(password)
         }
     }
@@ -54,14 +56,14 @@ class PreferencesRepository @Inject constructor(
 
     companion object {
         val THEME_KEY = intPreferencesKey("themeKey")
-        val USER_EMAIL_KEY = stringPreferencesKey("userEmailKey")
+        val USER_NAME_KEY = stringPreferencesKey("userNameKey")
         val USER_PASSWORD_KEY = stringPreferencesKey("userPasswordKey")
     }
 
     data class UserCredentialsWrapper(
-        val email: String,
+        val name: String,
         val password: String
     ) {
-        val isValid get() = email.isNotEmpty() && password.isNotEmpty()
+        val isGiven get() = name.isNotEmpty() && password.isNotEmpty()
     }
 }

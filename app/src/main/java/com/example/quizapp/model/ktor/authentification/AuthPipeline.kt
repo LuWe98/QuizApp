@@ -1,4 +1,4 @@
-package com.example.quizapp.model.ktor
+package com.example.quizapp.model.ktor.authentification
 
 import com.example.quizapp.extensions.log
 import io.ktor.client.*

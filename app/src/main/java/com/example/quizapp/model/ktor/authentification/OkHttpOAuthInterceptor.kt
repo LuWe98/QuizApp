@@ -1,4 +1,4 @@
-package com.example.quizapp.model.ktor
+package com.example.quizapp.model.ktor.authentification
 
 import com.example.quizapp.model.datastore.PreferencesRepository
 import io.ktor.http.*
@@ -23,7 +23,7 @@ class OkHttpOAuthInterceptor @Inject constructor(
             //TODO -> Change Logic to OAuth instead of basic
             return proceed(request().newBuilder().run {
                 preferencesRepository.getUserCredentials().let { credentials ->
-                    header(HttpHeaders.Authorization, Credentials.basic(credentials.email, credentials.password))
+                    header(HttpHeaders.Authorization, Credentials.basic(credentials.name, credentials.password))
                     build()
                 }
             })

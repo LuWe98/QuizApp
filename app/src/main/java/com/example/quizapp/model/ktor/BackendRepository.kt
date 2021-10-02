@@ -1,6 +1,7 @@
 package com.example.quizapp.model.ktor
 
 import com.example.quizapp.model.Todo
+import com.example.quizapp.model.ktor.apiclasses.QuestionnaireApi
 import com.example.quizapp.model.ktor.apiclasses.TodoCalls
 import com.example.quizapp.model.ktor.apiclasses.UserApi
 import io.ktor.client.*
@@ -13,9 +14,9 @@ import javax.inject.Singleton
 
 @Singleton
 class BackendRepository @Inject constructor(
-    private val httpClient: HttpClient,
     private val todoCalls: TodoCalls,
-    private val userApi : UserApi
+    private val userApi : UserApi,
+    private val questionnaireApi: QuestionnaireApi
 ) {
 
     // TO DO CALLS
@@ -26,7 +27,15 @@ class BackendRepository @Inject constructor(
 
 
     // USER CALLS
-    suspend fun loginUser(email : String, password : String) = userApi.loginUser(email, password)
+    suspend fun loginUser(userName : String, password : String) = userApi.loginUser(userName, password)
 
-    suspend fun registerUser(email: String, password: String, courseOfStudies : String) = userApi.registerUser(email, password, courseOfStudies)
+    suspend fun registerUser(userName: String, password: String, courseOfStudies : String) = userApi.registerUser(userName, password, courseOfStudies)
+
+    suspend fun updateUser(newUserName : String) = userApi.updateUser(newUserName)
+
+
+
+    // QUESTIONNAIRES
+    suspend fun getQuestionnairesOfUser() = flow { emit(questionnaireApi.getQuestionnaireOfUser()) }.flowOn(Dispatchers.IO)
+
 }

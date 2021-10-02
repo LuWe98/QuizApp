@@ -10,7 +10,6 @@ object Constants {
     const val GIVEN_ANSWER_TABLE_NAME = "givenAnswerTable"
     const val QUESTION_TABLE_NAME = "questionTable"
     const val QUESTIONARY_TABLE_NAME = "questionaryTable"
-    const val USER_TABLE_NAME = "userTable"
     const val USER_ROLE_TABLE_NAME = "userRoleTable"
     const val SUBJECT_TABLE_NAME = "subjectTable"
     const val FACULTY_TABLE_NAME = "facultyTable"

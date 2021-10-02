@@ -8,7 +8,7 @@ import com.example.quizapp.extensions.makeFullScreen
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-abstract class BindingFullScreenBottomSheetDialogFragment<VM : ViewBinding> : BindingBottomSheetDialogFragment<VM>() {
+abstract class BindingFullScreenBottomSheetDialogFragment<VB : ViewBinding> : BindingBottomSheetDialogFragment<VB>() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         super.onCreateView(inflater, container, savedInstanceState).makeFullScreen()

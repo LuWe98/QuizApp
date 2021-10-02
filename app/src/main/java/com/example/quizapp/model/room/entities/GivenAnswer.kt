@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 
 @Entity(
     tableName = Constants.GIVEN_ANSWER_TABLE_NAME,
-    primaryKeys = ["answerId", "userEmail"],
+    primaryKeys = ["answerId", "userName"],
     foreignKeys = [
         ForeignKey(
             entity = Answer::class,
@@ -26,13 +26,13 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class GivenAnswer(
     val answerId: Long,
-    val userEmail: String,
+    val userName: String,
     val isAnswerSelected: Boolean = false
 ) : EntityMarker {
 
     companion object {
         val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<GivenAnswer> {
-                o, o2 -> o.answerId == o2.answerId && o.userEmail == o2.userEmail
+                o, o2 -> o.answerId == o2.answerId && o.userName == o2.userName
         }
     }
 
