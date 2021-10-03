@@ -23,7 +23,7 @@ class RvaQuestionWithAnswersAddQuestionnaire : BindingListAdapter<QuestionWithAn
     override fun bindViews(binding: RviAddQuestionBinding, item: QuestionWithAnswers, position: Int) {
         binding.apply {
             tvNumber.text = "${position+1})"
-            tvTitle.text = item.question.text
+            tvTitle.text = item.question.questionText
             ivQuestionType.setImageDrawable(if(item.question.isMultipleChoice) R.drawable.ic_check_circle else R.drawable.ic_radio_button)
         }
     }

@@ -19,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
 
-    val questionId : Long by lazy { requireArguments().getLong(QUESTION_ID_KEY) }
+    val questionId : String by lazy { requireArguments().getString(QUESTION_ID_KEY)!! }
     val isMultipleChoice : Boolean by lazy { requireArguments().getBoolean(QUESTION_TYPE_KEY) }
 
     private val vmQuiz : VmQuiz by hiltNavGraphViewModels(R.id.quiz_nav_graph)
@@ -50,7 +50,7 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
 
     private fun initObservers(){
         vmQuiz.getQuestionWithAnswersLiveData(questionId).observe(viewLifecycleOwner) {
-            binding.tvQuestion.text = it.question.text
+            binding.tvQuestion.text = it.question.questionText
             rvaAdapter.submitList(it.answers)
         }
 
@@ -69,7 +69,7 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
 
         fun newInstance(question : Question) = FragmentQuizQuestion().apply {
             arguments = Bundle().apply {
-                putLong(QUESTION_ID_KEY, question.id)
+                putString(QUESTION_ID_KEY, question.id)
                 putBoolean(QUESTION_TYPE_KEY, question.isMultipleChoice)
             }
         }

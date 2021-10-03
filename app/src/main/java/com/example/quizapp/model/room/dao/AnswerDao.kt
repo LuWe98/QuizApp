@@ -15,8 +15,8 @@ abstract class AnswerDao : BaseDao<Answer> {
     abstract val allAnswersFlow : Flow<List<Answer>>
 
     @Query("SELECT * FROM answerTable WHERE questionId =:questionId")
-    abstract fun getAnswersOfQuestion(questionId : Long) : List<Answer>
+    abstract fun getAnswersOfQuestion(questionId : String) : List<Answer>
 
     @Query("SELECT * FROM answerTable WHERE questionId =:questionId")
-    abstract fun getAnswersOfQuestionFlow(questionId : Long) : Flow<List<Answer>>
+    abstract fun getAnswersOfQuestionFlow(questionId : String) : Flow<List<Answer>>
 }

@@ -1,6 +1,6 @@
 package com.example.quizapp.model.ktor.apiclasses
 
-import com.example.quizapp.model.realm.MongoQuestionnaire
+import com.example.quizapp.model.mongo.questionnairedocument.MongoQuestionnaire
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject

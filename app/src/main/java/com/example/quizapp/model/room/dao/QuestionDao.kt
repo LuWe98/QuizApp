@@ -15,12 +15,12 @@ abstract class QuestionDao : BaseDao<Question> {
     @get:Query("SELECT * FROM questionTable")
     abstract val allQuestionsFlow : Flow<List<Question>>
 
-    @Query("SELECT * FROM questionTable WHERE questionnaireId =:questionnaireId ORDER BY position")
-    abstract fun getQuestionsOfQuestionnaire(questionnaireId : Long) : List<Question>
+    @Query("SELECT * FROM questionTable WHERE questionnaireId =:questionnaireId ORDER BY questionPosition")
+    abstract fun getQuestionsOfQuestionnaire(questionnaireId : String) : List<Question>
 
-    @Query("SELECT * FROM questionTable WHERE questionnaireId =:questionnaireId ORDER BY position")
-    abstract fun getQuestionsOfQuestionnaireFlow(questionnaireId : Long) : Flow<List<Question>>
+    @Query("SELECT * FROM questionTable WHERE questionnaireId =:questionnaireId ORDER BY questionPosition")
+    abstract fun getQuestionsOfQuestionnaireFlow(questionnaireId : String) : Flow<List<Question>>
 
     @Query("DELETE FROM questionTable WHERE questionnaireId = :questionnaireId")
-    abstract fun deleteQuestionsWith(questionnaireId: Long)
+    abstract fun deleteQuestionsWith(questionnaireId: String)
 }

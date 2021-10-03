@@ -45,7 +45,7 @@ class RvaAnswerQuiz(
 
     override fun bindViews(binding: RviAnswerQuizBinding, item: Answer, position: Int) {
         binding.apply {
-            tvAnswerText.text = item.text
+            tvAnswerText.text = item.answerText
 
             if (vmQuiz.shouldDisplaySolution || vmQuizQuestionsContainer.shouldDisplayQuestionSolution(item.questionId)) {
                 tvAnswerText.setTextColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)

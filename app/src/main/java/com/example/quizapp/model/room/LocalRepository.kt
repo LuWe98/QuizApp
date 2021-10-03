@@ -55,15 +55,15 @@ class LocalRepository @Inject constructor(
 
     val allQuestionnairesWithQuestions get() = questionnaireDao.getAllQuestionnairesWithQuestions()
 
-    suspend fun getCompleteQuestionnaireWithId(questionnaireId: Long) = questionnaireDao.getCompleteQuestionnaireWithId(questionnaireId)
+    suspend fun getCompleteQuestionnaireWithId(questionnaireId: String) = questionnaireDao.getCompleteQuestionnaireWithId(questionnaireId)
 
-    fun getCompleteQuestionnaireWithIdLiveData(questionnaireId: Long) = questionnaireDao.getCompleteQuestionnaireWithIdLiveData(questionnaireId)
+    fun getCompleteQuestionnaireWithIdLiveData(questionnaireId: String) = questionnaireDao.getCompleteQuestionnaireWithIdLiveData(questionnaireId)
 
     val allQuestionnairesWithQuestionsPagingSource get() = questionnaireDao.getAllQuestionnairesWithQuestionsPagingSource()
 
     val allQuestionnairesWithQuestionsLiveData get() = questionnaireDao.getAllQuestionnairesWithQuestionsLiveData()
 
-    fun completeQuestionnaireStateFlow(questionnaireId: Long) = questionnaireDao.getCompleteQuestionnaireWithIdFlow(questionnaireId)
+    fun completeQuestionnaireStateFlow(questionnaireId: String) = questionnaireDao.getCompleteQuestionnaireWithIdFlow(questionnaireId)
         .stateIn(applicationScope, SharingStarted.WhileSubscribed(),  null)
 
 
@@ -72,9 +72,9 @@ class LocalRepository @Inject constructor(
 
     val getAllQuestionsFlow get() = questionDao.allQuestionsFlow
 
-    fun getQuestionsOfQuestionnaire(questionnaireId: Long) = questionDao.getQuestionsOfQuestionnaireFlow(questionnaireId)
+    fun getQuestionsOfQuestionnaire(questionnaireId: String) = questionDao.getQuestionsOfQuestionnaireFlow(questionnaireId)
 
-    fun deleteQuestionsWith(questionnaireId: Long) {
+    fun deleteQuestionsWith(questionnaireId: String) {
         questionDao.deleteQuestionsWith(questionnaireId)
     }
 
@@ -84,5 +84,5 @@ class LocalRepository @Inject constructor(
 
     val allAnswersFlow get() = answerDao.allAnswersFlow
 
-    fun getAnswersOfQuestion(questionId: Long) = answerDao.getAnswersOfQuestionFlow(questionId)
+    fun getAnswersOfQuestion(questionId: String) = answerDao.getAnswersOfQuestionFlow(questionId)
 }

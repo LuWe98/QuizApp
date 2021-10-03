@@ -30,7 +30,7 @@ class VmQuiz @Inject constructor(
 
     val completeQuestionnaireLiveData = localRepository.getCompleteQuestionnaireWithIdLiveData(args.questionnaireId).distinctUntilChanged()
 
-    fun getQuestionWithAnswersLiveData(questionId: Long) = completeQuestionnaireLiveData.map { it.getQuestionWithAnswers(questionId) }.distinctUntilChanged()
+    fun getQuestionWithAnswersLiveData(questionId: String) = completeQuestionnaireLiveData.map { it.getQuestionWithAnswers(questionId) }.distinctUntilChanged()
 
     val completeQuestionnaire get() = completeQuestionnaireLiveData.value
 

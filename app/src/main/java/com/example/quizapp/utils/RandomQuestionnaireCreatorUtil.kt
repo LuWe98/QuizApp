@@ -16,10 +16,10 @@ object RandomQuestionnaireCreatorUtil {
     ) {
 
         generateQuestionnaires(questionnaireAmount).forEach { questionnaire ->
-            localRepo.insert(questionnaire)?.let { questionnaireId ->
-                generateQuestions(maxQuestionsPerQuestionnaire, questionnaireId).forEach { question ->
-                    localRepo.insert(question)?.let { questionId ->
-                        localRepo.insert(generateAnswers(maxAnswersPerQuestion, questionId).toList())
+            localRepo.insert(questionnaire)?.let {
+                generateQuestions(maxQuestionsPerQuestionnaire, questionnaire.id).forEach { question ->
+                    localRepo.insert(question)?.let {
+                        localRepo.insert(generateAnswers(maxAnswersPerQuestion, question.id).toList())
                     }
                 }
             }
@@ -27,15 +27,15 @@ object RandomQuestionnaireCreatorUtil {
     }
 
     private fun generateQuestionnaires(questionnaireAmount: Int) = Array(questionnaireAmount) {
-        Questionnaire(0, "Questionnaire $it", randomAuthorName, randomFaculty, randomCourseOfStudies, randomSubject)
+        Questionnaire(title =  "Questionnaire $it", author = randomAuthorName, courseOfStudies = randomCourseOfStudies, faculty = randomFaculty, subject = randomSubject)
     }
 
-    private fun generateQuestions(maxQuestionsPerQuestionnaire: Int, questionnaireId : Long) = Array(Random.nextInt(maxQuestionsPerQuestionnaire) + 1) {
-        Question(0, questionnaireId,"Question $it", Random.nextBoolean(), it)
+    private fun generateQuestions(maxQuestionsPerQuestionnaire: Int, questionnaireId : String) = Array(Random.nextInt(maxQuestionsPerQuestionnaire) + 1) {
+        Question(questionnaireId = questionnaireId, questionText = "Question $it", isMultipleChoice = Random.nextBoolean(), questionPosition = it)
     }
 
-    private fun generateAnswers(maxAnswersPerQuestion: Int, questionId : Long) = Array(Random.nextInt(maxAnswersPerQuestion - 2) + 2) {
-        Answer(0, questionId,"Answer $it", Random.nextBoolean(), false)
+    private fun generateAnswers(maxAnswersPerQuestion: Int, questionId : String) = Array(Random.nextInt(maxAnswersPerQuestion - 2) + 2) {
+        Answer(questionId = questionId, answerText = "Answer $it", isAnswerCorrect = Random.nextBoolean(), isAnswerSelected = false)
     }
 
     private val randomAuthorName : String get() = authorNamePool[Random.nextInt(authorNamePool.size)]

@@ -16,9 +16,9 @@ data class QuestionnaireWithQuestionsAndAnswers(
 
     val questions: List<Question> get() = questionsWithAnswers.map { item -> item.question }
 
-    fun getQuestionWithAnswers(questionId: Long): QuestionWithAnswers = questionsWithAnswers.first { qwa -> qwa.question.id == questionId }
+    fun getQuestionWithAnswers(questionId: String): QuestionWithAnswers = questionsWithAnswers.first { qwa -> qwa.question.id == questionId }
 
-    fun getAnswersForQuestion(questionId: Long): List<Answer> = getQuestionWithAnswers(questionId).answers
+    fun getAnswersForQuestion(questionId: String): List<Answer> = getQuestionWithAnswers(questionId).answers
 
     val questionsAmount: Int get() = questionsWithAnswers.size
 

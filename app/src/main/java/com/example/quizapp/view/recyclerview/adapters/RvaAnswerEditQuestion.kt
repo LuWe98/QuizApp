@@ -60,7 +60,7 @@ class RvaAnswerEditQuestion(
     override fun bindViews(binding: RviAnswerEditBinding, item: Answer, position: Int) {
         binding.apply {
             val lastSelectionPos = etAnswer.selectionStart
-            etAnswer.setText(item.text)
+            etAnswer.setText(item.answerText)
             etAnswer.setSelection(lastSelectionPos)
             etAnswer.setTextColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.black)
             ivRing.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)

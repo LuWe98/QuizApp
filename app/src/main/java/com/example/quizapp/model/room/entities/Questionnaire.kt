@@ -5,18 +5,19 @@ import androidx.room.PrimaryKey
 import com.example.quizapp.utils.Constants
 import com.example.quizapp.utils.DiffUtilHelper
 import kotlinx.parcelize.Parcelize
+import org.bson.types.ObjectId
 
 @Entity(
     tableName = Constants.QUESTIONARY_TABLE_NAME
 )
 @Parcelize
 data class Questionnaire(
-    @PrimaryKey(autoGenerate = true) val id: Long,
-    val title: String,
-    val author: String,
-    val faculty: String,
-    val courseOfStudies: String,
-    val subject: String
+    @PrimaryKey var id: String = ObjectId().toString(),
+    var title: String,
+    var author: String,
+    var courseOfStudies: String,
+    var faculty: String,
+    var subject: String
 ) : EntityMarker {
 
     companion object {

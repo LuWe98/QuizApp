@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import com.example.quizapp.utils.Constants
 import com.example.quizapp.utils.DiffUtilHelper
 import kotlinx.parcelize.Parcelize
+import org.bson.types.ObjectId
 
 @Entity(
     tableName = Constants.FACULTY_TABLE_NAME,
@@ -15,7 +16,7 @@ import kotlinx.parcelize.Parcelize
 )
 @Parcelize
 data class Faculty(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey val id: String = ObjectId().toString(),
     val name: String
 ) : EntityMarker {
 

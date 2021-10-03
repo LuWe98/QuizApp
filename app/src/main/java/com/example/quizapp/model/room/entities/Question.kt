@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 import com.example.quizapp.utils.Constants
 import com.example.quizapp.utils.DiffUtilHelper
 import kotlinx.parcelize.Parcelize
+import org.bson.types.ObjectId
 
 @Entity(
     tableName = Constants.QUESTION_TABLE_NAME,
@@ -25,11 +26,11 @@ import kotlinx.parcelize.Parcelize
 )
 @Parcelize
 data class Question(
-    @PrimaryKey(autoGenerate = true) val id: Long,
-    val questionnaireId: Long,
-    val text: String,
-    val isMultipleChoice: Boolean = true,
-    val position: Int
+    @PrimaryKey var id: String = ObjectId().toString(),
+    var questionnaireId: String,
+    var questionText: String,
+    var isMultipleChoice: Boolean = true,
+    var questionPosition: Int
 ) : EntityMarker {
 
     companion object {

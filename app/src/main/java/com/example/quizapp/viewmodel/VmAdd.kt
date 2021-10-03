@@ -27,7 +27,7 @@ class VmAdd @Inject constructor(
 
     val fragmentAddQuestionnaireEventChannelFlow get() = fragmentAddQuestionnaireEventChannel.receiveAsFlow()
 
-    private var qId = state.get<Long>(QUESTIONNAIRE_ID) ?: 0
+    private var qId = state.get<String>(QUESTIONNAIRE_ID) ?: ""
         set(value) {
             state.set(QUESTIONNAIRE_ID, value)
             field = value
@@ -60,14 +60,14 @@ class VmAdd @Inject constructor(
     private val questionsWithAnswersLiveDataValue get() = questionsWithAnswersMutableLiveData.value!!
 
     init {
-        if (args.questionnaireId != 0L) {
+        args.questionnaireId?.let { id ->
             runBlocking {
-                localRepository.getCompleteQuestionnaireWithId(args.questionnaireId).apply {
-                    qId = questionnaire.id
+                localRepository.getCompleteQuestionnaireWithId(id).apply {
+                    qId = id
                     qTitle = questionnaire.title
                     qCourseOfStudies = questionnaire.courseOfStudies
                     qSubject = questionnaire.subject
-                    setQuestionWithAnswers(questionsWithAnswers.sortedBy { it.question.position }.toMutableList())
+                    setQuestionWithAnswers(questionsWithAnswers.sortedBy { it.question.questionPosition }.toMutableList())
                 }
             }
         }
@@ -116,7 +116,7 @@ class VmAdd @Inject constructor(
 
     fun onQuestionItemDragReleased(questions: List<QuestionWithAnswers>) {
         questionsWithAnswersMutableLiveData.value = questions.mapIndexed { index, qwa ->
-            qwa.copy(question = qwa.question.copy(position = index))
+            qwa.copy(question = qwa.question.copy(questionPosition = index))
         }.also {
             setQuestionWithAnswers(it)
         }.toMutableList()
@@ -159,8 +159,8 @@ class VmAdd @Inject constructor(
             localRepository.deleteQuestionsWith(qId)
             localRepository.insert(questionnaire)?.let { questionnaireId ->
                 questionsWithAnswersLiveDataValue.forEachIndexed { index, qwa ->
-                    localRepository.insert(qwa.question.copy(id = 0, questionnaireId = questionnaireId, position = index))?.let {  questionId ->
-                        localRepository.insert(qwa.answers.map { it.copy(id = 0, questionId = questionId, isAnswerSelected = false) })
+                    localRepository.insert(qwa.question.copy(questionnaireId = qId, questionPosition = index))?.let {  questionId ->
+                        localRepository.insert(qwa.answers.map { it.copy(questionId = qwa.question.id, isAnswerSelected = false) })
                     }
                 }
             }
@@ -170,7 +170,7 @@ class VmAdd @Inject constructor(
     }
 
     private fun isInputValid() : Boolean{
-        var position = questionsWithAnswersLiveDataValue.indexOfFirst { it.question.text.isEmpty() }
+        var position = questionsWithAnswersLiveDataValue.indexOfFirst { it.question.questionText.isEmpty() }
         if (position != RecyclerView.NO_POSITION) {
             launch { fragmentAddQuestionnaireEventChannel.send(ShowQuestionDoesNotHaveTitleToast(position)) }
             return false

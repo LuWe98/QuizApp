@@ -48,8 +48,7 @@ class Navigator @Inject constructor(
         navController.popBackStack()
     }
 
-
-    fun navigateToAddQuestionnaireScreen(questionnaireId: Long = NO_QUESTIONNAIRE_ID) {
+    fun navigateToAddQuestionnaireScreen(questionnaireId: String? = null) {
         navController.navigate(MainNavGraphDirections.actionGlobalGoToAddQuestionnaireScreen(questionnaireId))
     }
 
@@ -57,7 +56,7 @@ class Navigator @Inject constructor(
         navController.navigate(FragmentAddQuestionnaireDirections.actionFragmentAddQuestionnaireToFragmentAddQuestion(questionPosition, questionWithAnswers))
     }
 
-    fun navigateToQuizScreen(questionnaireId: Long) {
+    fun navigateToQuizScreen(questionnaireId: String) {
         navController.navigate(MainNavGraphDirections.actionGlobalGoToQuizScreen(questionnaireId))
     }
 
@@ -91,7 +90,7 @@ class Navigator @Inject constructor(
 
 
     companion object {
-        const val NO_QUESTIONNAIRE_ID = 0L
+        const val NO_QUESTIONNAIRE_ID = "NO_ID"
         const val FIRST_QUESTION_POSITION = 0
     }
 }

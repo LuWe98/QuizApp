@@ -8,11 +8,11 @@ import androidx.room.Room
 import com.example.quizapp.R
 import com.example.quizapp.model.datastore.EncryptionUtil
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.ktor.authentification.OkHttpBasicAuthInterceptor
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.apiclasses.QuestionnaireApi
 import com.example.quizapp.model.ktor.apiclasses.TodoCalls
 import com.example.quizapp.model.ktor.apiclasses.UserApi
+import com.example.quizapp.model.ktor.authentification.OkHttpBasicAuthInterceptor
 import com.example.quizapp.model.room.LocalDatabase
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.utils.ConnectivityHelper
@@ -136,9 +136,6 @@ object AppModule {
     @Singleton
     fun provideConnectivityHelper(@ApplicationContext context: Context) = ConnectivityHelper(context)
 
-
-    //TODO -> Noch einbauen
-    fun provideRealmDatabase() = null
 
 
 //    Ktor Different Settings

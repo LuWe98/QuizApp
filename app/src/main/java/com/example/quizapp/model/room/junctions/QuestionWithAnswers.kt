@@ -36,8 +36,8 @@ data class QuestionWithAnswers(
 
         fun createEmptyQuestionWithAnswers() : QuestionWithAnswers {
             val randomId = System.currentTimeMillis()
-            val randomPosition = randomId.toString().substring(randomId.toString().length - 10).toInt()
-            val emptyQuestion = Question(randomId * -1L, 0L, "", true, randomPosition)
+            val randomPosition = randomId.toString().substring(randomId.toString().length - 8).toInt()
+            val emptyQuestion = Question(questionnaireId =  "", questionText =  "", isMultipleChoice =  true, questionPosition = randomPosition)
             return QuestionWithAnswers(emptyQuestion, mutableListOf())
         }
     }

@@ -3,13 +3,14 @@ package com.example.quizapp.model.room.entities
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import androidx.room.PrimaryKey
 import com.example.quizapp.utils.Constants
 import com.example.quizapp.utils.DiffUtilHelper
 import kotlinx.parcelize.Parcelize
+import org.bson.types.ObjectId
 
 @Entity(
     tableName = Constants.GIVEN_ANSWER_TABLE_NAME,
-    primaryKeys = ["answerId", "userName"],
     foreignKeys = [
         ForeignKey(
             entity = Answer::class,
@@ -25,15 +26,11 @@ import kotlinx.parcelize.Parcelize
 )
 @Parcelize
 data class GivenAnswer(
-    val answerId: Long,
-    val userName: String,
-    val isAnswerSelected: Boolean = false
+    @PrimaryKey var answerId: String = ObjectId().toString(),
+    var isAnswerSelected: Boolean = false
 ) : EntityMarker {
 
     companion object {
-        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<GivenAnswer> {
-                o, o2 -> o.answerId == o2.answerId && o.userName == o2.userName
-        }
+        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<GivenAnswer> { o, o2 -> o.answerId == o2.answerId }
     }
-
 }

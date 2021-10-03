@@ -19,5 +19,5 @@ class VmHome @Inject constructor(
 
     val allQuestionnairesWithQuestionsPagingData get() = getPagingDataAsLiveData(localRepository.allQuestionnairesWithQuestionsPagingSource).distinctUntilChanged()
 
-    suspend fun allQuestionnairesForUser() = backendRepository.getQuestionnairesOfUser().distinctUntilChanged()
+    suspend fun allQuestionnairesForUser() = backendRepository.getQuestionnairesOfUser()
 }

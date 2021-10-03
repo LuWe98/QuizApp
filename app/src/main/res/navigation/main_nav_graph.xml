@@ -46,7 +46,7 @@
             app:startDestination="@id/fragmentQuizOverview">
         <argument
                 android:name="questionnaireId"
-                app:argType="long" />
+                app:argType="string"/>
 
         <fragment
                 android:id="@+id/fragmentQuizOverview"
@@ -77,7 +77,8 @@
             app:startDestination="@id/fragmentAddQuestionnaire">
         <argument
                 android:name="questionnaireId"
-                app:argType="long"/>
+                app:argType="string"
+                app:nullable="true"/>
 
         <fragment
                 android:id="@+id/fragmentAddQuestionnaire"

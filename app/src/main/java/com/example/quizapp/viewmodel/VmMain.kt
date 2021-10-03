@@ -25,11 +25,5 @@ class VmMain @Inject constructor(
         preferencesRepository.getTheme()
     }
 
-    fun getTodosKtor() = backendRepository.getTodos()
-
-    suspend fun getTodoKtor(todoId: Int) = backendRepository.getTodo(todoId)
-
-    suspend fun loginUser(email: String, password: String) = backendRepository.loginUser(email, password)
-
-    suspend fun registerUser(email: String, username: String, password: String) = backendRepository.registerUser(email, username, password)
+    suspend fun getQuestionnairesOfUser() = backendRepository.getQuestionnairesOfUser()
 }

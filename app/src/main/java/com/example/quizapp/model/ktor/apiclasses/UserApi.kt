@@ -19,7 +19,6 @@ class UserApi @Inject constructor(
             body = LoginUserRequest(email, password)
         }
 
-
     suspend fun registerUser(email: String, password: String, courseOfStudies : String): RegisterResponse<Nothing> =
         client.post("/user/register") {
             body = RegisterUserRequest(email, password, courseOfStudies)
@@ -29,4 +28,6 @@ class UserApi @Inject constructor(
         client.post("/user/update") {
             body = UpdateUserRequest(newUserName)
         }
+
+    suspend fun deleteUser(): Boolean = client.post("/user/delete")
 }

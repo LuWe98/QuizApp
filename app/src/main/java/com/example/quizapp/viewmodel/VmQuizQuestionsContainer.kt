@@ -33,13 +33,13 @@ class VmQuizQuestionsContainer @Inject constructor(
             field = value
         }
 
-    private val questionIdListLiveData = state.getLiveData<MutableList<Long>>(QUESTION_ID_LIST_KEY, mutableListOf())
+    private val questionIdListLiveData = state.getLiveData<MutableList<String>>(QUESTION_ID_LIST_KEY, mutableListOf())
 
     private val questionIdList get() = questionIdListLiveData.value!!
 
-    fun questionIdLiveData(questionId: Long) = questionIdListLiveData.map { it.firstOrNull { id -> id == questionId } }.distinctUntilChanged()
+    fun questionIdLiveData(questionId: String) = questionIdListLiveData.map { it.firstOrNull { id -> id == questionId } }.distinctUntilChanged()
 
-    private fun addOrRemoveQuestionToDisplaySolution(questionId : Long){
+    private fun addOrRemoveQuestionToDisplaySolution(questionId : String){
         if(questionIdList.contains(questionId)){
             questionIdList.remove(questionId)
         } else {
@@ -48,7 +48,7 @@ class VmQuizQuestionsContainer @Inject constructor(
         state.set(QUESTION_ID_LIST_KEY, questionIdList)
     }
 
-    fun shouldDisplayQuestionSolution(questionId: Long) = questionIdList.contains(questionId)
+    fun shouldDisplayQuestionSolution(questionId: String) = questionIdList.contains(questionId)
 
 
     fun onViewPagerPageSelected(position : Int){

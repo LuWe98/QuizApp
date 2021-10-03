@@ -19,4 +19,7 @@ object Constants {
     // Für physisches Handy 192.168.178.78 -> CMD -> ipconfig
     // Für Emulator Handy 10.0.2.2
     const val BACKEND_URL = "http://192.168.178.78:8080"
+
+
+    const val REALM_NAME = "quizRealm"
 }

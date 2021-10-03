@@ -36,7 +36,7 @@ class PreferencesRepository @Inject constructor(
 
 
 
-    val userCredentialsFlow = dataFlow.map { preferences ->
+    private val userCredentialsFlow = dataFlow.map { preferences ->
         val decryptedEmail: String = preferences[USER_NAME_KEY]?.let { encryptionUtil.decrypt(it) } ?: ""
         val decryptedPassword: String = preferences[USER_PASSWORD_KEY]?.let { encryptionUtil.decrypt(it) } ?: ""
         UserCredentialsWrapper(decryptedEmail, decryptedPassword)
@@ -45,6 +45,18 @@ class PreferencesRepository @Inject constructor(
     suspend fun updateUserCredentials(name: String, password: String) {
         dataStore.edit {
             it[USER_NAME_KEY] = encryptionUtil.encrypt(name)
+            it[USER_PASSWORD_KEY] = encryptionUtil.encrypt(password)
+        }
+    }
+
+    suspend fun updateUserName(name: String) {
+        dataStore.edit {
+            it[USER_NAME_KEY] = encryptionUtil.encrypt(name)
+        }
+    }
+
+    suspend fun updateUserPassword(password: String) {
+        dataStore.edit {
             it[USER_PASSWORD_KEY] = encryptionUtil.encrypt(password)
         }
     }

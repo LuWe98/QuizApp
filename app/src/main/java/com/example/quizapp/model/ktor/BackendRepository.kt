@@ -36,6 +36,6 @@ class BackendRepository @Inject constructor(
 
 
     // QUESTIONNAIRES
-    suspend fun getQuestionnairesOfUser() = flow { emit(questionnaireApi.getQuestionnaireOfUser()) }.flowOn(Dispatchers.IO)
+    suspend fun getQuestionnairesOfUser() = questionnaireApi.getQuestionnaireOfUser()
 
 }

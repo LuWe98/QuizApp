@@ -14,7 +14,7 @@ class RvaQuestionWithAnswersQuiz(
     private val vmQuiz: VmQuiz
 ) : BindingListAdapter<QuestionWithAnswers, RviQuestionQuizBinding>(QuestionWithAnswers.DIFF_CALLBACK) {
 
-    var onItemClick: ((Int, Long, CardView) -> (Unit))? = null
+    var onItemClick: ((Int, String, CardView) -> (Unit))? = null
 
     override fun initListeners(binding: RviQuestionQuizBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
@@ -28,7 +28,7 @@ class RvaQuestionWithAnswersQuiz(
     override fun bindViews(binding: RviQuestionQuizBinding, item: QuestionWithAnswers, position: Int) {
         binding.apply {
             tvNumber.text = "${position + 1})"
-            tvTitle.text = item.question.text
+            tvTitle.text = item.question.questionText
 
             val tint: Int
 

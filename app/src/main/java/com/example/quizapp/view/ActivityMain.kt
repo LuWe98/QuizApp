@@ -12,9 +12,8 @@ import androidx.navigation.NavDestination
 import androidx.navigation.ui.setupWithNavController
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityMainBinding
-import com.example.quizapp.extensions.getColor
-import com.example.quizapp.extensions.getThemeColor
-import com.example.quizapp.extensions.setDrawableTintWithRes
+import com.example.quizapp.extensions.*
+import com.example.quizapp.model.mongo.MongoMapper
 import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmMain
 import com.google.android.material.card.MaterialCardView
@@ -58,7 +57,18 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
             }
 
             addCard.setOnClickListener {
-                navigator.navigateToAddQuestionnaireScreen()
+                //navigator.navigateToAddQuestionnaireScreen()
+
+                launch {
+                    val questionnaires = viewModel.getQuestionnairesOfUser()
+                    questionnaires.forEach {
+                        MongoMapper.mapMongoObjectToSqlEntities(it).let { (questionnaire, questions, answers) ->
+                            log("Questionnaire: $questionnaire")
+                            log("Questions: $questions")
+                            log("Answers: $answers")
+                        }
+                    }
+                }
             }
         }
     }

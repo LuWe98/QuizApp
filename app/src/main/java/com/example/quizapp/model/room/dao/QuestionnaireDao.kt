@@ -40,13 +40,13 @@ abstract class QuestionnaireDao : BaseDao<Questionnaire> {
 
     @Transaction
     @Query("SELECT * FROM questionaryTable WHERE id = :questionnaireId")
-    abstract suspend fun getCompleteQuestionnaireWithId(questionnaireId: Long) : QuestionnaireWithQuestionsAndAnswers
+    abstract suspend fun getCompleteQuestionnaireWithId(questionnaireId: String) : QuestionnaireWithQuestionsAndAnswers
 
     @Transaction
     @Query("SELECT * FROM questionaryTable WHERE id = :questionnaireId")
-    abstract fun getCompleteQuestionnaireWithIdLiveData(questionnaireId: Long) : LiveData<QuestionnaireWithQuestionsAndAnswers>
+    abstract fun getCompleteQuestionnaireWithIdLiveData(questionnaireId: String) : LiveData<QuestionnaireWithQuestionsAndAnswers>
 
     @Transaction
     @Query("SELECT * FROM questionaryTable WHERE id = :questionnaireId")
-    abstract fun getCompleteQuestionnaireWithIdFlow(questionnaireId: Long) : Flow<QuestionnaireWithQuestionsAndAnswers>
+    abstract fun getCompleteQuestionnaireWithIdFlow(questionnaireId: String) : Flow<QuestionnaireWithQuestionsAndAnswers>
 }

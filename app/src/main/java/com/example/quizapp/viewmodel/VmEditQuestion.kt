@@ -33,7 +33,7 @@ class VmEditQuestion @Inject constructor(private val state: SavedStateHandle) : 
             field = value
         }
 
-    var questionTitle = state.get<String>(QUESTION_TITLE) ?: question.text
+    var questionTitle = state.get<String>(QUESTION_TITLE) ?: question.questionText
         set(value) {
             state.set(QUESTION_TITLE, value)
             field = value
@@ -77,7 +77,7 @@ class VmEditQuestion @Inject constructor(private val state: SavedStateHandle) : 
 
     fun onAnswerItemTextChanged(position: Int, newText: String) {
         answersMutableLiveDataValue.apply {
-            set(position, answersMutableLiveDataValue[position].copy(text = newText))
+            set(position, answersMutableLiveDataValue[position].copy(answerText = newText))
         }.also {
             setAnswerList(it)
         }
@@ -119,14 +119,14 @@ class VmEditQuestion @Inject constructor(private val state: SavedStateHandle) : 
             return
         }
 
-        if (answersMutableLiveDataValue.any { it.text.isEmpty() }) {
+        if (answersMutableLiveDataValue.any { it.answerText.isEmpty() }) {
             launch {
                 fragmentEditQuestionEventChannel.send(ShowSomeAnswersAreEmptyToast)
             }
             return
         }
 
-        val updatedQuestion = question.copy(text = questionTitle, isMultipleChoice = isMultipleChoice)
+        val updatedQuestion = question.copy(questionText = questionTitle, isMultipleChoice = isMultipleChoice)
         val updatedAnswers = answersMutableLiveDataValue.apply { mapIndexed { index, answer -> answer.copy(position = index) } }
         val updatedQuestionWithAnswers = questionWithAnswers.copy(question = updatedQuestion, answers = updatedAnswers)
         launch {

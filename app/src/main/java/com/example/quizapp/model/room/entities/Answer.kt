@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 import com.example.quizapp.utils.Constants
 import com.example.quizapp.utils.DiffUtilHelper
 import kotlinx.parcelize.Parcelize
+import org.bson.types.ObjectId
 
 @Entity(
     tableName = Constants.ANSWER_TABLE_NAME,
@@ -25,18 +26,18 @@ import kotlinx.parcelize.Parcelize
 )
 @Parcelize
 data class Answer(
-    @PrimaryKey(autoGenerate = true) val id: Long,
-    val questionId: Long,
-    val text: String,
-    val isAnswerCorrect: Boolean,
+    @PrimaryKey var id: String = ObjectId().toString(),
+    var questionId: String,
+    var answerText: String,
+    var isAnswerCorrect: Boolean,
     var isAnswerSelected: Boolean = false,
-    val position: Int = 0
+    var position: Int = 0
 ) : EntityMarker {
 
     companion object {
         val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<Answer> { o, o2 ->  o.id == o2.id}
 
-        fun createEmptyAnswer(position: Int) = Answer(System.currentTimeMillis() * -1, -1, "", isAnswerCorrect = false, position = position)
+        fun createEmptyAnswer(position: Int) = Answer(questionId= "", answerText = "", isAnswerCorrect = false, position = position)
     }
 
 }
