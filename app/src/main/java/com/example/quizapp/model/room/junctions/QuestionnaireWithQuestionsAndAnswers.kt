@@ -1,11 +1,11 @@
 package com.example.quizapp.model.room.junctions
 
-import androidx.recyclerview.widget.DiffUtil
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.model.room.entities.Questionnaire
+import com.example.quizapp.utils.DiffUtilHelper
 
 data class QuestionnaireWithQuestionsAndAnswers(
     @Embedded
@@ -33,11 +33,6 @@ data class QuestionnaireWithQuestionsAndAnswers(
     val correctQuestionsPercentage get() = (correctQuestionsAmount*100/questionsAmount.toFloat()).toInt()
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<QuestionnaireWithQuestionsAndAnswers>(){
-            override fun areItemsTheSame(oldItem: QuestionnaireWithQuestionsAndAnswers, newItem: QuestionnaireWithQuestionsAndAnswers) =
-                oldItem.questionnaire.id == newItem.questionnaire.id
-            override fun areContentsTheSame(oldItem: QuestionnaireWithQuestionsAndAnswers, newItem: QuestionnaireWithQuestionsAndAnswers) =
-                oldItem == newItem
-        }
+        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<QuestionnaireWithQuestionsAndAnswers> { old, new -> old.questionnaire.id == new.questionnaire.id }
     }
 }

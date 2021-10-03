@@ -54,7 +54,6 @@ class EncryptionUtil
         val generatedSecretKey = factory.generateSecret(pbeKeySpec)
         val secretKeySpec = SecretKeySpec(generatedSecretKey.encoded, KeyProperties.KEY_ALGORITHM_AES)
         val ivParamSpec = IvParameterSpec(Base64.decode(initialisationVector, BASE_64_FLAGS))
-
         init(cipherMode, secretKeySpec, ivParamSpec)
         doFinal(input)
     }

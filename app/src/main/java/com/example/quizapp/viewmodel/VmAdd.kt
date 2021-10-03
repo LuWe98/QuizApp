@@ -157,9 +157,9 @@ class VmAdd @Inject constructor(
                 subject = qSubject)
 
             localRepository.deleteQuestionsWith(qId)
-            localRepository.insert(questionnaire)?.let { questionnaireId ->
+            localRepository.insert(questionnaire)?.let {
                 questionsWithAnswersLiveDataValue.forEachIndexed { index, qwa ->
-                    localRepository.insert(qwa.question.copy(questionnaireId = qId, questionPosition = index))?.let {  questionId ->
+                    localRepository.insert(qwa.question.copy(questionnaireId = qId, questionPosition = index))?.let {
                         localRepository.insert(qwa.answers.map { it.copy(questionId = qwa.question.id, isAnswerSelected = false) })
                     }
                 }

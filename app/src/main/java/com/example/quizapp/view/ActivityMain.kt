@@ -13,7 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityMainBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.mongo.MongoMapper
+import com.example.quizapp.model.ktor.mongo.MongoMapper
 import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmMain
 import com.google.android.material.card.MaterialCardView
@@ -60,12 +60,17 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
                 //navigator.navigateToAddQuestionnaireScreen()
 
                 launch {
-                    val questionnaires = viewModel.getQuestionnairesOfUser()
-                    questionnaires.forEach {
-                        MongoMapper.mapMongoObjectToSqlEntities(it).let { (questionnaire, questions, answers) ->
-                            log("Questionnaire: $questionnaire")
-                            log("Questions: $questions")
-                            log("Answers: $answers")
+                    val mongoQuestionnaires = viewModel.getQuestionnairesOfUser()
+                    val qwa = mongoQuestionnaires.map { MongoMapper.mapMongoObjectToSqlEntities(it) }
+                    val remappedMongoQuestionnaires = qwa.map { MongoMapper.mapSqlEntitiesToMongoObject(it) }
+
+                    log("IS SAME? ${mongoQuestionnaires == remappedMongoQuestionnaires}")
+
+                    mongoQuestionnaires.forEach {
+                        MongoMapper.mapMongoObjectToSqlEntities(it).let {
+                            log("Questionnaire: ${it.questionnaire}")
+                            log("Questions: ${it.questionsWithAnswers.map { qwa -> qwa.question }}")
+                            log("Answers: ${it.questionsWithAnswers.map { qwa -> qwa.answers }}")
                         }
                     }
                 }
@@ -131,61 +136,3 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
         })
     }
 }
-
-
-
-//        result = realmRepo.getQuestionnaireResultsWith("6155d3654e300b57025e3bff")
-//        result.addChangeListener { t, changeSet ->
-//            log("${t.asJSON()}")
-//        }
-
-
-//            val answers1 = MongoAnswer(answerText = "Answer 1")
-//            val answers2 = MongoAnswer(answerText = "Answer 2")
-//            val answers3 = MongoAnswer(answerText = "Answer 3")
-//            val question = MongoQuestion(id = "6155d8508b1b2b6a1bd585bb", questionText = "Question 1", answers = RealmList(answers1, answers2, answers3))
-//            realmRepo.insertTest(MongoQuestionnaire(id = "6155d3654e300b57025e3bff", title = "HANS Peter", questions = RealmList(question)))
-
-//            launchForBackgroundRealm {
-////                    val a = realmRepo.deleteQuestionnaireWithId("6155d3654e300b57025e3bff")
-//                val a = realmRepo.deleteQuestionWith("6155d8508b1b2b6a1bd585bb")
-//                log("HALLO: $a")
-//            }
-////                launch {
-////                    try {
-////                        val response = viewModel.getTodoKtor(43)
-////                        log("Response: $response")
-////                    } catch (e: Exception) {
-////                        log("EXCEPTION : $e")
-////                    }
-////                }
-
-//                launchForBackgroundRealm {
-////                    val a = realmRepo.getQuestionnaireWithId("6155d3654e300b57025e3bff")
-//                    val a = realmRepo.getQuestionWithId("6155d8508b1b2b6a1bd585bb")
-//                    log("HALLO: $a")
-//                }//            val answers1 = MongoAnswer(answerText = "Answer 1")
-////            val answers2 = MongoAnswer(answerText = "Answer 2")
-////            val answers3 = MongoAnswer(answerText = "Answer 3")
-////            val question = MongoQuestion(id = "6155d8508b1b2b6a1bd585bb", questionText = "Question 1", answers = RealmList(answers1, answers2, answers3))
-////            realmRepo.insertTest(MongoQuestionnaire(id = "6155d3654e300b57025e3bff", title = "HANS Peter", questions = RealmList(question)))
-//
-////            launchForBackgroundRealm {
-//////                    val a = realmRepo.deleteQuestionnaireWithId("6155d3654e300b57025e3bff")
-////                val a = realmRepo.deleteQuestionWith("6155d8508b1b2b6a1bd585bb")
-////                log("HALLO: $a")
-////            }
-//////                launch {
-//////                    try {
-//////                        val response = viewModel.getTodoKtor(43)
-//////                        log("Response: $response")
-//////                    } catch (e: Exception) {
-//////                        log("EXCEPTION : $e")
-//////                    }
-//////                }
-//
-//            //                launchForBackgroundRealm {
-//////                    val a = realmRepo.getQuestionnaireWithId("6155d3654e300b57025e3bff")
-////                    val a = realmRepo.getQuestionWithId("6155d8508b1b2b6a1bd585bb")
-////                    log("HALLO: $a")
-////                }

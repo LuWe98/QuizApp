@@ -1,10 +1,5 @@
 package com.example.quizapp.view.recyclerview.adapters
 
-import com.example.quizapp.databinding.RviQuestionnaireBinding
-import com.example.quizapp.extensions.setDrawableSize
-import com.example.quizapp.model.mongo.questionnairedocument.MongoQuestionnaire
-import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
-
 //class RvaCreated : BindingListAdapter<MongoQuestionnaire, RviQuestionnaireBinding>(MongoQuestionnaire.DIFF_CALLBACK) {
 //
 //    override fun initListeners(binding: RviQuestionnaireBinding, vh: BindingListAdapterViewHolder) {

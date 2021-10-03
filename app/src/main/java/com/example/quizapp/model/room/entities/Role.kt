@@ -21,7 +21,7 @@ data class Role(
 ) : EntityMarker {
 
     companion object {
-        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<Role> { o, o2 ->  o.id == o2.id}
+        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<Role> { old, new ->  old.id == new.id}
     }
 
 }

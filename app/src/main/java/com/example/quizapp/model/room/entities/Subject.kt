@@ -21,7 +21,7 @@ data class Subject(
 ) : EntityMarker {
 
     companion object {
-        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<Subject> { o, o2 ->  o.id == o2.id}
+        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<Subject> { old, new ->  old.id == new.id}
     }
 
 }

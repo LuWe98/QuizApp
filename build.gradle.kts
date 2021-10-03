@@ -16,8 +16,6 @@ buildscript {
 
         val navigationVersion: String by project
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion")
-
-        classpath("io.realm:realm-gradle-plugin:10.8.0")
     }
 }
 

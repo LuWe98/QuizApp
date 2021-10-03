@@ -39,14 +39,14 @@ class VmEditQuestion @Inject constructor(private val state: SavedStateHandle) : 
             field = value
         }
 
-    private val answersMutableLiveData = state.getLiveData(ANSWERS, answers.sortedBy { it.position }.toMutableList())
+    private val answersMutableLiveData = state.getLiveData(ANSWERS, answers.sortedBy { it.answerPosition }.toMutableList())
 
     private val answersMutableLiveDataValue get() = answersMutableLiveData.value!!
 
     val answersLiveData: LiveData<MutableList<Answer>> = answersMutableLiveData.map {
         mutableListOf<Answer>().apply {
             addAll(it.sortedBy {
-                it.position
+                it.answerPosition
             })
         }
     }
@@ -93,7 +93,7 @@ class VmEditQuestion @Inject constructor(private val state: SavedStateHandle) : 
 
     fun onAnswerItemDragReleased(answers: List<Answer>) {
         answers.mapIndexed { index, answer ->
-            answer.copy(position = index)
+            answer.copy(answerPosition = index)
         }.also {
             setAnswerList(it)
         }
@@ -101,7 +101,7 @@ class VmEditQuestion @Inject constructor(private val state: SavedStateHandle) : 
 
     fun onAddAnswerButtonClicked() {
         answersMutableLiveDataValue.apply {
-            add(Answer.createEmptyAnswer((maxOfOrNull { it.position } ?: -1) + 1))
+            add(Answer(answerPosition = (maxOfOrNull { it.answerPosition } ?: -1) + 1))
         }.also {
             setAnswerList(it)
         }
@@ -127,7 +127,7 @@ class VmEditQuestion @Inject constructor(private val state: SavedStateHandle) : 
         }
 
         val updatedQuestion = question.copy(questionText = questionTitle, isMultipleChoice = isMultipleChoice)
-        val updatedAnswers = answersMutableLiveDataValue.apply { mapIndexed { index, answer -> answer.copy(position = index) } }
+        val updatedAnswers = answersMutableLiveDataValue.apply { mapIndexed { index, answer -> answer.copy(answerPosition = index) } }
         val updatedQuestionWithAnswers = questionWithAnswers.copy(question = updatedQuestion, answers = updatedAnswers)
         launch {
             fragmentEditQuestionEventChannel.send(SendUpdateRequestToVmAdd(args.questionPosition, updatedQuestionWithAnswers))

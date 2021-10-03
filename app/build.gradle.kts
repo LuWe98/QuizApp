@@ -5,7 +5,6 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("androidx.navigation.safeargs")
     id("kotlin-parcelize")
-    id("realm-android")
 }
 
 android {
@@ -157,6 +156,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
     val kotlinSerialisationVersion: String by project
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialisationVersion")
+
+
+    //BSON -> For ObjectID
+    val bsonVersion: String by project
+    implementation("org.mongodb:bson:$bsonVersion")
+
 
 
     //Testing

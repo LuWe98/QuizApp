@@ -21,7 +21,7 @@ data class Faculty(
 ) : EntityMarker {
 
     companion object {
-        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<Faculty> { o, o2 ->  o.id == o2.id}
+        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<Faculty> { old, new ->  old.id == new.id}
     }
 
 }

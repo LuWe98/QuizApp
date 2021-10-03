@@ -10,7 +10,6 @@ import com.example.quizapp.model.datastore.EncryptionUtil
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.apiclasses.QuestionnaireApi
-import com.example.quizapp.model.ktor.apiclasses.TodoCalls
 import com.example.quizapp.model.ktor.apiclasses.UserApi
 import com.example.quizapp.model.ktor.authentification.OkHttpBasicAuthInterceptor
 import com.example.quizapp.model.room.LocalDatabase
@@ -117,7 +116,7 @@ object AppModule {
 
         engine {
             config {
-                connectTimeout(30, TimeUnit.SECONDS)
+                connectTimeout(60, TimeUnit.SECONDS)
             }
             addInterceptor(basicAuthInterceptor)
         }
@@ -127,7 +126,6 @@ object AppModule {
     @Provides
     @Singleton
     fun provideBackendRepository(ktorClient: HttpClient) = BackendRepository(
-        TodoCalls(ktorClient),
         UserApi(ktorClient),
         QuestionnaireApi(ktorClient)
     )

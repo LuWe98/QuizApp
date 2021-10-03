@@ -1,8 +1,8 @@
-package com.example.quizapp.model.mongo
+package com.example.quizapp.model.ktor.mongo
 
-import com.example.quizapp.model.mongo.questionnairedocument.MongoAnswer
-import com.example.quizapp.model.mongo.questionnairedocument.MongoQuestion
-import com.example.quizapp.model.mongo.questionnairedocument.MongoQuestionnaire
+import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoAnswer
+import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoQuestion
+import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoQuestionnaire
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.model.room.entities.Questionnaire
@@ -34,7 +34,7 @@ object MongoMapper {
                     questionId = question.id,
                     answerText = answer.answerText,
                     isAnswerCorrect = answer.isAnswerCorrect,
-                    position = answer.answerPosition
+                    answerPosition = answer.answerPosition
                 )
             })
         }.toMutableList()
@@ -70,7 +70,7 @@ object MongoMapper {
                             MongoAnswer(
                                 id = answer.id,
                                 answerText = answer.answerText,
-                                answerPosition = answer.position,
+                                answerPosition = answer.answerPosition,
                                 isAnswerCorrect = answer.isAnswerCorrect
                             )
                         }

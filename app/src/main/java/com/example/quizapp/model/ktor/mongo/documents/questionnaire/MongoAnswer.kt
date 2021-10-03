@@ -1,4 +1,4 @@
-package com.example.quizapp.model.mongo.questionnairedocument
+package com.example.quizapp.model.ktor.mongo.documents.questionnaire
 
 import org.bson.types.ObjectId
 

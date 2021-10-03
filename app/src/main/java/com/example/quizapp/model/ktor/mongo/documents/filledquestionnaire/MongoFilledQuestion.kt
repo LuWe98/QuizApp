@@ -1,4 +1,4 @@
-package com.example.quizapp.model.mongo.userquestionnairedocument
+package com.example.quizapp.model.ktor.mongo.documents.filledquestionnaire
 
 data class MongoFilledQuestion(
     var questionId : String,

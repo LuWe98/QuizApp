@@ -27,17 +27,15 @@ import org.bson.types.ObjectId
 @Parcelize
 data class Answer(
     @PrimaryKey var id: String = ObjectId().toString(),
-    var questionId: String,
-    var answerText: String,
-    var isAnswerCorrect: Boolean,
+    var questionId: String = "",
+    var answerText: String = "",
+    var isAnswerCorrect: Boolean = false,
     var isAnswerSelected: Boolean = false,
-    var position: Int = 0
+    var answerPosition: Int = 0
 ) : EntityMarker {
 
     companion object {
-        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<Answer> { o, o2 ->  o.id == o2.id}
-
-        fun createEmptyAnswer(position: Int) = Answer(questionId= "", answerText = "", isAnswerCorrect = false, position = position)
+        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<Answer> { old, new ->  old.id == new.id}
     }
 
 }
