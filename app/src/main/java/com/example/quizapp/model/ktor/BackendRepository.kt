@@ -11,7 +11,7 @@ class BackendRepository @Inject constructor(
     private val questionnaireApi: QuestionnaireApi
 ) {
 
-    // USER CALLS
+    // USER
     suspend fun loginUser(userName : String, password : String) = userApi.loginUser(userName, password)
 
     suspend fun registerUser(userName: String, password: String, courseOfStudies : String) = userApi.registerUser(userName, password, courseOfStudies)

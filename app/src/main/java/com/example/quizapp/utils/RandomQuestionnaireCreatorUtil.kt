@@ -1,6 +1,5 @@
 package com.example.quizapp.utils
 
-import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.model.room.entities.Questionnaire
@@ -8,37 +7,41 @@ import kotlin.random.Random
 
 object RandomQuestionnaireCreatorUtil {
 
-    suspend fun generateAndInsertRandomData(
-        localRepo: LocalRepository,
+    fun generateAndInsertRandomData(
         questionnaireAmount: Int,
+        minQuestionsPerQuestionnaire: Int,
         maxQuestionsPerQuestionnaire: Int,
+        minAnswersPerQuestion: Int,
         maxAnswersPerQuestion: Int
-    ) {
+    ): Triple<List<Questionnaire>, List<Question>, List<Answer>> {
 
-        generateQuestionnaires(questionnaireAmount).forEach { questionnaire ->
-            localRepo.insert(questionnaire)?.let {
-                generateQuestions(maxQuestionsPerQuestionnaire, questionnaire.id).forEach { question ->
-                    localRepo.insert(question)?.let {
-                        localRepo.insert(generateAnswers(maxAnswersPerQuestion, question.id).toList())
-                    }
-                }
+        val questionnaires = mutableListOf<Questionnaire>().apply { addAll(generateQuestionnaires(questionnaireAmount)) }
+        val questions = mutableListOf<Question>()
+        val answers = mutableListOf<Answer>()
+
+        questionnaires.forEach { questionnaire ->
+            questions.addAll(generateQuestions(minQuestionsPerQuestionnaire, maxQuestionsPerQuestionnaire, questionnaire.id))
+            questions.forEach { question ->
+                answers.addAll(generateAnswers(minAnswersPerQuestion, maxAnswersPerQuestion, question.id).toList())
             }
         }
+
+        return Triple(questionnaires, questions, answers)
     }
 
     private fun generateQuestionnaires(questionnaireAmount: Int) = Array(questionnaireAmount) {
-        Questionnaire(title =  "Questionnaire $it", author = randomAuthorName, courseOfStudies = randomCourseOfStudies, faculty = randomFaculty, subject = randomSubject)
+        Questionnaire(title = "Questionnaire $it", author = randomAuthorName, courseOfStudies = randomCourseOfStudies, faculty = randomFaculty, subject = randomSubject)
     }
 
-    private fun generateQuestions(maxQuestionsPerQuestionnaire: Int, questionnaireId : String) = Array(Random.nextInt(maxQuestionsPerQuestionnaire) + 1) {
+    private fun generateQuestions(min: Int, max: Int, questionnaireId: String) = Array(Random.nextInt(max - min) + min) {
         Question(questionnaireId = questionnaireId, questionText = "Question $it", isMultipleChoice = Random.nextBoolean(), questionPosition = it)
     }
 
-    private fun generateAnswers(maxAnswersPerQuestion: Int, questionId : String) = Array(Random.nextInt(maxAnswersPerQuestion - 2) + 2) {
+    private fun generateAnswers(min: Int, max: Int, questionId: String) = Array(Random.nextInt(max - min) + min) {
         Answer(questionId = questionId, answerText = "Answer $it", isAnswerCorrect = Random.nextBoolean(), isAnswerSelected = false)
     }
 
-    private val randomAuthorName : String get() = authorNamePool[Random.nextInt(authorNamePool.size)]
+    private val randomAuthorName: String get() = authorNamePool[Random.nextInt(authorNamePool.size)]
 
     private val authorNamePool = mutableListOf(
         "Jonh",
