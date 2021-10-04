@@ -1,4 +1,4 @@
-package com.example.quizapp.view.fragments.bindingfragmentsuperclasses
+package com.example.quizapp.view.bindingsuperclasses
 
 import android.os.Bundle
 import android.view.LayoutInflater

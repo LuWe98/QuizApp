@@ -7,7 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.databinding.FragmentSettingsBinding
 import com.example.quizapp.extensions.collect
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmSettings
 import dagger.hilt.android.AndroidEntryPoint
 

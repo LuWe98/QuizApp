@@ -9,7 +9,7 @@ import com.example.quizapp.databinding.FragmentAuthBinding
 import com.example.quizapp.extensions.collect
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.extensions.showSnackBar
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.viewpager.adapter.VpaAuth
 import com.example.quizapp.view.viewpager.pagetransformer.VerticalFadePageTransformer
 import com.example.quizapp.viewmodel.VmAuth

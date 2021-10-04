@@ -11,7 +11,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddQuestionBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.recyclerview.adapters.RvaAnswerEditQuestion
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmAdd
 import com.example.quizapp.viewmodel.VmEditQuestion
 import com.example.quizapp.viewmodel.VmEditQuestion.FragmentEditQuestionEvent.*

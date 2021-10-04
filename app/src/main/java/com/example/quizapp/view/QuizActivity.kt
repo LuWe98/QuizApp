@@ -13,12 +13,10 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityMainBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.ktor.mongo.MongoMapper
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingActivity
+import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmMain
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.util.date.*
 import javax.inject.Inject
 import javax.inject.Provider
 

@@ -7,7 +7,7 @@ import com.example.quizapp.databinding.FragmentAuthRegisterBinding
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.onTextChanged
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmAuth
 import dagger.hilt.android.AndroidEntryPoint
 

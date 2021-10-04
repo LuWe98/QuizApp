@@ -14,7 +14,7 @@ import com.example.quizapp.databinding.FragmentQuizOverviewBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestionsAndAnswers
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionWithAnswersQuiz
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmQuiz
 import com.example.quizapp.viewmodel.VmQuiz.*
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*

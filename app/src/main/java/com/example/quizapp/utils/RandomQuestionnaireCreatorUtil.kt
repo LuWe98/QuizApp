@@ -1,5 +1,6 @@
 package com.example.quizapp.utils
 
+import com.example.quizapp.extensions.log
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.model.room.entities.Questionnaire
@@ -16,14 +17,15 @@ object RandomQuestionnaireCreatorUtil {
     ): Triple<List<Questionnaire>, List<Question>, List<Answer>> {
 
         val questionnaires = mutableListOf<Questionnaire>().apply { addAll(generateQuestionnaires(questionnaireAmount)) }
-        val questions = mutableListOf<Question>()
-        val answers = mutableListOf<Answer>()
 
+        val questions = mutableListOf<Question>()
         questionnaires.forEach { questionnaire ->
             questions.addAll(generateQuestions(minQuestionsPerQuestionnaire, maxQuestionsPerQuestionnaire, questionnaire.id))
-            questions.forEach { question ->
-                answers.addAll(generateAnswers(minAnswersPerQuestion, maxAnswersPerQuestion, question.id).toList())
-            }
+        }
+
+        val answers = mutableListOf<Answer>()
+        questions.forEach { question ->
+            answers.addAll(generateAnswers(minAnswersPerQuestion, maxAnswersPerQuestion, question.id))
         }
 
         return Triple(questionnaires, questions, answers)
@@ -33,11 +35,11 @@ object RandomQuestionnaireCreatorUtil {
         Questionnaire(title = "Questionnaire $it", author = randomAuthorName, courseOfStudies = randomCourseOfStudies, faculty = randomFaculty, subject = randomSubject)
     }
 
-    private fun generateQuestions(min: Int, max: Int, questionnaireId: String) = Array(Random.nextInt(max - min) + min) {
+    private fun generateQuestions(min: Int, max: Int, questionnaireId: String) = Array(Random.nextInt(max + 1 - min) + min) {
         Question(questionnaireId = questionnaireId, questionText = "Question $it", isMultipleChoice = Random.nextBoolean(), questionPosition = it)
     }
 
-    private fun generateAnswers(min: Int, max: Int, questionId: String) = Array(Random.nextInt(max - min) + min) {
+    private fun generateAnswers(min: Int, max: Int, questionId: String) = Array(Random.nextInt(max + 1 - min) + min) {
         Answer(questionId = questionId, answerText = "Answer $it", isAnswerCorrect = Random.nextBoolean(), isAnswerSelected = false)
     }
 

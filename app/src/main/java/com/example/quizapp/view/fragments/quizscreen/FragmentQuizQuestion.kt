@@ -11,7 +11,7 @@ import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.extensions.updateAllViewHolders
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.view.recyclerview.adapters.RvaAnswerQuiz
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmQuiz
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer
 import dagger.hilt.android.AndroidEntryPoint

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import com.example.quizapp.databinding.FragmentSearchBinding
 import com.example.quizapp.extensions.showKeyboard
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

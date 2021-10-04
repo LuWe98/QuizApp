@@ -11,7 +11,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeCachedBinding
 import com.example.quizapp.extensions.collect
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionnaireWithQuestions
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmHome
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged

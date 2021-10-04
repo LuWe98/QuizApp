@@ -9,7 +9,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddQuestionnaireBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionWithAnswersAddQuestionnaire
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmAdd
 import com.example.quizapp.viewmodel.VmAdd.FragmentAddQuestionnaireEvent.*
 import dagger.hilt.android.AndroidEntryPoint

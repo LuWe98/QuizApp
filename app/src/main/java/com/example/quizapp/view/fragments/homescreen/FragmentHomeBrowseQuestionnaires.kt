@@ -5,7 +5,7 @@ import android.view.View
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeBrowseBinding
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmHome
 import dagger.hilt.android.AndroidEntryPoint
 

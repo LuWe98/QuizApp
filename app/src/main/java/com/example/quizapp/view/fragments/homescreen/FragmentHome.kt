@@ -7,7 +7,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeBinding
 import com.example.quizapp.extensions.attachToViewPager
 import com.example.quizapp.extensions.getStringArray
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmHome
 import com.example.quizapp.view.viewpager.adapter.VpaHome
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer

@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingActivity
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingDialogFragment
-import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingActivity
+import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingDialogFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import java.lang.reflect.ParameterizedType
 
 @Suppress("UNCHECKED_CAST")
