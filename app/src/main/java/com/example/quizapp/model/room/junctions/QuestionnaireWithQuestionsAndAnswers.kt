@@ -14,7 +14,10 @@ data class QuestionnaireWithQuestionsAndAnswers(
     var questionsWithAnswers: MutableList<QuestionWithAnswers>
 ) {
 
-    val questions: List<Question> get() = questionsWithAnswers.map { item -> item.question }
+    val allQuestions: List<Question> get() = questionsWithAnswers.map { item -> item.question }
+
+    val allAnswers: List<Answer> get() = questionsWithAnswers.flatMap { item -> item.answers }
+
 
     fun getQuestionWithAnswers(questionId: String): QuestionWithAnswers = questionsWithAnswers.first { qwa -> qwa.question.id == questionId }
 

@@ -7,7 +7,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.databinding.FragmentSettingsBinding
 import com.example.quizapp.extensions.collect
-import com.example.quizapp.extensions.onClick
 import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmSettings
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,7 +26,13 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
     private fun initRecyclerView(){
         rvAdapter = RvaSettings().apply {
-
+            onItemClicked = {
+                when(it.id) {
+                    SettingsModel.ITEM_USER_LOGOUT_ID -> {
+                        viewModel.onLogoutClicked()
+                    }
+                }
+            }
         }
 
         binding.rv.apply {
@@ -35,8 +40,6 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = rvAdapter
         }
-
-        binding.appBarLayout.onClick(viewModel::onLogoutClicked)
     }
 
     private fun initObservers(){

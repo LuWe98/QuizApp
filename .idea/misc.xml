@@ -30,6 +30,7 @@
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/df_voice_search.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_question.xml" value="0.5" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_questionnaire.xml" value="0.33" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_admin.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_auth.xml" value="0.275" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_auth_login.xml" value="0.275" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_auth_register.xml" value="0.334375" />
@@ -64,7 +65,7 @@
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/settings_item.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/settings_item_dropdown.xml" value="0.5713541666666667" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/settings_item_switch.xml" value="0.559375" />
-        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/settings_item_text.xml" value="0.75" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/settings_item_text.xml" value="0.5" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/settings_section_header.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/menu/bottom_nav_menu.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/menu/quiz_popup_menu.xml" value="0.559375" />

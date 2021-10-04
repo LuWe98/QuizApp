@@ -33,6 +33,8 @@
     <color name="lightColorOnSecondary">@color/black</color>
     <color name="lightColorAccent">#add8e6</color>
     <color name="lightBackgroundColor">#f6f6f6</color>
+<!--    <color name="lightBackgroundColor">#f6f6f6</color>-->
+
     <color name="lightColorControlActivated">#89000000</color>
 
     <!-- Dark Theme Colors -->

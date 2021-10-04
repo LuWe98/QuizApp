@@ -10,6 +10,7 @@ import io.ktor.utils.io.*
 import okhttp3.Credentials
 import kotlin.coroutines.CoroutineContext
 
+//TODO -> Find out how this works for ktor
 class AuthPipeline(httpClient: HttpClient) {
 
     init {

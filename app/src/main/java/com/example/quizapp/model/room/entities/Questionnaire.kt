@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.quizapp.utils.Constants
 import com.example.quizapp.utils.DiffUtilHelper
+import io.ktor.util.date.*
 import kotlinx.parcelize.Parcelize
 import org.bson.types.ObjectId
 
@@ -15,6 +16,7 @@ data class Questionnaire(
     @PrimaryKey var id: String = ObjectId().toString(),
     var title: String,
     var author: String,
+    var lastModifiedTimestamp: Long = getTimeMillis(),
     var courseOfStudies: String,
     var faculty: String,
     var subject: String
@@ -23,5 +25,4 @@ data class Questionnaire(
     companion object {
         val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<Questionnaire> { old, new ->  old.id == new.id}
     }
-
 }

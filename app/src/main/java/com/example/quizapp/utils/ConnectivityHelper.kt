@@ -6,15 +6,8 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
-import android.net.NetworkCapabilities.NET_CAPABILITY_NOT_VPN
 import android.net.NetworkRequest
-import android.os.Build
 import androidx.lifecycle.*
-import com.example.quizapp.extensions.log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.InetSocketAddress
 import javax.inject.Inject

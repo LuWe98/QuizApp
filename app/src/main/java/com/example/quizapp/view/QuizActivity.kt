@@ -18,11 +18,12 @@ import com.example.quizapp.view.fragments.bindingfragmentsuperclasses.BindingAct
 import com.example.quizapp.viewmodel.VmMain
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
+import io.ktor.util.date.*
 import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDestinationChangedListener {
+class QuizActivity : BindingActivity<ActivityMainBinding>(), NavController.OnDestinationChangedListener {
 
     @Inject
     lateinit var navigatorProvider: Provider<Navigator>
@@ -45,7 +46,11 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
             bottomNavView.setupWithNavController(navigator.navController)
 
             cardHome.setOnClickListener {
-                bottomNavView.selectedItemId = R.id.fragmentHome
+                if(bottomNavView.selectedItemId == R.id.fragmentSettings){
+                    navigator.popBackStack()
+                } else {
+                    bottomNavView.selectedItemId = R.id.fragmentHome
+                }
             }
 
             cardSettings.setOnClickListener {
@@ -57,23 +62,14 @@ class ActivityMain : BindingActivity<ActivityMainBinding>(), NavController.OnDes
             }
 
             addCard.setOnClickListener {
-                //navigator.navigateToAddQuestionnaireScreen()
+//                navigator.navigateToAddQuestionnaireScreen()
 
-                launch {
-                    val mongoQuestionnaires = viewModel.getQuestionnairesOfUser()
-                    val qwa = mongoQuestionnaires.map { MongoMapper.mapMongoObjectToSqlEntities(it) }
-                    val remappedMongoQuestionnaires = qwa.map { MongoMapper.mapSqlEntitiesToMongoObject(it) }
-
-                    log("IS SAME? ${mongoQuestionnaires == remappedMongoQuestionnaires}")
-
-                    mongoQuestionnaires.forEach {
-                        MongoMapper.mapMongoObjectToSqlEntities(it).let {
-                            log("Questionnaire: ${it.questionnaire}")
-                            log("Questions: ${it.questionsWithAnswers.map { qwa -> qwa.question }}")
-                            log("Answers: ${it.questionsWithAnswers.map { qwa -> qwa.answers }}")
-                        }
-                    }
-                }
+//                launch {
+//                    val mongoQuestionnaires = viewModel.getQuestionnairesOfUser()
+//                    val qwa = mongoQuestionnaires.map { MongoMapper.mapMongoObjectToSqlEntities(it) }
+//                    val remappedMongoQuestionnaires = qwa.map { MongoMapper.mapSqlEntitiesToMongoObject(it) }
+//                    log("IS SAME? ${mongoQuestionnaires == remappedMongoQuestionnaires}")
+//                }
             }
         }
     }

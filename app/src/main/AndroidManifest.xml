@@ -31,7 +31,7 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.QuizApp">
         <activity
-                android:name=".view.ActivityMain"
+                android:name=".view.QuizActivity"
                 android:exported="true"
                 tools:ignore="LockedOrientationActivity"
                 android:windowSoftInputMode="adjustPan"

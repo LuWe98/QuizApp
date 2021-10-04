@@ -41,6 +41,7 @@
     <string name="register">Register</string>
     <string name="registerHere">Register here</string>
     <string name="email">Email</string>
+    <string name="role">Role</string>
     <string name="alreadyGotAccount">Already got an account? Login</string>
 
 
@@ -90,6 +91,8 @@
     <string name="logout">Logout</string>
     <string name="adminFunctionality">Admin Functionality</string>
     <string name="promoteUserToAdmin">Promote User to Admin</string>
+    <string name="adminSettings">Go to Admin Settings</string>
+
 
     <!-- Quiz Screen-->
     <string name="showSolution">Show Solution</string>

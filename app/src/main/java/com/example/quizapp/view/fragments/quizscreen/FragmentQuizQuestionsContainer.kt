@@ -35,7 +35,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
     }
 
     private fun initViews() {
-        vpaAdapter = VpaQuiz(this, vmQuiz.completeQuestionnaire?.questions ?: emptyList())
+        vpaAdapter = VpaQuiz(this, vmQuiz.completeQuestionnaire?.allQuestions ?: emptyList())
 
         binding.apply {
             viewPager.apply {

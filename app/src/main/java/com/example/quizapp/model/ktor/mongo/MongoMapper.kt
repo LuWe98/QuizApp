@@ -16,6 +16,7 @@ object MongoMapper {
             id = mongoQuestionnaire.id,
             author = mongoQuestionnaire.author,
             title = mongoQuestionnaire.title,
+            lastModifiedTimestamp = mongoQuestionnaire.lastModifiedTimestamp,
             courseOfStudies = mongoQuestionnaire.courseOfStudies,
             subject = "",
             faculty = ""
@@ -56,6 +57,7 @@ object MongoMapper {
             id = questionnaire.id,
             title = questionnaire.title,
             author = questionnaire.author,
+            lastModifiedTimestamp = questionnaire.lastModifiedTimestamp,
             courseOfStudies = questionnaire.courseOfStudies
         ).apply {
             questions = questionsWithAnswers.map { qwa ->

@@ -5,6 +5,8 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("androidx.navigation.safeargs")
     id("kotlin-parcelize")
+
+    kotlin("plugin.serialization") version "1.5.31"
 }
 
 android {
@@ -33,10 +35,6 @@ android {
     buildFeatures {
         viewBinding =  true
     }
-
-//    realm {
-//        syncEnabled = true
-//    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -147,18 +145,14 @@ dependencies {
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-android:$ktorVersion")
     implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-    implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("io.ktor:ktor-client-gson:$ktorVersion")
+    implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 
     
     //Kotlin Serialisation
-    val kotlinVersion: String by project
-    implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
     val kotlinSerialisationVersion: String by project
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialisationVersion")
 
-
-    //BSON -> For ObjectID
+    //BSON
     val bsonVersion: String by project
     implementation("org.mongodb:bson:$bsonVersion")
 

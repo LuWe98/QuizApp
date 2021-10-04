@@ -10,6 +10,7 @@ import javax.inject.Singleton
 @Singleton
 class LocalRepository @Inject constructor(
     private val applicationScope : CoroutineScope,
+    private val localDatabase: LocalDatabase,
     private val questionnaireDao: QuestionnaireDao,
     private val questionDao: QuestionDao,
     private val answerDao: AnswerDao,

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import com.example.quizapp.R
-import com.example.quizapp.view.ActivityMain
+import com.example.quizapp.view.QuizActivity
 import com.example.quizapp.view.Navigator
 import dagger.Module
 import dagger.Provides
@@ -19,7 +19,7 @@ object ActivityModule {
 
     @Provides
     fun provideNavHostFragment(@ActivityContext context: Context) =
-        (context as AppCompatActivity).supportFragmentManager.findFragmentById(if(context is ActivityMain) R.id.navHost else -1) as NavHostFragment
+        (context as AppCompatActivity).supportFragmentManager.findFragmentById(if(context is QuizActivity) R.id.navHost else -1) as NavHostFragment
 
     @Provides
     fun provideNavController(navHostFragment: NavHostFragment) = navHostFragment.navController

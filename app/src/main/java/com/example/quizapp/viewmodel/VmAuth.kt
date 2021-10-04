@@ -4,12 +4,14 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.quizapp.R
+import com.example.quizapp.extensions.LogType
 import com.example.quizapp.extensions.containsWhiteSpaces
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.extensions.log
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.BackendResponse.*
-import com.example.quizapp.model.ktor.responses.BackendResponse.RegisterResponse.*
+import com.example.quizapp.model.ktor.responses.BackendResponse.RegisterUserResponse.*
 import com.example.quizapp.viewmodel.VmAuth.FragmentAuthEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -64,6 +66,7 @@ class VmAuth @Inject constructor(
             val loginResponse = try {
                 backendRepository.loginUser(currentLoginUserName, currentLoginPassword)
             } catch (e : Exception) {
+                log("$e", LogType.Error)
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileLoggingInUser))
                 return@launch
             }
@@ -73,7 +76,7 @@ class VmAuth @Inject constructor(
                 fragmentEventChannel.send(NavigateToHomeScreen)
             }
 
-            fragmentEventChannel.send(ShowMessageSnackBar(loginResponse.loginResponseType.messageRes))
+            fragmentEventChannel.send(ShowMessageSnackBar(loginResponse.responseType.messageRes))
         }
     }
 
@@ -154,7 +157,7 @@ class VmAuth @Inject constructor(
                 fragmentEventChannel.send(SwitchPage(0))
             }
 
-            fragmentEventChannel.send(ShowMessageSnackBar(registerResponse.registerResponseType.messageRes))
+            fragmentEventChannel.send(ShowMessageSnackBar(registerResponse.responseType.messageRes))
         }
     }
 

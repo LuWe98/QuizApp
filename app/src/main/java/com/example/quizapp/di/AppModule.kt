@@ -24,7 +24,10 @@ import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.*
-import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.client.features.json.JsonFeature
+import kotlinx.serialization.json.Json
+
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -74,6 +77,7 @@ object AppModule {
         roomDatabase: LocalDatabase
     ) = LocalRepository(
         applicationScope,
+        roomDatabase,
         roomDatabase.getQuestionaryDao(),
         roomDatabase.getQuestionDao(),
         roomDatabase.getAnswerDao(),
@@ -108,10 +112,10 @@ object AppModule {
         }
 
         install(JsonFeature) {
-            serializer = GsonSerializer {
-                setPrettyPrinting()
-                disableHtmlEscaping()
-            }
+            serializer = KotlinxSerializer(Json {
+                prettyPrint = true
+                isLenient = true
+            })
         }
 
         engine {

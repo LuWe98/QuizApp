@@ -1,8 +1,6 @@
 package com.example.quizapp.model.ktor.apiclasses
 
-import com.example.quizapp.model.ktor.requests.user.LoginUserRequest
-import com.example.quizapp.model.ktor.requests.user.RegisterUserRequest
-import com.example.quizapp.model.ktor.requests.user.UpdateUserRequest
+import com.example.quizapp.model.ktor.requests.BackendRequest.*
 import com.example.quizapp.model.ktor.responses.BackendResponse.*
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -14,17 +12,17 @@ class UserApi @Inject constructor(
     private val client: HttpClient
 ) {
 
-    suspend fun loginUser(email: String, password: String): LoginResponse<Nothing> =
+    suspend fun loginUser(email: String, password: String): LoginUserResponse =
         client.post("/user/login") {
             body = LoginUserRequest(email, password)
         }
 
-    suspend fun registerUser(email: String, password: String, courseOfStudies : String): RegisterResponse<Nothing> =
+    suspend fun registerUser(email: String, password: String, courseOfStudies : String): RegisterUserResponse =
         client.post("/user/register") {
             body = RegisterUserRequest(email, password, courseOfStudies)
         }
 
-    suspend fun updateUser(newUserName : String): Boolean =
+    suspend fun updateUser(newUserName : String): UpdateUserResponse =
         client.post("/user/update") {
             body = UpdateUserRequest(newUserName)
         }

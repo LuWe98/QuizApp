@@ -13,13 +13,13 @@ object SettingsModel {
     const val ITEM_DARK_MODE_ID = 4
     const val ITEM_LANGUAGE_ID = 5
     const val ITEM_USER_NAME_ID = 6
-    const val ITEM_EMAIL_ID = 7
-    const val ITEM_PASSWORD_ID = 8
-    const val ITEM_LOGOUT_ID = 9
+    const val ITEM_USER_ROLE_ID = 7
+    const val ITEM_USER_PASSWORD_ID = 8
+    const val ITEM_USER_LOGOUT_ID = 9
     const val ITEM_COMPLETED_QUESTIONNAIRES_ID = 10
     const val ITEM_GIVEN_ANSWERS_ID = 11
     const val ITEM_CREATED_QUESTIONNAIRES_ID = 12
-    const val ITEM_PROMOTE_USER_TO_ADMIN_ID = 13
+    const val ITEM_ADMIN_PAGE_ID = 13
 
 
     private val preferencesList = mutableListOf(
@@ -27,7 +27,7 @@ object SettingsModel {
             HEADER_PREFERENCE_ID,
             R.string.preference
         ),
-        SettingsMenuItem.SwitchItem(
+        SettingsMenuItem.DropDownItem(
             ITEM_DARK_MODE_ID,
             R.drawable.ic_dark_mode,
             R.string.darkMode
@@ -50,17 +50,17 @@ object SettingsModel {
             R.string.userName
         ),
         SettingsMenuItem.TextItem(
-            ITEM_USER_NAME_ID,
-            R.drawable.ic_email,
-            R.string.email
+            ITEM_USER_ROLE_ID,
+            R.drawable.ic_role_badge,
+            R.string.role
         ),
         SettingsMenuItem.TextItem(
-            ITEM_USER_NAME_ID,
+            ITEM_USER_PASSWORD_ID,
             R.drawable.ic_password,
             R.string.password
         ),
         SettingsMenuItem.ClickableItem(
-            ITEM_USER_NAME_ID,
+            ITEM_USER_LOGOUT_ID,
             R.drawable.ic_logout,
             R.string.logout
         )
@@ -94,9 +94,9 @@ object SettingsModel {
             R.string.adminFunctionality
         ),
         SettingsMenuItem.ClickableItem(
-            ITEM_PROMOTE_USER_TO_ADMIN_ID,
+            ITEM_ADMIN_PAGE_ID,
             R.drawable.ic_admin_panel,
-            R.string.promoteUserToAdmin
+            R.string.adminSettings
         )
     )
 

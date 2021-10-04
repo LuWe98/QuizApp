@@ -6,6 +6,7 @@ import androidx.room.Relation
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.utils.DiffUtilHelper
+import io.ktor.util.date.*
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -28,9 +29,13 @@ data class QuestionWithAnswers(
         val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<QuestionWithAnswers> { old, new ->  old.question.id == new.question.id}
 
         fun createEmptyQuestionWithAnswers() : QuestionWithAnswers {
-            val randomPosition = System.currentTimeMillis().toString().apply { substring(length - 8) }.toInt()
-            val emptyQuestion = Question(questionnaireId =  "", questionText =  "", isMultipleChoice =  true, questionPosition = randomPosition)
-            return QuestionWithAnswers(emptyQuestion, mutableListOf())
+            return Question(
+                questionnaireId =  "",
+                questionText =  "",
+                isMultipleChoice =  true,
+                questionPosition = getTimeMillis().toInt()).let { question ->
+                QuestionWithAnswers(question, emptyList())
+            }
         }
     }
 }
