@@ -1,5 +1,6 @@
 package com.example.quizapp.model.ktor
 
+import com.example.quizapp.model.ktor.apiclasses.FilledQuestionnaireApi
 import com.example.quizapp.model.ktor.apiclasses.QuestionnaireApi
 import com.example.quizapp.model.ktor.apiclasses.UserApi
 import javax.inject.Inject
@@ -8,7 +9,8 @@ import javax.inject.Singleton
 @Singleton
 class BackendRepository @Inject constructor(
     private val userApi : UserApi,
-    private val questionnaireApi: QuestionnaireApi
+    private val questionnaireApi: QuestionnaireApi,
+    private val filledQuestionnaireApi: FilledQuestionnaireApi
 ) {
 
     // USER
@@ -24,5 +26,7 @@ class BackendRepository @Inject constructor(
 
     // QUESTIONNAIRES
     suspend fun getQuestionnairesOfUser() = questionnaireApi.getQuestionnaireOfUser()
+
+    suspend fun getAllQuestionnaires() = questionnaireApi.getAllQuestionnaires()
 
 }

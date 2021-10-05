@@ -30,7 +30,7 @@ class VmAuth @Inject constructor(
     val fragmentEventChannelFlow get() = fragmentEventChannel.receiveAsFlow()
 
     fun checkIfLoggedIn() {
-        if (preferencesRepository.getUserCredentials().isGiven) {
+        if (preferencesRepository.userCredentials.isGiven) {
             launch {
                 fragmentEventChannel.send(NavigateToHomeScreen)
             }
@@ -66,13 +66,12 @@ class VmAuth @Inject constructor(
             val loginResponse = try {
                 backendRepository.loginUser(currentLoginUserName, currentLoginPassword)
             } catch (e : Exception) {
-                log("$e", LogType.Error)
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileLoggingInUser))
                 return@launch
             }
 
             if(loginResponse.isSuccessful){
-                preferencesRepository.updateUserCredentials(currentLoginUserName,currentLoginPassword)
+                preferencesRepository.updateUserCredentials(loginResponse.userId!!, currentLoginUserName,currentLoginPassword)
                 fragmentEventChannel.send(NavigateToHomeScreen)
             }
 

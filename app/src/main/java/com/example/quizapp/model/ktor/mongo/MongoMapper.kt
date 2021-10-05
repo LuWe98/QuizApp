@@ -14,7 +14,7 @@ object MongoMapper {
     fun mapMongoObjectToSqlEntities(mongoQuestionnaire: MongoQuestionnaire): QuestionnaireWithQuestionsAndAnswers {
         val questionnaire = Questionnaire(
             id = mongoQuestionnaire.id,
-            author = mongoQuestionnaire.author,
+            authorInfo = mongoQuestionnaire.authorInfo,
             title = mongoQuestionnaire.title,
             lastModifiedTimestamp = mongoQuestionnaire.lastModifiedTimestamp,
             courseOfStudies = mongoQuestionnaire.courseOfStudies,
@@ -56,7 +56,7 @@ object MongoMapper {
         return MongoQuestionnaire(
             id = questionnaire.id,
             title = questionnaire.title,
-            author = questionnaire.author,
+            authorInfo = questionnaire.authorInfo,
             lastModifiedTimestamp = questionnaire.lastModifiedTimestamp,
             courseOfStudies = questionnaire.courseOfStudies
         ).apply {

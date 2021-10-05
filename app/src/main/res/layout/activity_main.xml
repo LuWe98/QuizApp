@@ -82,7 +82,6 @@
                         app:cardBackgroundColor="@color/transparent"
                         app:cardCornerRadius="12.5dp"
                         app:cardElevation="0dp"
-                        android:visibility="gone"
                         app:rippleColor="?colorAccent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"

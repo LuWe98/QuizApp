@@ -1,7 +1,9 @@
 package com.example.quizapp.model.room.entities
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.quizapp.model.ktor.mongo.documents.questionnaire.AuthorInfo
 import com.example.quizapp.utils.Constants
 import com.example.quizapp.utils.DiffUtilHelper
 import io.ktor.util.date.*
@@ -15,7 +17,8 @@ import org.bson.types.ObjectId
 data class Questionnaire(
     @PrimaryKey var id: String = ObjectId().toString(),
     var title: String,
-    var author: String,
+    @Embedded
+    var authorInfo: AuthorInfo,
     var lastModifiedTimestamp: Long = getTimeMillis(),
     var courseOfStudies: String,
     var faculty: String,

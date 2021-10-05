@@ -11,12 +11,12 @@ enum class LogType{
 
 fun Any.log(text: String, logType: LogType = LogType.Debug) {
     when(logType){
-        LogType.Debug -> Log.d(tag ,  text)
-        LogType.Error -> Log.e(tag ,  text)
-        LogType.Wtf -> Log.wtf(tag ,  text)
+        LogType.Debug -> Log.d(tag , text)
+        LogType.Error -> Log.e(tag , text)
+        LogType.Wtf -> Log.wtf(tag , text)
     }
 }
 
-private val Any.tag get() = "${BuildConfig.APPLICATION_ID} - ${javaClass.simpleName}"
+private val Any.tag get() = "${BuildConfig.APPLICATION_ID} - Manual Log - ${javaClass.simpleName}"
 
 val <T> T.exhaustive : T get() = this

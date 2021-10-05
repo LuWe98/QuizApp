@@ -49,31 +49,23 @@ class LocalRepository @Inject constructor(
     } as BaseDao<T>)
 
 
+
+
     //QUESTIONNAIRE
-    suspend fun getAllQuestionnaires() = questionnaireDao.getAllQuestionnaires()
+    fun findAllQuestionnairesWithQuestionsNotForUserFlow(userId: String) = questionnaireDao.findAllQuestionnairesWithQuestionsNotForUserFlow(userId)
 
-    val allQuestionnairesFlow get() = questionnaireDao.allQuestionnairesFlow
+    fun findAllQuestionnairesWithQuestionsForUserFlow(userId: String) = questionnaireDao.findAllQuestionnairesWithQuestionsForUserFlow(userId)
 
-    val allQuestionnairesWithQuestions get() = questionnaireDao.getAllQuestionnairesWithQuestions()
+    suspend fun findCompleteQuestionnaireWith(questionnaireId: String) = questionnaireDao.findCompleteQuestionnaireWith(questionnaireId)
 
-    suspend fun getCompleteQuestionnaireWithId(questionnaireId: String) = questionnaireDao.getCompleteQuestionnaireWithId(questionnaireId)
+    fun findCompleteQuestionnaireAsFlowWith(questionnaireId: String) = questionnaireDao.findCompleteQuestionnaireAsFlowWith(questionnaireId)
 
-    fun getCompleteQuestionnaireWithIdLiveData(questionnaireId: String) = questionnaireDao.getCompleteQuestionnaireWithIdLiveData(questionnaireId)
-
-    val allQuestionnairesWithQuestionsPagingSource get() = questionnaireDao.getAllQuestionnairesWithQuestionsPagingSource()
-
-    val allQuestionnairesWithQuestionsLiveData get() = questionnaireDao.getAllQuestionnairesWithQuestionsLiveData()
-
-    fun completeQuestionnaireStateFlow(questionnaireId: String) = questionnaireDao.getCompleteQuestionnaireWithIdFlow(questionnaireId)
+    fun completeQuestionnaireStateFlow(questionnaireId: String) = questionnaireDao.findCompleteQuestionnaireAsFlowWith(questionnaireId)
         .stateIn(applicationScope, SharingStarted.WhileSubscribed(),  null)
 
 
     //QUESTION
-    suspend fun getAllQuestions() = questionDao.getAllQuestions()
-
-    val getAllQuestionsFlow get() = questionDao.allQuestionsFlow
-
-    fun getQuestionsOfQuestionnaire(questionnaireId: String) = questionDao.getQuestionsOfQuestionnaireFlow(questionnaireId)
+    fun findQuestionsAsFlowWith(questionnaireId: String) = questionDao.findQuestionsAsFlowWith(questionnaireId)
 
     fun deleteQuestionsWith(questionnaireId: String) {
         questionDao.deleteQuestionsWith(questionnaireId)
@@ -81,9 +73,5 @@ class LocalRepository @Inject constructor(
 
 
     //ANSWER
-    suspend fun allAnswers() = answerDao.getAllAnswers()
-
-    val allAnswersFlow get() = answerDao.allAnswersFlow
-
-    fun getAnswersOfQuestion(questionId: String) = answerDao.getAnswersOfQuestionFlow(questionId)
+    fun getAnswersOfQuestion(questionId: String) = answerDao.findAnswersByIdFlow(questionId)
 }

@@ -48,7 +48,7 @@ class Navigator @Inject constructor(
         navController.popBackStack()
     }
 
-    fun navigateToAddQuestionnaireScreen(questionnaireId: String? = null) {
+    fun navigateToAddQuestionnaireScreen(questionnaireId: String? = NO_QUESTIONNAIRE_ID) {
         navController.navigate(MainNavGraphDirections.actionGlobalGoToAddQuestionnaireScreen(questionnaireId))
     }
 
@@ -85,12 +85,12 @@ class Navigator @Inject constructor(
     }
 
     fun navigateToSearchScreen() {
-        navController.navigate(FragmentHomeDirections.actionFragmentHomeToFragmentSearch())
+        navController.navigate(MainNavGraphDirections.actionGlobalFragmentSearch())
     }
 
 
     companion object {
-        const val NO_QUESTIONNAIRE_ID = "NO_ID"
+        val NO_QUESTIONNAIRE_ID : String? = null
         const val FIRST_QUESTION_POSITION = 0
     }
 }

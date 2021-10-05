@@ -9,6 +9,7 @@ import com.example.quizapp.R
 import com.example.quizapp.model.datastore.EncryptionUtil
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.apiclasses.FilledQuestionnaireApi
 import com.example.quizapp.model.ktor.apiclasses.QuestionnaireApi
 import com.example.quizapp.model.ktor.apiclasses.UserApi
 import com.example.quizapp.model.ktor.authentification.OkHttpBasicAuthInterceptor
@@ -131,7 +132,8 @@ object AppModule {
     @Singleton
     fun provideBackendRepository(ktorClient: HttpClient) = BackendRepository(
         UserApi(ktorClient),
-        QuestionnaireApi(ktorClient)
+        QuestionnaireApi(ktorClient),
+        FilledQuestionnaireApi(ktorClient)
     )
 
     @Provides

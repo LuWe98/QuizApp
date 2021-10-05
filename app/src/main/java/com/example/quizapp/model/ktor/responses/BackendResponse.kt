@@ -16,6 +16,7 @@ sealed class BackendResponse {
     @Serializable
     data class LoginUserResponse(
         val isSuccessful: Boolean,
+        val userId : String?,
         val responseType: LoginUserResponseType,
     ) : BackendResponse() {
         enum class LoginUserResponseType(@StringRes val messageRes: Int) {

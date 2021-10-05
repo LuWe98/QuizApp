@@ -10,11 +10,7 @@
             android:id="@+id/fragmentHome"
             android:name="com.example.quizapp.view.fragments.homescreen.FragmentHome"
             android:label="FragmentHome"
-            tools:layout="@layout/fragment_home">
-        <action
-                android:id="@+id/action_fragmentHome_to_fragmentSearch"
-                app:destination="@id/fragmentSearch" />
-    </fragment>
+            tools:layout="@layout/fragment_home"/>
 
 
     <fragment
@@ -116,4 +112,7 @@
 
     <action android:id="@+id/actionGlobalGoToQuizScreen"
             app:destination="@id/quiz_nav_graph"/>
+
+    <action android:id="@+id/action_global_fragmentSearch"
+        app:destination="@id/fragmentSearch"/>
 </navigation>

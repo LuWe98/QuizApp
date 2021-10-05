@@ -1,6 +1,6 @@
 package com.example.quizapp.utils
 
-import com.example.quizapp.extensions.log
+import com.example.quizapp.model.ktor.mongo.documents.questionnaire.AuthorInfo
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.model.room.entities.Questionnaire
@@ -32,7 +32,7 @@ object RandomQuestionnaireCreatorUtil {
     }
 
     private fun generateQuestionnaires(questionnaireAmount: Int) = Array(questionnaireAmount) {
-        Questionnaire(title = "Questionnaire $it", author = randomAuthorName, courseOfStudies = randomCourseOfStudies, faculty = randomFaculty, subject = randomSubject)
+        Questionnaire(title = "Questionnaire $it", authorInfo = randomAuthor, courseOfStudies = "WIB", faculty = "WI", subject = randomSubject)
     }
 
     private fun generateQuestions(min: Int, max: Int, questionnaireId: String) = Array(Random.nextInt(max + 1 - min) + min) {
@@ -42,45 +42,6 @@ object RandomQuestionnaireCreatorUtil {
     private fun generateAnswers(min: Int, max: Int, questionId: String) = Array(Random.nextInt(max + 1 - min) + min) {
         Answer(questionId = questionId, answerText = "Answer $it", isAnswerCorrect = Random.nextBoolean(), isAnswerSelected = false)
     }
-
-    private val randomAuthorName: String get() = authorNamePool[Random.nextInt(authorNamePool.size)]
-
-    private val authorNamePool = mutableListOf(
-        "Jonh",
-        "Dion",
-        "Luca",
-        "Mattheis",
-        "Sasi",
-        "Ziekow",
-        "Tamine",
-        "Noll"
-    )
-
-    private val randomFaculty: String get() = facultyPool[Random.nextInt(facultyPool.size)]
-
-    private val facultyPool = mutableListOf(
-        "W",
-        "WI",
-        "DM",
-        "GGS",
-        "IT",
-        "I",
-        "MLS",
-        "MME"
-    )
-
-    private val randomCourseOfStudies: String get() = courseOfStudiesPool[Random.nextInt(courseOfStudiesPool.size)]
-
-    private val courseOfStudiesPool = mutableListOf(
-        "WIB",
-        "WNB",
-        "BC",
-        "IBS",
-        "IBM",
-        "IEB",
-        "MBA",
-        "BA"
-    )
 
     private val randomSubject: String get() = subjectsPool[Random.nextInt(subjectsPool.size)]
 
@@ -94,4 +55,8 @@ object RandomQuestionnaireCreatorUtil {
         "GPD",
         "Logistic"
     )
+
+    private val randomAuthor
+        get() = if (Random.nextBoolean()) AuthorInfo("615b295b6f9d372bf28212bb", "Luca")
+        else AuthorInfo("615b2ee78d92a10ed1292a84", "Sasi")
 }

@@ -65,7 +65,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             questionnaireLiveData.observe(viewLifecycleOwner) {
                 binding.apply {
                     tvTitle.text = it.title
-                    tvAuthor.text = it.author
+                    tvAuthor.text = it.authorInfo.userName
                     tvCourseOfStudies.text = it.courseOfStudies
                     tvSubject.text = it.subject
                 }

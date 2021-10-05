@@ -58,11 +58,9 @@ abstract class LocalDatabase : RoomDatabase() {
                         minAnswersPerQuestion = 2,
                         maxAnswersPerQuestion = 5
                     ).let { (questionnaires, questions, answers) ->
-                        repo.insert(questionnaires)?.let {
-                            repo.insert(questions)?.let {
-                                repo.insert(answers)
-                            }
-                        }
+                        repo.insert(questionnaires)
+                        repo.insert(questions)
+                        repo.insert(answers)
                     }
                 }
             }

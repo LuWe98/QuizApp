@@ -9,7 +9,7 @@ import org.bson.types.ObjectId
 data class MongoQuestionnaire(
     @BsonId var id : String = ObjectId().toString(),
     var title : String = "",
-    var author : String = "",
+    var authorInfo : AuthorInfo,
     var lastModifiedTimestamp: Long = getTimeMillis(),
     var courseOfStudies : String = "",
     var questions : List<MongoQuestion> = emptyList()

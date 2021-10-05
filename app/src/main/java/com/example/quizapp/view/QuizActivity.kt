@@ -2,6 +2,7 @@ package com.example.quizapp.view
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.graphics.Rect
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.activity.viewModels
@@ -13,6 +14,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityMainBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.ktor.mongo.MongoMapper
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmMain
 import com.google.android.material.card.MaterialCardView
@@ -56,11 +58,12 @@ class QuizActivity : BindingActivity<ActivityMainBinding>(), NavController.OnDes
             }
 
             cardSearch.setOnClickListener {
-                bottomNavView.selectedItemId = R.id.fragmentSearch
+                navigator.navigateToSearchScreen()
+//                bottomNavView.selectedItemId = R.id.fragmentSearch
             }
 
             addCard.setOnClickListener {
-//                navigator.navigateToAddQuestionnaireScreen()
+                navigator.navigateToAddQuestionnaireScreen()
 
 //                launch {
 //                    val mongoQuestionnaires = viewModel.getQuestionnairesOfUser()
@@ -74,7 +77,7 @@ class QuizActivity : BindingActivity<ActivityMainBinding>(), NavController.OnDes
 
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
         when (destination.id) {
-            R.id.fragmentQuizOverview, R.id.fragmentQuizContainer, R.id.fragmentAddQuestionnaire, R.id.fragmentAddQuestion, R.id.fragmentAuth, R.id.fragmentSearch -> {
+            R.id.fragmentQuizOverview, R.id.fragmentQuizContainer, R.id.fragmentAddQuestionnaire, R.id.fragmentAddQuestion, R.id.fragmentAuth, R.id.fragmentSearch-> {
                 binding.bottomAppBar.performHide()
                 changeBottomAppBarVisibility(false)
             }
@@ -90,6 +93,12 @@ class QuizActivity : BindingActivity<ActivityMainBinding>(), NavController.OnDes
                 }
                 changeBottomAppBarVisibility(true)
             }
+//            R.id.fragmentSearch -> {
+//                binding.apply {
+//                    changeCustomBottomNavBarVisibility(cardSearch, ivSearch)
+//                }
+//                changeBottomAppBarVisibility(true)
+//            }
         }
     }
 

@@ -1,10 +1,7 @@
 package com.example.quizapp.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.map
+import androidx.lifecycle.*
 import com.example.quizapp.QuizNavGraphArgs
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.room.LocalRepository
@@ -28,11 +25,13 @@ class VmQuiz @Inject constructor(
 
     val fragmentEventChannelFlow get() = fragmentEventChannel.receiveAsFlow()
 
-    val completeQuestionnaireLiveData = localRepository.getCompleteQuestionnaireWithIdLiveData(args.questionnaireId).distinctUntilChanged()
+    private val completeQuestionnaireFlow = localRepository.findCompleteQuestionnaireAsFlowWith(args.questionnaireId)
 
-    fun getQuestionWithAnswersLiveData(questionId: String) = completeQuestionnaireLiveData.map { it.getQuestionWithAnswers(questionId) }.distinctUntilChanged()
+    val completeQuestionnaireLiveData = completeQuestionnaireFlow.asLiveData().distinctUntilChanged()
 
     val completeQuestionnaire get() = completeQuestionnaireLiveData.value
+
+    fun getQuestionWithAnswersLiveData(questionId: String) = completeQuestionnaireLiveData.map { it.getQuestionWithAnswers(questionId) }.distinctUntilChanged()
 
     val questionnaireLiveData get() = completeQuestionnaireLiveData.map { it.questionnaire }.distinctUntilChanged()
 

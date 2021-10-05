@@ -9,18 +9,13 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 abstract class QuestionDao : BaseDao<Question> {
 
-    @Query("SELECT * FROM questionTable")
-    abstract suspend fun getAllQuestions() : List<Question>
-
-    @get:Query("SELECT * FROM questionTable")
-    abstract val allQuestionsFlow : Flow<List<Question>>
+    @Query("SELECT * FROM questionTable WHERE questionnaireId =:questionnaireId ORDER BY questionPosition")
+    abstract fun findQuestionsWith(questionnaireId : String) : List<Question>
 
     @Query("SELECT * FROM questionTable WHERE questionnaireId =:questionnaireId ORDER BY questionPosition")
-    abstract fun getQuestionsOfQuestionnaire(questionnaireId : String) : List<Question>
-
-    @Query("SELECT * FROM questionTable WHERE questionnaireId =:questionnaireId ORDER BY questionPosition")
-    abstract fun getQuestionsOfQuestionnaireFlow(questionnaireId : String) : Flow<List<Question>>
+    abstract fun findQuestionsAsFlowWith(questionnaireId : String) : Flow<List<Question>>
 
     @Query("DELETE FROM questionTable WHERE questionnaireId = :questionnaireId")
     abstract fun deleteQuestionsWith(questionnaireId: String)
+
 }

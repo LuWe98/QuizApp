@@ -3,7 +3,10 @@ package com.example.quizapp.viewmodel
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.AddNavGraphArgs
+import com.example.quizapp.extensions.first
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.ktor.mongo.documents.questionnaire.AuthorInfo
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
@@ -11,6 +14,7 @@ import com.example.quizapp.viewmodel.VmAdd.FragmentAddQuestionnaireEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -18,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class VmAdd @Inject constructor(
     private val localRepository: LocalRepository,
+    private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
 ) : ViewModel() {
 
@@ -62,7 +67,7 @@ class VmAdd @Inject constructor(
     init {
         args.questionnaireId?.let { id ->
             runBlocking {
-                localRepository.getCompleteQuestionnaireWithId(id).apply {
+                localRepository.findCompleteQuestionnaireWith(id).apply {
                     qId = id
                     qTitle = questionnaire.title
                     qCourseOfStudies = questionnaire.courseOfStudies
@@ -143,15 +148,13 @@ class VmAdd @Inject constructor(
     }
 
     fun onFabSaveClicked() {
-        if(!isInputValid()){ return }
-
-        //TODO --> Author ist der momentan User der in der App angemeldet ist
+        if(!isInputValid()) return
         //TODO --> Faculty ist noch WIP / Auch vom User ?
         launch(viewModelScope, Dispatchers.IO) {
             val questionnaire = Questionnaire(
                 id = qId,
                 title = qTitle,
-                author = "Luca",
+                authorInfo = preferencesRepository.userCredentialsFlow.first().asAuthorInfo(),
                 faculty = "WIB",
                 courseOfStudies = qCourseOfStudies,
                 subject = qSubject)
@@ -169,7 +172,7 @@ class VmAdd @Inject constructor(
         }
     }
 
-    private fun isInputValid() : Boolean{
+    private fun isInputValid() : Boolean {
         var position = questionsWithAnswersLiveDataValue.indexOfFirst { it.question.questionText.isEmpty() }
         if (position != RecyclerView.NO_POSITION) {
             launch { fragmentAddQuestionnaireEventChannel.send(ShowQuestionDoesNotHaveTitleToast(position)) }

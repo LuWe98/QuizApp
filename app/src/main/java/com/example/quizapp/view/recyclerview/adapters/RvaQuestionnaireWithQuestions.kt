@@ -4,15 +4,16 @@ import com.example.quizapp.databinding.RviQuestionnaireNewBinding
 import com.example.quizapp.extensions.setDrawableSize
 import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestions
+import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 import com.example.quizapp.view.recyclerview.impl.BindingPagingDataAdapter
 
-class RvaQuestionnaireWithQuestions : BindingPagingDataAdapter<QuestionnaireWithQuestions, RviQuestionnaireNewBinding>(QuestionnaireWithQuestions.DIFF_CALLBACK) {
+class RvaQuestionnaireWithQuestions : BindingListAdapter<QuestionnaireWithQuestions, RviQuestionnaireNewBinding>(QuestionnaireWithQuestions.DIFF_CALLBACK) {
 
     var onItemClick : ((Questionnaire) -> (Unit))? = null
 
     var onItemLongClick: ((Questionnaire) -> (Unit))? = null
 
-    override fun initListeners(binding: RviQuestionnaireNewBinding, vh: BindingPagingDataAdapterViewHolder) {
+    override fun initListeners(binding: RviQuestionnaireNewBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
             root.setOnClickListener {
                 getItem(vh.bindingAdapterPosition)?.let {
@@ -34,7 +35,7 @@ class RvaQuestionnaireWithQuestions : BindingPagingDataAdapter<QuestionnaireWith
             item.questionnaire.let {
                 questionnaireTitle.text = it.title
                 courseOfStudiesName.text = it.faculty
-                authorName.text = it.author
+                authorName.text = it.authorInfo.userName
 //                subjectName.text = it.subject
             }
 

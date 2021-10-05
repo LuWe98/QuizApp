@@ -13,4 +13,6 @@ class QuestionnaireApi @Inject constructor(
 
     suspend fun getQuestionnaireOfUser(): List<MongoQuestionnaire> = client.get("/questionnaire/user")
 
+    suspend fun getAllQuestionnaires() : List<MongoQuestionnaire> = client.get("/questionnaires")
+
 }

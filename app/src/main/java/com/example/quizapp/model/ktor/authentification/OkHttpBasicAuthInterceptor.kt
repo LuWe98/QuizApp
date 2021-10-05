@@ -22,7 +22,7 @@ class OkHttpBasicAuthInterceptor @Inject constructor(
             }
 
             return proceed(request().newBuilder().run {
-                preferencesRepository.getUserCredentials().let { credentials ->
+                preferencesRepository.userCredentials.let { credentials ->
                     header(HttpHeaders.Authorization, Credentials.basic(credentials.name, credentials.password, Charsets.UTF_8))
                     build()
                 }

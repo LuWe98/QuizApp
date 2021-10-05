@@ -2,21 +2,21 @@ package com.example.quizapp.view.fragments.homescreen
 
 import android.os.Bundle
 import android.view.View
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeBinding
 import com.example.quizapp.extensions.attachToViewPager
 import com.example.quizapp.extensions.getStringArray
+import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.viewmodel.VmHome
 import com.example.quizapp.view.viewpager.adapter.VpaHome
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
+import com.example.quizapp.viewmodel.VmHome
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FragmentHome : BindingFragment<FragmentHomeBinding>(){
 
-    private val vmHome: VmHome by hiltNavGraphViewModels(R.id.main_nav_graph)
+    private val vmHome: VmHome by hiltNavDestinationViewModels(R.id.fragmentHome)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
