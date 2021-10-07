@@ -15,7 +15,4 @@ abstract class QuestionDao : BaseDao<Question> {
     @Query("SELECT * FROM questionTable WHERE questionnaireId =:questionnaireId ORDER BY questionPosition")
     abstract fun findQuestionsAsFlowWith(questionnaireId : String) : Flow<List<Question>>
 
-    @Query("DELETE FROM questionTable WHERE questionnaireId = :questionnaireId")
-    abstract fun deleteQuestionsWith(questionnaireId: String)
-
 }

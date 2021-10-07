@@ -3,26 +3,34 @@ package com.example.quizapp.viewmodel
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.AddNavGraphArgs
-import com.example.quizapp.extensions.first
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.ktor.mongo.documents.questionnaire.AuthorInfo
+import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.room.LocalRepository
+import com.example.quizapp.model.room.SyncStatus
 import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
 import com.example.quizapp.viewmodel.VmAdd.FragmentAddQuestionnaireEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.util.date.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.bson.types.ObjectId
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
 class VmAdd @Inject constructor(
+    private val applicationScope : CoroutineScope,
     private val localRepository: LocalRepository,
     private val preferencesRepository: PreferencesRepository,
+    private val backendRepository: BackendRepository,
     private val state: SavedStateHandle
 ) : ViewModel() {
 
@@ -32,7 +40,7 @@ class VmAdd @Inject constructor(
 
     val fragmentAddQuestionnaireEventChannelFlow get() = fragmentAddQuestionnaireEventChannel.receiveAsFlow()
 
-    private var qId = state.get<String>(QUESTIONNAIRE_ID) ?: ""
+    private var qId = state.get<String>(QUESTIONNAIRE_ID) ?: ObjectId().toString()
         set(value) {
             state.set(QUESTIONNAIRE_ID, value)
             field = value
@@ -107,6 +115,7 @@ class VmAdd @Inject constructor(
         }
     }
 
+
     fun onSaveSpecificQuestionClicked(event: VmEditQuestion.FragmentEditQuestionEvent.SendUpdateRequestToVmAdd) {
         questionsWithAnswersLiveDataValue.apply {
             set(event.position, event.newQuestionWithAnswers)
@@ -131,15 +140,15 @@ class VmAdd @Inject constructor(
         setQuestionWithAnswers(event.lastListValues)
     }
 
-    fun onQuestionnaireTitleTextChanged(text : String){
+    fun onQuestionnaireTitleTextChanged(text: String) {
         qTitle = text
     }
 
-    fun onQuestionnaireCourseOfStudiesTextChanged(text : String){
+    fun onQuestionnaireCourseOfStudiesTextChanged(text: String) {
         qCourseOfStudies = text
     }
 
-    fun onQuestionnaireSubjectTextChanged(text : String){
+    fun onQuestionnaireSubjectTextChanged(text: String) {
         qSubject = text
     }
 
@@ -148,31 +157,50 @@ class VmAdd @Inject constructor(
     }
 
     fun onFabSaveClicked() {
-        if(!isInputValid()) return
+        if (!isInputValid()) return
         //TODO --> Faculty ist noch WIP / Auch vom User ?
-        launch(viewModelScope, Dispatchers.IO) {
+        applicationScope.launch(Dispatchers.IO) {
             val questionnaire = Questionnaire(
                 id = qId,
                 title = qTitle,
                 authorInfo = preferencesRepository.userCredentialsFlow.first().asAuthorInfo(),
+                lastModifiedTimestamp = getTimeMillis(),
                 faculty = "WIB",
                 courseOfStudies = qCourseOfStudies,
-                subject = qSubject)
+                subject = qSubject,
+                syncStatus = SyncStatus.SYNCING)
 
-            localRepository.deleteQuestionsWith(qId)
-            localRepository.insert(questionnaire)?.let {
-                questionsWithAnswersLiveDataValue.forEachIndexed { index, qwa ->
-                    localRepository.insert(qwa.question.copy(questionnaireId = qId, questionPosition = index))?.let {
-                        localRepository.insert(qwa.answers.map { it.copy(questionId = qwa.question.id, isAnswerSelected = false) })
-                    }
+            val questionsWithAnswersMapped = questionsWithAnswersLiveDataValue.onEachIndexed { index, qwa ->
+                qwa.question.apply {
+                    questionnaireId = qId
+                    questionPosition = index
+                }
+                qwa.answers = qwa.answers.mapIndexed { answerIndex, answer ->
+                    answer.copy(questionId = qwa.question.id, isAnswerSelected = false, answerPosition = answerIndex)
                 }
             }
 
+            localRepository.deleteQuestionnaireWith(qId)
+            localRepository.insert(questionnaire)
+            localRepository.insert(questionsWithAnswersMapped.map { it.question })
+            localRepository.insert(questionsWithAnswersMapped.flatMap { it.answers })
+
             fragmentAddQuestionnaireEventChannel.send(NavigateBackEvent)
+
+            val response = try {
+                backendRepository.insertQuestionnaire(DataMapper.mapSqlEntitiesToMongoEntity(questionnaire, questionsWithAnswersMapped))
+            } catch (e: Exception) {
+                null
+            }
+
+            localRepository.update(questionnaire.apply {
+                syncStatus = if(response != null && response.isSuccessful) SyncStatus.SYNCED else SyncStatus.UNSYNCED
+            })
         }
     }
 
-    private fun isInputValid() : Boolean {
+
+    private fun isInputValid(): Boolean {
         var position = questionsWithAnswersLiveDataValue.indexOfFirst { it.question.questionText.isEmpty() }
         if (position != RecyclerView.NO_POSITION) {
             launch { fragmentAddQuestionnaireEventChannel.send(ShowQuestionDoesNotHaveTitleToast(position)) }

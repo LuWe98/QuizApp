@@ -14,6 +14,8 @@ object Constants {
     const val SUBJECT_TABLE_NAME = "subjectTable"
     const val FACULTY_TABLE_NAME = "facultyTable"
     const val COURSE_OF_STUDIES_TABLE_NAME = "courseOfStudiesTableName"
+    const val DELETED_QUESTIONNAIRES_TABLE = "deletedQuestionnairesTable"
+    const val DOWNLOADED_QUESTIONNAIRES_TABLE = "downloadedQuestionnairesTable"
 
 
     // Für physisches Handy 192.168.178.78 -> CMD -> ipconfig

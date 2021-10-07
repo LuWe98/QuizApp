@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/white"
+        app:cardElevation="@dimen/defaultElevation"
+        android:layout_marginTop="@dimen/grid_3"
+        android:layout_marginHorizontal="@dimen/grid_2"
+        app:cardCornerRadius="7.5dp"
+        android:padding="@dimen/grid_2">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/defaultMinQuestionnaireCardHeight"
+            android:id="@+id/clTop"
+            android:layout_margin="@dimen/grid_2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:id="@+id/progressIndicator"
+                app:indicatorSize="42.5dp"
+                app:indicatorColor="?colorAccent"
+                app:trackColor="@color/unselectedColor"
+                app:trackThickness="5dp"
+                android:indeterminateOnly="true"
+                tools:visibility="visible"
+                app:trackCornerRadius="45dp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@+id/btnDownload"
+                app:layout_constraintTop_toTopOf="@+id/btnDownload"
+                app:layout_constraintBottom_toBottomOf="@+id/btnDownload"
+                app:layout_constraintEnd_toEndOf="@+id/btnDownload" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/btnDownload"
+                app:srcCompat="@drawable/ic_cloud_download"
+                android:layout_marginStart="@dimen/grid_2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:tint="@color/white"
+                android:padding="8dp"
+                android:background="@drawable/shape_circle"
+                android:backgroundTint="?colorPrimary"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/tvTitle"
+                android:gravity="bottom"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnMoreOptions"
+                app:layout_constraintHeight_percent="0.50"
+                tools:text="Questionnaire Title"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_marginStart="@dimen/grid_3"
+                app:layout_constraintStart_toEndOf="@+id/btnDownload" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/btnMoreOptions"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/ic_more"
+                android:padding="10dp" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="22.5dp"
+                android:id="@+id/tvInfo"
+                android:text="@string/test"
+                android:gravity="center_vertical"
+                android:layout_marginStart="@dimen/grid_3"
+                app:layout_constraintStart_toEndOf="@+id/btnDownload"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+                app:layout_constraintEnd_toStartOf="@+id/btnMoreOptions" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

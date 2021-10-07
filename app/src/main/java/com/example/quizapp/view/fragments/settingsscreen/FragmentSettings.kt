@@ -5,10 +5,13 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentSettingsBinding
 import com.example.quizapp.extensions.collect
+import com.example.quizapp.extensions.showAlertDialog
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmSettings
+import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -49,7 +52,12 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
         viewModel.fragmentSettingsEventChannelFlow.collect(lifecycleScope){ event ->
             when(event){
-                VmSettings.FragmentSettingsEvent.NavigateToLoginScreen -> navigator.navigateToLoginScreen()
+                NavigateToLoginScreen -> navigator.navigateToLoginScreen()
+                OnLogoutClickedEvent -> {
+                    showAlertDialog(R.string.logoutWarningTitle, R.string.logoutWarning, R.string.logout, R.string.cancel, positiveButtonClicked = {
+                        viewModel.onLogoutConfirmed()
+                    })
+                }
             }
         }
     }

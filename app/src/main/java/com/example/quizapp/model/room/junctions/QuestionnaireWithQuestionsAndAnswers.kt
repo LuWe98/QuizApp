@@ -2,6 +2,7 @@ package com.example.quizapp.model.room.junctions
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.example.quizapp.model.ktor.requests.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.model.room.entities.Questionnaire
@@ -18,6 +19,7 @@ data class QuestionnaireWithQuestionsAndAnswers(
 
     val allAnswers: List<Answer> get() = questionsWithAnswers.flatMap { item -> item.answers }
 
+    fun isAnswerSelected(answerId : String) = allAnswers.firstOrNull { it.id == answerId }?.isAnswerSelected ?: false
 
     fun getQuestionWithAnswers(questionId: String): QuestionWithAnswers = questionsWithAnswers.first { qwa -> qwa.question.id == questionId }
 
@@ -34,6 +36,8 @@ data class QuestionnaireWithQuestionsAndAnswers(
     val correctQuestionsAmount get() = questionsWithAnswers.filter { it.isAnsweredCorrectly }.size
 
     val correctQuestionsPercentage get() = (correctQuestionsAmount*100/questionsAmount.toFloat()).toInt()
+
+    val asQuestionnaireIdWithTimestamp get() = questionnaire.asQuestionnaireIdWithTimeStamp
 
     companion object {
         val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<QuestionnaireWithQuestionsAndAnswers> { old, new -> old.questionnaire.id == new.questionnaire.id }

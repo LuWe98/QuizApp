@@ -31,6 +31,7 @@ import kotlinx.serialization.json.Json
 
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -82,11 +83,12 @@ object AppModule {
         roomDatabase.getQuestionaryDao(),
         roomDatabase.getQuestionDao(),
         roomDatabase.getAnswerDao(),
-        roomDatabase.getGivenAnswersDao(),
         roomDatabase.getUserRoleDao(),
         roomDatabase.getFacultyDao(),
         roomDatabase.getCourseOfStudiesDao(),
-        roomDatabase.getSubjectDao()
+        roomDatabase.getSubjectDao(),
+        roomDatabase.getDownloadedQuestionnairesDao(),
+        roomDatabase.getDeletedQuestionnairesDao()
     )
 
     @Provides
@@ -103,9 +105,9 @@ object AppModule {
     @Singleton
     fun provideKtorClient(basicAuthInterceptor: OkHttpBasicAuthInterceptor): HttpClient = HttpClient(OkHttp) {
         install(DefaultRequest) {
+            //TODO -> Change later to HTTPS
             url.takeFrom(URLBuilder().takeFrom(Constants.BACKEND_URL).apply {
                 encodedPath += url.encodedPath
-                //TODO -> Change later to HTTPS
                 protocol = URLProtocol.HTTP
             })
 
@@ -121,7 +123,9 @@ object AppModule {
 
         engine {
             config {
-                connectTimeout(60, TimeUnit.SECONDS)
+                connectTimeout(1, TimeUnit.SECONDS)
+                writeTimeout(2, TimeUnit.SECONDS)
+                readTimeout(2, TimeUnit.SECONDS)
             }
             addInterceptor(basicAuthInterceptor)
         }

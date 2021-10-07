@@ -14,4 +14,6 @@ abstract class AnswerDao : BaseDao<Answer> {
     @Query("SELECT * FROM answerTable WHERE questionId =:questionId")
     abstract fun findAnswersByIdFlow(questionId : String) : Flow<List<Answer>>
 
+    @Query("SELECT * FROM answerTable WHERE isAnswerSelected = 1")
+    abstract fun findAllSelectedAnswersWithQuestionId() : List<Answer>
 }

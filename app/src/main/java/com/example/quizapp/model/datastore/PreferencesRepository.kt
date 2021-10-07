@@ -36,6 +36,15 @@ class PreferencesRepository @Inject constructor(
     }
 
 
+    suspend fun resetPreferenceData(){
+        dataStore.edit {
+            it[USER_ID_KEY] = encryptionUtil.encrypt("")
+            it[USER_NAME_KEY] = encryptionUtil.encrypt("")
+            it[USER_PASSWORD_KEY] = encryptionUtil.encrypt("")
+            it[THEME_KEY] = AppCompatDelegate.MODE_NIGHT_NO
+        }
+    }
+
 
     val userCredentialsFlow = dataFlow.map { preferences ->
         val decryptedUserId: String = preferences[USER_ID_KEY]?.let { encryptionUtil.decrypt(it) } ?: ""

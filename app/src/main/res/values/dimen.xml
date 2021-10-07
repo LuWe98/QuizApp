@@ -16,6 +16,7 @@
 
     <dimen name="quizTopLayoutHeight">265dp</dimen>
     <dimen name="defaultMinCardHeight">67.5dp</dimen>
+    <dimen name="defaultMinQuestionnaireCardHeight">75dp</dimen>
 
     <dimen name="maxHeaderTextSize">18sp</dimen>
 </resources>

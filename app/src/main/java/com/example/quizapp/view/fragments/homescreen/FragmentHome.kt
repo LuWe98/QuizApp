@@ -2,11 +2,10 @@ package com.example.quizapp.view.fragments.homescreen
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeBinding
-import com.example.quizapp.extensions.attachToViewPager
-import com.example.quizapp.extensions.getStringArray
-import com.example.quizapp.extensions.hiltNavDestinationViewModels
+import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.viewpager.adapter.VpaHome
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
@@ -21,6 +20,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        initObservers()
     }
 
     private fun initViews(){
@@ -33,7 +33,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>(){
                 tabLayout.attachToViewPager(this) { tab, pos ->
                     tab.text = getStringArray(R.array.home_tab_names)[pos]
                     tab.view.setOnClickListener {
-                        viewPager.setCurrentItem(pos, false)
+                        viewPager.setCurrentItem(pos, true)
                     }
 //                    tab.setIcon(when(pos) {
 //                        0 -> R.drawable.ic_api
@@ -46,6 +46,16 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>(){
 
             clSearch.setOnClickListener {
                 navigator.navigateToSearchScreen()
+            }
+        }
+    }
+
+    private fun initObservers(){
+        vmHome.fragmentHomeEventChannelFlow.collect(lifecycleScope) { event ->
+            when(event) {
+                is VmHome.FragmentHomeEvent.ShowSnackBarMessageBar -> {
+                    showSnackBar(event.messageRes)
+                }
             }
         }
     }

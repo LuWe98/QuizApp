@@ -23,6 +23,7 @@
                 android:id="@+id/ivQuestionType"
                 app:srcCompat="@drawable/ic_check_circle"
                 android:padding="7.5dp"
+                app:tint="@color/green"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"

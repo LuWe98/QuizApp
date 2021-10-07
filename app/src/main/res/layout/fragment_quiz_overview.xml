@@ -153,12 +153,11 @@
                     android:layout_height="55dp"
                     android:layout_marginHorizontal="@dimen/grid_1"
                     android:layout_marginVertical="@dimen/grid_1">
-
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:id="@+id/tvCourseOfStudies"
-                        tools:text="WI"
+                        android:id="@+id/tvAuthor"
+                        tools:text="Sasi"
                         android:textStyle="bold"
                         app:autoSizeMaxTextSize="14sp"
                         app:autoSizeMinTextSize="9sp"
@@ -166,7 +165,7 @@
                         app:autoSizeStepGranularity="0.25sp"
                         android:gravity="center_horizontal"
                         android:drawablePadding="@dimen/grid_1"
-                        app:drawableTopCompat="@drawable/ic_domain"
+                        app:drawableTopCompat="@drawable/ic_person"
                         app:drawableTint="?colorPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -178,11 +177,41 @@
                 <View
                         android:layout_width="0.75dp"
                         android:layout_height="match_parent"
-                        app:layout_constraintEnd_toStartOf="@+id/tvSubject"
-                        app:layout_constraintStart_toEndOf="@+id/tvCourseOfStudies"
+                        app:layout_constraintEnd_toStartOf="@+id/tvCourseOfStudies"
+                        app:layout_constraintStart_toEndOf="@+id/tvAuthor"
                         android:background="@color/unselectedColor"
                         android:layout_marginVertical="@dimen/grid_1"
                         android:id="@+id/separatorOne" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/tvCourseOfStudies"
+                        tools:text="WIB"
+                        android:textStyle="bold"
+                        app:autoSizeMaxTextSize="14sp"
+                        app:autoSizeMinTextSize="9sp"
+                        app:autoSizeTextType="uniform"
+                        app:autoSizeStepGranularity="0.25sp"
+                        android:gravity="center_horizontal"
+                        android:drawablePadding="@dimen/grid_1"
+                        app:drawableTopCompat="@drawable/ic_domain"
+                        app:drawableTint="?colorPrimary"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/separatorOne"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintWidth_percent="0.32"
+                        app:layout_constraintEnd_toStartOf="@+id/separatorTwo"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                        android:layout_width="0.75dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/separatorTwo"
+                        app:layout_constraintStart_toEndOf="@+id/tvCourseOfStudies"
+                        app:layout_constraintEnd_toStartOf="@+id/tvSubject"
+                        android:layout_marginVertical="@dimen/grid_1"
+                        android:background="@color/unselectedColor" />
 
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="0dp"
@@ -197,36 +226,6 @@
                         android:gravity="center_horizontal"
                         android:drawablePadding="@dimen/grid_1"
                         app:drawableTopCompat="@drawable/ic_class"
-                        app:drawableTint="?colorPrimary"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/separatorOne"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintWidth_percent="0.32"
-                        app:layout_constraintEnd_toStartOf="@+id/separatorTwo"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                <View
-                        android:layout_width="0.75dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/separatorTwo"
-                        app:layout_constraintStart_toEndOf="@+id/tvSubject"
-                        app:layout_constraintEnd_toStartOf="@+id/tvAuthor"
-                        android:layout_marginVertical="@dimen/grid_1"
-                        android:background="@color/unselectedColor" />
-
-                <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/tvAuthor"
-                        tools:text="John"
-                        android:textStyle="bold"
-                        app:autoSizeMaxTextSize="14sp"
-                        app:autoSizeMinTextSize="9sp"
-                        app:autoSizeTextType="uniform"
-                        app:autoSizeStepGranularity="0.25sp"
-                        android:gravity="center_horizontal"
-                        android:drawablePadding="@dimen/grid_1"
-                        app:drawableTopCompat="@drawable/ic_person"
                         app:drawableTint="?colorPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

@@ -2,7 +2,6 @@ package com.example.quizapp.view
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.graphics.Rect
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.activity.viewModels
@@ -14,7 +13,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityMainBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.ktor.mongo.MongoMapper
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmMain
 import com.google.android.material.card.MaterialCardView
@@ -59,18 +57,11 @@ class QuizActivity : BindingActivity<ActivityMainBinding>(), NavController.OnDes
 
             cardSearch.setOnClickListener {
                 navigator.navigateToSearchScreen()
-//                bottomNavView.selectedItemId = R.id.fragmentSearch
+//               bottomNavView.selectedItemId = R.id.fragmentSearch
             }
 
             addCard.setOnClickListener {
                 navigator.navigateToAddQuestionnaireScreen()
-
-//                launch {
-//                    val mongoQuestionnaires = viewModel.getQuestionnairesOfUser()
-//                    val qwa = mongoQuestionnaires.map { MongoMapper.mapMongoObjectToSqlEntities(it) }
-//                    val remappedMongoQuestionnaires = qwa.map { MongoMapper.mapSqlEntitiesToMongoObject(it) }
-//                    log("IS SAME? ${mongoQuestionnaires == remappedMongoQuestionnaires}")
-//                }
             }
         }
     }

@@ -1,6 +1,10 @@
 package com.example.quizapp.model.ktor.requests
 
+import com.example.quizapp.model.ktor.mongo.documents.filledquestionnaire.MongoFilledQuestionnaire
+import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoQuestionnaire
+import com.example.quizapp.model.room.entities.LocallyDeletedQuestionnaire
 import kotlinx.serialization.Serializable
+
 
 sealed class BackendRequest {
 
@@ -19,18 +23,45 @@ sealed class BackendRequest {
 
     @Serializable
     data class UpdateUserRequest(
+        val userId: String,
         val newUserName: String
     ) : BackendRequest()
 
     @Serializable
-    data class DeleteAnswerRequest(
-        val questionnaireId: String,
-        val answerId: String
+    data class DeleteUserRequest(
+        val userId: String
+    ) : BackendRequest()
+
+
+    @Serializable
+    data class InsertQuestionnaireRequest(
+        val mongoQuestionnaire: MongoQuestionnaire
     ) : BackendRequest()
 
     @Serializable
+    data class InsertFilledQuestionnaireRequest(
+        val shouldBeIgnoredWhenAnotherIsPresent : Boolean,
+        val mongoFilledQuestionnaire: MongoFilledQuestionnaire
+    ) : BackendRequest()
+
+    @Serializable
+    data class GetAllSyncedQuestionnairesRequest(
+        val syncedQuestionnaireIdsWithTimestamp : List<QuestionnaireIdWithTimestamp>,
+        val unsyncedQuestionnaireIds: List<String>,
+        val questionnaireIdsToIgnore: List<String>
+    ) : BackendRequest()
+
+
+
+    @Serializable
     data class DeleteQuestionnaireRequest(
-        val questionnaireId: String
+        val questionnaireIds: List<String>
+    ) : BackendRequest()
+
+    @Serializable
+    data class DeleteFilledQuestionnaireRequest(
+        val userId: String,
+        val questionnaireIds: List<String>
     ) : BackendRequest()
 
     @Serializable
@@ -40,8 +71,8 @@ sealed class BackendRequest {
     ) : BackendRequest()
 
     @Serializable
-    data class QuestionnairesRequest(
-        val searchString: String
+    data class DeleteAnswerRequest(
+        val questionnaireId: String,
+        val answerId: String
     ) : BackendRequest()
-
 }

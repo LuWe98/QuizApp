@@ -12,20 +12,24 @@ class UserApi @Inject constructor(
     private val client: HttpClient
 ) {
 
-    suspend fun loginUser(email: String, password: String): LoginUserResponse =
+    suspend fun loginUser(newUserName: String, password: String): LoginUserResponse =
         client.post("/user/login") {
-            body = LoginUserRequest(email, password)
+            body = LoginUserRequest(newUserName, password)
         }
 
-    suspend fun registerUser(email: String, password: String, courseOfStudies : String): RegisterUserResponse =
+    suspend fun registerUser(newUserName: String, password: String, courseOfStudies: String): RegisterUserResponse =
         client.post("/user/register") {
-            body = RegisterUserRequest(email, password, courseOfStudies)
+            body = RegisterUserRequest(newUserName, password, courseOfStudies)
         }
 
-    suspend fun updateUser(newUserName : String): UpdateUserResponse =
+    suspend fun updateUser(userId: String, newUserName: String): UpdateUserResponse =
         client.post("/user/update") {
-            body = UpdateUserRequest(newUserName)
+            body = UpdateUserRequest(userId, newUserName)
         }
 
-    suspend fun deleteUser(): Boolean = client.post("/user/delete")
+    suspend fun deleteUser(userId: String): DeleteUserResponse =
+        client.post("/user/delete") {
+            body = DeleteUserRequest(userId)
+        }
+
 }

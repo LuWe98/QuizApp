@@ -3,7 +3,6 @@ package com.example.quizapp.model.room
 import com.example.quizapp.model.room.dao.*
 import com.example.quizapp.model.room.entities.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,11 +13,12 @@ class LocalRepository @Inject constructor(
     private val questionnaireDao: QuestionnaireDao,
     private val questionDao: QuestionDao,
     private val answerDao: AnswerDao,
-    private val givenAnswerDao: GivenAnswerDao,
     private val roleDao: RoleDao,
     private val facultyDao: FacultyDao,
     private val courseOfStudiesDao: CourseOfStudiesDao,
-    private val subjectDao: SubjectDao
+    private val subjectDao: SubjectDao,
+    private val locallyDownloadedQuestionnaireDao: LocallyDownloadedQuestionnaireDao,
+    private val locallyDeletedQuestionnaireDao: LocallyDeletedQuestionnaireDao
 ) {
 
     suspend fun <T : EntityMarker> insert(entity: T) = getBaseDaoWith(entity).insert(entity)
@@ -38,17 +38,24 @@ class LocalRepository @Inject constructor(
     @Suppress("UNCHECKED_CAST")
     private fun <T : EntityMarker> getBaseDaoWith(entity: T) = (when (entity) {
         is Answer -> answerDao
-        is GivenAnswer -> givenAnswerDao
         is Question -> questionDao
         is Questionnaire -> questionnaireDao
         is Role -> roleDao
         is Faculty -> facultyDao
         is CourseOfStudies -> courseOfStudiesDao
         is Subject -> subjectDao
+        is LocallyDeletedQuestionnaire -> locallyDeletedQuestionnaireDao
+        is LocallyDownloadedQuestionnaire -> locallyDownloadedQuestionnaireDao
         else -> throw IllegalArgumentException("Object does not implement EntityMarker Interface!")
     } as BaseDao<T>)
 
 
+    // TRANSACTIONS
+    fun test() {
+        localDatabase.runInTransaction {
+
+        }
+    }
 
 
     //QUESTIONNAIRE
@@ -60,18 +67,47 @@ class LocalRepository @Inject constructor(
 
     fun findCompleteQuestionnaireAsFlowWith(questionnaireId: String) = questionnaireDao.findCompleteQuestionnaireAsFlowWith(questionnaireId)
 
-    fun completeQuestionnaireStateFlow(questionnaireId: String) = questionnaireDao.findCompleteQuestionnaireAsFlowWith(questionnaireId)
-        .stateIn(applicationScope, SharingStarted.WhileSubscribed(),  null)
+    suspend fun findQuestionnaireWith(questionnaireId: String) = questionnaireDao.findQuestionnaireWith(questionnaireId)
+
+    suspend fun findQuestionnairesWith(questionnaireIds: List<String>) = questionnaireDao.findQuestionnairesWith(questionnaireIds)
+
+    suspend fun findAllNonSyncedQuestionnaireIds() = questionnaireDao.findAllNonSyncedQuestionnaireIds()
+
+    suspend fun findAllSyncedQuestionnaires() = questionnaireDao.findAllSyncedQuestionnaires()
+
+    suspend fun findAllSyncingQuestionnaires() = questionnaireDao.findAllSyncingQuestionnaires()
+
+    suspend fun deleteAllQuestionnaires() = questionnaireDao.deleteAllQuestionnaires()
+
+    suspend fun findCompleteQuestionnaireWith(questionnaireIds: List<String>) = questionnaireDao.findCompleteQuestionnaireWith(questionnaireIds)
+
+    suspend fun deleteQuestionnaireWith(questionnaireId: String) {
+        findQuestionnaireWith(questionnaireId)?.let {
+            delete(it)
+        }
+    }
+
+    suspend fun deleteQuestionnairesWith(questionnaireIds: List<String>) {
+        delete(findQuestionnairesWith(questionnaireIds))
+    }
+
 
 
     //QUESTION
     fun findQuestionsAsFlowWith(questionnaireId: String) = questionDao.findQuestionsAsFlowWith(questionnaireId)
 
-    fun deleteQuestionsWith(questionnaireId: String) {
-        questionDao.deleteQuestionsWith(questionnaireId)
-    }
-
 
     //ANSWER
-    fun getAnswersOfQuestion(questionId: String) = answerDao.findAnswersByIdFlow(questionId)
+    fun findAnswersByIdFlow(questionId: String) = answerDao.findAnswersByIdFlow(questionId)
+
+    fun findAllSelectedAnswersWithQuestionId() = answerDao.findAllSelectedAnswersWithQuestionId()
+
+
+    //DOWNLOADED QUESTIONNAIRE
+    suspend fun getAllDownloadedQuestionnaireIds() = locallyDownloadedQuestionnaireDao.getAllDownloadedQuestionnaireIds()
+
+
+    //DELETED QUESTIONNAIRE
+    suspend fun getAllDeletedQuestionnaireIds() = locallyDeletedQuestionnaireDao.getAllDeletedQuestionnaireIds()
+
 }

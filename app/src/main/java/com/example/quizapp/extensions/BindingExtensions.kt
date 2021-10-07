@@ -15,6 +15,6 @@ fun ViewBinding.getDrawable(@DrawableRes res : Int) = ContextCompat.getDrawable(
 
 fun ViewBinding.getColor(@ColorRes res : Int) = ContextCompat.getColor(context, res)
 
-fun ViewBinding.getString(@StringRes res : Int) = context.getString(res)
+fun ViewBinding.getString(@StringRes res : Int, vararg objects : Any) = context.getString(res, objects)
 
 fun ViewBinding.getThemeColor(@AttrRes res : Int) = context.getThemeColor(res)

@@ -1,13 +1,12 @@
 package com.example.quizapp.extensions
 
-import android.app.Activity
+import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.speech.RecognizerIntent
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -48,6 +47,23 @@ fun Fragment.showSnackBar(text: String, viewToAttachTo: View = requireView(), du
 fun Fragment.showSnackBar(@StringRes textRes: Int, viewToAttachTo: View = requireView(), duration: Int = Snackbar.LENGTH_LONG) {
     Snackbar.make(viewToAttachTo, textRes, duration).show()
 }
+
+fun Fragment.showAlertDialog(
+    @StringRes titleRes: Int,
+    @StringRes textRes: Int,
+    @StringRes positiveButtonRes: Int,
+    @StringRes negativeButtonRes: Int,
+    positiveButtonClicked: ((DialogInterface) -> Unit)? = null,
+    negativeButtonClicked: ((DialogInterface) -> Unit)? = null){
+    AlertDialog.Builder(requireContext())
+        .setTitle(getString(titleRes))
+        .setMessage(textRes)
+        .setPositiveButton(positiveButtonRes) { dialogInterface, _  -> positiveButtonClicked?.invoke(dialogInterface) }
+        .setNegativeButton(negativeButtonRes)  { dialogInterface, _  -> negativeButtonClicked?.invoke(dialogInterface) }
+        .show()
+}
+
+
 
 @MainThread
 fun Fragment.showSnackBar(

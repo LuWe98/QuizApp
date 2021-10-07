@@ -132,3 +132,10 @@ fun View.onClick(action : () -> (Unit)) {
         action.invoke()
     }
 }
+
+fun View.onLongClick(action : () -> (Unit)) {
+    setOnLongClickListener {
+        action.invoke()
+        return@setOnLongClickListener true
+    }
+}

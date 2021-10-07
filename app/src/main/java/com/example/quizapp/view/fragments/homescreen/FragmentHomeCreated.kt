@@ -2,23 +2,22 @@ package com.example.quizapp.view.fragments.homescreen
 
 import android.os.Bundle
 import android.view.View
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeCreatedBinding
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaQuestionnaireWithQuestions
+import com.example.quizapp.view.recyclerview.adapters.RvaCreatedQuestionnaires
 import com.example.quizapp.viewmodel.VmHome
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentHomeCreatedQuestionnaires : BindingFragment<FragmentHomeCreatedBinding>() {
+class FragmentHomeCreated : BindingFragment<FragmentHomeCreatedBinding>() {
 
     private val vmHome: VmHome by hiltNavDestinationViewModels(R.id.fragmentHome)
 
-    private lateinit var rvAdapter : RvaQuestionnaireWithQuestions
+    private lateinit var rvAdapter : RvaCreatedQuestionnaires
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -26,13 +25,11 @@ class FragmentHomeCreatedQuestionnaires : BindingFragment<FragmentHomeCreatedBin
     }
 
     private fun initRecyclerView(){
-        rvAdapter = RvaQuestionnaireWithQuestions().apply {
-            onItemClick = {
-                navigator.navigateToQuizScreen(it.id)
-            }
-            onItemLongClick = {
-                navigator.navigateToAddQuestionnaireScreen(it.id)
-            }
+        rvAdapter = RvaCreatedQuestionnaires().apply {
+            onItemClick = navigator::navigateToQuizScreen
+            onItemLongClick = navigator::navigateToAddQuestionnaireScreen
+            onSyncClick = vmHome::onCreatedItemSyncButtonClicked
+            onMoreOptionsClick = vmHome::onCreatedItemDeleteQuestionnaireClicked
         }
 
         binding.rv.apply {
@@ -43,7 +40,11 @@ class FragmentHomeCreatedQuestionnaires : BindingFragment<FragmentHomeCreatedBin
         }
 
         vmHome.allQuestionnairesWithQuestionsForUserLD.observe(viewLifecycleOwner) {
-            rvAdapter.submitList(it)
+            rvAdapter.submitList(it) {
+                if(it.isEmpty()){
+
+                }
+            }
         }
     }
 }
