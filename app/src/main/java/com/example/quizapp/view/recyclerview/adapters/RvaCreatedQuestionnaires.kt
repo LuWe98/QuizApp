@@ -5,7 +5,7 @@ import androidx.core.view.isVisible
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviQuestionnaireCreatedBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.room.SyncStatus
+import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestions
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter

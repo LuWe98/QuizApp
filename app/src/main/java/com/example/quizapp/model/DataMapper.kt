@@ -5,7 +5,7 @@ import com.example.quizapp.model.ktor.mongo.documents.filledquestionnaire.MongoF
 import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoAnswer
 import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoQuestion
 import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoQuestionnaire
-import com.example.quizapp.model.room.SyncStatus
+import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.model.room.entities.Questionnaire

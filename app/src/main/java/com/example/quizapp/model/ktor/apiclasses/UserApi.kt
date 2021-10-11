@@ -1,5 +1,6 @@
 package com.example.quizapp.model.ktor.apiclasses
 
+import com.example.quizapp.model.ktor.mongo.documents.user.User
 import com.example.quizapp.model.ktor.requests.BackendRequest.*
 import com.example.quizapp.model.ktor.responses.BackendResponse.*
 import io.ktor.client.*
@@ -32,4 +33,8 @@ class UserApi @Inject constructor(
             body = DeleteUserRequest(userId)
         }
 
+    suspend fun getPagedUsers(limit: Int, page: Int, searchString: String) : List<User> =
+        client.post("/users/paged") {
+            body = GetPagedUsersRequest(limit, page, searchString)
+        }
 }

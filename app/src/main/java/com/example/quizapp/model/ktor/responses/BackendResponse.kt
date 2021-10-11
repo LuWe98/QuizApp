@@ -71,7 +71,9 @@ sealed class BackendResponse {
         val responseType: InsertQuestionnaireResponseType
     ) : BackendResponse() {
         enum class  InsertQuestionnaireResponseType {
-            INSERT_SUCCESSFUL,
+            INSERTED,
+            REPLACED,
+            NOT_ACKNOWLEDGED,
             ERROR
         }
     }
@@ -82,10 +84,10 @@ sealed class BackendResponse {
         val responseType: InsertFilledQuestionnaireResponseType
     ) : BackendResponse() {
         enum class  InsertFilledQuestionnaireResponseType {
-            INSERT_SUCCESSFUL,
-            ERROR,
-            EMPTY_FILLED_QUESTIONNAIRE_NOT_INSERTED,
-            QUESTIONNAIRE_DOES_NOT_EXIST_ANYMORE
+            INSERTED,
+            EMPTY_INSERTION_SKIPPED,
+            QUESTIONNAIRE_DOES_NOT_EXIST_ANYMORE,
+            ERROR
         }
     }
 
@@ -113,12 +115,13 @@ sealed class BackendResponse {
 
 
     @Serializable
-    data class GetAllSyncedQuestionnairesResponse(
+    data class SyncQuestionnairesResponse(
         val mongoQuestionnaires: List<MongoQuestionnaire>,
         val mongoFilledQuestionnaires: List<MongoFilledQuestionnaire>,
-        val responseType: GetAllSyncedQuestionnairesResponseType
+        val questionnaireIdsToUnsync: List<String>,
+        val responseType: SyncQuestionnairesResponseType
     ) : BackendResponse(){
-        enum class  GetAllSyncedQuestionnairesResponseType {
+        enum class  SyncQuestionnairesResponseType {
             SUCCESSFUL,
             ERROR
         }

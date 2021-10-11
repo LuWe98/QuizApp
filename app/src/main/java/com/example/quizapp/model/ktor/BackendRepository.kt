@@ -28,6 +28,9 @@ class BackendRepository @Inject constructor(
 
     suspend fun deleteUser(userId: String) = userApi.deleteUser(userId)
 
+    suspend fun getPagedUsers(limit: Int, page: Int, searchString: String) = userApi.getPagedUsers(limit, page, searchString)
+
+
 
 
     // QUESTIONNAIRES
@@ -47,6 +50,9 @@ class BackendRepository @Inject constructor(
     ) = questionnaireApi.getQuestionnairesForSyncronization(syncedQuestionnaireIdsWithTimestamp, unsyncedQuestionnaireIds, questionnairesToDelete)
 
     suspend fun deleteQuestionnaire(questionnaireIds: List<String>) = questionnaireApi.deleteQuestionnaire(questionnaireIds)
+
+    suspend fun getPagedQuestionnaires(limit: Int, page: Int, searchString: String) = questionnaireApi.getPagedQuestionnaires(limit, page, searchString)
+
 
 
 

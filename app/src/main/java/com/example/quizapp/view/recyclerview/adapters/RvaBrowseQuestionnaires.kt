@@ -12,14 +12,15 @@ import com.example.quizapp.extensions.setDrawableSize
 import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoQuestionnaire
 import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
+import com.example.quizapp.view.recyclerview.impl.BindingPagingDataAdapter
 
-class RvaBrowseQuestionnaires : BindingListAdapter<MongoQuestionnaire, RviQuestionnaireBrowseNewBinding>(MongoQuestionnaire.DIFF_CALLBACK) {
+class RvaBrowseQuestionnaires : BindingPagingDataAdapter<MongoQuestionnaire, RviQuestionnaireBrowseNewBinding>(MongoQuestionnaire.DIFF_CALLBACK) {
 
     var onDownloadClick : ((MongoQuestionnaire) -> (Unit))? = null
 
     var onMoreOptionsClicked : ((MongoQuestionnaire) -> (Unit))? = null
 
-    override fun initListeners(binding: RviQuestionnaireBrowseNewBinding, vh: BindingListAdapterViewHolder) {
+    override fun initListeners(binding: RviQuestionnaireBrowseNewBinding, vh: BindingPagingDataAdapterViewHolder) {
         binding.apply {
             btnMoreOptions.onClick {
                 getItem(vh.bindingAdapterPosition)?.let {
@@ -28,8 +29,10 @@ class RvaBrowseQuestionnaires : BindingListAdapter<MongoQuestionnaire, RviQuesti
             }
 
             btnDownload.onClick {
-                progressIndicator.isVisible = true
-                onDownloadClick?.invoke(getItem(vh.bindingAdapterPosition))
+                getItem(vh.bindingAdapterPosition)?.let {
+                    progressIndicator.isVisible = true
+                    onDownloadClick?.invoke(it)
+                }
             }
         }
     }

@@ -14,6 +14,7 @@ sealed class BackendRequest {
         val password: String
     ) : BackendRequest()
 
+
     @Serializable
     data class RegisterUserRequest(
         val userName: String,
@@ -21,11 +22,13 @@ sealed class BackendRequest {
         val courseOfStudies: String
     ) : BackendRequest()
 
+
     @Serializable
     data class UpdateUserRequest(
         val userId: String,
         val newUserName: String
     ) : BackendRequest()
+
 
     @Serializable
     data class DeleteUserRequest(
@@ -38,19 +41,36 @@ sealed class BackendRequest {
         val mongoQuestionnaire: MongoQuestionnaire
     ) : BackendRequest()
 
+
     @Serializable
     data class InsertFilledQuestionnaireRequest(
         val shouldBeIgnoredWhenAnotherIsPresent : Boolean,
         val mongoFilledQuestionnaire: MongoFilledQuestionnaire
     ) : BackendRequest()
 
+
     @Serializable
-    data class GetAllSyncedQuestionnairesRequest(
+    data class SyncQuestionnairesRequest(
         val syncedQuestionnaireIdsWithTimestamp : List<QuestionnaireIdWithTimestamp>,
         val unsyncedQuestionnaireIds: List<String>,
-        val questionnaireIdsToIgnore: List<String>
+        val locallyDeletedQuestionnaireIds: List<String>
     ) : BackendRequest()
 
+
+    @Serializable
+    data class GetPagedQuestionnairesRequest(
+        val limit: Int,
+        val page: Int,
+        val searchString: String
+    ) : BackendRequest()
+
+
+    @Serializable
+    data class GetPagedUsersRequest(
+        val limit: Int ,
+        val page: Int,
+        val searchString: String
+    ) : BackendRequest()
 
 
     @Serializable
@@ -58,21 +78,10 @@ sealed class BackendRequest {
         val questionnaireIds: List<String>
     ) : BackendRequest()
 
+
     @Serializable
     data class DeleteFilledQuestionnaireRequest(
         val userId: String,
         val questionnaireIds: List<String>
-    ) : BackendRequest()
-
-    @Serializable
-    data class DeleteQuestionRequest(
-        val questionnaireId: String,
-        val questionId: String
-    ) : BackendRequest()
-
-    @Serializable
-    data class DeleteAnswerRequest(
-        val questionnaireId: String,
-        val answerId: String
     ) : BackendRequest()
 }

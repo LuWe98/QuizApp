@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.quizapp.model.ktor.mongo.documents.questionnaire.AuthorInfo
 import com.example.quizapp.model.ktor.requests.QuestionnaireIdWithTimestamp
-import com.example.quizapp.model.room.SyncStatus
+import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.utils.Constants
 import com.example.quizapp.utils.DiffUtilHelper
 import io.ktor.util.date.*
@@ -35,4 +35,5 @@ data class Questionnaire(
     }
 
     val asQuestionnaireIdWithTimeStamp get() = QuestionnaireIdWithTimestamp(id, lastModifiedTimestamp)
+
 }

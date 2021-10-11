@@ -16,8 +16,8 @@ import org.bson.types.ObjectId
 )
 @Parcelize
 data class Faculty(
-    @PrimaryKey val id: String = ObjectId().toString(),
-    val name: String
+    @PrimaryKey var id: String = ObjectId().toString(),
+    var name: String
 ) : EntityMarker {
 
     companion object {

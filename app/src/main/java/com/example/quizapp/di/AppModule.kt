@@ -17,6 +17,7 @@ import com.example.quizapp.model.room.LocalDatabase
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.utils.ConnectivityHelper
 import com.example.quizapp.utils.Constants
+import com.example.quizapp.utils.SyncHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -68,9 +69,9 @@ object AppModule {
         @ApplicationContext context: Context,
         callback: LocalDatabase.Callback
     ) = Room.databaseBuilder(context, LocalDatabase::class.java, Constants.ROOM_DATABASE_NAME)
-            .fallbackToDestructiveMigration()
-            .addCallback(callback)
-            .build()
+        .fallbackToDestructiveMigration()
+        .addCallback(callback)
+        .build()
 
     @Provides
     @Singleton
@@ -123,9 +124,9 @@ object AppModule {
 
         engine {
             config {
-                connectTimeout(1, TimeUnit.SECONDS)
-                writeTimeout(2, TimeUnit.SECONDS)
-                readTimeout(2, TimeUnit.SECONDS)
+                connectTimeout(10, TimeUnit.SECONDS)
+                writeTimeout(15, TimeUnit.SECONDS)
+                readTimeout(15, TimeUnit.SECONDS)
             }
             addInterceptor(basicAuthInterceptor)
         }
@@ -144,6 +145,15 @@ object AppModule {
     @Singleton
     fun provideConnectivityHelper(@ApplicationContext context: Context) = ConnectivityHelper(context)
 
+
+    @Provides
+    @Singleton
+    fun provideSyncHelper(
+        applicationScope: CoroutineScope,
+        localRepository: LocalRepository,
+        backendRepository: BackendRepository,
+        preferencesRepository: PreferencesRepository
+    ) = SyncHelper(applicationScope, localRepository, backendRepository, preferencesRepository)
 
 
 //    Ktor Different Settings

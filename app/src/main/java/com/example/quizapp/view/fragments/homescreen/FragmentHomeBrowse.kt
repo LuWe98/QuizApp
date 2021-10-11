@@ -3,6 +3,7 @@ package com.example.quizapp.view.fragments.homescreen
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeBrowseBinding
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
@@ -32,11 +33,11 @@ class FragmentHomeBrowse : BindingFragment<FragmentHomeBrowseBinding>() {
             adapter = rvAdapter
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext())
-
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        vmHome.allQuestionnairesFromDatabase.observe(viewLifecycleOwner) {
-            rvAdapter.submitList(it)
+        vmHome.filteredPagedData.observe(viewLifecycleOwner) {
+            rvAdapter.submitData(lifecycle, it)
         }
     }
 }

@@ -1,33 +1,33 @@
 package com.example.quizapp.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import androidx.paging.liveData
 import com.example.quizapp.R
 import com.example.quizapp.extensions.first
 import com.example.quizapp.extensions.log
+import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.ktor.mongo.documents.filledquestionnaire.MongoFilledQuestionnaire
 import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoQuestionnaire
-import com.example.quizapp.model.ktor.responses.BackendResponse.*
-import com.example.quizapp.model.ktor.responses.BackendResponse.InsertFilledQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.paging.MongoQuestionnairePagingSource
+import com.example.quizapp.model.ktor.paging.PagingConfigValues
+import com.example.quizapp.model.ktor.responses.BackendResponse.InsertFilledQuestionnaireResponse.InsertFilledQuestionnaireResponseType
+import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.LocalRepository
-import com.example.quizapp.model.room.SyncStatus
 import com.example.quizapp.model.room.entities.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.room.entities.LocallyDownloadedQuestionnaire
 import com.example.quizapp.model.room.entities.Questionnaire
-import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestionsAndAnswers
-import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.*
+import com.example.quizapp.utils.SyncHelper
+import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.ShowSnackBarMessageBar
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,12 +37,11 @@ class VmHome @Inject constructor(
     private val applicationScope: CoroutineScope,
     private val localRepository: LocalRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val backendRepository: BackendRepository
+    private val backendRepository: BackendRepository,
+    syncHelper: SyncHelper
 ) : ViewModel() {
 
-    init {
-        syncData()
-    }
+    init { syncHelper.syncData() }
 
     private val userId = preferencesRepository.userCredentialsFlow.first(viewModelScope).id
 
@@ -54,26 +53,16 @@ class VmHome @Inject constructor(
 
     val allQuestionnairesWithQuestionsForUserLD = localRepository.findAllQuestionnairesWithQuestionsForUserFlow(userId).asLiveData().distinctUntilChanged()
 
-    val allQuestionnairesFromDatabase = flow {
-        try {
-            emit(backendRepository.getAllQuestionnaires())
-        } catch (e: Exception) {
-            emit(emptyList())
-        }
-    }.flowOn(Dispatchers.IO).asLiveData().distinctUntilChanged()
 
 
+    val searchQuery = MutableLiveData("")
 
-    fun onCachedItemDownLoadButtonClicked(mongoQuestionnaire: MongoQuestionnaire) {
-        applicationScope.launch(Dispatchers.IO) {
-            DataMapper.mapMongoObjectToSqlEntities(mongoQuestionnaire).apply {
-                localRepository.insert(questionnaire)
-                localRepository.insert(allQuestions)
-                localRepository.insert(allAnswers)
-                uploadEmptyQuestionnaire(questionnaire.id)
-            }
-        }
-    }
+    val filteredPagedData = searchQuery.switchMap { query ->
+        Pager(config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
+            pagingSourceFactory = { MongoQuestionnairePagingSource(backendRepository, query) }).liveData
+    }.cachedIn(viewModelScope).distinctUntilChanged()
+
+
 
     fun onCreatedItemSyncButtonClicked(questionnaireId: String) {
         applicationScope.launch(Dispatchers.IO) {
@@ -115,6 +104,7 @@ class VmHome @Inject constructor(
         }
     }
 
+
     fun onCreatedItemDeleteQuestionnaireClicked(questionnaire: Questionnaire) {
         applicationScope.launch(Dispatchers.IO) {
             localRepository.deleteQuestionnaireWith(questionnaire.id)
@@ -132,112 +122,19 @@ class VmHome @Inject constructor(
     }
 
 
-
-    //    log("RESPONSE ${response.mongoQuestionnaires}")
-    //    log("ANSWERS: ${response.mongoFilledQuestionnaires}")
-    //TODO -> Checken welche Fragebögen sich wie verändert haben und anschließend updaten!
-    private fun syncData() = applicationScope.launch(Dispatchers.IO) {
-        val completeSyncedQuestionnaires = localRepository.findAllSyncedQuestionnaires()
-        val locallyDeletedQuestionnaireIds = localRepository.getAllDeletedQuestionnaireIds()
-        val unsyncedQuestionnaireIds = localRepository.findAllNonSyncedQuestionnaireIds()
-
-        syncLocallyDeletedQuestionnaires(locallyDeletedQuestionnaireIds)
-        syncDownloadedQuestionnaires()
-        syncQuestionnaires(completeSyncedQuestionnaires, locallyDeletedQuestionnaireIds, unsyncedQuestionnaireIds)
-    }
-
-    private fun syncQuestionnaires(
-        completeSyncedQuestionnaires: List<QuestionnaireWithQuestionsAndAnswers>,
-        locallyDeletedQuestionnaireIds: List<LocallyDeletedQuestionnaire>,
-        unsyncedQuestionnaireIds: List<String>
-    ) = applicationScope.launch(Dispatchers.IO) {
-
-        val response = try {
-            backendRepository.getQuestionnairesForSyncronization(
-                completeSyncedQuestionnaires.map { it.asQuestionnaireIdWithTimestamp },
-                unsyncedQuestionnaireIds,
-                locallyDeletedQuestionnaireIds
-            )
-        } catch (e: Exception) {
-            null
-        } ?: return@launch
-
+    fun onCachedItemDownLoadButtonClicked(mongoQuestionnaire: MongoQuestionnaire) {
         applicationScope.launch(Dispatchers.IO) {
-            response.mongoQuestionnaires.map { DataMapper.mapMongoObjectToSqlEntities(it) }.apply {
-                localRepository.deleteQuestionnairesWith(map { it.questionnaire.id })
-                localRepository.insert(map { it.questionnaire })
-                localRepository.insert(flatMap { it.allQuestions })
-                localRepository.insert(flatMap { it.allAnswers })
-
-                forEach { completeQuestionnaire ->
-                    applicationScope.launch(Dispatchers.IO) {
-                        val first = response.mongoFilledQuestionnaires.firstOrNull { it.questionnaireId == completeQuestionnaire.questionnaire.id }
-                        if (first != null) {
-                            //ES GIBT KEINEN LOKALEN FRAGEBOGEN MIT DER ID
-                            completeQuestionnaire.allAnswers.filter { answer -> first.isAnswerSelected(answer.id) }.let { answers ->
-                                localRepository.update(answers.onEach { answer -> answer.isAnswerSelected = true })
-                            }
-                        } else {
-                            //ES GIBT EINEN LOKALEN FRAGEBOGEN MIT IDS
-                            completeSyncedQuestionnaires.firstOrNull { it.questionnaire.id == completeQuestionnaire.questionnaire.id }?.let {
-                                it.allAnswers.filter { answer -> it.isAnswerSelected(answer.id) }.let { answers ->
-                                    localRepository.update(answers.onEach { answer -> answer.isAnswerSelected = true })
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun syncLocallyDeletedQuestionnaires(questionnaires: List<LocallyDeletedQuestionnaire>) = applicationScope.launch(Dispatchers.IO) {
-        if (questionnaires.isEmpty()) return@launch
-
-        val cached = mutableListOf<LocallyDeletedQuestionnaire>()
-        val created = mutableListOf<LocallyDeletedQuestionnaire>()
-        questionnaires.forEach {
-            if (it.deleteWholeQuestionnaire) created.add(it) else cached.add(it)
-        }
-
-        applicationScope.launch(Dispatchers.IO) createdLaunch@{
-            if (created.isEmpty()) return@createdLaunch
-
-            val response = try {
-                backendRepository.deleteQuestionnaire(created.map { it.questionnaireId })
-            } catch (e: Exception) {
-                null
-            }
-
-            if (response != null && response.isSuccessful) {
-                localRepository.delete(created)
-            }
-        }
-
-        applicationScope.launch(Dispatchers.IO) createdLaunch@{
-            if (cached.isEmpty()) return@createdLaunch
-
-            val response = try {
-                backendRepository.deleteFilledQuestionnaire(preferencesRepository.userCredentialsFlow.first().id, cached.map { it.questionnaireId })
-            } catch (e: Exception) {
-                null
-            }
-
-            if (response != null && response.isSuccessful) {
-                localRepository.delete(cached)
+            DataMapper.mapMongoObjectToSqlEntities(mongoQuestionnaire).apply {
+                localRepository.insert(questionnaire)
+                localRepository.insert(allQuestions)
+                localRepository.insert(allAnswers)
+                uploadEmptyFilledQuestionnaire(questionnaire.id)
             }
         }
     }
 
 
-    //TODO -> INSERT EMPTY QUESTIONNAIRE IN ORDER FOR IT TO BE DOWNLOADED
-    private fun syncDownloadedQuestionnaires() = applicationScope.launch(Dispatchers.IO) {
-        localRepository.getAllDownloadedQuestionnaireIds().let {
-
-        }
-    }
-
-    private fun uploadEmptyQuestionnaire(questionnaireId: String) = applicationScope.launch(Dispatchers.IO) {
+    private fun uploadEmptyFilledQuestionnaire(questionnaireId: String) = applicationScope.launch(Dispatchers.IO) {
         val response = try {
             backendRepository.insertEmptyFilledQuestionnaire(
                 MongoFilledQuestionnaire(
@@ -251,13 +148,13 @@ class VmHome @Inject constructor(
         }
 
         when (response?.responseType) {
-            InsertFilledQuestionnaireResponseType.INSERT_SUCCESSFUL -> {
+            InsertFilledQuestionnaireResponseType.INSERTED -> {
                 //EMPTY QUESTIONNAIRE INSERTED!
             }
             InsertFilledQuestionnaireResponseType.ERROR -> {
                 //SOMETHING WENT WRONG
             }
-            InsertFilledQuestionnaireResponseType.EMPTY_FILLED_QUESTIONNAIRE_NOT_INSERTED -> {
+            InsertFilledQuestionnaireResponseType.EMPTY_INSERTION_SKIPPED -> {
                 //ES GIBT SCHON EINEN AUSGEFÜLLTEN QUESTIONNAIRE!
             }
             InsertFilledQuestionnaireResponseType.QUESTIONNAIRE_DOES_NOT_EXIST_ANYMORE -> {
@@ -266,6 +163,9 @@ class VmHome @Inject constructor(
             null -> log("Empty one inserted!")
         }
     }
+
+
+
 
     sealed class FragmentHomeEvent {
         class ShowSnackBarMessageBar(val messageRes: Int) : FragmentHomeEvent()

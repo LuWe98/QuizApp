@@ -1,4 +1,4 @@
-package com.example.quizapp.model.room
+package com.example.quizapp.model.ktor.status
 
 enum class SyncStatus {
     SYNCED,

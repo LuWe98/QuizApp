@@ -8,7 +8,7 @@ import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.room.LocalRepository
-import com.example.quizapp.model.room.SyncStatus
+import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
 import com.example.quizapp.viewmodel.VmAdd.FragmentAddQuestionnaireEvent.*

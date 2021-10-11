@@ -104,7 +104,7 @@ class LocalRepository @Inject constructor(
 
 
     //DOWNLOADED QUESTIONNAIRE
-    suspend fun getAllDownloadedQuestionnaireIds() = locallyDownloadedQuestionnaireDao.getAllDownloadedQuestionnaireIds()
+    suspend fun getAllLocallyDownloadedQuestionnaireIds() = locallyDownloadedQuestionnaireDao.getAllDownloadedQuestionnaireIds()
 
 
     //DELETED QUESTIONNAIRE

@@ -1,4 +1,4 @@
-package com.example.quizapp.model.ktor
+package com.example.quizapp.model.ktor.status
 
 sealed class ResourceStatus<out T>(val data: T?, val throwable: Throwable?) {
     class Success<T>(data : T? = null) : ResourceStatus<T>(data, null)

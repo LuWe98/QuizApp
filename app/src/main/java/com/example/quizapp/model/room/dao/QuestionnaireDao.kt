@@ -3,8 +3,7 @@ package com.example.quizapp.model.room.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import com.example.quizapp.model.ktor.requests.QuestionnaireIdWithTimestamp
-import com.example.quizapp.model.room.SyncStatus
+import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestions
 import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestionsAndAnswers

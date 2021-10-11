@@ -49,7 +49,7 @@
                 app:tint="@color/white"
                 android:padding="8dp"
                 android:background="@drawable/shape_circle"
-                android:backgroundTint="?colorPrimary"
+                android:backgroundTint="@color/unselectedColor"
                 app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView

@@ -30,18 +30,24 @@ class QuestionnaireApi @Inject constructor(
     suspend fun getQuestionnairesForSyncronization(
         syncedQuestionnaireIdsWithTimestamp: List<QuestionnaireIdWithTimestamp>,
         unsyncedQuestionnaireIds: List<String>,
-        questionnairesToDelete: List<LocallyDeletedQuestionnaire>
-    ): GetAllSyncedQuestionnairesResponse =
-        client.post("/questionnaire/user/synced") {
-            body = GetAllSyncedQuestionnairesRequest(
+        locallyDeletedQuestionnaire: List<LocallyDeletedQuestionnaire>
+    ): SyncQuestionnairesResponse =
+        client.post("/questionnaire/user/sync") {
+            body = SyncQuestionnairesRequest(
                 syncedQuestionnaireIdsWithTimestamp,
                 unsyncedQuestionnaireIds,
-                questionnairesToDelete.map { it.questionnaireId }
+                locallyDeletedQuestionnaire.map { it.questionnaireId }
             )
         }
 
     suspend fun deleteQuestionnaire(questionnaireIds: List<String>): DeleteQuestionnaireResponse =
         client.delete("/questionnaire/delete") {
             body = DeleteQuestionnaireRequest(questionnaireIds)
+        }
+
+    //TODO -> RÜCKGABEWERT ZU RESPONSE SEALED CLASS UMÄNDERN!
+    suspend fun getPagedQuestionnaires(limit: Int, page: Int, searchString: String) : List<MongoQuestionnaire> =
+        client.post("/questionnaires/paged"){
+            body = GetPagedQuestionnairesRequest(limit, page, searchString)
         }
 }
