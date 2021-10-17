@@ -1,6 +1,6 @@
 package com.example.quizapp.utils
 
-import com.example.quizapp.model.ktor.mongo.documents.questionnaire.AuthorInfo
+import com.example.quizapp.model.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.model.room.entities.Questionnaire

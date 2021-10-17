@@ -23,6 +23,8 @@
             app:background="@drawable/background_transparent"
             app:hideOnScroll="false"
             app:elevation="@dimen/defaultElevation"
+            android:visibility="gone"
+            tools:visibility="visible"
             app:fabAnimationMode="scale"
             app:fabAlignmentMode="end"
             app:contentInsetStart="0dp"
@@ -135,7 +137,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:id="@+id/ivSettings"
-                            app:srcCompat="@drawable/ic_settings"
+                            app:srcCompat="@drawable/ic_person"
                             app:tint="@color/black"
                             android:padding="10dp" />
                 </com.google.android.material.card.MaterialCardView>

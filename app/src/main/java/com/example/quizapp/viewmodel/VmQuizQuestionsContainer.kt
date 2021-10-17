@@ -1,9 +1,6 @@
 package com.example.quizapp.viewmodel
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.map
+import androidx.lifecycle.*
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.Answer
@@ -11,6 +8,7 @@ import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContai
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.FragmentQuizOverviewEvent.*
 import com.example.quizapp.view.viewpager.adapter.VpaQuiz
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
@@ -25,7 +23,7 @@ class VmQuizQuestionsContainer @Inject constructor(
 
     private val fragmentEventChannel = Channel<FragmentQuizOverviewEvent>()
 
-    val fragmentEventChannelFlow get() = fragmentEventChannel.receiveAsFlow()
+    val fragmentEventChannelLD get() = fragmentEventChannel.receiveAsFlow().asLiveData()
 
     var lastAdapterPosition = state.get<Int>(LAST_ADAPTER_POSITION_KEY) ?: args.questionPosition
         set(value) {
@@ -39,8 +37,8 @@ class VmQuizQuestionsContainer @Inject constructor(
 
     fun questionIdLiveData(questionId: String) = questionIdListLiveData.map { it.firstOrNull { id -> id == questionId } }.distinctUntilChanged()
 
-    private fun addOrRemoveQuestionToDisplaySolution(questionId : String){
-        if(questionIdList.contains(questionId)){
+    private fun addOrRemoveQuestionToDisplaySolution(questionId: String) {
+        if (questionIdList.contains(questionId)) {
             questionIdList.remove(questionId)
         } else {
             questionIdList.add(questionId)
@@ -51,51 +49,39 @@ class VmQuizQuestionsContainer @Inject constructor(
     fun shouldDisplayQuestionSolution(questionId: String) = questionIdList.contains(questionId)
 
 
-    fun onViewPagerPageSelected(position : Int){
+    fun onViewPagerPageSelected(position: Int) {
         lastAdapterPosition = position
     }
 
-    fun onSelectPreviousPageButtonClicked(){
-        if(lastAdapterPosition != 0){
-            launch {
-                fragmentEventChannel.send(SelectDifferentPage(lastAdapterPosition - 1))
-            }
+    fun onSelectPreviousPageButtonClicked() = launch(IO) {
+        if (lastAdapterPosition != 0) {
+            fragmentEventChannel.send(SelectDifferentPage(lastAdapterPosition - 1))
         }
     }
 
-    fun onSelectNextPageButtonClicked(vpaQuiz: VpaQuiz){
-        if(lastAdapterPosition != vpaQuiz.itemCount -1){
-            launch {
-                fragmentEventChannel.send(SelectDifferentPage(lastAdapterPosition + 1))
-            }
+    fun onSelectNextPageButtonClicked(vpaQuiz: VpaQuiz) = launch(IO) {
+        if (lastAdapterPosition != vpaQuiz.itemCount - 1) {
+            fragmentEventChannel.send(SelectDifferentPage(lastAdapterPosition + 1))
         }
     }
 
-    fun onCheckResultsButtonClicked(){
-        launch {
-            fragmentEventChannel.send(CheckResultsEvent)
+    fun onCheckResultsButtonClicked() = launch(IO) {
+        fragmentEventChannel.send(CheckResultsEvent)
+    }
+
+    fun onShowSolutionButtonClicked(vpaQuiz: VpaQuiz) = launch(IO) {
+        vpaQuiz.getFragment(lastAdapterPosition).questionId.let {
+            addOrRemoveQuestionToDisplaySolution(it)
+            fragmentEventChannel.send(ChangeSolutionButtonTint(shouldDisplayQuestionSolution(it)))
         }
-    }
 
-    fun onShowSolutionButtonClicked(vpaQuiz: VpaQuiz){
-        launch {
-            vpaQuiz.getFragment(lastAdapterPosition).questionId.let {
-                addOrRemoveQuestionToDisplaySolution(it)
-                fragmentEventChannel.send(ChangeSolutionButtonTint(shouldDisplayQuestionSolution(it)))
-            }
-        }
     }
-
-    fun onAnswerItemClicked(list: List<Answer>){
-        launch { localRepository.update(list) }
-    }
-
 
 
     sealed class FragmentQuizOverviewEvent {
         object CheckResultsEvent : FragmentQuizOverviewEvent()
-        data class SelectDifferentPage(val newPosition : Int) : FragmentQuizOverviewEvent()
-        data class ChangeSolutionButtonTint(val show : Boolean) : FragmentQuizOverviewEvent()
+        data class SelectDifferentPage(val newPosition: Int) : FragmentQuizOverviewEvent()
+        data class ChangeSolutionButtonTint(val show: Boolean) : FragmentQuizOverviewEvent()
     }
 
     companion object {

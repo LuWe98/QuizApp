@@ -1,23 +1,23 @@
 package com.example.quizapp.model
 
-import com.example.quizapp.model.ktor.mongo.documents.filledquestionnaire.MongoFilledQuestion
-import com.example.quizapp.model.ktor.mongo.documents.filledquestionnaire.MongoFilledQuestionnaire
-import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoAnswer
-import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoQuestion
-import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoQuestionnaire
+import com.example.quizapp.model.mongodb.documents.filledquestionnaire.MongoFilledQuestion
+import com.example.quizapp.model.mongodb.documents.filledquestionnaire.MongoFilledQuestionnaire
+import com.example.quizapp.model.mongodb.documents.questionnaire.MongoAnswer
+import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestion
+import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.Question
 import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
-import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestionsAndAnswers
+import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 
 object DataMapper {
 
     fun mapMongoObjectToSqlEntities(
         mongoQuestionnaire: MongoQuestionnaire,
         mongoFilledQuestionnaire: MongoFilledQuestionnaire? = null
-    ): QuestionnaireWithQuestionsAndAnswers {
+    ): CompleteQuestionnaireJunction {
         val questionnaire = Questionnaire(
             id = mongoQuestionnaire.id,
             authorInfo = mongoQuestionnaire.authorInfo,
@@ -48,13 +48,13 @@ object DataMapper {
             })
         }.toMutableList()
 
-        return QuestionnaireWithQuestionsAndAnswers(questionnaire, questionsWithAnswers)
+        return CompleteQuestionnaireJunction(questionnaire, questionsWithAnswers)
     }
 
 
     fun mapSqlEntitiesToMongoEntity(
-        completeQuestionnaire: QuestionnaireWithQuestionsAndAnswers
-    ) = completeQuestionnaire.run { mapSqlEntitiesToMongoEntity(questionnaire, questionsWithAnswers) }
+        completeCompleteQuestionnaire: CompleteQuestionnaireJunction
+    ) = completeCompleteQuestionnaire.run { mapSqlEntitiesToMongoEntity(questionnaire, questionsWithAnswers) }
 
     fun mapSqlEntitiesToMongoEntity(
         questionnaire: Questionnaire,
@@ -74,7 +74,7 @@ object DataMapper {
             lastModifiedTimestamp = questionnaire.lastModifiedTimestamp,
             courseOfStudies = questionnaire.courseOfStudies,
             subject = questionnaire.subject
-            ).apply {
+        ).apply {
             questions = questionsWithAnswers.map { qwa ->
                 qwa.question.let { question ->
                     MongoQuestion(
@@ -99,8 +99,8 @@ object DataMapper {
 
 
     fun mapSqlEntitiesToFilledMongoEntity(
-        completeQuestionnaire: QuestionnaireWithQuestionsAndAnswers
-    ) = completeQuestionnaire.run { mapSqlEntitiesToFilledMongoEntity(questionnaire, questionsWithAnswers) }
+        completeCompleteQuestionnaire: CompleteQuestionnaireJunction
+    ) = completeCompleteQuestionnaire.run { mapSqlEntitiesToFilledMongoEntity(questionnaire, questionsWithAnswers) }
 
     fun mapSqlEntitiesToFilledMongoEntity(
         questionnaire: Questionnaire,
@@ -113,20 +113,29 @@ object DataMapper {
     fun mapSqlEntitiesToFilledMongoEntity(
         questionnaire: Questionnaire,
         questionsWithAnswers: List<QuestionWithAnswers>
-    ): MongoFilledQuestionnaire {
-        return MongoFilledQuestionnaire(
-            questionnaireId = questionnaire.id,
-            userId = questionnaire.authorInfo.userId
-        ).apply {
-            questions = questionsWithAnswers.map { qwa ->
-                qwa.question.let { question ->
-                    MongoFilledQuestion(
-                        questionId = question.questionnaireId
-                    ).apply {
-                        selectedAnswerIds = qwa.answers.filter { it.isAnswerSelected }.map { it.id }
-                    }
+    ) = MongoFilledQuestionnaire(
+        questionnaireId = questionnaire.id,
+        userId = questionnaire.authorInfo.userId
+    ).apply {
+        questions = questionsWithAnswers.filter { it.isAnswered }.map { qwa ->
+            qwa.question.let { question ->
+                MongoFilledQuestion(
+                    questionId = question.questionnaireId
+                ).apply {
+                    selectedAnswerIds = qwa.selectedAnswerIds
                 }
             }
         }
     }
+
+    fun mapSqlEntitiesToEmptyFilledMongoEntity(
+        completeCompleteQuestionnaire: CompleteQuestionnaireJunction
+    ) = completeCompleteQuestionnaire.run { mapSqlEntitiesToEmptyFilledMongoEntity(questionnaire) }
+
+    fun mapSqlEntitiesToEmptyFilledMongoEntity(
+        questionnaire: Questionnaire
+    ) = MongoFilledQuestionnaire(
+        questionnaireId = questionnaire.id,
+        userId = questionnaire.authorInfo.userId
+    )
 }

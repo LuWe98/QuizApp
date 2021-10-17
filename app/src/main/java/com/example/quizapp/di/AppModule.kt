@@ -17,7 +17,7 @@ import com.example.quizapp.model.room.LocalDatabase
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.utils.ConnectivityHelper
 import com.example.quizapp.utils.Constants
-import com.example.quizapp.utils.SyncHelper
+import com.example.quizapp.utils.BackendSyncHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,7 +32,6 @@ import kotlinx.serialization.json.Json
 
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -56,9 +55,11 @@ object AppModule {
     @Provides
     @Singleton
     fun providePreferencesManager(
+        applicationScope: CoroutineScope,
         @ApplicationContext context: Context,
         encryptionUtil: EncryptionUtil
     ) = PreferencesRepository(
+        applicationScope,
         context.dataStore,
         encryptionUtil
     )
@@ -84,12 +85,13 @@ object AppModule {
         roomDatabase.getQuestionaryDao(),
         roomDatabase.getQuestionDao(),
         roomDatabase.getAnswerDao(),
-        roomDatabase.getUserRoleDao(),
         roomDatabase.getFacultyDao(),
         roomDatabase.getCourseOfStudiesDao(),
         roomDatabase.getSubjectDao(),
-        roomDatabase.getDownloadedQuestionnairesDao(),
-        roomDatabase.getDeletedQuestionnairesDao()
+        roomDatabase.getDownloadedQuestionnaireDao(),
+        roomDatabase.getLocallyDeletedQuestionnaireDao(),
+        roomDatabase.getLocallyDeletedFilledQuestionnaireDao(),
+        roomDatabase.getLocallyAnsweredQuestionnairesDao()
     )
 
     @Provides
@@ -153,7 +155,7 @@ object AppModule {
         localRepository: LocalRepository,
         backendRepository: BackendRepository,
         preferencesRepository: PreferencesRepository
-    ) = SyncHelper(applicationScope, localRepository, backendRepository, preferencesRepository)
+    ) = BackendSyncHelper(applicationScope, localRepository, backendRepository, preferencesRepository)
 
 
 //    Ktor Different Settings

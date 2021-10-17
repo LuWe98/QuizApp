@@ -26,20 +26,16 @@ class EncryptionUtil
         //"AES/GCM/NoPadding" | "AES/CBC/PKCS7Padding"
         private const val TRANSFORMATION = "AES/CBC/PKCS7Padding"
         private const val ALGORITHM = "PBKDF2WithHmacSHA1"
-        private const val ITERATION_COUNT = 5_000
+        private const val ITERATION_COUNT = 2500
         private const val KEY_LENGTH = 256
         private const val BASE_64_FLAGS = Base64.DEFAULT
     }
 
-    fun encrypt(strToEncrypt: String): String {
-        val bytes = initCipher(Cipher.ENCRYPT_MODE, strToEncrypt.toByteArray(Charsets.UTF_8))
-        return Base64.encodeToString(bytes, BASE_64_FLAGS)
+    fun encrypt(strToEncrypt: String): String = initCipher(Cipher.ENCRYPT_MODE, strToEncrypt.toByteArray(Charsets.UTF_8)).let { bytes ->
+        Base64.encodeToString(bytes, BASE_64_FLAGS)
     }
 
-    fun decrypt(strToDecrypt: String): String {
-        val bytes = initCipher(Cipher.DECRYPT_MODE, Base64.decode(strToDecrypt, BASE_64_FLAGS))
-        return String(bytes)
-    }
+    fun decrypt(strToDecrypt: String): String = String(initCipher(Cipher.DECRYPT_MODE, Base64.decode(strToDecrypt, BASE_64_FLAGS)))
 
     @ExperimentalSerializationApi
     inline fun <reified T> encryptObject(value: T) = encrypt(Json.encodeToString(value))

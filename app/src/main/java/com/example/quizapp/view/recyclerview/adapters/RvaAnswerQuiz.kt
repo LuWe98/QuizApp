@@ -15,31 +15,13 @@ class RvaAnswerQuiz(
     private val isMultipleChoice: Boolean
 ) : BindingListAdapter<Answer, RviAnswerQuizBinding>(Answer.DIFF_CALLBACK) {
 
-    var onItemClick: ((List<Answer>) -> (Unit))? = null
+    var onItemClick: ((String, List<Answer>) -> (Unit))? = null
 
     override fun initListeners(binding: RviAnswerQuizBinding, vh: BindingListAdapterViewHolder) {
         binding.root.setOnClickListener {
-            getItem(vh.bindingAdapterPosition).let { answer ->
-                if (isMultipleChoice) {
-                    handleMultipleChoiceClick(answer)
-                } else if (!answer.isAnswerSelected) {
-                    handleSingleChoiceClick(answer)
-                }
+            getItem(vh).let { answer ->
+                onItemClick?.invoke(answer.id, currentList)
             }
-        }
-    }
-
-    private fun handleMultipleChoiceClick(answer: Answer) {
-        answer.copy(isAnswerSelected = !answer.isAnswerSelected).apply {
-            onItemClick?.invoke(mutableListOf(this))
-        }
-    }
-
-    private fun handleSingleChoiceClick(answer: Answer) {
-        answer.copy(isAnswerSelected = true).apply {
-            currentList.firstOrNull { it.isAnswerSelected }?.copy(isAnswerSelected = false)?.let {
-                onItemClick?.invoke(mutableListOf(this, it))
-            } ?: onItemClick?.invoke(mutableListOf(this))
         }
     }
 

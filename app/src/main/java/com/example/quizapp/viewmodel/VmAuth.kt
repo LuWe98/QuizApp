@@ -4,17 +4,15 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.quizapp.R
-import com.example.quizapp.extensions.LogType
 import com.example.quizapp.extensions.containsWhiteSpaces
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.extensions.log
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.BackendResponse.*
-import com.example.quizapp.model.ktor.responses.BackendResponse.RegisterUserResponse.*
 import com.example.quizapp.viewmodel.VmAuth.FragmentAuthEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
@@ -29,11 +27,11 @@ class VmAuth @Inject constructor(
 
     val fragmentEventChannelFlow get() = fragmentEventChannel.receiveAsFlow()
 
-    fun checkIfLoggedIn() {
-        if (preferencesRepository.userCredentials.isGiven) {
-            launch {
-                fragmentEventChannel.send(NavigateToHomeScreen)
-            }
+    fun checkIfLoggedIn() = launch(IO) {
+        if (preferencesRepository.userInfoFlow.first().isNotEmpty) {
+            fragmentEventChannel.send(NavigateToHomeScreen)
+        } else {
+            fragmentEventChannel.send(ShowLoginScreen)
         }
     }
 
@@ -51,13 +49,13 @@ class VmAuth @Inject constructor(
         }
 
     fun onGoToRegisterButtonClicked() {
-        launch {
+        launch(IO) {
             fragmentEventChannel.send(SwitchPage(1))
         }
     }
 
     fun onLoginButtonClicked() {
-        launch {
+        launch(IO) {
             if (currentLoginUserName.isEmpty() || currentLoginPassword.isEmpty()) {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
                 return@launch
@@ -65,13 +63,19 @@ class VmAuth @Inject constructor(
 
             val loginResponse = try {
                 backendRepository.loginUser(currentLoginUserName, currentLoginPassword)
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileLoggingInUser))
                 return@launch
             }
 
-            if(loginResponse.isSuccessful){
-                preferencesRepository.updateUserCredentials(loginResponse.userId!!, currentLoginUserName,currentLoginPassword)
+            if (loginResponse.isSuccessful) {
+                preferencesRepository.updateUserCredentials(
+                    id = loginResponse.userId!!,
+                    name = currentLoginUserName,
+                    password = currentLoginPassword,
+                    role = loginResponse.role!!
+                )
+
                 fragmentEventChannel.send(NavigateToHomeScreen)
             }
 
@@ -114,13 +118,13 @@ class VmAuth @Inject constructor(
         }
 
     fun onGoToLoginButtonClicked() {
-        launch {
+        launch(IO) {
             fragmentEventChannel.send(SwitchPage(0))
         }
     }
 
     fun onRegisterButtonClicked() {
-        launch {
+        launch(IO) {
             if (currentRegisterUserName.isEmpty() ||
                 currentRegisterCourseOfStudies.isEmpty() ||
                 currentRegisterPassword.isEmpty() ||
@@ -180,8 +184,9 @@ class VmAuth @Inject constructor(
     sealed class FragmentAuthEvent {
         data class SwitchPage(val pagePosition: Int) : FragmentAuthEvent()
         object NavigateToHomeScreen : FragmentAuthEvent()
+        object ShowLoginScreen : FragmentAuthEvent()
         data class ShowMessageSnackBar(@StringRes val stringRes: Int) : FragmentAuthEvent()
-        data class SetLoginCredentials(val email: String, val password : String) : FragmentAuthEvent()
+        data class SetLoginCredentials(val email: String, val password: String) : FragmentAuthEvent()
     }
 
 

@@ -10,14 +10,24 @@
             android:id="@+id/fragmentHome"
             android:name="com.example.quizapp.view.fragments.homescreen.FragmentHome"
             android:label="FragmentHome"
-            tools:layout="@layout/fragment_home"/>
+            tools:layout="@layout/fragment_home" />
 
 
     <fragment
             android:id="@+id/fragmentSettings"
             android:name="com.example.quizapp.view.fragments.settingsscreen.FragmentSettings"
             android:label="FragmentSettings"
-            tools:layout="@layout/fragment_settings"/>
+            tools:layout="@layout/fragment_settings">
+        <action
+                android:id="@+id/action_fragmentSettings_to_fragmentAdmin"
+                app:destination="@id/fragmentAdmin" />
+    </fragment>
+
+    <fragment
+            android:id="@+id/fragmentAdmin"
+            android:name="com.example.quizapp.view.fragments.adminscreen.FragmentAdmin"
+            android:label="FragmentAdmin"
+            tools:layout="@layout/fragment_admin" />
 
     <fragment
             android:id="@+id/fragmentSearch"
@@ -29,7 +39,7 @@
             android:id="@+id/fragmentAuth"
             android:name="com.example.quizapp.view.fragments.authscreen.FragmentAuth"
             android:label="FragmentAuth"
-            tools:layout="@layout/fragment_auth" >
+            tools:layout="@layout/fragment_auth">
         <action
                 android:id="@+id/action_fragmentAuth_to_fragmentHome"
                 app:destination="@id/fragmentHome" />
@@ -42,7 +52,7 @@
             app:startDestination="@id/fragmentQuizOverview">
         <argument
                 android:name="questionnaireId"
-                app:argType="string"/>
+                app:argType="string" />
 
         <fragment
                 android:id="@+id/fragmentQuizOverview"
@@ -66,7 +76,6 @@
     </navigation>
 
 
-
     <!--ADD QUESTIONNAIRE FUNCTIONALITY NAV GRAPH-->
     <navigation
             android:id="@+id/add_nav_graph"
@@ -74,13 +83,13 @@
         <argument
                 android:name="questionnaireId"
                 app:argType="string"
-                app:nullable="true"/>
+                app:nullable="true" />
 
         <fragment
                 android:id="@+id/fragmentAddQuestionnaire"
                 android:name="com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaire"
                 android:label="FragmentAddQuestionnaire"
-                tools:layout="@layout/fragment_add_questionnaire" >
+                tools:layout="@layout/fragment_add_questionnaire">
             <action
                     android:id="@+id/action_fragmentAddQuestionnaire_to_fragmentAddQuestion"
                     app:destination="@id/fragmentAddQuestion" />
@@ -101,18 +110,37 @@
     </navigation>
 
 
+    <!--DIALOGS-->
+    <dialog
+            android:id="@+id/bsdfQuestionnaireMoreOptions"
+            android:name="com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptions"
+            android:label="BsdfQuestionnaireMoreOptions"
+            tools:layout="@layout/bsdf_questionnaire_more_options">
+        <argument
+                android:name="authorId"
+                app:argType="string" />
+        <argument android:name="questionnaireId" />
+    </dialog>
+
 
     <!--GLOBAL ACTIONS-->
     <action
             android:id="@+id/actionGlobalGoToAddQuestionnaireScreen"
             app:destination="@id/add_nav_graph" />
 
-    <action android:id="@+id/actionGlobalGoToAuthScreen"
-            app:destination="@id/fragmentAuth"/>
+    <action
+            android:id="@+id/actionGlobalGoToAuthScreen"
+            app:destination="@id/fragmentAuth" />
 
-    <action android:id="@+id/actionGlobalGoToQuizScreen"
-            app:destination="@id/quiz_nav_graph"/>
+    <action
+            android:id="@+id/actionGlobalGoToQuizScreen"
+            app:destination="@id/quiz_nav_graph" />
 
-    <action android:id="@+id/action_global_fragmentSearch"
-        app:destination="@id/fragmentSearch"/>
+    <action
+            android:id="@+id/action_global_fragmentSearch"
+            app:destination="@id/fragmentSearch" />
+
+    <action
+            android:id="@+id/action_global_bsdfQuestionnaireMoreOptions"
+            app:destination="@id/bsdfQuestionnaireMoreOptions" />
 </navigation>

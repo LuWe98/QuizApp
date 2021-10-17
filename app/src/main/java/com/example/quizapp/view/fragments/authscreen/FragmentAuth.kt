@@ -2,6 +2,7 @@ package com.example.quizapp.view.fragments.authscreen
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.example.quizapp.R
@@ -37,8 +38,8 @@ class FragmentAuth : BindingFragment<FragmentAuthBinding>() {
             adapter = vpaAdapter
             orientation = ViewPager2.ORIENTATION_VERTICAL
             offscreenPageLimit = 2
-            setPageTransformer(VerticalFadePageTransformer())
             isUserInputEnabled = false
+            setPageTransformer(VerticalFadePageTransformer())
         }
     }
 
@@ -54,6 +55,11 @@ class FragmentAuth : BindingFragment<FragmentAuthBinding>() {
                     vpaAdapter.loginFragment.binding.apply {
                         etUserName.setText(event.email)
                         etPassword.setText(event.password)
+                    }
+                }
+                ShowLoginScreen -> {
+                    binding.apply {
+                        viewPager.isVisible = true
                     }
                 }
             }

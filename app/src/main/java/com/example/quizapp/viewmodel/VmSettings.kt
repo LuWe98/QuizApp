@@ -1,13 +1,17 @@
 package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,11 +27,22 @@ class VmSettings @Inject constructor(
 
     val fragmentSettingsEventChannelFlow = fragmentSettingsEventChannel.receiveAsFlow()
 
+    val userInfoFlow get() = preferencesRepository.userInfoFlow.flowOn(Dispatchers.IO).asLiveData().distinctUntilChanged()
+
+    val userInfo get() = preferencesRepository.userInfo
+
     fun onLogoutClicked() {
         launch {
             fragmentSettingsEventChannel.send(OnLogoutClickedEvent)
         }
     }
+
+     fun onGoToAdminPageClicked(){
+         launch {
+             fragmentSettingsEventChannel.send(NavigateToAdminScreen)
+         }
+     }
+
 
     fun onLogoutConfirmed(){
         applicationScope.launch {
@@ -42,5 +57,6 @@ class VmSettings @Inject constructor(
     sealed class FragmentSettingsEvent{
         object OnLogoutClickedEvent : FragmentSettingsEvent()
         object NavigateToLoginScreen : FragmentSettingsEvent()
+        object NavigateToAdminScreen : FragmentSettingsEvent()
     }
 }

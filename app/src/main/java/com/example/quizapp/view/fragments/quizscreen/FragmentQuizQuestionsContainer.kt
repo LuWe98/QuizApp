@@ -52,19 +52,10 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
     private fun initClickListeners() {
         binding.apply {
             btnBack.onClick(navigator::popBackStack)
-
             btnPreviousQuestion.onClick(vmContainer::onSelectPreviousPageButtonClicked)
-
             btnCheckResults.onClick(vmContainer::onCheckResultsButtonClicked)
-
-            btnNextQuestion.onClick {
-                vmContainer.onSelectNextPageButtonClicked(vpaAdapter)
-            }
-
-            btnShowSolution.onClick {
-                vmContainer.onShowSolutionButtonClicked(vpaAdapter)
-                //vmQuiz.onCheckResultsClick()
-            }
+            btnNextQuestion.onClick { vmContainer.onSelectNextPageButtonClicked(vpaAdapter) }
+            btnShowSolution.onClick { vmContainer.onShowSolutionButtonClicked(vpaAdapter) }
         }
     }
 
@@ -73,7 +64,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
             binding.btnCheckResults.isVisible = allAnswered
         }
 
-        vmContainer.fragmentEventChannelFlow.collect(lifecycleScope) { event ->
+        vmContainer.fragmentEventChannelLD.observe(viewLifecycleOwner) { event ->
             when(event){
                 is SelectDifferentPage -> binding.viewPager.currentItem = event.newPosition
                 is ChangeSolutionButtonTint -> changeShowSolutionButtonTint(event.show)

@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewpager2.widget.ViewPager2
 import com.example.quizapp.R
 import com.example.quizapp.view.recyclerview.impl.CustomItemTouchHelperCallback
@@ -33,10 +34,22 @@ fun TabLayout.attachToViewPager(viewPager: ViewPager2, tabConfigurationStrategy:
     }
 
 
-fun TextView.setDrawableSize(size: Int, pos: Int = 0) {
+fun TextView.setDrawableSize(size: Int, pos: DrawablePos = DrawablePos.START) {
     val pixelSize = size.px
-    compoundDrawablesRelative[pos].setBounds(0, 0, pixelSize, pixelSize)
-    setCompoundDrawablesRelative(compoundDrawablesRelative[pos], null, null, null)
+    compoundDrawablesRelative[pos.ordinal].setBounds(0, 0, pixelSize, pixelSize)
+    when(pos){
+        DrawablePos.START -> setCompoundDrawablesRelative(compoundDrawablesRelative[pos.ordinal], null, null, null)
+        DrawablePos.TOP -> setCompoundDrawablesRelative(null, compoundDrawablesRelative[pos.ordinal], null, null)
+        DrawablePos.END -> setCompoundDrawablesRelative(null, null, compoundDrawablesRelative[pos.ordinal], null)
+        DrawablePos.BOT -> setCompoundDrawablesRelative(null, null, null, compoundDrawablesRelative[pos.ordinal])
+    }
+}
+
+enum class DrawablePos{
+    START,
+    TOP,
+    END,
+    BOT
 }
 
 fun ProgressBar.setProgressWithAnimation(to: Int, duration: Long = context.resources.getInteger(R.integer.defaultProgressAnimDuration).toLong()) {
@@ -87,6 +100,10 @@ fun RecyclerView.addCustomItemTouchHelperCallBack(
     ItemTouchHelper(this).also {
         it.attachToRecyclerView(this@addCustomItemTouchHelperCallBack)
     }
+}
+
+fun RecyclerView.disableChangeAnimation() {
+    (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
 }
 
 fun TextView.setTextColorWithRes(@ColorRes colorRes: Int) {

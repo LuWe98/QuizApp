@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizQuestionBinding
+import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.extensions.updateAllViewHolders
 import com.example.quizapp.model.room.entities.Question
@@ -28,7 +29,6 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
 
     private lateinit var rvaAdapter : RvaAnswerQuiz
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
@@ -37,14 +37,16 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
 
     private fun initRecyclerView(){
         rvaAdapter = RvaAnswerQuiz(vmQuiz, vmContainer, isMultipleChoice).apply {
-            onItemClick = vmContainer::onAnswerItemClicked
+            onItemClick = { selectedAnswerId, currentList ->
+                vmQuiz.onAnswerItemClicked(selectedAnswerId, currentList, isMultipleChoice)
+            }
         }
 
         binding.rv.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext())
             adapter = rvaAdapter
-            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+            disableChangeAnimation()
         }
     }
 

@@ -46,31 +46,21 @@ class FragmentAddQuestion : BindingFragment<FragmentAddQuestionBinding>() {
             setHasFixedSize(true)
             isNestedScrollingEnabled = false
             layoutManager = LinearLayoutManager(requireContext())
+            adapter = rvAdapter
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             addCustomItemTouchHelperCallBack().apply {
                 onSwiped = vmEditQuestion::onAnswerItemSwiped
                 onDrag = rvAdapter::moveItem
                 onDragReleased = { vmEditQuestion.onAnswerItemDragReleased(rvAdapter.currentList) }
             }
-            adapter = rvAdapter
         }
     }
 
     private fun initListeners() {
-        binding.buttonBack.setOnClickListener {
-            navigator.popBackStack()
-        }
-
-        binding.buttonAdd.setOnClickListener {
-            vmEditQuestion.onAddAnswerButtonClicked()
-        }
-
-        binding.fabConfirm.setOnClickListener {
-            vmEditQuestion.onFabConfirmClicked()
-        }
-
+        binding.buttonBack.onClick(navigator::popBackStack)
+        binding.buttonAdd.onClick(vmEditQuestion::onAddAnswerButtonClicked)
+        binding.fabConfirm.onClick(vmEditQuestion::onFabConfirmClicked)
         binding.isMultipleChoiceSwitch.onCheckedChange(vmEditQuestion::onSwitchChanged)
-
         binding.questionEditText.onTextChanged(vmEditQuestion::onQuestionEditTextChanged)
     }
 
@@ -83,15 +73,15 @@ class FragmentAddQuestion : BindingFragment<FragmentAddQuestionBinding>() {
         vmEditQuestion.fragmentEditQuestionEventChannelFlow.collect(lifecycleScope) { event ->
             when(event){
                 is ShowAnswerDeletedSuccessFullySnackBar -> {
-                    showSnackBar(R.string.answerDeleted, viewToAttachTo = requireActivity().window.decorView, actionTextRes = R.string.undo) {
+                    showSnackBar(R.string.answerDeleted, viewToAttachTo = bindingActivity.rootView, actionTextRes = R.string.undo) {
                         vmEditQuestion.onUndoDeleteAnswerClicked(event)
                     }
                 }
                 is ShowSelectAtLeastOneCorrectAnswerToast -> {
-                    showToast("Select at least one correct Answer!")
+                    showToast(R.string.errorSelectOneCorrectAnswer)
                 }
                 is ShowSomeAnswersAreEmptyToast -> {
-                    showToast("Some Answers don't have a Text yet!")
+                    showToast(R.string.errorAnswersDoNotHaveText)
                 }
                 is SendUpdateRequestToVmAdd -> {
                     vmAdd.onSaveSpecificQuestionClicked(event)

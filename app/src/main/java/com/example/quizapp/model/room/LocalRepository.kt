@@ -1,7 +1,19 @@
 package com.example.quizapp.model.room
 
+import androidx.room.Transaction
+import com.example.quizapp.model.DataMapper
+import com.example.quizapp.model.mongodb.documents.filledquestionnaire.MongoFilledQuestionnaire
 import com.example.quizapp.model.room.dao.*
+import com.example.quizapp.model.room.dao.sync.LocallyAnsweredQuestionnaireDao
+import com.example.quizapp.model.room.dao.sync.LocallyDeletedFilledQuestionnaireDao
+import com.example.quizapp.model.room.dao.sync.LocallyDeletedQuestionnaireDao
+import com.example.quizapp.model.room.dao.sync.LocallyDownloadedQuestionnaireDao
 import com.example.quizapp.model.room.entities.*
+import com.example.quizapp.model.room.entities.sync.LocallyAnsweredQuestionnaire
+import com.example.quizapp.model.room.entities.sync.LocallyDeletedFilledQuestionnaire
+import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.room.entities.sync.LocallyDownloadedQuestionnaire
+import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,12 +25,13 @@ class LocalRepository @Inject constructor(
     private val questionnaireDao: QuestionnaireDao,
     private val questionDao: QuestionDao,
     private val answerDao: AnswerDao,
-    private val roleDao: RoleDao,
     private val facultyDao: FacultyDao,
     private val courseOfStudiesDao: CourseOfStudiesDao,
     private val subjectDao: SubjectDao,
     private val locallyDownloadedQuestionnaireDao: LocallyDownloadedQuestionnaireDao,
-    private val locallyDeletedQuestionnaireDao: LocallyDeletedQuestionnaireDao
+    private val locallyDeletedQuestionnaireDao: LocallyDeletedQuestionnaireDao,
+    private val locallyDeletedFilledQuestionnaireDao: LocallyDeletedFilledQuestionnaireDao,
+    private val locallyAnsweredQuestionnaireDao: LocallyAnsweredQuestionnaireDao
 ) {
 
     suspend fun <T : EntityMarker> insert(entity: T) = getBaseDaoWith(entity).insert(entity)
@@ -40,30 +53,46 @@ class LocalRepository @Inject constructor(
         is Answer -> answerDao
         is Question -> questionDao
         is Questionnaire -> questionnaireDao
-        is Role -> roleDao
         is Faculty -> facultyDao
         is CourseOfStudies -> courseOfStudiesDao
         is Subject -> subjectDao
         is LocallyDeletedQuestionnaire -> locallyDeletedQuestionnaireDao
+        is LocallyDeletedFilledQuestionnaire -> locallyDeletedFilledQuestionnaireDao
+        is LocallyAnsweredQuestionnaire -> locallyAnsweredQuestionnaireDao
         is LocallyDownloadedQuestionnaire -> locallyDownloadedQuestionnaireDao
         else -> throw IllegalArgumentException("Object does not implement EntityMarker Interface!")
     } as BaseDao<T>)
 
 
-    // TRANSACTIONS
-    fun test() {
-        localDatabase.runInTransaction {
-
-        }
-    }
-
 
     //QUESTIONNAIRE
-    fun findAllQuestionnairesWithQuestionsNotForUserFlow(userId: String) = questionnaireDao.findAllQuestionnairesWithQuestionsNotForUserFlow(userId)
+    @Transaction
+    suspend fun insertCompleteQuestionnaire(completeCompleteQuestionnaire: CompleteQuestionnaireJunction){
+        deleteQuestionnaireWith(completeCompleteQuestionnaire.questionnaire.id)
+        insert(completeCompleteQuestionnaire.questionnaire)
+        insert(completeCompleteQuestionnaire.allQuestions)
+        insert(completeCompleteQuestionnaire.allAnswers)
+    }
 
-    fun findAllQuestionnairesWithQuestionsForUserFlow(userId: String) = questionnaireDao.findAllQuestionnairesWithQuestionsForUserFlow(userId)
+    @Transaction
+    suspend fun insertCompleteQuestionnaires(completeCompleteQuestionnaires: List<CompleteQuestionnaireJunction>){
+        deleteQuestionnairesWith(completeCompleteQuestionnaires.map { it.questionnaire.id })
+        insert(completeCompleteQuestionnaires.map { it.questionnaire })
+        insert(completeCompleteQuestionnaires.flatMap { it.allQuestions })
+        insert(completeCompleteQuestionnaires.flatMap { it.allAnswers })
+    }
+
+    private suspend fun deleteQuestionnairesWith(questionnaireIds: List<String>) {
+        delete(findQuestionnairesWith(questionnaireIds))
+    }
+
+    fun findAllCompleteQuestionnairesNotForUserFlow(userId: String) = questionnaireDao.findAllCompleteQuestionnairesNotForUserFlow(userId)
+
+    fun findAllCompleteQuestionnairesForUserFlow(userId: String) = questionnaireDao.findAllCompleteQuestionnairesForUserFlow(userId)
 
     suspend fun findCompleteQuestionnaireWith(questionnaireId: String) = questionnaireDao.findCompleteQuestionnaireWith(questionnaireId)
+
+    suspend fun findCompleteQuestionnairesWith(questionnaireIds: List<String>) = questionnaireDao.findCompleteQuestionnairesWith(questionnaireIds)
 
     fun findCompleteQuestionnaireAsFlowWith(questionnaireId: String) = questionnaireDao.findCompleteQuestionnaireAsFlowWith(questionnaireId)
 
@@ -79,22 +108,19 @@ class LocalRepository @Inject constructor(
 
     suspend fun deleteAllQuestionnaires() = questionnaireDao.deleteAllQuestionnaires()
 
-    suspend fun findCompleteQuestionnaireWith(questionnaireIds: List<String>) = questionnaireDao.findCompleteQuestionnaireWith(questionnaireIds)
-
     suspend fun deleteQuestionnaireWith(questionnaireId: String) {
         findQuestionnaireWith(questionnaireId)?.let {
             delete(it)
         }
     }
 
-    suspend fun deleteQuestionnairesWith(questionnaireIds: List<String>) {
-        delete(findQuestionnairesWith(questionnaireIds))
-    }
 
 
 
     //QUESTION
     fun findQuestionsAsFlowWith(questionnaireId: String) = questionDao.findQuestionsAsFlowWith(questionnaireId)
+
+
 
 
     //ANSWER
@@ -103,11 +129,54 @@ class LocalRepository @Inject constructor(
     fun findAllSelectedAnswersWithQuestionId() = answerDao.findAllSelectedAnswersWithQuestionId()
 
 
-    //DOWNLOADED QUESTIONNAIRE
+
+
+
+    //LOCALLY DOWNLOADED QUESTIONNAIRE
     suspend fun getAllLocallyDownloadedQuestionnaireIds() = locallyDownloadedQuestionnaireDao.getAllDownloadedQuestionnaireIds()
 
 
-    //DELETED QUESTIONNAIRE
-    suspend fun getAllDeletedQuestionnaireIds() = locallyDeletedQuestionnaireDao.getAllDeletedQuestionnaireIds()
+    //LOCALLY DELETED QUESTIONNAIRE
+    suspend fun getLocallyDeletedQuestionnaireIds() = locallyDeletedQuestionnaireDao.getLocallyDeletedQuestionnaireIds()
+
+
+    //LOCALLY DELETED FILLED QUESTIONNAIRE
+    suspend fun getLocallyDeletedFilledQuestionnaireIds() = locallyDeletedFilledQuestionnaireDao.getLocallyDeletedFilledQuestionnaireIds()
+
+
+    //LOCALLY ANSWERED QUESTIONNAIRES
+    suspend fun getLocallyAnsweredQuestionnaireIds() = locallyAnsweredQuestionnaireDao.getLocallyDeletedQuestionnaireIds()
+
+    suspend fun getAllLocallyAnsweredFilledQuestionnaires() : List<MongoFilledQuestionnaire> {
+        getLocallyAnsweredQuestionnaireIds().map { it.questionnaireId }.let { locallyAnswered ->
+            return if(locallyAnswered.isEmpty()) emptyList()
+            else {
+                val foundCompleteQuestionnaires = findCompleteQuestionnairesWith(locallyAnswered)
+                val deletedQuestionnaireIds = locallyAnswered - foundCompleteQuestionnaires.map { it.questionnaire.id }
+                if(deletedQuestionnaireIds.isNotEmpty()){
+                    locallyAnsweredQuestionnaireDao.deleteLocallyAnsweredQuestionnaireWith(deletedQuestionnaireIds)
+                }
+                foundCompleteQuestionnaires.map { DataMapper.mapSqlEntitiesToFilledMongoEntity(it) }
+            }
+        }
+    }
+
+    suspend fun isAnsweredQuestionnairePresent(questionnaireId: String) = locallyAnsweredQuestionnaireDao.isAnsweredQuestionnairePresent(questionnaireId) == 1
+
+
+
+    //LOCALLY SYNC HELPER STUFF
+    //-> Wenn man lokal einen Fragebogen ausfüllt, diesen aber da
+    suspend fun insertLocallyAnsweredQuestionnaire(questionnaireId: String){
+        locallyAnsweredQuestionnaireDao.insert(LocallyAnsweredQuestionnaire(questionnaireId))
+        locallyDeletedFilledQuestionnaireDao.deleteLocallyDeletedFilledQuestionnaireWith(questionnaireId)
+
+    }
+
+    //TODO -> Wenn man einen Fragebogen lokal ausgefüllt hat und dann anschließend
+    suspend fun insertLocallyDeletedFilledQuestionnaire(questionnaireId: String){
+        locallyDeletedFilledQuestionnaireDao.insert(LocallyDeletedFilledQuestionnaire(questionnaireId))
+        locallyAnsweredQuestionnaireDao.deleteLocallyAnsweredQuestionnaireWith(questionnaireId)
+    }
 
 }

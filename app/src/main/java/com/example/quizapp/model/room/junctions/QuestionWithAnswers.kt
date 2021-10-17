@@ -17,13 +17,13 @@ data class QuestionWithAnswers(
     var answers: List<Answer>
 ) : Parcelable {
 
-    val answersAmount: Int get() = answers.size
-
     val isAnsweredCorrectly : Boolean get() = answers.all { it.isAnswerCorrect == it.isAnswerSelected }
 
     val isAnswered : Boolean get() = answers.any { it.isAnswerSelected }
 
     val answersSortedByPosition get() = answers.sortedBy { it.answerPosition }
+
+    val selectedAnswerIds get() = answers.filter { it.isAnswerSelected }.map { it.id }
 
     companion object {
         val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<QuestionWithAnswers> { old, new ->  old.question.id == new.question.id}

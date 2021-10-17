@@ -3,6 +3,7 @@ package com.example.quizapp.view.recyclerview.impl
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.example.quizapp.utils.BindingUtils
 
@@ -23,6 +24,8 @@ abstract class BindingListAdapter<T : Any, B : ViewBinding>(diffCallback: DiffUt
             bindViews(binding, item, bindingAdapterPosition)
         }
     }
+
+    fun getItem(viewHolder: RecyclerView.ViewHolder): T = getItem(viewHolder.bindingAdapterPosition)
 
     abstract fun initListeners(binding: B, vh: BindingListAdapterViewHolder)
 

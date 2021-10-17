@@ -6,6 +6,11 @@
     <string name="settings">Settings</string>
 
     <string name="test">%1$s - %2$s - %3$s - %4$s</string>
+    <string name="authorNameAndDate">%1$s - %2$s - </string>
+    <string name="authorNameDateAndQuestionAmount">%1$s - %2$s - %3$s</string>
+    <string name="dateAndQuestionAmount">%1$s - %2$s</string>
+    <string name="cosAndSubject">%1$s - %2$s</string>
+
 
     <string name="title">Title</string>
     <string name="addQuestionnaire">Add Questionnaire</string>
@@ -36,6 +41,7 @@
 
 
     <string name="password">Password</string>
+    <string name="changePassword">Change password</string>
     <string name="confirmPassword">Confirm Password</string>
     <string name="userName">Username</string>
     <string name="login">Login</string>
@@ -53,9 +59,30 @@
     <string name="questionsDeleted">Questions deleted</string>
     <string name="questionDeleted">Question deleted</string>
     <string name="checkResults">Check Results</string>
+    <string name="questionnaireDeleted">Questionnaire deleted</string>
 
 
     <string name="searchForQuestionnaires">Search for Questionnaires</string>
+
+
+
+    <!-- BSDF - Questionnaire More Options -->
+    <string name="shareQuestionnaireWithUser">Share with other User</string>
+    <string name="uploadQuestionnaire">Upload</string>
+    <string name="uploadAnswers">Upload answers</string>
+    <string name="copyQuestionnaire">Copy</string>
+    <string name="publishQuestionnaire">Publish</string>
+    <string name="hideQuestionnaire">Hide</string>
+    <string name="edit">Edit</string>
+    <string name="deleteGivenAnswers">Delete given answers</string>
+    <string name="deleteQuestionnaire">Delete</string>
+
+
+
+    <string name="errorSelectOneCorrectAnswer">Select at least one correct Answer!</string>
+    <string name="errorAnswersDoNotHaveText">Some Answers don\'t have a Text yet!</string>
+    <string name="errorQuestionDoesNotHaveTitle">Question %1$s) does not have a title!</string>
+    <string name="errorQuestionsHasNoAnswers">"Question %1$s) doesn't have any answers!"</string>
 
 
     <!-- Response Message Items -->
@@ -97,8 +124,8 @@
 
     <!-- Quiz Screen-->
     <string name="showSolution">Show Solution</string>
-    <string name="deleteGivenAnswers">Delete given Answers</string>
     <string name="shuffleQuestions">Shuffle Questions</string>
+
 
     <!-- Strings for voice Search functionality -->
     <string name="voiceSearchStartTalking">Sprechen Sie los…</string>

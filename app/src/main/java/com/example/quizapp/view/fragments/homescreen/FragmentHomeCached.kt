@@ -3,13 +3,14 @@ package com.example.quizapp.view.fragments.homescreen
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeCachedBinding
+import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaCachedQuestionnaires
 import com.example.quizapp.viewmodel.VmHome
+import com.example.quizapp.viewmodel.VmHome.FragmentHomeCachedEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,29 +23,43 @@ class FragmentHomeCached : BindingFragment<FragmentHomeCachedBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
-        iniObservers()
+        initListeners()
+        initObservers()
     }
 
     private fun initRecyclerView() {
         rvAdapter = RvaCachedQuestionnaires().apply {
             onItemClick = navigator::navigateToQuizScreen
-
-            onMoreOptionsClicked = vmHome::onCachedItemDeleteQuestionnaireClicked
-
-            onItemLongClick = {
-                //navigator.navigateToAddQuestionnaireScreen(it.id)
-            }
+            onItemLongClick = navigator::navigateToQuestionnaireMoreOptions
         }
 
         binding.rv.apply {
             adapter = rvAdapter
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
-            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+            disableChangeAnimation()
         }
     }
 
-    private fun iniObservers() {
-        vmHome.allQuestionnairesWithQuestionsLD.observe(viewLifecycleOwner, rvAdapter::submitList)
+    private fun initListeners(){
+        binding.swipeRefreshLayout.setOnRefreshListener(vmHome::onSwipeRefreshCachedQuestionnairesList)
+    }
+
+    private fun initObservers() {
+        vmHome.allCachedQuestionnairesLD.observe(viewLifecycleOwner) {
+            rvAdapter.submitList(it){
+                if(it.isEmpty()){
+
+                }
+            }
+        }
+
+        vmHome.fragmentHomeCachedEventChannelLD.observe(viewLifecycleOwner){ event ->
+            when(event) {
+                is ChangeCachedSwipeRefreshLayoutVisibility -> {
+                    binding.swipeRefreshLayout.isRefreshing = event.visible
+                }
+            }
+        }
     }
 }

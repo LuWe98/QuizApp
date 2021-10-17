@@ -10,11 +10,13 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.quizapp.MainNavGraphDirections
 import com.example.quizapp.R
 import com.example.quizapp.extensions.initMaterialElevationScale
+import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaireDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
 import com.example.quizapp.view.fragments.homescreen.FragmentHomeDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
+import com.example.quizapp.view.fragments.settingsscreen.FragmentSettingsDirections
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -88,6 +90,13 @@ class Navigator @Inject constructor(
         navController.navigate(MainNavGraphDirections.actionGlobalFragmentSearch())
     }
 
+    fun navigateToAdminPage(){
+        navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToFragmentAdmin())
+    }
+
+    fun navigateToQuestionnaireMoreOptions(authorId: String, questionnaireId: String){
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfQuestionnaireMoreOptions(authorId, questionnaireId))
+    }
 
     companion object {
         val NO_QUESTIONNAIRE_ID : String? = null

@@ -2,13 +2,11 @@ package com.example.quizapp.model.ktor.authentification
 
 import com.example.quizapp.model.datastore.PreferencesRepository
 import io.ktor.http.*
-import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.text.Charsets
 
 @Singleton
 class OkHttpBasicAuthInterceptor @Inject constructor(
@@ -23,7 +21,7 @@ class OkHttpBasicAuthInterceptor @Inject constructor(
 
             return proceed(request().newBuilder().run {
                 preferencesRepository.userCredentials.let { credentials ->
-                    header(HttpHeaders.Authorization, Credentials.basic(credentials.name, credentials.password, Charsets.UTF_8))
+                    header(HttpHeaders.Authorization, credentials)
                     build()
                 }
             })

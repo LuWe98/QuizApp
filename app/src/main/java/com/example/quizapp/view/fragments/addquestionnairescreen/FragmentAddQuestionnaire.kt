@@ -54,22 +54,12 @@ class FragmentAddQuestionnaire : BindingFragment<FragmentAddQuestionnaireBinding
     }
 
     private fun initClickListener(){
-        binding.buttonBack.setOnClickListener {
-            navigator.popBackStack()
-        }
-
-        binding.fabSave.setOnClickListener {
-            vmAdd.onFabSaveClicked()
-        }
-
-        binding.buttonAdd.setOnClickListener {
-            vmAdd.onAddQuestionButtonClicked()
-        }
+        binding.buttonBack.onClick(navigator::popBackStack)
+        binding.fabSave.onClick(vmAdd::onFabSaveClicked)
+        binding.buttonAdd.onClick(vmAdd::onAddQuestionButtonClicked)
 
         binding.editTextName.onTextChanged(vmAdd::onQuestionnaireTitleTextChanged)
-
         binding.editTextCourseOfStudies.onTextChanged(vmAdd::onQuestionnaireCourseOfStudiesTextChanged)
-
         binding.editTextSubject.onTextChanged(vmAdd::onQuestionnaireSubjectTextChanged)
     }
 
@@ -82,15 +72,15 @@ class FragmentAddQuestionnaire : BindingFragment<FragmentAddQuestionnaireBinding
         vmAdd.fragmentAddQuestionnaireEventChannelFlow.collect(lifecycleScope){ event ->
             when(event){
                 is ShowQuestionDeletedSuccessFullySnackBar -> {
-                    showSnackBar(R.string.questionDeleted, viewToAttachTo = requireActivity().window.decorView, actionTextRes = R.string.undo) {
+                    showSnackBar(R.string.questionDeleted, viewToAttachTo = bindingActivity.rootView, actionTextRes = R.string.undo) {
                         vmAdd.onUndoDeleteQuestionClicked(event)
                     }
                 }
                 is ShowQuestionDoesNotHaveTitleToast -> {
-                    showToast("Question at position ${event.position} does not have a title!")
+                    showToast(getString(R.string.errorQuestionDoesNotHaveTitle, event.position.toString()))
                 }
                 is ShowQuestionHasNoAnswersToast -> {
-                    showToast("Question at position ${event.position} doesn't have any answers!")
+                    showToast(getString(R.string.errorQuestionsHasNoAnswers, event.position.toString()))
                 }
                 NavigateBackEvent -> navigator.popBackStack()
             }

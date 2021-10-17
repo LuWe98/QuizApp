@@ -36,8 +36,8 @@ fun <T : Any> ViewModel.getPagingFlowAsFlow(pagingSource : PagingSource<Int, T>)
 
 
 inline fun ViewModel.launch(
-    scope: CoroutineScope = viewModelScope,
     dispatcher: CoroutineContext = EmptyCoroutineContext,
+    scope: CoroutineScope = viewModelScope,
     crossinline block: suspend CoroutineScope.() -> Unit
 ) {
     scope.launch(dispatcher) {

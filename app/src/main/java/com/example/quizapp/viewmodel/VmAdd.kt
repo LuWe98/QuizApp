@@ -11,6 +11,7 @@ import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
+import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.viewmodel.VmAdd.FragmentAddQuestionnaireEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.date.*
@@ -75,7 +76,7 @@ class VmAdd @Inject constructor(
     init {
         args.questionnaireId?.let { id ->
             runBlocking {
-                localRepository.findCompleteQuestionnaireWith(id).apply {
+                localRepository.findCompleteQuestionnaireWith(id)?.apply {
                     qId = id
                     qTitle = questionnaire.title
                     qCourseOfStudies = questionnaire.courseOfStudies
@@ -156,14 +157,15 @@ class VmAdd @Inject constructor(
         addQuestionWithAnswers(QuestionWithAnswers.createEmptyQuestionWithAnswers())
     }
 
+    //TODO --> Faculty ist noch WIP / Auch vom User ?
     fun onFabSaveClicked() {
         if (!isInputValid()) return
-        //TODO --> Faculty ist noch WIP / Auch vom User ?
+
         applicationScope.launch(Dispatchers.IO) {
             val questionnaire = Questionnaire(
                 id = qId,
                 title = qTitle,
-                authorInfo = preferencesRepository.userCredentialsFlow.first().asAuthorInfo(),
+                authorInfo = preferencesRepository.userInfoFlow.first().asAuthorInfo(),
                 lastModifiedTimestamp = getTimeMillis(),
                 faculty = "WIB",
                 courseOfStudies = qCourseOfStudies,
@@ -180,15 +182,13 @@ class VmAdd @Inject constructor(
                 }
             }
 
-            localRepository.deleteQuestionnaireWith(qId)
-            localRepository.insert(questionnaire)
-            localRepository.insert(questionsWithAnswersMapped.map { it.question })
-            localRepository.insert(questionsWithAnswersMapped.flatMap { it.answers })
+            val completeQuestionnaire = CompleteQuestionnaireJunction(questionnaire, questionsWithAnswersMapped)
 
+            localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
             fragmentAddQuestionnaireEventChannel.send(NavigateBackEvent)
 
             val response = try {
-                backendRepository.insertQuestionnaire(DataMapper.mapSqlEntitiesToMongoEntity(questionnaire, questionsWithAnswersMapped))
+                backendRepository.insertQuestionnaire(DataMapper.mapSqlEntitiesToMongoEntity(completeQuestionnaire))
             } catch (e: Exception) {
                 null
             }

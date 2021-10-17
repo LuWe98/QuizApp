@@ -2,16 +2,10 @@ package com.example.quizapp.view.recyclerview.adapters
 
 import androidx.core.view.isVisible
 import com.example.quizapp.R
-import com.example.quizapp.databinding.RviQuestionnaireBrowseBinding
-import com.example.quizapp.databinding.RviQuestionnaireBrowseNew2Binding
 import com.example.quizapp.databinding.RviQuestionnaireBrowseNewBinding
 import com.example.quizapp.extensions.context
-import com.example.quizapp.extensions.getString
 import com.example.quizapp.extensions.onClick
-import com.example.quizapp.extensions.setDrawableSize
-import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoQuestionnaire
-import com.example.quizapp.model.room.entities.Questionnaire
-import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
+import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
 import com.example.quizapp.view.recyclerview.impl.BindingPagingDataAdapter
 
 class RvaBrowseQuestionnaires : BindingPagingDataAdapter<MongoQuestionnaire, RviQuestionnaireBrowseNewBinding>(MongoQuestionnaire.DIFF_CALLBACK) {

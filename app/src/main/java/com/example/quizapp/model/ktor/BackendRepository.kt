@@ -4,11 +4,12 @@ import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.ktor.apiclasses.FilledQuestionnaireApi
 import com.example.quizapp.model.ktor.apiclasses.QuestionnaireApi
 import com.example.quizapp.model.ktor.apiclasses.UserApi
-import com.example.quizapp.model.ktor.mongo.documents.filledquestionnaire.MongoFilledQuestionnaire
-import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoQuestionnaire
-import com.example.quizapp.model.ktor.requests.QuestionnaireIdWithTimestamp
-import com.example.quizapp.model.room.entities.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestionsAndAnswers
+import com.example.quizapp.model.mongodb.documents.filledquestionnaire.MongoFilledQuestionnaire
+import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
+import com.example.quizapp.model.mongodb.documents.user.Role
+import com.example.quizapp.model.dto.QuestionnaireIdWithTimestamp
+import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,13 +25,13 @@ class BackendRepository @Inject constructor(
 
     suspend fun registerUser(userName: String, password: String, courseOfStudies: String) = userApi.registerUser(userName, password, courseOfStudies)
 
-    suspend fun updateUser(userId: String, newUserName: String) = userApi.updateUser(userId, newUserName)
+    suspend fun updateUsername(userId: String, newUserName: String) = userApi.updateUsername(userId, newUserName)
+
+    suspend fun updateUserRole(userId: String, newRole: Role) = userApi.updateUserRole(userId, newRole)
 
     suspend fun deleteUser(userId: String) = userApi.deleteUser(userId)
 
     suspend fun getPagedUsers(limit: Int, page: Int, searchString: String) = userApi.getPagedUsers(limit, page, searchString)
-
-
 
 
     // QUESTIONNAIRES
@@ -40,8 +41,8 @@ class BackendRepository @Inject constructor(
 
     suspend fun insertQuestionnaire(mongoQuestionnaire: MongoQuestionnaire) = questionnaireApi.insertQuestionnaire(mongoQuestionnaire)
 
-    suspend fun insertQuestionnaire(completeQuestionnaire: QuestionnaireWithQuestionsAndAnswers) =
-        questionnaireApi.insertQuestionnaire(DataMapper.mapSqlEntitiesToMongoEntity(completeQuestionnaire))
+    suspend fun insertQuestionnaire(completeCompleteQuestionnaire: CompleteQuestionnaireJunction) =
+        questionnaireApi.insertQuestionnaire(DataMapper.mapSqlEntitiesToMongoEntity(completeCompleteQuestionnaire))
 
     suspend fun getQuestionnairesForSyncronization(
         syncedQuestionnaireIdsWithTimestamp: List<QuestionnaireIdWithTimestamp>,
@@ -54,11 +55,12 @@ class BackendRepository @Inject constructor(
     suspend fun getPagedQuestionnaires(limit: Int, page: Int, searchString: String) = questionnaireApi.getPagedQuestionnaires(limit, page, searchString)
 
 
-
-
     // FILLED QUESTIONNAIRED
     suspend fun insertEmptyFilledQuestionnaire(mongoFilledQuestionnaire: MongoFilledQuestionnaire) =
         filledQuestionnaireApi.insertEmptyFilledQuestionnaire(mongoFilledQuestionnaire)
+
+    suspend fun insertFilledQuestionnaires(mongoFilledQuestionnaires: List<MongoFilledQuestionnaire>) =
+        filledQuestionnaireApi.insertFilledQuestionnaires(mongoFilledQuestionnaires)
 
     suspend fun insertFilledQuestionnaire(mongoFilledQuestionnaire: MongoFilledQuestionnaire) =
         filledQuestionnaireApi.insertFilledQuestionnaire(mongoFilledQuestionnaire)

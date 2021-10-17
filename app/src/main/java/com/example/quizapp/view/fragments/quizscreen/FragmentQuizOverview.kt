@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizOverviewBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestionsAndAnswers
+import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionWithAnswersQuiz
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmQuiz
@@ -48,7 +48,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             adapter = rvAdapter
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext())
-            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+            disableChangeAnimation()
         }
     }
 
@@ -118,8 +118,8 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         }
     }
 
-    private fun onShouldDisplaySolutionChanged(shouldDisplay: Boolean, completeQuestionnaire: QuestionnaireWithQuestionsAndAnswers) {
-        val cqp = completeQuestionnaire.correctQuestionsPercentage
+    private fun onShouldDisplaySolutionChanged(shouldDisplay: Boolean, completeCompleteQuestionnaire: CompleteQuestionnaireJunction) {
+        val cqp = completeCompleteQuestionnaire.correctQuestionsPercentage
         binding.apply {
             progressCorrect.setProgressWithAnimation(if (shouldDisplay) cqp else 0)
             progressIncorrect.setProgressWithAnimation(if (shouldDisplay) 100 - cqp else 0)

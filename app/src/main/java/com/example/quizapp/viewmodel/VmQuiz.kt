@@ -1,23 +1,29 @@
 package com.example.quizapp.viewmodel
 
-import android.app.Application
 import androidx.lifecycle.*
 import com.example.quizapp.QuizNavGraphArgs
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.model.DataMapper
+import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.Answer
+import com.example.quizapp.model.room.entities.sync.LocallyAnsweredQuestionnaire
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class VmQuiz @Inject constructor(
-    application: Application,
+    private val applicationScope: CoroutineScope,
     private val localRepository: LocalRepository,
+    private val backendRepository: BackendRepository,
     private val state: SavedStateHandle
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     private val args = QuizNavGraphArgs.fromSavedStateHandle(state)
 
@@ -56,25 +62,24 @@ class VmQuiz @Inject constructor(
             if (it.areAllQuestionsAnswered) {
                 setShouldDisplaySolution(!shouldDisplaySolution)
             } else {
-                launch { fragmentEventChannel.send(ShowCompleteAllAnswersToast) }
+                launch(IO) { fragmentEventChannel.send(ShowCompleteAllAnswersToast) }
             }
         }
     }
 
     fun onMoreOptionsItemClicked() {
-        launch { fragmentEventChannel.send(ShowPopupMenu) }
+        launch(IO) { fragmentEventChannel.send(ShowPopupMenu) }
     }
 
     fun onUndoDeleteGivenAnswersClick(event: ShowUndoDeleteGivenAnswersSnackBack) {
-        launch { localRepository.update(event.lastAnswerValues) }
-
+        launch(IO) { localRepository.update(event.lastAnswerValues) }
     }
 
-    fun onClearGivenAnswersClicked(){
-        completeQuestionnaire?.apply {
-            mutableListOf<Answer>().let { list ->
-                questionsWithAnswers.forEach { qwa -> list.addAll(qwa.answers) }
-                launch {
+    fun onClearGivenAnswersClicked() {
+        launch(IO) {
+            completeQuestionnaire?.apply {
+                mutableListOf<Answer>().let { list ->
+                    list.addAll(allAnswers)
                     fragmentEventChannel.send(ShowUndoDeleteGivenAnswersSnackBack(list))
                     list.map {
                         it.copy(isAnswerSelected = false)
@@ -86,14 +91,51 @@ class VmQuiz @Inject constructor(
         }
     }
 
-    fun onFabClicked(){
-        if(shouldDisplaySolution){
+    fun onFabClicked() {
+        if (shouldDisplaySolution) {
             setShouldDisplaySolution(false)
         }
-        launch {
+        launch(IO) {
             fragmentEventChannel.send(NavigateToQuizScreen)
         }
     }
+
+
+
+    fun onAnswerItemClicked(selectedAnswerId: String, allAnswers: List<Answer>, isQuestionMultipleChoice: Boolean) = launch(IO) {
+        if (isQuestionMultipleChoice) {
+            allAnswers.firstOrNull { it.id == selectedAnswerId }?.let { answer ->
+                localRepository.update(answer.copy(isAnswerSelected = !answer.isAnswerSelected))
+            }
+        } else {
+            localRepository.update(allAnswers.map { it.copy(isAnswerSelected = it.id == selectedAnswerId) })
+        }
+
+        completeQuestionnaire?.let {
+            localRepository.insert(LocallyAnsweredQuestionnaire(it.questionnaire.id))
+        }
+    }
+
+
+    override fun onCleared() {
+        super.onCleared()
+        uploadGivenAnswers()
+    }
+
+    private fun uploadGivenAnswers() = applicationScope.launch(IO) {
+        completeQuestionnaire?.let { DataMapper.mapSqlEntitiesToFilledMongoEntity(it) }?.let {
+            if(localRepository.isAnsweredQuestionnairePresent(it.questionnaireId)){
+                runCatching {
+                    backendRepository.insertFilledQuestionnaire(it)
+                }.onSuccess { response ->
+                    if(response.isSuccessful){
+                        localRepository.delete(LocallyAnsweredQuestionnaire(it.questionnaireId))
+                    }
+                }
+            }
+        }
+    }
+
 
 
     sealed class FragmentQuizEvent {
@@ -106,25 +148,5 @@ class VmQuiz @Inject constructor(
     companion object {
         const val SHOULD_DISPLAY_SOLUTION = "shouldDisplaySolutionKey"
     }
-
-
-
-//    private val completeQuestionnaireStateFlow = localRepository.completeQuestionnaireStateFlow(args.questionnaireId)
-//
-//    val completeQuestionnaireStateFlowOpen = localRepository.completeQuestionnaireStateFlow(args.questionnaireId).filterNotNull().distinctUntilChanged()
-//
-//    fun getQuestionWithAnswersFlow(questionId: Long) = completeQuestionnaireStateFlow.mapNotNull { it?.getQuestionWithAnswers(questionId) }.distinctUntilChanged()
-//
-//    val completeQuestionnaireFlowValue get() = completeQuestionnaireStateFlow.value
-//
-//    val questionnaireFlow get() = completeQuestionnaireStateFlow.mapNotNull { it?.questionnaire }.distinctUntilChanged()
-//
-//    val questionsWithAnswersFlow get() = completeQuestionnaireStateFlow.mapNotNull { it?.questionsWithAnswers }.distinctUntilChanged()
-//
-//    val answeredQuestionsPercentageFlow get() = completeQuestionnaireStateFlow.mapNotNull { it?.answeredQuestionsPercentage }.distinctUntilChanged()
-//
-//    val allQuestionsAnsweredFlow get() = answeredQuestionsPercentageFlow.map { it == 100 }.distinctUntilChanged()
-//
-//    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
 }

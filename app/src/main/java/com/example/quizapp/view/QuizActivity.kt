@@ -4,19 +4,18 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.widget.ImageView
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.ui.setupWithNavController
+import com.example.quizapp.QuizApplication
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityMainBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
-import com.example.quizapp.viewmodel.VmMain
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
+import io.ktor.util.date.*
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -27,13 +26,9 @@ class QuizActivity : BindingActivity<ActivityMainBinding>(), NavController.OnDes
     lateinit var navigatorProvider: Provider<Navigator>
     private val navigator get() = navigatorProvider.get()!!
 
-    private val viewModel: VmMain by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AppCompatDelegate.setDefaultNightMode(viewModel.currentTheme)
         setContentView(binding.root)
-
         initViews()
         navigator.addOnDestinationChangedListener(this)
     }
@@ -43,7 +38,7 @@ class QuizActivity : BindingActivity<ActivityMainBinding>(), NavController.OnDes
         binding.apply {
             bottomNavView.setupWithNavController(navigator.navController)
 
-            cardHome.setOnClickListener {
+            cardHome.onClick {
                 if(bottomNavView.selectedItemId == R.id.fragmentSettings){
                     navigator.popBackStack()
                 } else {
@@ -51,16 +46,16 @@ class QuizActivity : BindingActivity<ActivityMainBinding>(), NavController.OnDes
                 }
             }
 
-            cardSettings.setOnClickListener {
+            cardSettings.onClick {
                 bottomNavView.selectedItemId = R.id.fragmentSettings
             }
 
-            cardSearch.setOnClickListener {
+            cardSearch.onClick {
                 navigator.navigateToSearchScreen()
 //               bottomNavView.selectedItemId = R.id.fragmentSearch
             }
 
-            addCard.setOnClickListener {
+            addCard.onClick {
                 navigator.navigateToAddQuestionnaireScreen()
             }
         }
@@ -96,7 +91,6 @@ class QuizActivity : BindingActivity<ActivityMainBinding>(), NavController.OnDes
     private fun changeCustomBottomNavBarVisibility(cardToShow: MaterialCardView, imageViewToChangeTintOf: ImageView) {
         binding.apply {
             bottomAppBar.performShow()
-
             cardHome.setCardBackgroundColor(getColor(R.color.transparent))
             ivHome.setDrawableTintWithRes(R.color.black)
             cardSearch.setCardBackgroundColor(getColor(R.color.transparent))

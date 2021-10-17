@@ -6,10 +6,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.databinding.FragmentSearchBinding
-import com.example.quizapp.extensions.collect
-import com.example.quizapp.extensions.onClick
-import com.example.quizapp.extensions.onTextChanged
-import com.example.quizapp.extensions.showKeyboard
+import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaBrowseQuestionnaires
 import com.example.quizapp.viewmodel.VmSearch
@@ -43,6 +40,7 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
                 setHasFixedSize(true)
                 adapter = rvAdapter
                 layoutManager = LinearLayoutManager(requireContext())
+                disableChangeAnimation()
             }
         }
     }

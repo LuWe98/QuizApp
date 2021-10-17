@@ -1,24 +1,19 @@
 package com.example.quizapp.view.recyclerview.adapters
 
+import androidx.core.view.isVisible
 import com.example.quizapp.R
-import com.example.quizapp.databinding.RviQuestionnaireBinding
-import com.example.quizapp.extensions.context
-import com.example.quizapp.extensions.onClick
-import com.example.quizapp.extensions.onLongClick
-import com.example.quizapp.model.room.entities.Questionnaire
-import com.example.quizapp.model.room.junctions.QuestionnaireWithQuestions
+import com.example.quizapp.databinding.RviQuestionnaireCachedBinding
+import com.example.quizapp.extensions.*
+import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
-class RvaCachedQuestionnaires : BindingListAdapter<QuestionnaireWithQuestions, RviQuestionnaireBinding>(QuestionnaireWithQuestions.DIFF_CALLBACK) {
+class RvaCachedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunction, RviQuestionnaireCachedBinding>(CompleteQuestionnaireJunction.DIFF_CALLBACK) {
 
     var onItemClick : ((String) -> (Unit))? = null
 
-    var onItemLongClick: ((Questionnaire) -> (Unit))? = null
+    var onItemLongClick: ((String, String) -> (Unit))? = null
 
-    var onMoreOptionsClicked : ((Questionnaire) -> (Unit))? = null
-
-
-    override fun initListeners(binding: RviQuestionnaireBinding, vh: BindingListAdapterViewHolder) {
+    override fun initListeners(binding: RviQuestionnaireCachedBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
             root.onClick {
                 getItem(vh.bindingAdapterPosition)?.let {
@@ -28,41 +23,29 @@ class RvaCachedQuestionnaires : BindingListAdapter<QuestionnaireWithQuestions, R
 
             root.onLongClick {
                 getItem(vh.bindingAdapterPosition)?.let {
-                    onItemLongClick?.invoke(it.questionnaire)
-                }
-            }
-
-            btnMoreOptions.onClick {
-                getItem(vh.bindingAdapterPosition)?.let {
-                    onMoreOptionsClicked?.invoke(it.questionnaire)
+                    onItemLongClick?.invoke(it.questionnaire.authorInfo.userId, it.questionnaire.id)
                 }
             }
         }
     }
 
-    override fun bindViews(binding: RviQuestionnaireBinding, item: QuestionnaireWithQuestions, position: Int) {
+    override fun bindViews(binding: RviQuestionnaireCachedBinding, item: CompleteQuestionnaireJunction, position: Int) {
         binding.apply {
-//            item.questionnaire.let {
-//                questionnaireTitle.text = it.title
-//                tvCourseOfStudies.text = it.courseOfStudies
-//                tvAuthor.text = it.authorInfo.userName
-//            }
             tvTitle.text = item.questionnaire.title
-
-            tvInfo.text = context.getString(R.string.test,
+            tvAuthorDateAndQuestionAmount.text = context.getString(R.string.authorNameDateAndQuestionAmount,
                 item.questionnaire.authorInfo.userName,
-                item.questionnaire.courseOfStudies,
-                item.questionnaire.subject,
+                item.questionnaire.timeStampAsDate,
                 item.questionsAmount.toString())
 
-//            tvQuestionAmount.text = item.questionsAmount.toString()
-//
-//            tvAuthor.setDrawableSize(18)
-//            tvQuestionAmount.setDrawableSize(18)
-//            tvCourseOfStudies.setDrawableSize(18)
+            tvInfo.text = context.getString(R.string.cosAndSubject, item.questionnaire.courseOfStudies, item.questionnaire.subject)
 
-            //progressIndicator.progress = item.completedQuestionsPercentage
-            //checkMarkIcon.isVisible = progressIndicator.progress == 100
+//            val answersPresent = item.allAnswers.isNotEmpty()
+            progressIndicator.progress = item.answeredQuestionsPercentage
+
+            item.areAllQuestionsCorrectlyAnswered.let {
+                checkMarkIcon.isVisible = it
+                progressIndicator.setIndicatorColor(if(it) getColor(R.color.green) else getThemeColor(R.attr.colorAccent))
+            }
         }
     }
 }

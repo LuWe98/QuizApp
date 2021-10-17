@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.transition.Slide
 import com.example.quizapp.R
+import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
@@ -27,6 +28,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+
+val Fragment.bindingActivity get() = requireActivity() as BindingActivity<*>
 
 @MainThread
 fun Fragment.showToast(text: String, duration: Int = Toast.LENGTH_LONG) {
@@ -81,10 +84,17 @@ fun Fragment.showSnackBar(
     @StringRes textRes: Int,
     viewToAttachTo: View = requireView(),
     duration: Int = Snackbar.LENGTH_LONG,
+    onDismissedAction: () -> (Unit) = {},
     @StringRes actionTextRes: Int,
     actionClickEvent: ((View) -> Unit)
 ) {
-    Snackbar.make(viewToAttachTo, textRes, duration).setAction(actionTextRes, actionClickEvent).show()
+    Snackbar.make(viewToAttachTo, textRes, duration).addCallback(object : Snackbar.Callback(){
+        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+            if(event != DISMISS_EVENT_ACTION){
+                onDismissedAction.invoke()
+            }
+        }
+    }).setAction(actionTextRes, actionClickEvent).show()
 }
 
 fun Fragment.isPermissionGranted(permission: String) = requireContext().isPermissionGranted(permission)
@@ -101,8 +111,8 @@ fun Fragment.getThemeColor(@AttrRes themeAttrId: Int) = requireContext().getThem
 
 
 inline fun Fragment.launch(
-    scope: CoroutineScope = lifecycleScope,
     dispatcher: CoroutineContext = EmptyCoroutineContext,
+    scope: CoroutineScope = lifecycleScope,
     crossinline block: suspend CoroutineScope.() -> Unit
 ) {
     scope.launch(dispatcher) {
@@ -147,6 +157,8 @@ inline fun Fragment.launchWhenResumed(
         block.invoke(this)
     }
 }
+
+
 
 
 @MainThread

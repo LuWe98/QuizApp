@@ -23,6 +23,9 @@
     <color name="transparent">#00000000</color>
 
 
+    <color name="colorAccentLighter">#99add8e6</color>
+
+
 
     <!-- Light Theme Colors -->
     <color name="lightColorPrimary">#0070ba</color>

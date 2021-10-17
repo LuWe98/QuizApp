@@ -1,8 +1,7 @@
 package com.example.quizapp.view.fragments.settingsscreen
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.quizapp.R
+import com.example.quizapp.model.mongodb.documents.user.Role
 
 object SettingsModel {
     const val HEADER_PREFERENCE_ID = 0
@@ -54,10 +53,10 @@ object SettingsModel {
             R.drawable.ic_role_badge,
             R.string.role
         ),
-        SettingsMenuItem.TextItem(
+        SettingsMenuItem.ClickableItem(
             ITEM_USER_PASSWORD_ID,
             R.drawable.ic_password,
-            R.string.password
+            R.string.changePassword
         ),
         SettingsMenuItem.ClickableItem(
             ITEM_USER_LOGOUT_ID,
@@ -100,13 +99,16 @@ object SettingsModel {
         )
     )
 
-    private val settingItemList = mutableListOf<SettingsMenuItem>().apply {
+
+    private val settingsListMutableLiveData =mutableListOf<SettingsMenuItem>().apply {
         addAll(preferencesList)
         addAll(userList)
+    }
+
+    private val settingsAdminListMutableLiveData = mutableListOf<SettingsMenuItem>().apply {
+        addAll(settingsListMutableLiveData)
         addAll(adminList)
     }
 
-    private val settingsListMutableLiveData = MutableLiveData<List<SettingsMenuItem>>(settingItemList)
-
-    val settingsListLiveData : LiveData<List<SettingsMenuItem>> get() = settingsListMutableLiveData
+    fun getSettingsItemList(userRole: Role) = if(userRole == Role.ADMIN) settingsAdminListMutableLiveData else settingsListMutableLiveData
 }

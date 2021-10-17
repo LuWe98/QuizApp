@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="home_tab_names">
-        <item>Browse</item>
-        <item>Cached</item>
+        <item>Downloaded</item>
         <item>Created</item>
     </string-array>
 </resources>

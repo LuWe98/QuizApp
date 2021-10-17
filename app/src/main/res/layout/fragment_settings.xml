@@ -38,22 +38,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         android:id="@+id/materialTextView" />
 
-                <com.google.android.material.progressindicator.CircularProgressIndicator
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
-                        android:id="@+id/progress"
-                        android:visibility="gone"
-                        app:indicatorSize="150dp"
-                        app:indicatorColor="?colorAccent"
-                        app:trackColor="@color/unselectedColor"
-                        app:trackThickness="10dp"
-                        app:trackCornerRadius="5dp"
-                        tools:progress="60"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/materialTextView"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -69,7 +53,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/appBarLayout"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:listitem="@layout/settings_item_text"/>
 
         <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"

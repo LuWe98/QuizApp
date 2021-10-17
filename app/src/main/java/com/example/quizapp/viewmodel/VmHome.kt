@@ -1,36 +1,31 @@
 package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.*
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.cachedIn
-import androidx.paging.liveData
 import com.example.quizapp.R
-import com.example.quizapp.extensions.first
+import com.example.quizapp.extensions.launch
 import com.example.quizapp.extensions.log
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.mongo.documents.filledquestionnaire.MongoFilledQuestionnaire
-import com.example.quizapp.model.ktor.mongo.documents.questionnaire.MongoQuestionnaire
-import com.example.quizapp.model.ktor.paging.MongoQuestionnairePagingSource
-import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.model.ktor.responses.BackendResponse.InsertFilledQuestionnaireResponse.InsertFilledQuestionnaireResponseType
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.LocalRepository
-import com.example.quizapp.model.room.entities.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.room.entities.LocallyDownloadedQuestionnaire
-import com.example.quizapp.model.room.entities.Questionnaire
-import com.example.quizapp.utils.SyncHelper
-import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.ShowSnackBarMessageBar
+import com.example.quizapp.model.room.entities.Answer
+import com.example.quizapp.model.room.entities.sync.LocallyDeletedFilledQuestionnaire
+import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.room.entities.sync.LocallyDownloadedQuestionnaire
+import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.utils.BackendSyncHelper
+import com.example.quizapp.viewmodel.VmHome.FragmentHomeCachedEvent.*
+import com.example.quizapp.viewmodel.VmHome.FragmentHomeCreatedEvent.*
+import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 
 @HiltViewModel
 class VmHome @Inject constructor(
@@ -38,35 +33,64 @@ class VmHome @Inject constructor(
     private val localRepository: LocalRepository,
     private val preferencesRepository: PreferencesRepository,
     private val backendRepository: BackendRepository,
-    syncHelper: SyncHelper
+    private val backendSyncHelper: BackendSyncHelper
 ) : ViewModel() {
 
-    init { syncHelper.syncData() }
-
-    private val userId = preferencesRepository.userCredentialsFlow.first(viewModelScope).id
-
     private val fragmentHomeEventChannel = Channel<FragmentHomeEvent>()
+    private val fragmentHomeCachedEventChannel = Channel<FragmentHomeCachedEvent>()
+    private val fragmentHomeCreatedEventChannel = Channel<FragmentHomeCreatedEvent>()
 
-    val fragmentHomeEventChannelFlow get() = fragmentHomeEventChannel.receiveAsFlow()
+    val fragmentHomeEventChannelLD get() = fragmentHomeEventChannel.receiveAsFlow().asLiveData()
+    val fragmentHomeCachedEventChannelLD get() = fragmentHomeCachedEventChannel.receiveAsFlow().asLiveData()
+    val fragmentHomeCreatedEventChannelLD get() = fragmentHomeCreatedEventChannel.receiveAsFlow().asLiveData()
 
-    val allQuestionnairesWithQuestionsLD = localRepository.findAllQuestionnairesWithQuestionsNotForUserFlow(userId).asLiveData().distinctUntilChanged()
+    init {
+        applicationScope.launch(IO) {
+//            fragmentHomeEventChannel.send(ChangeProgressVisibility(true))
+            fragmentHomeCachedEventChannel.send(ChangeCachedSwipeRefreshLayoutVisibility(true))
+            fragmentHomeCreatedEventChannel.send(ChangeCreatedSwipeRefreshLayoutVisibility(true))
+            backendSyncHelper.syncData()
+            delay(500)
+            fragmentHomeCachedEventChannel.send(ChangeCachedSwipeRefreshLayoutVisibility(false))
+            fragmentHomeCreatedEventChannel.send(ChangeCreatedSwipeRefreshLayoutVisibility(false))
+//            fragmentHomeEventChannel.send(ChangeProgressVisibility(false))
+        }
+    }
 
-    val allQuestionnairesWithQuestionsForUserLD = localRepository.findAllQuestionnairesWithQuestionsForUserFlow(userId).asLiveData().distinctUntilChanged()
+
+//    private val userInfo = preferencesRepository.userInfoFlow.first(IO)
+//    val allCachedQuestionnairesLD = localRepository.findAllCompleteQuestionnairesNotForUserFlow(userInfo.id).asLiveData().distinctUntilChanged()
+//    val allCreatedQuestionnairesLD = localRepository.findAllCompleteQuestionnairesForUserFlow(userInfo.id).asLiveData().distinctUntilChanged()
+
+    private val userInfoFlow = preferencesRepository.userInfoFlow
+
+    val allCachedQuestionnairesLD = userInfoFlow.flatMapLatest {
+        localRepository.findAllCompleteQuestionnairesNotForUserFlow(it.id)
+    }.asLiveData().distinctUntilChanged()
+
+    val allCreatedQuestionnairesLD = userInfoFlow.flatMapLatest {
+        localRepository.findAllCompleteQuestionnairesForUserFlow(it.id)
+    }.asLiveData().distinctUntilChanged()
 
 
 
-    val searchQuery = MutableLiveData("")
 
-    val filteredPagedData = searchQuery.switchMap { query ->
-        Pager(config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
-            pagingSourceFactory = { MongoQuestionnairePagingSource(backendRepository, query) }).liveData
-    }.cachedIn(viewModelScope).distinctUntilChanged()
 
+
+    fun onSwipeRefreshCachedQuestionnairesList() = launch(IO) {
+        backendSyncHelper.synAllQuestionnaireData()
+        fragmentHomeCachedEventChannel.send(ChangeCachedSwipeRefreshLayoutVisibility(false))
+    }
+
+    fun onSwipeRefreshCreatedQuestionnairesList() = launch(IO) {
+        backendSyncHelper.synAllQuestionnaireData()
+        fragmentHomeCreatedEventChannel.send(ChangeCreatedSwipeRefreshLayoutVisibility(false))
+    }
 
 
     fun onCreatedItemSyncButtonClicked(questionnaireId: String) {
-        applicationScope.launch(Dispatchers.IO) {
-            val completeQuestionnaire = localRepository.findCompleteQuestionnaireWith(questionnaireId)
+        applicationScope.launch(IO) {
+            val completeQuestionnaire = localRepository.findCompleteQuestionnaireWith(questionnaireId)!!
             localRepository.update(completeQuestionnaire.questionnaire.apply { syncStatus = SyncStatus.SYNCING })
 
             val result = try {
@@ -86,88 +110,127 @@ class VmHome @Inject constructor(
     }
 
 
-    //TODO -> UNDO BUTTON in SNACKBAR HINZUFÜGEN UM DELETION RÜCKGÄNGIG ZU MACHEN!
-    fun onCachedItemDeleteQuestionnaireClicked(questionnaire: Questionnaire) {
-        applicationScope.launch(Dispatchers.IO) {
-            localRepository.deleteQuestionnaireWith(questionnaire.id)
-            localRepository.delete(LocallyDownloadedQuestionnaire(questionnaire.id))
 
-            val response = try {
-                backendRepository.deleteFilledQuestionnaire(preferencesRepository.userCredentialsFlow.first().id, listOf(questionnaire.id))
-            } catch (e: Exception) {
-                null
+    // DELETE CREATED QUESTIONNAIRE
+    fun deleteCreatedQuestionnaire(questionnaireId: String) = launch(IO) {
+        localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let {
+            fragmentHomeEventChannel.send(ShowUndoDeleteCreatedQuestionnaireSnackBar(it))
+        }
+        localRepository.insert(LocallyDeletedQuestionnaire.asOwner(questionnaireId))
+        localRepository.deleteQuestionnaireWith(questionnaireId)
+    }
+
+    fun onDeleteCreatedQuestionnaireConfirmed(event: ShowUndoDeleteCreatedQuestionnaireSnackBar) = launch(IO) {
+        val questionnaireId = event.completeQuestionnaire.questionnaire.id
+
+        runCatching {
+            backendRepository.deleteQuestionnaire(listOf(questionnaireId))
+        }.onSuccess {
+            if (it.isSuccessful) {
+                localRepository.delete(LocallyDeletedQuestionnaire.asOwner(questionnaireId))
             }
+        }
+    }
 
-            if (response == null || !response.isSuccessful) {
-                localRepository.insert(LocallyDeletedQuestionnaire(questionnaire.id, false))
+    fun onUndoDeleteCreatedQuestionnaireClicked(event: ShowUndoDeleteCreatedQuestionnaireSnackBar) = launch(IO) {
+        localRepository.insertCompleteQuestionnaire(event.completeQuestionnaire)
+        localRepository.delete(LocallyDeletedQuestionnaire.asOwner(event.completeQuestionnaire.questionnaire.id))
+    }
+
+
+
+    // DELETE FILLED QUESTIONNAIRE
+    fun deleteCachedQuestionnaire(questionnaireId: String) = launch(IO) {
+        localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let {
+            fragmentHomeEventChannel.send(ShowUndoDeleteCachedQuestionnaireSnackBar(it))
+        }
+        localRepository.insert(LocallyDeletedQuestionnaire.notAsOwner(questionnaireId))
+        localRepository.deleteQuestionnaireWith(questionnaireId)
+    }
+
+    fun onDeleteCachedQuestionnaireConfirmed(event: ShowUndoDeleteCachedQuestionnaireSnackBar) = launch(IO) {
+        val questionnaireId = event.completeQuestionnaire.questionnaire.id
+        localRepository.delete(LocallyDownloadedQuestionnaire(questionnaireId))
+
+        runCatching {
+            backendRepository.deleteQuestionnaire(listOf(questionnaireId))
+        }.onSuccess {
+            if (it.isSuccessful) {
+                localRepository.delete(LocallyDeletedQuestionnaire.notAsOwner(questionnaireId))
+            }
+        }
+    }
+
+    fun onUndoDeleteCachedQuestionnaireClicked(event: ShowUndoDeleteCachedQuestionnaireSnackBar) = launch(IO) {
+        localRepository.insertCompleteQuestionnaire(event.completeQuestionnaire)
+        localRepository.delete(LocallyDeletedQuestionnaire.notAsOwner(event.completeQuestionnaire.questionnaire.id))
+    }
+
+
+
+
+
+
+
+    // DELETE ANSWERS OF QUESTIONNAIRE
+    //TODO -> ONLINE LÖSCHEN MACHEN!
+    // WENN MAN OFFLINE IST UND ES ONLINE NICHT GELÖSCHT WERDEN KONNTE, WIRD ES in LocallyDeletedFilledQuestionnaire gespeichert
+    // UND DANN GELÖSCHT WENN MAN SYNCT
+    // WENN MAN WIEDER INET HAT UND VERUSUCHT DIE ANTWORTEN HOCHZULADEN, WIRD DAS LÖSCHEN IGNOERIERT und die LocallyDeletedFilledQuestionnaire GELÖSCHT
+    // ES WIRD SOMIT IM BACKEND INSERTED ABER NICHT GELÖSCHT!
+    fun deleteGivenAnswersOfQuestionnaire(questionnaireId: String) = launch(IO) {
+        localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let { completeQuestionnaire ->
+
+            //TODO -> Inserted, dass man den hier reingeldaden hat -> Man muss noch schauen ob die Id in LocallyAnsweredQuestionnaireIds is und wenn ja rauslöschen!
+            localRepository.insert(LocallyDeletedFilledQuestionnaire(completeQuestionnaire.questionnaire.id))
+
+            fragmentHomeEventChannel.send(ShowUndoDeleteAnswersOfQuestionnaireSnackBar(completeQuestionnaire))
+            completeQuestionnaire.allAnswers.map { it.copy(isAnswerSelected = false) }.also { localRepository.update(it) }
+        }
+    }
+    //TODO -> Das ist der einzige kritische Punkt, da hier nur die antworten gelöscht werden, deswegen wird später der Fragebogen nicht automatisch rausgefiltert
+
+    fun onDeleteGivenAnswersOfQuestionnaireConfirmed(event: ShowUndoDeleteAnswersOfQuestionnaireSnackBar) = launch(IO) {
+        runCatching {
+            backendRepository.insertFilledQuestionnaire(DataMapper.mapSqlEntitiesToEmptyFilledMongoEntity(event.completeQuestionnaire))
+        }.onSuccess { response ->
+            if(response.isSuccessful){
+
             }
         }
     }
 
 
-    fun onCreatedItemDeleteQuestionnaireClicked(questionnaire: Questionnaire) {
-        applicationScope.launch(Dispatchers.IO) {
-            localRepository.deleteQuestionnaireWith(questionnaire.id)
-
-            val response = try {
-                backendRepository.deleteQuestionnaire(listOf(questionnaire.id))
-            } catch (e: Exception) {
-                null
-            }
-
-            if (response == null || !response.isSuccessful) {
-                localRepository.insert(LocallyDeletedQuestionnaire(questionnaire.id, true))
-            }
-        }
+    fun onUndoDeleteGivenAnswersClicked(event: ShowUndoDeleteAnswersOfQuestionnaireSnackBar) = launch(IO) {
+        localRepository.update(event.completeQuestionnaire.allAnswers)
     }
 
 
-    fun onCachedItemDownLoadButtonClicked(mongoQuestionnaire: MongoQuestionnaire) {
-        applicationScope.launch(Dispatchers.IO) {
-            DataMapper.mapMongoObjectToSqlEntities(mongoQuestionnaire).apply {
-                localRepository.insert(questionnaire)
-                localRepository.insert(allQuestions)
-                localRepository.insert(allAnswers)
-                uploadEmptyFilledQuestionnaire(questionnaire.id)
-            }
-        }
-    }
 
 
-    private fun uploadEmptyFilledQuestionnaire(questionnaireId: String) = applicationScope.launch(Dispatchers.IO) {
-        val response = try {
-            backendRepository.insertEmptyFilledQuestionnaire(
-                MongoFilledQuestionnaire(
-                    questionnaireId = questionnaireId,
-                    userId = preferencesRepository.userCredentialsFlow.first().id
-                )
-            )
-        } catch (e: Exception) {
-            localRepository.insert(LocallyDownloadedQuestionnaire(questionnaireId))
-            null
-        }
 
-        when (response?.responseType) {
-            InsertFilledQuestionnaireResponseType.INSERTED -> {
-                //EMPTY QUESTIONNAIRE INSERTED!
-            }
-            InsertFilledQuestionnaireResponseType.ERROR -> {
-                //SOMETHING WENT WRONG
-            }
-            InsertFilledQuestionnaireResponseType.EMPTY_INSERTION_SKIPPED -> {
-                //ES GIBT SCHON EINEN AUSGEFÜLLTEN QUESTIONNAIRE!
-            }
-            InsertFilledQuestionnaireResponseType.QUESTIONNAIRE_DOES_NOT_EXIST_ANYMORE -> {
-                //QUESTIONNAIRE WURDE MITTLERWEILE GELÖSCHT!
-            }
-            null -> log("Empty one inserted!")
-        }
-    }
+    //TODO -> WANN SOLLEN ANTWORTEN HOCHGELADEN WERDEN?
+    //TODO -> 1) WENN MAN IN DEM QUIZ SCREEN IST WIRD, sobald man eine Anwtort auswählt, die QuestionnaireId gespeichert.
+    //TODO -> Wenn man dann wieder in den HomeScreen kommt, werden die Antworten für diese Id Hochgeladen
+    //TODO -> Dafür wird eine eigene Entität genötigt, namens "LocallyGivenAnswersForQuestionnaire" oder so
+    //TODO -> Wenn man den Fragebogen löscht, wird auch die LocallyGivenAnswersForQuestionnaire ID Gelöscht und die LocallayDeletedFilledQuestionnaire
 
 
 
 
     sealed class FragmentHomeEvent {
         class ShowSnackBarMessageBar(val messageRes: Int) : FragmentHomeEvent()
+        class ShowUndoDeleteCreatedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaireJunction) : FragmentHomeEvent()
+        class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaireJunction) : FragmentHomeEvent()
+        class ShowUndoDeleteAnswersOfQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaireJunction) : FragmentHomeEvent()
+        class ChangeProgressVisibility(val visible: Boolean) : FragmentHomeEvent()
+    }
+
+    sealed class FragmentHomeCreatedEvent {
+        class ChangeCreatedSwipeRefreshLayoutVisibility(val visible: Boolean)  : FragmentHomeCreatedEvent()
+    }
+
+    sealed class FragmentHomeCachedEvent {
+        class ChangeCachedSwipeRefreshLayoutVisibility(val visible: Boolean) : FragmentHomeCachedEvent()
     }
 }

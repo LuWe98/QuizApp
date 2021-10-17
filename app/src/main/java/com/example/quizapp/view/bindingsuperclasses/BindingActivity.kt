@@ -9,6 +9,8 @@ abstract class BindingActivity<VB : ViewBinding> : AppCompatActivity() {
 
     lateinit var binding : VB
 
+    val rootView get() = binding.root
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = getBinding(this)
