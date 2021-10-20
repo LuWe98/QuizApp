@@ -10,6 +10,7 @@ data class UpdateUserResponse(
 ) {
     enum class UpdateUserResponseType(@StringRes val messageRes: Int) {
         UPDATE_SUCCESSFUL(0),
+        UPDATE_FAILED(0),
         USER_ALREADY_EXISTS(0),
         LAST_CHANGE_TO_CLOSE(0),
         USER_DOES_NOT_EXIST(0)

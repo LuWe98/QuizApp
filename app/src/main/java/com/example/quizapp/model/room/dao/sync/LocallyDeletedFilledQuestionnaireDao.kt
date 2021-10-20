@@ -14,4 +14,10 @@ abstract class LocallyDeletedFilledQuestionnaireDao: BaseDao<LocallyDeletedFille
     @Query("DELETE FROM deletedFilledQuestionnairesTable WHERE questionnaireId = :questionnaireId")
     abstract suspend fun deleteLocallyDeletedFilledQuestionnaireWith(questionnaireId: String)
 
+    @Query("DELETE FROM deletedFilledQuestionnairesTable WHERE questionnaireId IN(:questionnaireIds)")
+    abstract suspend fun deleteLocallyDeletedFilledQuestionnairesWith(questionnaireIds: List<String>)
+
+    @Query("DELETE FROM deletedFilledQuestionnairesTable")
+    abstract suspend fun deleteAllLocallyDeletedFilledQuestionnaires()
+
 }

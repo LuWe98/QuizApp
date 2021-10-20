@@ -2,29 +2,40 @@ package com.example.quizapp.view
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.content.Context
 import android.os.Bundle
 import android.widget.ImageView
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.ui.setupWithNavController
-import com.example.quizapp.QuizApplication
 import com.example.quizapp.R
-import com.example.quizapp.databinding.ActivityMainBinding
+import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
+import com.example.quizapp.viewmodel.VmMain
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.util.date.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class QuizActivity : BindingActivity<ActivityMainBinding>(), NavController.OnDestinationChangedListener {
+class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDestinationChangedListener {
 
     @Inject
     lateinit var navigatorProvider: Provider<Navigator>
     private val navigator get() = navigatorProvider.get()!!
+
+    private val vmMain : VmMain by viewModels()
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base?.setLocale(Locale.ENGLISH))
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +73,11 @@ class QuizActivity : BindingActivity<ActivityMainBinding>(), NavController.OnDes
     }
 
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
+        currentSnackBar?.let {
+            it.dismiss()
+            currentSnackBar = null
+        }
+
         when (destination.id) {
             R.id.fragmentQuizOverview, R.id.fragmentQuizContainer, R.id.fragmentAddQuestionnaire, R.id.fragmentAddQuestion, R.id.fragmentAuth, R.id.fragmentSearch-> {
                 binding.bottomAppBar.performHide()

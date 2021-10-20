@@ -11,7 +11,7 @@ class RvaCachedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunction
 
     var onItemClick : ((String) -> (Unit))? = null
 
-    var onItemLongClick: ((String, String) -> (Unit))? = null
+    var onItemLongClick: ((String, String, String) -> (Unit))? = null
 
     override fun initListeners(binding: RviQuestionnaireCachedBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
@@ -23,7 +23,10 @@ class RvaCachedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunction
 
             root.onLongClick {
                 getItem(vh.bindingAdapterPosition)?.let {
-                    onItemLongClick?.invoke(it.questionnaire.authorInfo.userId, it.questionnaire.id)
+                    onItemLongClick?.invoke(
+                        it.questionnaire.authorInfo.userId,
+                        it.questionnaire.id,
+                        it.questionnaire.title)
                 }
             }
         }

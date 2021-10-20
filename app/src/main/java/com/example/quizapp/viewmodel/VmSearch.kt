@@ -39,8 +39,8 @@ class VmSearch @Inject constructor(
 
     val filteredPagedData = searchQuery.switchMap { query ->
         Pager(config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
-            pagingSourceFactory = { MongoQuestionnairePagingSource(backendRepository, query) }).liveData
-    }.cachedIn(viewModelScope).distinctUntilChanged()
+            pagingSourceFactory = { MongoQuestionnairePagingSource(backendRepository, query) }).liveData.cachedIn(viewModelScope).distinctUntilChanged()
+    }.distinctUntilChanged()
 
 //
 //    val filteredPagedData = searchQuery.switchMap { query ->
@@ -81,28 +81,26 @@ class VmSearch @Inject constructor(
     }
 
     private fun uploadEmptyFilledQuestionnaire(questionnaireId: String) = applicationScope.launch(IO) {
-        val response = try {
+        runCatching {
             backendRepository.insertEmptyFilledQuestionnaire(
                 MongoFilledQuestionnaire(
                     questionnaireId = questionnaireId,
-                    userId = preferencesRepository.userInfoFlow.first().id
+                    userId = preferencesRepository.user.id
                 )
             )
-        } catch (e: Exception) {
+        }.onFailure {
             localRepository.insert(LocallyDownloadedQuestionnaire(questionnaireId))
-            null
-        }
-
-        when (response?.responseType) {
-            InsertFilledQuestionnaireResponseType.INSERTED -> {
+        }.onSuccess { response ->
+            when (response.responseType) {
+                InsertFilledQuestionnaireResponseType.INSERTED -> {
+                }
+                InsertFilledQuestionnaireResponseType.ERROR -> {
+                }
+                InsertFilledQuestionnaireResponseType.EMPTY_INSERTION_SKIPPED -> {
+                }
+                InsertFilledQuestionnaireResponseType.QUESTIONNAIRE_DOES_NOT_EXIST_ANYMORE -> {
+                }
             }
-            InsertFilledQuestionnaireResponseType.ERROR -> {
-            }
-            InsertFilledQuestionnaireResponseType.EMPTY_INSERTION_SKIPPED -> {
-            }
-            InsertFilledQuestionnaireResponseType.QUESTIONNAIRE_DOES_NOT_EXIST_ANYMORE -> {
-            }
-            null -> log("Empty one inserted!")
         }
     }
 

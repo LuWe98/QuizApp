@@ -11,4 +11,7 @@ abstract class LocallyDownloadedQuestionnaireDao : BaseDao<LocallyDownloadedQues
     @Query("SELECT questionnaireId FROM downloadedQuestionnairesTable")
     abstract suspend fun getAllDownloadedQuestionnaireIds() : List<String>
 
+    @Query("DELETE FROM downloadedQuestionnairesTable")
+    abstract suspend fun deleteAllLocallyDownloadedQuestionnaires()
+
 }

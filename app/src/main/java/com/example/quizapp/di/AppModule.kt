@@ -8,32 +8,30 @@ import androidx.room.Room
 import com.example.quizapp.R
 import com.example.quizapp.model.datastore.EncryptionUtil
 import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.ktor.exceptions.BackendExceptionHandler
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.apiclasses.FilledQuestionnaireApi
-import com.example.quizapp.model.ktor.apiclasses.QuestionnaireApi
-import com.example.quizapp.model.ktor.apiclasses.UserApi
-import com.example.quizapp.model.ktor.authentification.OkHttpBasicAuthInterceptor
+import com.example.quizapp.model.ktor.apiclasses.*
+import com.example.quizapp.model.ktor.authentification.BasicAuthCredentialsProvider
 import com.example.quizapp.model.room.LocalDatabase
 import com.example.quizapp.model.room.LocalRepository
+import com.example.quizapp.utils.BackendSyncer
 import com.example.quizapp.utils.ConnectivityHelper
 import com.example.quizapp.utils.Constants
-import com.example.quizapp.utils.BackendSyncHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
-import io.ktor.client.engine.okhttp.*
+import io.ktor.client.engine.android.*
 import io.ktor.client.features.*
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.features.auth.*
 import io.ktor.client.features.json.JsonFeature
-import kotlinx.serialization.json.Json
-
+import io.ktor.client.features.json.serializer.*
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import java.util.concurrent.TimeUnit
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
@@ -91,7 +89,8 @@ object AppModule {
         roomDatabase.getDownloadedQuestionnaireDao(),
         roomDatabase.getLocallyDeletedQuestionnaireDao(),
         roomDatabase.getLocallyDeletedFilledQuestionnaireDao(),
-        roomDatabase.getLocallyAnsweredQuestionnairesDao()
+        roomDatabase.getLocallyAnsweredQuestionnairesDao(),
+        roomDatabase.getLocallyDeletedUsersDao()
     )
 
     @Provides
@@ -99,17 +98,28 @@ object AppModule {
     fun provideApplicationScope() = CoroutineScope(SupervisorJob())
 
 
-    @Provides
     @Singleton
-    fun provideOkHttpAuthInterceptor(preferencesRepository: PreferencesRepository) = OkHttpBasicAuthInterceptor(preferencesRepository)
+    @Provides
+    fun provideBasicAuthHelper(preferencesRepository: PreferencesRepository): BasicAuthCredentialsProvider = BasicAuthCredentialsProvider(preferencesRepository)
+
+
+    @Singleton
+    @Provides
+    fun provideBackendExceptionHandler(preferencesRepository: PreferencesRepository, localRepository: LocalRepository)
+        = BackendExceptionHandler(localRepository, preferencesRepository)
 
 
     @Provides
     @Singleton
-    fun provideKtorClient(basicAuthInterceptor: OkHttpBasicAuthInterceptor): HttpClient = HttpClient(OkHttp) {
+    fun provideKtorClient(
+        basicAuth: BasicAuthCredentialsProvider,
+        backendExceptionHandler: BackendExceptionHandler,
+    ): HttpClient = HttpClient(Android) {
         install(DefaultRequest) {
+            expectSuccess = false
+
             //TODO -> Change later to HTTPS
-            url.takeFrom(URLBuilder().takeFrom(Constants.BACKEND_URL).apply {
+            url.takeFrom(URLBuilder().takeFrom(Constants.BACKEND_PATH).apply {
                 encodedPath += url.encodedPath
                 protocol = URLProtocol.HTTP
             })
@@ -121,16 +131,20 @@ object AppModule {
             serializer = KotlinxSerializer(Json {
                 prettyPrint = true
                 isLenient = true
+                ignoreUnknownKeys = false
             })
         }
 
+        install(Auth, basicAuth::registerBasicAuth)
+
         engine {
-            config {
-                connectTimeout(10, TimeUnit.SECONDS)
-                writeTimeout(15, TimeUnit.SECONDS)
-                readTimeout(15, TimeUnit.SECONDS)
-            }
-            addInterceptor(basicAuthInterceptor)
+            connectTimeout = 100_000
+            socketTimeout = 100_000
+        }
+
+        HttpResponseValidator {
+            validateResponse { backendExceptionHandler.validateResponse(it) }
+            handleResponseException { backendExceptionHandler.handleException(it) }
         }
     }
 
@@ -138,10 +152,16 @@ object AppModule {
     @Provides
     @Singleton
     fun provideBackendRepository(ktorClient: HttpClient) = BackendRepository(
+        ktorClient,
+        AdminApi(ktorClient),
         UserApi(ktorClient),
         QuestionnaireApi(ktorClient),
-        FilledQuestionnaireApi(ktorClient)
+        FilledQuestionnaireApi(ktorClient),
+        FacultyApi(ktorClient),
+        CourseOfStudiesApi(ktorClient),
+        SubjectApi(ktorClient)
     )
+
 
     @Provides
     @Singleton
@@ -155,32 +175,6 @@ object AppModule {
         localRepository: LocalRepository,
         backendRepository: BackendRepository,
         preferencesRepository: PreferencesRepository
-    ) = BackendSyncHelper(applicationScope, localRepository, backendRepository, preferencesRepository)
+    ) = BackendSyncer(applicationScope, localRepository, backendRepository, preferencesRepository)
 
-
-//    Ktor Different Settings
-//    install(JsonFeature) {
-//        Kotlin Serialization
-//                serializer = KotlinxSerializer(
-//            kotlinx.serialization.json.Json
-//            {
-//                prettyPrint = true
-//                isLenient = true
-//                ignoreUnknownKeys = true
-//            }
-//    }
-//
-//    install(ResponseObserver)
-//    {
-//        onResponse { response ->
-//
-//        }
-//    }
-//
-//    engine {
-//        connectTimeout = 100_000
-//        socketTimeout = 100_000
-//    }
-//    connectTimeout = 100_000
-//    socketTimeout = 100_000
 }

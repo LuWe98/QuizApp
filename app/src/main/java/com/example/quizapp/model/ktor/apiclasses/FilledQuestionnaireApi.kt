@@ -32,10 +32,9 @@ class FilledQuestionnaireApi @Inject constructor(
             body = InsertFilledQuestionnairesRequest(mongoFilledQuestionnaires)
         }
 
-    suspend fun deleteFilledQuestionnaire(userId: String, questionnaireIds: List<String>) : DeleteFilledQuestionnaireResponse =
+    suspend fun deleteFilledQuestionnaire(questionnaireIds: List<String>) : DeleteFilledQuestionnaireResponse =
         client.delete("/questionnaire/filled/delete"){
-            body = DeleteFilledQuestionnaireRequest(userId, questionnaireIds)
+            body = DeleteFilledQuestionnaireRequest(questionnaireIds)
         }
-
 
 }

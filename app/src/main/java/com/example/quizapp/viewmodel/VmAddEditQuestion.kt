@@ -8,14 +8,14 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionArgs
-import com.example.quizapp.viewmodel.VmEditQuestion.FragmentEditQuestionEvent.*
+import com.example.quizapp.viewmodel.VmAddEditQuestion.FragmentEditQuestionEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class VmEditQuestion @Inject constructor(private val state: SavedStateHandle) : ViewModel() {
+class VmAddEditQuestion @Inject constructor(private val state: SavedStateHandle) : ViewModel() {
 
     private val args = FragmentAddQuestionArgs.fromSavedStateHandle(state)
     private val questionWithAnswers get() = args.questionWithAnswers

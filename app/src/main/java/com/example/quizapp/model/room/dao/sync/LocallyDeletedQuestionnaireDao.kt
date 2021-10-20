@@ -14,4 +14,7 @@ abstract class LocallyDeletedQuestionnaireDao: BaseDao<LocallyDeletedQuestionnai
     @Query("DELETE FROM deletedQuestionnairesTable WHERE questionnaireId = :questionnaireId")
     abstract suspend fun deleteLocallyDeletedQuestionnaireWith(questionnaireId: String)
 
+    @Query("DELETE FROM deletedQuestionnairesTable")
+    abstract suspend fun deleteAllLocallyDeletedQuestionnaires()
+
 }

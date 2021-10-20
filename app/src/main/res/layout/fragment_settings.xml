@@ -31,10 +31,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:text="@string/settings"
-                        android:gravity="center_horizontal|bottom"
+                        android:gravity="bottom"
                         android:textSize="25sp"
                         android:paddingBottom="10dp"
                         android:textStyle="bold"
+                        android:fontFamily="@font/work_sans_medium"
+                        android:paddingHorizontal="@dimen/grid_8"
                         app:layout_constraintTop_toTopOf="parent"
                         android:id="@+id/materialTextView" />
 
@@ -48,6 +50,7 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="75dp"
                 android:id="@+id/rv"
+                android:visibility="visible"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:layout_marginHorizontal="@dimen/grid_1"
                 app:layout_constraintStart_toStartOf="parent"

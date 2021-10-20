@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfQuestionnaireMoreOptionsBinding
@@ -22,6 +23,8 @@ class BsdfQuestionnaireMoreOptions : BindingBottomSheetDialogFragment<BsdfQuesti
 
     private val vmHome: VmHome by hiltNavDestinationViewModels(R.id.fragmentHome)
 
+    private val args: BsdfQuestionnaireMoreOptionsArgs by navArgs()
+
     lateinit var rvAdapter: RvaBsdfMenu
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -31,6 +34,7 @@ class BsdfQuestionnaireMoreOptions : BindingBottomSheetDialogFragment<BsdfQuesti
     }
 
     private fun initRecyclerView(){
+        binding.tvTitle.text = args.questionnaireTitle
 
         rvAdapter = RvaBsdfMenu().apply {
             onItemClicked = vm::onMenuItemClicked
@@ -50,7 +54,7 @@ class BsdfQuestionnaireMoreOptions : BindingBottomSheetDialogFragment<BsdfQuesti
         vm.questionnaireMoreOptionsEventChannelFlow.collect(lifecycleScope) { event ->
             when(event){
                 is NavigateToEditQuestionnaireScreen -> {
-                    navigator.navigateToAddQuestionnaireScreen(event.questionnaireId)
+                    navigator.navigateToAddQuestionnaireScreen(event.completeQuestionnaire)
                 }
                 is DeleteCreatedQuestionnaireEvent -> {
                     vmHome.deleteCreatedQuestionnaire(event.questionnaireId)
@@ -59,7 +63,7 @@ class BsdfQuestionnaireMoreOptions : BindingBottomSheetDialogFragment<BsdfQuesti
                     vmHome.deleteCachedQuestionnaire(event.questionnaireId)
                 }
                 is DeleteGivenAnswersOfQuestionnaire -> {
-                    vmHome.deleteGivenAnswersOfQuestionnaire(event.questionnaireId)
+                    vmHome.deleteFilledQuestionnaire(event.questionnaireId)
                 }
                 NavigateBack -> {
                     navigator.popBackStack()

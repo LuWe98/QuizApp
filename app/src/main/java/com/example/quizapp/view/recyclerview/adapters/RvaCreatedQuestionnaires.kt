@@ -12,7 +12,7 @@ class RvaCreatedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunctio
 
     var onItemClick: ((String) -> (Unit))? = null
 
-    var onItemLongClick: ((String, String) -> (Unit))? = null
+    var onItemLongClick: ((String, String, String) -> (Unit))? = null
 
     var onSyncClick: ((String) -> (Unit))? = null
 
@@ -26,7 +26,10 @@ class RvaCreatedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunctio
 
             root.onLongClick {
                 getItem(vh).let {
-                    onItemLongClick?.invoke(it.questionnaire.authorInfo.userId, it.questionnaire.id)
+                    onItemLongClick?.invoke(
+                        it.questionnaire.authorInfo.userId,
+                        it.questionnaire.id,
+                        it.questionnaire.title)
                 }
             }
 

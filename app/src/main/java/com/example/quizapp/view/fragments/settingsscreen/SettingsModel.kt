@@ -28,7 +28,7 @@ object SettingsModel {
         ),
         SettingsMenuItem.DropDownItem(
             ITEM_DARK_MODE_ID,
-            R.drawable.ic_dark_mode,
+            R.drawable.ic_dark_mode_alt,
             R.string.darkMode
         ),
         SettingsMenuItem.DropDownItem(

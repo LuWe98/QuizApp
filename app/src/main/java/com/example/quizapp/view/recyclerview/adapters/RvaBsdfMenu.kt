@@ -1,7 +1,7 @@
 package com.example.quizapp.view.recyclerview.adapters
 
 import com.example.quizapp.databinding.RviMenuBinding
-import com.example.quizapp.extensions.getString
+import com.example.quizapp.extensions.context
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.setImageDrawable
 import com.example.quizapp.model.menudatamodels.MenuItem
@@ -19,7 +19,7 @@ class RvaBsdfMenu : BindingListAdapter<MenuItem, RviMenuBinding>(MenuItem.DIFF_C
 
     override fun bindViews(binding: RviMenuBinding, item: MenuItem, position: Int) {
         binding.apply {
-            title.text = getString(item.titleRes)
+            title.text = context.getString(item.titleRes)
             icon.setImageDrawable(item.iconRes)
         }
     }

@@ -9,9 +9,8 @@ import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,30 +26,30 @@ class VmSettings @Inject constructor(
 
     val fragmentSettingsEventChannelFlow = fragmentSettingsEventChannel.receiveAsFlow()
 
-    val userInfoFlow get() = preferencesRepository.userInfoFlow.flowOn(Dispatchers.IO).asLiveData().distinctUntilChanged()
+    val userInfoFlow get() = preferencesRepository.userFlow.asLiveData().distinctUntilChanged()
 
-    val userInfo get() = preferencesRepository.userInfo
+    val userInfo get() = preferencesRepository.user
 
     fun onLogoutClicked() {
-        launch {
+        launch(IO) {
             fragmentSettingsEventChannel.send(OnLogoutClickedEvent)
         }
     }
 
      fun onGoToAdminPageClicked(){
-         launch {
+         launch(IO) {
              fragmentSettingsEventChannel.send(NavigateToAdminScreen)
          }
      }
 
 
     fun onLogoutConfirmed(){
-        applicationScope.launch {
+        applicationScope.launch(IO) {
             preferencesRepository.resetPreferenceData()
             fragmentSettingsEventChannel.send(NavigateToLoginScreen)
 
             //TODO --> IDS of Delted Questionnaires müssen noch weiterhin bestehen bleiben, dass sie beim nächsten start gelöscht werden können.
-            localRepository.deleteAllQuestionnaires()
+            localRepository.deleteAllData()
         }
     }
 

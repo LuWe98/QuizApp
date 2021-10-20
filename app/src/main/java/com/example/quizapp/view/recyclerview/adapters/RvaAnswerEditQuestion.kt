@@ -6,10 +6,10 @@ import com.example.quizapp.databinding.RviAnswerEditBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
-import com.example.quizapp.viewmodel.VmEditQuestion
+import com.example.quizapp.viewmodel.VmAddEditQuestion
 
 class RvaAnswerEditQuestion(
-    private val vmEditQuestion: VmEditQuestion
+    private val vmEditQuestion: VmAddEditQuestion
 ) : BindingListAdapter<Answer, RviAnswerEditBinding>(Answer.DIFF_CALLBACK) {
 
     var onItemClick: ((List<Answer>) -> (Unit))? = null

@@ -11,9 +11,11 @@ object MenuItemDataModel {
     const val PUBLISH_QUESTIONNAIRE_ITEM_ID = 4
     const val DELETE_ANSWERS_QUESTIONNAIRE_ITEM_ID = 5
     const val DELETE_CREATED_QUESTIONNAIRE_ITEM_ID = 6
-    const val UPLOAD_GIVEN_ANSWERS_ITEM_ID = 7
     const val DELETE_CACHED_QUESTIONNAIRE_ITEM_ID = 8
     const val COPY_QUESTIONNAIRE_ITEM_ID = 9
+    const val DELETE_USER_ITEM_ID = 10
+    const val CHANGE_USER_ROLE_ITEM_ID = 11
+    const val BROWSER_USER_QUESTIONNAIRES_ITEM_ID = 12
 
     fun getQuestionnaireMoreOptionsMenu(isOwnerOfQuestionnaire: Boolean, userRole: Role) : List<MenuItem> {
         return if(isOwnerOfQuestionnaire) {
@@ -42,11 +44,6 @@ object MenuItemDataModel {
             titleRes = R.string.copyQuestionnaire
         ),
         MenuItem(
-            id = UPLOAD_GIVEN_ANSWERS_ITEM_ID,
-            iconRes = R.drawable.ic_cloud_upload,
-            titleRes = R.string.uploadAnswers
-        ),
-        MenuItem(
             id = UPLOAD_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_cloud_upload,
             titleRes = R.string.uploadQuestionnaire
@@ -71,11 +68,6 @@ object MenuItemDataModel {
 
     private val cachedQuestionnaireMoreOptionsMenu get() = mutableListOf(
         MenuItem(
-            id = UPLOAD_GIVEN_ANSWERS_ITEM_ID,
-            iconRes = R.drawable.ic_cloud_upload,
-            titleRes = R.string.uploadAnswers
-        ),
-        MenuItem(
             id = COPY_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_copy,
             titleRes = R.string.copyQuestionnaire
@@ -86,9 +78,31 @@ object MenuItemDataModel {
             titleRes = R.string.deleteGivenAnswers
         ),
         MenuItem(
-            id = DELETE_CREATED_QUESTIONNAIRE_ITEM_ID,
+            id = DELETE_CACHED_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_delete,
             titleRes = R.string.deleteQuestionnaire
+        )
+    )
+
+
+    /*
+    MenuItem(
+            id = BROWSER_USER_QUESTIONNAIRES_ITEM_ID,
+            iconRes = R.drawable.ic_question,
+            titleRes = R.string.browseUsersQuestionnaires
+        ),
+     */
+
+    val userMoreOptionsMenu get() = mutableListOf(
+        MenuItem(
+          id = CHANGE_USER_ROLE_ITEM_ID,
+          iconRes = R.drawable.ic_role_badge,
+          titleRes = R.string.changeUserRole
+        ),
+        MenuItem(
+            id = DELETE_USER_ITEM_ID,
+            iconRes = R.drawable.ic_delete,
+            titleRes = R.string.deleteUser
         )
     )
 }

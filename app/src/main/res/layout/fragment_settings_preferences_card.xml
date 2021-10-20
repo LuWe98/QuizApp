@@ -30,7 +30,7 @@
                 android:layout_height="50dp"
                 android:id="@+id/darkModePreferenceText"
                 android:text="@string/darkMode"
-                android:drawableStart="@drawable/ic_dark_mode"
+                android:drawableStart="@drawable/ic_dark_mode_alt"
                 android:gravity="center_vertical"
                 android:drawablePadding="@dimen/grid_3"
                 android:textSize="15sp"
@@ -49,17 +49,5 @@
                 android:textStyle="bold"
                 android:paddingHorizontal="@dimen/grid_3"
                 app:layout_constraintTop_toBottomOf="@+id/darkModePreferenceText" />
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:id="@+id/showAnswersPreferenceText"
-                android:text="@string/showSolutionDirectly"
-                android:drawableStart="@drawable/ic_question_mark"
-                android:gravity="center_vertical"
-                android:drawablePadding="@dimen/grid_3"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:paddingHorizontal="@dimen/grid_3"
-                app:layout_constraintTop_toBottomOf="@+id/languagePreferenceText" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

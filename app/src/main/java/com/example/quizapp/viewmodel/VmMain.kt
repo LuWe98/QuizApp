@@ -1,16 +1,15 @@
 package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.EncryptionUtil
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.utils.ConnectivityHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import io.ktor.client.statement.*
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class VmMain @Inject constructor(
@@ -21,9 +20,4 @@ class VmMain @Inject constructor(
     val connectivityHelper: ConnectivityHelper
 ) : ViewModel() {
 
-    val currentTheme get() = runBlocking(Dispatchers.IO) {
-        preferencesRepository.getTheme()
-    }
-
-    suspend fun getQuestionnairesOfUser() = backendRepository.getQuestionnairesOfUser()
 }

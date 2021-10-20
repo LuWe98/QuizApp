@@ -8,6 +8,7 @@ import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.menudatamodels.MenuItem
 import com.example.quizapp.model.menudatamodels.MenuItemDataModel
 import com.example.quizapp.model.room.LocalRepository
+import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptionsArgs
 import com.example.quizapp.viewmodel.VmQuestionnaireMoreOptions.QuestionnaireMoreOptionsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +27,7 @@ class VmQuestionnaireMoreOptions @Inject constructor(
 
     private val args = BsdfQuestionnaireMoreOptionsArgs.fromSavedStateHandle(state)
 
-    private val info = preferencesRepository.userInfo
+    private val info = preferencesRepository.user
 
     private val questionnaireMoreOptionsEventChannel = Channel<QuestionnaireMoreOptionsEvent>()
 
@@ -41,7 +42,6 @@ class VmQuestionnaireMoreOptions @Inject constructor(
             MenuItemDataModel.UPLOAD_QUESTIONNAIRE_ITEM_ID -> onUploadQuestionnaireSelected()
             MenuItemDataModel.SHARE_QUESTIONNAIRE_ITEM_ID -> onShareQuestionnaireWithOtherUserSelected()
             MenuItemDataModel.PUBLISH_QUESTIONNAIRE_ITEM_ID -> onPublishQuestionnaireSelected()
-            MenuItemDataModel.UPLOAD_GIVEN_ANSWERS_ITEM_ID -> onUploadAnswersOfQuestionnaireSelected()
             MenuItemDataModel.COPY_QUESTIONNAIRE_ITEM_ID -> onCopyQuestionnaireSelected()
         }
     }
@@ -50,7 +50,9 @@ class VmQuestionnaireMoreOptions @Inject constructor(
         MenuItemDataModel.getQuestionnaireMoreOptionsMenu(args.authorId == info.id, info.role)
 
     private fun onEditQuestionnaireSelected() = launch(IO) {
-        questionnaireMoreOptionsEventChannel.send(NavigateToEditQuestionnaireScreen(args.questionnaireId))
+        localRepository.findCompleteQuestionnaireWith(args.questionnaireId).let {
+            questionnaireMoreOptionsEventChannel.send(NavigateToEditQuestionnaireScreen(it))
+        }
     }
 
     private fun onDeleteCreatedQuestionnaireSelected() = launch(IO) {
@@ -80,18 +82,13 @@ class VmQuestionnaireMoreOptions @Inject constructor(
 
     }
 
-    private fun onUploadAnswersOfQuestionnaireSelected() = launch(IO) {
-
-    }
-
     private fun onCopyQuestionnaireSelected() = launch(IO) {
 
     }
 
 
-
     sealed class QuestionnaireMoreOptionsEvent {
-        class NavigateToEditQuestionnaireScreen(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()
+        class NavigateToEditQuestionnaireScreen(val completeQuestionnaire: CompleteQuestionnaireJunction?) : QuestionnaireMoreOptionsEvent()
         class DeleteCreatedQuestionnaireEvent(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()
         class DeleteCachedQuestionnaireEvent(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()
         class DeleteGivenAnswersOfQuestionnaire(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()

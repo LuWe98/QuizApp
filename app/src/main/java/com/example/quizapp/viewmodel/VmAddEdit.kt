@@ -4,31 +4,30 @@ import androidx.lifecycle.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.AddNavGraphArgs
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.DataMapper
-import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.ktor.status.SyncStatus
+import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.Questionnaire
-import com.example.quizapp.model.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
-import com.example.quizapp.viewmodel.VmAdd.FragmentAddQuestionnaireEvent.*
+import com.example.quizapp.model.room.junctions.QuestionWithAnswers
+import com.example.quizapp.viewmodel.VmAddEdit.FragmentAddQuestionnaireEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.bson.types.ObjectId
-import java.lang.Exception
 import javax.inject.Inject
 
+
+//TODO -> Den title des Screens Ändern von Add in Edit oder Add, je nachdem on ein CompleteQuestionnaire geparsed wurde oder nicht
 @HiltViewModel
-class VmAdd @Inject constructor(
-    private val applicationScope : CoroutineScope,
+class VmAddEdit @Inject constructor(
+    private val applicationScope: CoroutineScope,
     private val localRepository: LocalRepository,
     private val preferencesRepository: PreferencesRepository,
     private val backendRepository: BackendRepository,
@@ -74,16 +73,12 @@ class VmAdd @Inject constructor(
     private val questionsWithAnswersLiveDataValue get() = questionsWithAnswersMutableLiveData.value!!
 
     init {
-        args.questionnaireId?.let { id ->
-            runBlocking {
-                localRepository.findCompleteQuestionnaireWith(id)?.apply {
-                    qId = id
-                    qTitle = questionnaire.title
-                    qCourseOfStudies = questionnaire.courseOfStudies
-                    qSubject = questionnaire.subject
-                    setQuestionWithAnswers(questionsWithAnswers.sortedBy { it.question.questionPosition }.toMutableList())
-                }
-            }
+        args.completeQuestionnaire?.let {
+            qId = it.questionnaire.id
+            qTitle = it.questionnaire.title
+            qCourseOfStudies = it.questionnaire.courseOfStudies
+            qSubject = it.questionnaire.subject
+            setQuestionWithAnswers(it.questionsWithAnswers.sortedBy { qwa -> qwa.question.questionPosition }.toMutableList())
         }
     }
 
@@ -110,14 +105,14 @@ class VmAdd @Inject constructor(
                 setQuestionWithAnswers(it)
             }
 
-            launch {
+            launch(IO) {
                 fragmentAddQuestionnaireEventChannel.send(ShowQuestionDeletedSuccessFullySnackBar(lastList))
             }
         }
     }
 
 
-    fun onSaveSpecificQuestionClicked(event: VmEditQuestion.FragmentEditQuestionEvent.SendUpdateRequestToVmAdd) {
+    fun onSaveSpecificQuestionClicked(event: VmAddEditQuestion.FragmentEditQuestionEvent.SendUpdateRequestToVmAdd) {
         questionsWithAnswersLiveDataValue.apply {
             set(event.position, event.newQuestionWithAnswers)
         }.also {
@@ -161,24 +156,32 @@ class VmAdd @Inject constructor(
     fun onFabSaveClicked() {
         if (!isInputValid()) return
 
-        applicationScope.launch(Dispatchers.IO) {
+        applicationScope.launch(IO) {
             val questionnaire = Questionnaire(
                 id = qId,
                 title = qTitle,
-                authorInfo = preferencesRepository.userInfoFlow.first().asAuthorInfo(),
+                authorInfo = preferencesRepository.user.asAuthorInfo,
                 lastModifiedTimestamp = getTimeMillis(),
                 faculty = "WIB",
                 courseOfStudies = qCourseOfStudies,
                 subject = qSubject,
-                syncStatus = SyncStatus.SYNCING)
+                syncStatus = SyncStatus.SYNCING
+            )
 
-            val questionsWithAnswersMapped = questionsWithAnswersLiveDataValue.onEachIndexed { index, qwa ->
+            val questionsWithAnswersMapped = questionsWithAnswersLiveDataValue.onEachIndexed { questionIndex, qwa ->
                 qwa.question.apply {
                     questionnaireId = qId
-                    questionPosition = index
+                    questionPosition = questionIndex
                 }
+
+                //TODO -> Schauen ob es das wirklich braucht oder nicht | Sollte immer jede Frage resettet werden?
+                val setIsSelectedToFalse = !qwa.question.isMultipleChoice && qwa.selectedAnswerIds.size > 1
+
                 qwa.answers = qwa.answers.mapIndexed { answerIndex, answer ->
-                    answer.copy(questionId = qwa.question.id, isAnswerSelected = false, answerPosition = answerIndex)
+                    answer.copy(
+                        questionId = qwa.question.id,
+                        isAnswerSelected = if(setIsSelectedToFalse) false else answer.isAnswerSelected,
+                        answerPosition = answerIndex)
                 }
             }
 
@@ -187,15 +190,13 @@ class VmAdd @Inject constructor(
             localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
             fragmentAddQuestionnaireEventChannel.send(NavigateBackEvent)
 
-            val response = try {
+            runCatching {
                 backendRepository.insertQuestionnaire(DataMapper.mapSqlEntitiesToMongoEntity(completeQuestionnaire))
-            } catch (e: Exception) {
-                null
+            }.onFailure {
+                localRepository.update(questionnaire.apply { syncStatus = SyncStatus.UNSYNCED })
+            }.onSuccess {
+                localRepository.update(questionnaire.apply { syncStatus = if (it.isSuccessful) SyncStatus.SYNCED else SyncStatus.UNSYNCED })
             }
-
-            localRepository.update(questionnaire.apply {
-                syncStatus = if(response != null && response.isSuccessful) SyncStatus.SYNCED else SyncStatus.UNSYNCED
-            })
         }
     }
 

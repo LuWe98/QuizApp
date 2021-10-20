@@ -17,8 +17,13 @@ object Constants {
     const val LOCALLY_DELETED_FILLED_QUESTIONNAIRES_TABLE = "deletedFilledQuestionnairesTable"
     const val LOCALLY_ANSWERED_QUESTIONNAIRES_TABLE = "locallyAnsweredQuestionnairesTable"
     const val LOCALLY_DOWNLOADED_QUESTIONNAIRES_TABLE = "downloadedQuestionnairesTable"
+    const val LOCALLY_DELETED_USERS_TABLE = "locallyDeletedUsersTable"
+
 
     // Für physisches Handy 192.168.178.78 -> CMD -> ipconfig
     // Für Emulator Handy 10.0.2.2
-    const val BACKEND_URL = "http://192.168.178.78:8080"
+    const val BACKEND_HOSTNAME = "http://192.168.178.78"
+    const val BACKEND_PORT = 8080
+    const val BACKEND_PATH = "$BACKEND_HOSTNAME:$BACKEND_PORT"
+    const val REALM = "QuizApp"
 }

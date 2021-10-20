@@ -9,8 +9,10 @@ data class MongoFilledQuestionnaire(
     var questions : List<MongoFilledQuestion> = emptyList()
 ) {
 
+    val allSelectedAnswerIds get() = questions.flatMap { it.selectedAnswerIds }
+
     fun isAnswerSelected(questionId : String, answerId : String) = questions.first { it.questionId == questionId }.selectedAnswerIds.contains(answerId)
 
-    fun isAnswerSelected(answerId: String) = questions.flatMap { it.selectedAnswerIds }.contains(answerId)
+    fun isAnswerSelected(answerId: String) = allSelectedAnswerIds.contains(answerId)
 
 }

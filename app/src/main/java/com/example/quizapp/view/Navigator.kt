@@ -10,9 +10,12 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.quizapp.MainNavGraphDirections
 import com.example.quizapp.R
 import com.example.quizapp.extensions.initMaterialElevationScale
+import com.example.quizapp.model.mongodb.documents.user.User
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaireDirections
+import com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptionsDirections
+import com.example.quizapp.view.fragments.adminscreen.FragmentAdminDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
 import com.example.quizapp.view.fragments.homescreen.FragmentHomeDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
@@ -50,8 +53,8 @@ class Navigator @Inject constructor(
         navController.popBackStack()
     }
 
-    fun navigateToAddQuestionnaireScreen(questionnaireId: String? = NO_QUESTIONNAIRE_ID) {
-        navController.navigate(MainNavGraphDirections.actionGlobalGoToAddQuestionnaireScreen(questionnaireId))
+    fun navigateToAddQuestionnaireScreen(completeQuestionnaire: CompleteQuestionnaireJunction? = null) {
+        navController.navigate(MainNavGraphDirections.actionGlobalGoToAddQuestionnaireScreen(completeQuestionnaire))
     }
 
     fun navigateToEditQuestionScreen(questionPosition: Int, questionWithAnswers: QuestionWithAnswers) {
@@ -94,12 +97,21 @@ class Navigator @Inject constructor(
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToFragmentAdmin())
     }
 
-    fun navigateToQuestionnaireMoreOptions(authorId: String, questionnaireId: String){
-        navController.navigate(MainNavGraphDirections.actionGlobalBsdfQuestionnaireMoreOptions(authorId, questionnaireId))
+    fun navigateToQuestionnaireMoreOptions(authorId: String, questionnaireId: String, questionnaireTitle: String){
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfQuestionnaireMoreOptions(authorId, questionnaireId, questionnaireTitle))
     }
 
+    fun navigateToUserMoreOptions(user: User){
+        navController.navigate(FragmentAdminDirections.actionFragmentAdminToBsdfUserMoreOptions(user))
+    }
+
+    fun navigateToChangeUserRoleDialog(user: User){
+        popBackStack()
+        navController.navigate(FragmentAdminDirections.actionFragmentAdminToBsdfChangeUserRole(user))
+    }
+
+
     companion object {
-        val NO_QUESTIONNAIRE_ID : String? = null
         const val FIRST_QUESTION_POSITION = 0
     }
 }

@@ -14,7 +14,7 @@
             android:elevation="@dimen/defaultElevation"
             android:layout_marginHorizontal="@dimen/grid_6"
             android:layout_marginTop="@dimen/grid_4"
-            app:layout_constraintVertical_bias="0.15"
+            app:layout_constraintVertical_bias="0.20"
             app:startIconDrawable="@drawable/ic_person"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -23,32 +23,10 @@
 
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/etUserName"
                 style="@style/Style.QuizApp.TextInputEditText"
                 android:inputType="textEmailAddress" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/tilCourseOfStudies"
-            style="@style/Style.QuizApp.TextInputLayout"
-            android:hint="@string/courseOfStudies"
-            android:elevation="@dimen/defaultElevation"
-            android:layout_marginHorizontal="@dimen/grid_6"
-            android:layout_marginTop="@dimen/grid_4"
-            app:startIconDrawable="@drawable/ic_domain"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tilUserName">
-
-        <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:id="@+id/etCourseOfStudies"
-                style="@style/Style.QuizApp.TextInputEditText"
-                android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -64,11 +42,11 @@
             app:passwordToggleEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tilCourseOfStudies">
+            app:layout_constraintTop_toBottomOf="@+id/tilUserName">
 
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/etPassword"
                 style="@style/Style.QuizApp.TextInputEditText"
                 android:inputType="textPassword" />
@@ -91,7 +69,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/etConfirmPassword"
                 style="@style/Style.QuizApp.TextInputEditText"
                 android:inputType="textPassword" />

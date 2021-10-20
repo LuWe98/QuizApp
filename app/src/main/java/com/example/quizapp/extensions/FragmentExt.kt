@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.transition.Slide
 import com.example.quizapp.R
+import com.example.quizapp.view.QuizActivity
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
@@ -30,6 +31,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 val Fragment.bindingActivity get() = requireActivity() as BindingActivity<*>
+
 
 @MainThread
 fun Fragment.showToast(text: String, duration: Int = Toast.LENGTH_LONG) {
@@ -46,27 +48,29 @@ fun Fragment.showSnackBar(text: String, viewToAttachTo: View = requireView(), du
     Snackbar.make(viewToAttachTo, text, duration).show()
 }
 
-@MainThread
-fun Fragment.showSnackBar(@StringRes textRes: Int, viewToAttachTo: View = requireView(), duration: Int = Snackbar.LENGTH_LONG) {
-    Snackbar.make(viewToAttachTo, textRes, duration).show()
-}
-
 fun Fragment.showAlertDialog(
     @StringRes titleRes: Int,
     @StringRes textRes: Int,
     @StringRes positiveButtonRes: Int,
     @StringRes negativeButtonRes: Int,
     positiveButtonClicked: ((DialogInterface) -> Unit)? = null,
-    negativeButtonClicked: ((DialogInterface) -> Unit)? = null){
+    negativeButtonClicked: ((DialogInterface) -> Unit)? = null
+) {
     AlertDialog.Builder(requireContext())
         .setTitle(getString(titleRes))
         .setMessage(textRes)
-        .setPositiveButton(positiveButtonRes) { dialogInterface, _  -> positiveButtonClicked?.invoke(dialogInterface) }
-        .setNegativeButton(negativeButtonRes)  { dialogInterface, _  -> negativeButtonClicked?.invoke(dialogInterface) }
+        .setPositiveButton(positiveButtonRes) { dialogInterface, _ -> positiveButtonClicked?.invoke(dialogInterface) }
+        .setNegativeButton(negativeButtonRes) { dialogInterface, _ -> negativeButtonClicked?.invoke(dialogInterface) }
         .show()
 }
 
-
+@MainThread
+fun Fragment.showSnackBar(@StringRes textRes: Int, viewToAttachTo: View = requireView(), duration: Int = Snackbar.LENGTH_LONG) =
+    Snackbar.make(viewToAttachTo, textRes, duration).apply {
+        show()
+    }.also {
+        bindingActivity.currentSnackBar = it
+    }
 
 @MainThread
 fun Fragment.showSnackBar(
@@ -75,8 +79,11 @@ fun Fragment.showSnackBar(
     duration: Int = Snackbar.LENGTH_LONG,
     actionText: String,
     actionClickEvent: ((View) -> Unit)
-) {
-    Snackbar.make(viewToAttachTo, text, duration).setAction(actionText, actionClickEvent).show()
+) = Snackbar.make(viewToAttachTo, text, duration).apply {
+    setAction(actionText, actionClickEvent)
+    show()
+}.also {
+    bindingActivity.currentSnackBar = it
 }
 
 @MainThread
@@ -87,15 +94,19 @@ fun Fragment.showSnackBar(
     onDismissedAction: () -> (Unit) = {},
     @StringRes actionTextRes: Int,
     actionClickEvent: ((View) -> Unit)
-) {
-    Snackbar.make(viewToAttachTo, textRes, duration).addCallback(object : Snackbar.Callback(){
+) = Snackbar.make(viewToAttachTo, textRes, duration).apply {
+    addCallback(object : Snackbar.Callback() {
         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-            if(event != DISMISS_EVENT_ACTION){
-                onDismissedAction.invoke()
-            }
+            if (event != DISMISS_EVENT_ACTION) { onDismissedAction.invoke() }
         }
-    }).setAction(actionTextRes, actionClickEvent).show()
+    })
+    setAction(actionTextRes, actionClickEvent)
+    show()
+}.also {
+    bindingActivity.currentSnackBar = it
 }
+
+
 
 fun Fragment.isPermissionGranted(permission: String) = requireContext().isPermissionGranted(permission)
 
@@ -103,7 +114,7 @@ fun Fragment.getDrawable(@DrawableRes id: Int) = AppCompatResources.getDrawable(
 
 fun Fragment.getColor(@ColorRes id: Int) = ContextCompat.getColor(requireContext(), id)
 
-fun Fragment.getColorStateList(@ColorRes id: Int) : ColorStateList = AppCompatResources.getColorStateList(requireContext(), id)
+fun Fragment.getColorStateList(@ColorRes id: Int): ColorStateList = AppCompatResources.getColorStateList(requireContext(), id)
 
 fun Fragment.getStringArray(@ArrayRes id: Int): Array<String> = resources.getStringArray(id)
 
@@ -159,8 +170,6 @@ inline fun Fragment.launchWhenResumed(
 }
 
 
-
-
 @MainThread
 inline fun <reified VM : ViewModel> Fragment.hiltNavDestinationViewModels(
     @IdRes destinationId: Int
@@ -183,12 +192,6 @@ fun Fragment.showKeyboard(view: View) {
 fun Fragment.hideKeyboard(view: View) {
     requireContext().hideKeyboard(view)
 }
-
-
-
-
-
-
 
 
 //ANIMATION EXTENSIONS

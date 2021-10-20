@@ -4,14 +4,20 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
 open class BasicPagingSource <T: Any> (
-    private val getRefreshKeyAction : (Int) -> (Int?) = { anchorPosition -> anchorPosition/ PagingConfigValues.PAGE_SIZE },
+    private val getRefreshKeyAction : (PagingState<Int, T>) -> (Int?) = { state ->
+        state.anchorPosition?.let {
+            state.closestPageToPosition(it).let { anchor ->
+                anchor?.prevKey?.plus(1) ?: anchor?.nextKey?.minus(1)
+        }
+    } },
     private val getDataAction : suspend (Int) -> (List<T>)) : PagingSource<Int, T>() {
 
-    override fun getRefreshKey(state: PagingState<Int, T>): Int? =
-        state.anchorPosition?.let(getRefreshKeyAction)
+    override fun getRefreshKey(state: PagingState<Int, T>): Int? {
+        return getRefreshKeyAction.invoke(state)
+    }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
-        return try{
+        return try {
             val page = params.key ?: PagingConfigValues.INITIAL_PAGE_INDEX
             val response = getDataAction.invoke(page)
             LoadResult.Page(

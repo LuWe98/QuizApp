@@ -2,24 +2,18 @@ package com.example.quizapp.model.datastore
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.*
 import com.example.quizapp.extensions.first
-import com.example.quizapp.model.datastore.PreferencesKeys.THEME_KEY
-import com.example.quizapp.model.datastore.PreferencesKeys.USER_ID_KEY
-import com.example.quizapp.model.datastore.PreferencesKeys.USER_NAME_KEY
-import com.example.quizapp.model.datastore.PreferencesKeys.USER_PASSWORD_KEY
-import com.example.quizapp.model.datastore.PreferencesKeys.USER_ROLE_KEY
 import com.example.quizapp.model.mongodb.documents.user.Role
+import com.example.quizapp.model.mongodb.documents.user.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import okhttp3.Credentials
 import java.io.IOException
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,14 +26,17 @@ class PreferencesRepository @Inject constructor(
 
     private val dataFlow = dataStore.data.catch { exception -> if (exception is IOException) emit(emptyPreferences()) else throw exception }
 
+    private var cachedUser: User? = null
+
     suspend fun resetPreferenceData() {
         dataStore.edit { preferences ->
-            cachedUserFlow = null
+            cachedUser = null
             preferences[USER_ID_KEY] = ""
             preferences[USER_NAME_KEY] = ""
             preferences[USER_PASSWORD_KEY] = ""
             preferences[USER_ROLE_KEY] = ""
             preferences[THEME_KEY] = AppCompatDelegate.MODE_NIGHT_NO
+            preferences[LANGUAGE_KEY] = Locale.getDefault().toLanguageTag()
         }
     }
 
@@ -56,39 +53,58 @@ class PreferencesRepository @Inject constructor(
     }
 
 
-    //TODO -> ENTSCHLÜSSELUNG TAKES TO LONG!
-    val userInfoFlow = dataFlow.map { preferences ->
-        UserInfoWrapper(
-            id = preferences[USER_ID_KEY]?.let { if (it.isEmpty()) "" else encryptionUtil.decrypt(it) } ?: "",
-            name = preferences[USER_NAME_KEY]?.let { if (it.isEmpty()) "" else encryptionUtil.decrypt(it) } ?: "",
-            password = preferences[USER_PASSWORD_KEY]?.let { if (it.isEmpty()) "" else encryptionUtil.decrypt(it) } ?: "",
-            role = preferences[USER_ROLE_KEY]?.let { if (it.isEmpty()) Role.USER else Role.valueOf(encryptionUtil.decrypt(it)) } ?: Role.USER).also {
-            if (cachedUserFlow == null) {
-                cachedUserFlow = it
-            }
+    private val languageFlow = dataFlow.map { preferences ->
+        preferences[LANGUAGE_KEY]?.let { Locale.forLanguageTag(it) } ?: Locale.getDefault()
+    }
+
+    suspend fun getLanguage(): Locale = languageFlow.first()
+
+    suspend fun updateLanguage(locale: Locale){
+        dataStore.edit { preferences ->
+            preferences[LANGUAGE_KEY] = locale.toLanguageTag()
         }
     }
 
-    private var cachedUserFlow: UserInfoWrapper? = null
 
-    val userInfo
+
+
+    val userFlow = dataFlow.map { preferences ->
+        User(
+            id = preferences[USER_ID_KEY]?.let { if (it.isEmpty()) "" else encryptionUtil.decrypt(it) } ?: "",
+            userName = preferences[USER_NAME_KEY]?.let { if (it.isEmpty()) "" else encryptionUtil.decrypt(it) } ?: "",
+            password = preferences[USER_PASSWORD_KEY]?.let { if (it.isEmpty()) "" else encryptionUtil.decrypt(it) } ?: "",
+            role = preferences[USER_ROLE_KEY]?.let { if (it.isEmpty()) Role.USER else Role.valueOf(encryptionUtil.decrypt(it)) } ?: Role.USER).also {
+                cachedUser = it
+        }
+    }
+
+    val user
         get() = run {
-            if (cachedUserFlow == null) { cachedUserFlow = userInfoFlow.flowOn(IO).first(IO) }
-            cachedUserFlow!!
+            if (cachedUser == null) { cachedUser = userFlow.flowOn(IO).first(IO) }
+            cachedUser!!
         }
 
-    val userCredentials
-        get() = userInfo.let {
-            Credentials.basic(it.name, it.password, Charsets.UTF_8)
-        }
+    suspend fun getUserAsync() = userFlow.first()
 
     suspend fun updateUserCredentials(id: String, name: String, password: String, role: Role = Role.USER) {
         dataStore.edit { preferences ->
-            cachedUserFlow = UserInfoWrapper(id, name, password, role)
+            cachedUser = User(id, name, password, role)
             preferences[USER_ID_KEY] = encryptionUtil.encrypt(id)
             preferences[USER_NAME_KEY] = encryptionUtil.encrypt(name)
             preferences[USER_PASSWORD_KEY] = encryptionUtil.encrypt(password)
             preferences[USER_ROLE_KEY] = encryptionUtil.encrypt(role.name)
         }
+    }
+
+
+
+
+    companion object PreferencesKeys {
+        val THEME_KEY = intPreferencesKey("themeKey")
+        val LANGUAGE_KEY = stringPreferencesKey("languageKey")
+        val USER_ID_KEY = stringPreferencesKey("userIdKey")
+        val USER_NAME_KEY = stringPreferencesKey("userNameKey")
+        val USER_PASSWORD_KEY = stringPreferencesKey("userPasswordKey")
+        val USER_ROLE_KEY = stringPreferencesKey("userRoleKey")
     }
 }

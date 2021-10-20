@@ -2,14 +2,11 @@ package com.example.quizapp.extensions
 
 import android.app.Activity
 import android.graphics.Color
-import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
-import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -25,8 +22,8 @@ fun Activity.enableFullScreenMode() {
 }
 
 inline fun AppCompatActivity.launch(
-    scope: CoroutineScope = lifecycleScope,
     dispatcher: CoroutineContext = EmptyCoroutineContext,
+    scope: CoroutineScope = lifecycleScope,
     crossinline block: suspend CoroutineScope.() -> Unit
 ) {
     scope.launch(dispatcher) {

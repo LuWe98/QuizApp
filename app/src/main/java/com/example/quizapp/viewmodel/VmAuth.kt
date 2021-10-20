@@ -28,7 +28,7 @@ class VmAuth @Inject constructor(
     val fragmentEventChannelFlow get() = fragmentEventChannel.receiveAsFlow()
 
     fun checkIfLoggedIn() = launch(IO) {
-        if (preferencesRepository.userInfoFlow.first().isNotEmpty) {
+        if (preferencesRepository.userFlow.first().isNotEmpty) {
             fragmentEventChannel.send(NavigateToHomeScreen)
         } else {
             fragmentEventChannel.send(ShowLoginScreen)
@@ -61,25 +61,23 @@ class VmAuth @Inject constructor(
                 return@launch
             }
 
-            val loginResponse = try {
+            runCatching {
                 backendRepository.loginUser(currentLoginUserName, currentLoginPassword)
-            } catch (e: Exception) {
+            }.onFailure {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileLoggingInUser))
-                return@launch
+            }.onSuccess { response ->
+                if (response.isSuccessful) {
+                    preferencesRepository.updateUserCredentials(
+                        id = response.userId!!,
+                        name = currentLoginUserName,
+                        password = currentLoginPassword,
+                        role = response.role!!
+                    )
+                    fragmentEventChannel.send(NavigateToHomeScreen)
+                }
+
+                fragmentEventChannel.send(ShowMessageSnackBar(response.responseType.messageRes))
             }
-
-            if (loginResponse.isSuccessful) {
-                preferencesRepository.updateUserCredentials(
-                    id = loginResponse.userId!!,
-                    name = currentLoginUserName,
-                    password = currentLoginPassword,
-                    role = loginResponse.role!!
-                )
-
-                fragmentEventChannel.send(NavigateToHomeScreen)
-            }
-
-            fragmentEventChannel.send(ShowMessageSnackBar(loginResponse.responseType.messageRes))
         }
     }
 
@@ -96,12 +94,6 @@ class VmAuth @Inject constructor(
     var currentRegisterUserName = state.get<String>(REGISTER_USERNAME) ?: ""
         set(value) {
             state.set(REGISTER_USERNAME, value)
-            field = value
-        }
-
-    var currentRegisterCourseOfStudies = state.get<String>(REGISTER_COURSE_OF_STUDIES) ?: ""
-        set(value) {
-            state.set(REGISTER_COURSE_OF_STUDIES, value)
             field = value
         }
 
@@ -126,20 +118,9 @@ class VmAuth @Inject constructor(
     fun onRegisterButtonClicked() {
         launch(IO) {
             if (currentRegisterUserName.isEmpty() ||
-                currentRegisterCourseOfStudies.isEmpty() ||
                 currentRegisterPassword.isEmpty() ||
-                currentRegisterPasswordConfirm.isEmpty()
-            ) {
+                currentRegisterPasswordConfirm.isEmpty()) {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
-                return@launch
-            }
-
-            if (currentRegisterUserName.containsWhiteSpaces ||
-                currentRegisterCourseOfStudies.containsWhiteSpaces ||
-                currentRegisterPassword.containsWhiteSpaces ||
-                currentRegisterPasswordConfirm.containsWhiteSpaces
-            ) {
-                fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorFieldsContainWhitespaces))
                 return@launch
             }
 
@@ -148,28 +129,23 @@ class VmAuth @Inject constructor(
                 return@launch
             }
 
-            val registerResponse = try {
-                backendRepository.registerUser(currentRegisterUserName, currentRegisterPassword, currentRegisterCourseOfStudies)
-            } catch (e: Exception) {
+            runCatching {
+                backendRepository.registerUser(currentRegisterUserName, currentRegisterPassword)
+            }.onFailure {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileRegisteringUser))
-                return@launch
-            }
+            }.onSuccess { response ->
+                if (response.isSuccessful) {
+                    fragmentEventChannel.send(SetLoginCredentials(currentRegisterUserName, currentRegisterPassword))
+                    fragmentEventChannel.send(SwitchPage(0))
+                }
 
-            if (registerResponse.isSuccessful) {
-                fragmentEventChannel.send(SetLoginCredentials(currentRegisterUserName, currentRegisterPassword))
-                fragmentEventChannel.send(SwitchPage(0))
+                fragmentEventChannel.send(ShowMessageSnackBar(response.responseType.messageRes))
             }
-
-            fragmentEventChannel.send(ShowMessageSnackBar(registerResponse.responseType.messageRes))
         }
     }
 
     fun onRegisterEmailEditTextChanged(newValue: String) {
         currentRegisterUserName = newValue.trim()
-    }
-
-    fun onRegisterCourseOfStudiesEditTextChanged(newValue: String) {
-        currentRegisterCourseOfStudies = newValue.trim()
     }
 
     fun onRegisterPasswordEditTextChanged(newValue: String) {

@@ -12,16 +12,16 @@ import com.example.quizapp.databinding.FragmentAddQuestionBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.recyclerview.adapters.RvaAnswerEditQuestion
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.viewmodel.VmAdd
-import com.example.quizapp.viewmodel.VmEditQuestion
-import com.example.quizapp.viewmodel.VmEditQuestion.FragmentEditQuestionEvent.*
+import com.example.quizapp.viewmodel.VmAddEdit
+import com.example.quizapp.viewmodel.VmAddEditQuestion
+import com.example.quizapp.viewmodel.VmAddEditQuestion.FragmentEditQuestionEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FragmentAddQuestion : BindingFragment<FragmentAddQuestionBinding>() {
 
-    private val vmAdd : VmAdd by hiltNavGraphViewModels(R.id.add_nav_graph)
-    private val vmEditQuestion : VmEditQuestion by viewModels()
+    private val vmAdd : VmAddEdit by hiltNavGraphViewModels(R.id.add_nav_graph)
+    private val vmEditQuestion : VmAddEditQuestion by viewModels()
 
     private lateinit var rvAdapter : RvaAnswerEditQuestion
 

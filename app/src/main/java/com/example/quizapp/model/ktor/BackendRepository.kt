@@ -1,37 +1,48 @@
 package com.example.quizapp.model.ktor
 
 import com.example.quizapp.model.DataMapper
-import com.example.quizapp.model.ktor.apiclasses.FilledQuestionnaireApi
-import com.example.quizapp.model.ktor.apiclasses.QuestionnaireApi
-import com.example.quizapp.model.ktor.apiclasses.UserApi
 import com.example.quizapp.model.mongodb.documents.filledquestionnaire.MongoFilledQuestionnaire
 import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
 import com.example.quizapp.model.mongodb.documents.user.Role
 import com.example.quizapp.model.dto.QuestionnaireIdWithTimestamp
+import com.example.quizapp.model.ktor.apiclasses.*
 import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class BackendRepository @Inject constructor(
+    private val client: HttpClient,
+    private val adminApi: AdminApi,
     private val userApi: UserApi,
     private val questionnaireApi: QuestionnaireApi,
-    private val filledQuestionnaireApi: FilledQuestionnaireApi
+    private val filledQuestionnaireApi: FilledQuestionnaireApi,
+    private val facultyApi: FacultyApi,
+    private val courseOfStudiesApi: CourseOfStudiesApi,
+    private val subjectApi: SubjectApi
 ) {
+    // ADMIN
+    suspend fun updateUserRole(userId: String, newRole: Role) = adminApi.updateUserRole(userId, newRole)
+
+    suspend fun getPagedUsers(limit: Int, page: Int, searchString: String) = adminApi.getPagedUsers(limit, page, searchString)
+
+    suspend fun deleteUser(userId: String) = adminApi.deleteUser(userId)
+
+    suspend fun deleteUsers(userIds: List<String>) = adminApi.deleteUsers(userIds)
+
 
     // USER
     suspend fun loginUser(userName: String, password: String) = userApi.loginUser(userName, password)
 
-    suspend fun registerUser(userName: String, password: String, courseOfStudies: String) = userApi.registerUser(userName, password, courseOfStudies)
+    suspend fun registerUser(userName: String, password: String) = userApi.registerUser(userName, password)
 
-    suspend fun updateUsername(userId: String, newUserName: String) = userApi.updateUsername(userId, newUserName)
+    suspend fun updateUsername(newUserName: String) = userApi.updateUsername(newUserName)
 
-    suspend fun updateUserRole(userId: String, newRole: Role) = userApi.updateUserRole(userId, newRole)
-
-    suspend fun deleteUser(userId: String) = userApi.deleteUser(userId)
-
-    suspend fun getPagedUsers(limit: Int, page: Int, searchString: String) = userApi.getPagedUsers(limit, page, searchString)
+    suspend fun deleteSelf() = userApi.deleteSelf()
 
 
     // QUESTIONNAIRES
@@ -65,7 +76,16 @@ class BackendRepository @Inject constructor(
     suspend fun insertFilledQuestionnaire(mongoFilledQuestionnaire: MongoFilledQuestionnaire) =
         filledQuestionnaireApi.insertFilledQuestionnaire(mongoFilledQuestionnaire)
 
-    suspend fun deleteFilledQuestionnaire(userId: String, questionnaireIds: List<String>) =
-        filledQuestionnaireApi.deleteFilledQuestionnaire(userId, questionnaireIds)
+    suspend fun deleteFilledQuestionnaire(questionnaireIds: List<String>) =
+        filledQuestionnaireApi.deleteFilledQuestionnaire(questionnaireIds)
+
+
+    // FACULTY
+
+
+    // COURSE OF STUDIES
+
+
+    // SUBJECT
 
 }

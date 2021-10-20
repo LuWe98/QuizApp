@@ -5,6 +5,7 @@ import com.example.quizapp.QuizNavGraphArgs
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.model.room.entities.sync.LocallyAnsweredQuestionnaire
@@ -123,13 +124,19 @@ class VmQuiz @Inject constructor(
     }
 
     private fun uploadGivenAnswers() = applicationScope.launch(IO) {
-        completeQuestionnaire?.let { DataMapper.mapSqlEntitiesToFilledMongoEntity(it) }?.let {
-            if(localRepository.isAnsweredQuestionnairePresent(it.questionnaireId)){
+        completeQuestionnaire?.let {
+            if(it.questionnaire.syncStatus != SyncStatus.SYNCED) {
+                return@launch
+            }
+
+            val filledQuestionnaire = DataMapper.mapSqlEntitiesToFilledMongoEntity(it)
+
+            if(localRepository.isAnsweredQuestionnairePresent(filledQuestionnaire.questionnaireId)){
                 runCatching {
-                    backendRepository.insertFilledQuestionnaire(it)
+                    backendRepository.insertFilledQuestionnaire(filledQuestionnaire)
                 }.onSuccess { response ->
                     if(response.isSuccessful){
-                        localRepository.delete(LocallyAnsweredQuestionnaire(it.questionnaireId))
+                        localRepository.delete(LocallyAnsweredQuestionnaire(filledQuestionnaire.questionnaireId))
                     }
                 }
             }
@@ -148,5 +155,4 @@ class VmQuiz @Inject constructor(
     companion object {
         const val SHOULD_DISPLAY_SOLUTION = "shouldDisplaySolutionKey"
     }
-
 }

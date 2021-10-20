@@ -146,8 +146,9 @@ dependencies {
     implementation("io.ktor:ktor-client-android:$ktorVersion")
     implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
     implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+    implementation("io.ktor:ktor-client-auth:$ktorVersion")
 
-    
+
     //Kotlin Serialisation
     val kotlinSerialisationVersion: String by project
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialisationVersion")

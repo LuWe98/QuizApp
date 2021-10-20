@@ -9,7 +9,7 @@ import com.example.quizapp.model.room.entities.sync.LocallyAnsweredQuestionnaire
 abstract class LocallyAnsweredQuestionnaireDao: BaseDao<LocallyAnsweredQuestionnaire> {
 
     @Query("SELECT * FROM locallyAnsweredQuestionnairesTable")
-    abstract suspend fun getLocallyDeletedQuestionnaireIds() : List<LocallyAnsweredQuestionnaire>
+    abstract suspend fun getLocallyAnsweredQuestionnaireIds() : List<LocallyAnsweredQuestionnaire>
 
     @Query("DELETE FROM locallyAnsweredQuestionnairesTable WHERE questionnaireId = :questionnaireId")
     abstract suspend fun deleteLocallyAnsweredQuestionnaireWith(questionnaireId: String)
@@ -19,5 +19,11 @@ abstract class LocallyAnsweredQuestionnaireDao: BaseDao<LocallyAnsweredQuestionn
 
     @Query("SELECT COUNT(*) FROM locallyAnsweredQuestionnairesTable WHERE questionnaireId = :questionnaireId LIMIT 1")
     abstract suspend fun isAnsweredQuestionnairePresent(questionnaireId: String) : Int
+
+    @Query("SELECT * FROM locallyAnsweredQuestionnairesTable WHERE questionnaireId = :questionnaireId LIMIT 1")
+    abstract suspend fun getLocallyAnsweredQuestionnaire(questionnaireId: String) : LocallyAnsweredQuestionnaire?
+
+    @Query("DELETE FROM locallyAnsweredQuestionnairesTable")
+    abstract suspend fun deleteAllLocallyAnsweredQuestionnaires()
 
 }

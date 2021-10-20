@@ -54,6 +54,8 @@
         <item name="colorSecondaryVariant">@color/lightColorSecondaryVariant</item>
         <item name="colorOnSecondary">@color/lightColorOnSecondary</item>
 
+        <item name="colorAccent">@color/lightColorAccent</item>
+
         <item name="android:windowLightStatusBar">false</item>
 
         <!-- Customization -->
@@ -74,6 +76,8 @@
         <item name="colorSecondary">@color/lightColorSecondary</item>
         <item name="colorSecondaryVariant">@color/lightColorSecondaryVariant</item>
         <item name="colorOnSecondary">@color/lightColorOnSecondary</item>
+
+        <item name="colorAccent">@color/lightColorAccent</item>
 
         <item name="android:windowBackground">@android:color/transparent</item>
 

@@ -21,6 +21,8 @@ data class CompleteQuestionnaireJunction(
 
     val allAnswers: List<Answer> get() = questionsWithAnswers.flatMap { item -> item.answers }
 
+    val allSelectedAnswerIds: List<String> get() = allAnswers.filter { it.isAnswerSelected }.map { it.id }
+
     fun isAnswerSelected(answerId : String) = allAnswers.firstOrNull { it.id == answerId }?.isAnswerSelected ?: false
 
     fun getQuestionWithAnswers(questionId: String): QuestionWithAnswers = questionsWithAnswers.first { qwa -> qwa.question.id == questionId }

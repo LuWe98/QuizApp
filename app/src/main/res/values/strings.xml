@@ -60,11 +60,15 @@
     <string name="questionDeleted">Question deleted</string>
     <string name="checkResults">Check Results</string>
     <string name="questionnaireDeleted">Questionnaire deleted</string>
-
+    <string name="userDeleted">User deleted</string>
 
     <string name="searchForQuestionnaires">Search for Questionnaires</string>
 
 
+    <string name="created">Created</string>
+    <string name="downloaded">Downloaded</string>
+
+    <string name="save">Save</string>
 
     <!-- BSDF - Questionnaire More Options -->
     <string name="shareQuestionnaireWithUser">Share with other User</string>
@@ -76,8 +80,11 @@
     <string name="edit">Edit</string>
     <string name="deleteGivenAnswers">Delete given answers</string>
     <string name="deleteQuestionnaire">Delete</string>
+    <string name="deleteUser">Delete</string>
+    <string name="changeUserRole">Change role</string>
+    <string name="browseUsersQuestionnaires">Browse Questionnaires</string>
 
-
+    <string name="changeRoleForUser">Change Role for:\n%1$s</string>
 
     <string name="errorSelectOneCorrectAnswer">Select at least one correct Answer!</string>
     <string name="errorAnswersDoNotHaveText">Some Answers don\'t have a Text yet!</string>
@@ -90,6 +97,7 @@
     <string name="userLoggedInSuccessfully">Logged in Successfully!</string>
     <string name="errorUserNameOrPassWordWrong">Username or Password wrong!</string>
     <string name="userRegisteredSuccessfully">Registered successfully!</string>
+    <string name="userRegistrationFailed">Registration Failed</string>
 
 
     <!-- Auth Messages -->
@@ -99,6 +107,7 @@
     <string name="errorOccurredWhileRegisteringUser">Error occurred while registering User!</string>
     <string name="errorOccurredWhileLoggingInUser">Error occurred while logging in User!</string>
     <string name="errorFieldsContainWhitespaces">Some fields contain whitespaces!</string>
+    <string name="errorCouldNotDeleteUser">Could not delete User \'%1$s\'</string>
 
 
     <!-- Settings-->

@@ -1,4 +1,4 @@
-package com.example.quizapp.model.ktor.authentification
+package com.example.quizapp.model.ktor.authentification.old
 
 import com.example.quizapp.model.datastore.PreferencesRepository
 import io.ktor.http.*
@@ -20,7 +20,7 @@ class OkHttpBasicAuthInterceptor @Inject constructor(
             }
 
             return proceed(request().newBuilder().run {
-                preferencesRepository.userCredentials.let { credentials ->
+                preferencesRepository.user.asBasicCredentials.let { credentials ->
                     header(HttpHeaders.Authorization, credentials)
                     build()
                 }

@@ -10,6 +10,8 @@ import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.viewpager.adapter.VpaHome
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmHome
+import com.example.quizapp.viewmodel.VmHome.*
+import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,12 +44,12 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
     }
 
     private fun initObservers() {
-        vmHome.fragmentHomeEventChannelLD.observe(viewLifecycleOwner) { event ->
+        vmHome.fragmentHomeEventChannelFlow.observe(viewLifecycleOwner) { event ->
             when (event) {
-                is VmHome.FragmentHomeEvent.ShowSnackBarMessageBar -> {
+                is ShowSnackBarMessageBar -> {
                     showSnackBar(event.messageRes)
                 }
-                is VmHome.FragmentHomeEvent.ShowUndoDeleteCreatedQuestionnaireSnackBar -> {
+                is ShowUndoDeleteCreatedQuestionnaireSnackBar -> {
                     showSnackBar(
                         R.string.questionnaireDeleted,
                         onDismissedAction = { vmHome.onDeleteCreatedQuestionnaireConfirmed(event) },
@@ -55,7 +57,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
                         actionClickEvent = { vmHome.onUndoDeleteCreatedQuestionnaireClicked(event) }
                     )
                 }
-                is VmHome.FragmentHomeEvent.ShowUndoDeleteCachedQuestionnaireSnackBar -> {
+                is ShowUndoDeleteCachedQuestionnaireSnackBar -> {
                     showSnackBar(
                         R.string.questionnaireDeleted,
                         onDismissedAction = { vmHome.onDeleteCachedQuestionnaireConfirmed(event) },
@@ -63,15 +65,15 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
                         actionClickEvent = { vmHome.onUndoDeleteCachedQuestionnaireClicked(event) }
                     )
                 }
-                is VmHome.FragmentHomeEvent.ShowUndoDeleteAnswersOfQuestionnaireSnackBar -> {
+                is ShowUndoDeleteAnswersOfQuestionnaireSnackBar -> {
                     showSnackBar(
                         R.string.answersDeleted,
-                        onDismissedAction = { vmHome.onDeleteGivenAnswersOfQuestionnaireConfirmed(event) },
+                        onDismissedAction = { vmHome.onDeleteFilledQuestionnaireConfirmed(event) },
                         actionTextRes = R.string.undo,
-                        actionClickEvent =  { vmHome.onUndoDeleteGivenAnswersClicked(event) }
+                        actionClickEvent =  { vmHome.onUndoDeleteFilledQuestionnaireClicked(event) }
                     )
                 }
-                is VmHome.FragmentHomeEvent.ChangeProgressVisibility -> binding.syncProgress.isVisible = event.visible
+                is ChangeProgressVisibility -> binding.syncProgress.isVisible = event.visible
             }
         }
     }

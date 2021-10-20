@@ -1,12 +1,12 @@
 package com.example.quizapp.model.ktor.apiclasses
 
-import com.example.quizapp.model.ktor.requests.*
+import com.example.quizapp.model.ktor.requests.LoginUserRequest
+import com.example.quizapp.model.ktor.requests.RegisterUserRequest
+import com.example.quizapp.model.ktor.requests.UpdateUserNameRequest
 import com.example.quizapp.model.ktor.responses.DeleteUserResponse
 import com.example.quizapp.model.ktor.responses.LoginUserResponse
 import com.example.quizapp.model.ktor.responses.RegisterUserResponse
 import com.example.quizapp.model.ktor.responses.UpdateUserResponse
-import com.example.quizapp.model.mongodb.documents.user.Role
-import com.example.quizapp.model.mongodb.documents.user.User
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject
@@ -22,28 +22,16 @@ class UserApi @Inject constructor(
             body = LoginUserRequest(newUserName, password)
         }
 
-    suspend fun registerUser(newUserName: String, password: String, courseOfStudies: String): RegisterUserResponse =
+    suspend fun registerUser(newUserName: String, password: String): RegisterUserResponse =
         client.post("/user/register") {
-            body = RegisterUserRequest(newUserName, password, courseOfStudies)
+            body = RegisterUserRequest(newUserName, password)
         }
 
-    suspend fun updateUsername(userId: String, newUserName: String): UpdateUserResponse =
+    suspend fun updateUsername(newUserName: String): UpdateUserResponse =
         client.post("/user/update/username") {
-            body = UpdateUserNameRequest(userId, newUserName)
+            body = UpdateUserNameRequest(newUserName)
         }
 
-    suspend fun updateUserRole(userId: String, newRole: Role): UpdateUserResponse =
-        client.post("/user/update/role") {
-            body = UpdateUserRoleRequest(userId, newRole)
-        }
+    suspend fun deleteSelf(): DeleteUserResponse = client.delete("/user/delete")
 
-    suspend fun deleteUser(userId: String): DeleteUserResponse =
-        client.post("/user/delete") {
-            body = DeleteUserRequest(userId)
-        }
-
-    suspend fun getPagedUsers(limit: Int, page: Int, searchString: String) : List<User> =
-        client.post("/users/paged") {
-            body = GetPagedUserRequest(limit, page, searchString)
-        }
 }

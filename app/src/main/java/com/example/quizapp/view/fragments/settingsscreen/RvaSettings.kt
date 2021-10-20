@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.viewbinding.ViewBinding
 import com.example.quizapp.databinding.*
-import com.example.quizapp.extensions.getString
+import com.example.quizapp.extensions.context
 import com.example.quizapp.extensions.setImageDrawable
 import com.example.quizapp.view.recyclerview.impl.BindingViewHolder
 
@@ -59,20 +59,20 @@ class RvaSettings : ListAdapter<SettingsMenuItem, RvaSettings.SettingsItemViewHo
 
         class HeaderViewHolder(private val binding: SettingsSectionHeaderBinding) : SettingsItemViewHolder<SettingsMenuItem.HeaderItem>(binding) {
             override fun bind(item: SettingsMenuItem.HeaderItem) {
-                binding.title.text = binding.getString(item.titleRes)
+                binding.title.text = binding.context.getString(item.titleRes)
             }
         }
 
         class ItemViewHolder(private val binding: SettingsItemBinding) : SettingsItemViewHolder<SettingsMenuItem.ClickableItem>(binding) {
             override fun bind(item: SettingsMenuItem.ClickableItem) {
-                binding.title.text = binding.getString(item.titleRes)
+                binding.title.text = binding.context.getString(item.titleRes)
                 binding.icon.setImageDrawable(item.iconRes)
             }
         }
 
         class TextItemViewHolder(private val binding: SettingsItemTextBinding) : SettingsItemViewHolder<SettingsMenuItem.TextItem>(binding) {
             override fun bind(item: SettingsMenuItem.TextItem) {
-                binding.title.text = binding.getString(item.titleRes)
+                binding.title.text = binding.context.getString(item.titleRes)
                 binding.icon.setImageDrawable(item.iconRes)
                 binding.text.text = "Value"
             }
@@ -80,14 +80,14 @@ class RvaSettings : ListAdapter<SettingsMenuItem, RvaSettings.SettingsItemViewHo
 
         class SwitchItemViewHolder(private val binding: SettingsItemSwitchBinding) : SettingsItemViewHolder<SettingsMenuItem.SwitchItem>(binding) {
             override fun bind(item: SettingsMenuItem.SwitchItem) {
-                binding.title.text = binding.getString(item.titleRes)
+                binding.title.text = binding.context.getString(item.titleRes)
                 binding.icon.setImageDrawable(item.iconRes)
             }
         }
 
         class DropDownItemViewHolder(private val binding: SettingsItemDropdownBinding) : SettingsItemViewHolder<SettingsMenuItem.DropDownItem>(binding) {
             override fun bind(item: SettingsMenuItem.DropDownItem) {
-                binding.title.text = binding.getString(item.titleRes)
+                binding.title.text = binding.context.getString(item.titleRes)
                 binding.icon.setImageDrawable(item.iconRes)
             }
         }

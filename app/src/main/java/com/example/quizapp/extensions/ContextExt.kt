@@ -6,12 +6,15 @@ import android.hardware.input.InputManager
 import android.widget.Toast
 
 import android.util.TypedValue
+import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.AttrRes
 import androidx.annotation.MainThread
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import java.util.*
 
 @MainThread
 fun Context.showToast(text: String, duration: Int = Toast.LENGTH_LONG) {
@@ -43,4 +46,15 @@ fun Context.hideKeyboard(view : View) {
     (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).apply {
         hideSoftInputFromWindow(view.windowToken, 0)
     }
+}
+
+fun Context.setLocale(locale: Locale) : Context {
+    Locale.setDefault(locale)
+
+    val config = resources.configuration.apply {
+        setLocale(locale)
+        setLayoutDirection(locale)
+    }
+
+    return createConfigurationContext(config)
 }

@@ -25,7 +25,6 @@ class FragmentAuthRegister : BindingFragment<FragmentAuthRegisterBinding>() {
     private fun initViews() {
         binding.apply {
             etUserName.setText(viewModel.currentRegisterUserName)
-            etCourseOfStudies.setText(viewModel.currentRegisterCourseOfStudies)
             etPassword.setText(viewModel.currentRegisterPassword)
             etConfirmPassword.setText(viewModel.currentRegisterPasswordConfirm)
         }
@@ -36,7 +35,6 @@ class FragmentAuthRegister : BindingFragment<FragmentAuthRegisterBinding>() {
             btnGoToLogin.onClick(viewModel::onGoToLoginButtonClicked)
             btnRegister.onClick(viewModel::onRegisterButtonClicked)
             etUserName.onTextChanged(viewModel::onRegisterEmailEditTextChanged)
-            etCourseOfStudies.onTextChanged(viewModel::onRegisterCourseOfStudiesEditTextChanged)
             etPassword.onTextChanged(viewModel::onRegisterPasswordEditTextChanged)
             etConfirmPassword.onTextChanged(viewModel::onRegisterPasswordConfirmEditTextChanged)
         }

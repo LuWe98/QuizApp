@@ -10,14 +10,14 @@ import com.example.quizapp.databinding.FragmentAddQuestionnaireBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionWithAnswersAddQuestionnaire
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.viewmodel.VmAdd
-import com.example.quizapp.viewmodel.VmAdd.FragmentAddQuestionnaireEvent.*
+import com.example.quizapp.viewmodel.VmAddEdit
+import com.example.quizapp.viewmodel.VmAddEdit.FragmentAddQuestionnaireEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FragmentAddQuestionnaire : BindingFragment<FragmentAddQuestionnaireBinding>() {
 
-    private val vmAdd : VmAdd by hiltNavDestinationViewModels(R.id.add_nav_graph)
+    private val vmAdd : VmAddEdit by hiltNavDestinationViewModels(R.id.add_nav_graph)
 
     private lateinit var rvAdapter: RvaQuestionWithAnswersAddQuestionnaire
 

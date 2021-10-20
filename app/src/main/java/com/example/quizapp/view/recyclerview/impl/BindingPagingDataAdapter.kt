@@ -3,6 +3,7 @@ package com.example.quizapp.view.recyclerview.impl
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.example.quizapp.utils.BindingUtils
 
@@ -15,7 +16,7 @@ abstract class BindingPagingDataAdapter<T : Any, B : ViewBinding>(diffCallback: 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = BindingPagingDataAdapterViewHolder(BindingUtils.getViewHolderBindingWith(this, parent))
 
-    inner class BindingPagingDataAdapterViewHolder(private val binding: B) : BindingViewHolder<T>(binding) {
+    inner class BindingPagingDataAdapterViewHolder(val binding: B) : BindingViewHolder<T>(binding) {
         init {
             initListeners(binding, this)
         }
@@ -24,6 +25,10 @@ abstract class BindingPagingDataAdapter<T : Any, B : ViewBinding>(diffCallback: 
             bindViews(binding, item, bindingAdapterPosition)
         }
     }
+
+
+
+    fun getItem(viewHolder: RecyclerView.ViewHolder): T? = getItem(viewHolder.bindingAdapterPosition)
 
     abstract fun initListeners(binding: B, vh: BindingPagingDataAdapterViewHolder)
 

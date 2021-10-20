@@ -6,15 +6,9 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.quizapp.model.room.dao.*
-import com.example.quizapp.model.room.dao.sync.LocallyAnsweredQuestionnaireDao
-import com.example.quizapp.model.room.dao.sync.LocallyDeletedFilledQuestionnaireDao
-import com.example.quizapp.model.room.dao.sync.LocallyDeletedQuestionnaireDao
-import com.example.quizapp.model.room.dao.sync.LocallyDownloadedQuestionnaireDao
+import com.example.quizapp.model.room.dao.sync.*
 import com.example.quizapp.model.room.entities.*
-import com.example.quizapp.model.room.entities.sync.LocallyAnsweredQuestionnaire
-import com.example.quizapp.model.room.entities.sync.LocallyDeletedFilledQuestionnaire
-import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.room.entities.sync.LocallyDownloadedQuestionnaire
+import com.example.quizapp.model.room.entities.sync.*
 import com.example.quizapp.utils.Constants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +28,8 @@ import javax.inject.Singleton
         LocallyDeletedQuestionnaire::class,
         LocallyDeletedFilledQuestionnaire::class,
         LocallyAnsweredQuestionnaire::class,
-        LocallyDownloadedQuestionnaire::class
+        LocallyDownloadedQuestionnaire::class,
+        LocallyDeletedUser::class
     ],
     version = Constants.ROOM_DATABASE_VERSION,
     exportSchema = false
@@ -52,6 +47,7 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun getLocallyDeletedQuestionnaireDao(): LocallyDeletedQuestionnaireDao
     abstract fun getLocallyDeletedFilledQuestionnaireDao(): LocallyDeletedFilledQuestionnaireDao
     abstract fun getLocallyAnsweredQuestionnairesDao(): LocallyAnsweredQuestionnaireDao
+    abstract fun getLocallyDeletedUsersDao(): LocallyDeletedUserDao
 
     class Callback @Inject constructor(
         private val repoProvider: Provider<LocalRepository>,

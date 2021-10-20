@@ -156,3 +156,6 @@ fun View.onLongClick(action : () -> (Unit)) {
         return@setOnLongClickListener true
     }
 }
+
+
+fun RadioGroup.getSelectedButton() = findViewById<RadioButton>(checkedRadioButtonId)

@@ -27,7 +27,14 @@
             android:id="@+id/fragmentAdmin"
             android:name="com.example.quizapp.view.fragments.adminscreen.FragmentAdmin"
             android:label="FragmentAdmin"
-            tools:layout="@layout/fragment_admin" />
+            tools:layout="@layout/fragment_admin" >
+        <action
+                android:id="@+id/action_fragmentAdmin_to_bsdfUserMoreOptions"
+                app:destination="@id/bsdfUserMoreOptions" />
+        <action
+                android:id="@+id/action_fragmentAdmin_to_bsdfChangeUserRole"
+                app:destination="@id/bsdfChangeUserRole" />
+    </fragment>
 
     <fragment
             android:id="@+id/fragmentSearch"
@@ -81,8 +88,8 @@
             android:id="@+id/add_nav_graph"
             app:startDestination="@id/fragmentAddQuestionnaire">
         <argument
-                android:name="questionnaireId"
-                app:argType="string"
+                android:name="completeQuestionnaire"
+                app:argType="com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction"
                 app:nullable="true" />
 
         <fragment
@@ -116,10 +123,36 @@
             android:name="com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptions"
             android:label="BsdfQuestionnaireMoreOptions"
             tools:layout="@layout/bsdf_questionnaire_more_options">
+
         <argument
                 android:name="authorId"
                 app:argType="string" />
-        <argument android:name="questionnaireId" />
+
+        <argument android:name="questionnaireId"
+                app:argType="string" />
+
+        <argument android:name="questionnaireTitle"
+                app:argType="string" />
+    </dialog>
+
+
+    <dialog
+            android:id="@+id/bsdfUserMoreOptions"
+            android:name="com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptions"
+            android:label="BsdfUserMoreOptions"
+            tools:layout="@layout/bsdf_user_more_options">
+        <argument android:name="user"
+                app:argType="com.example.quizapp.model.mongodb.documents.user.User" />
+
+    </dialog>
+
+    <dialog
+            android:id="@+id/bsdfChangeUserRole"
+            android:name="com.example.quizapp.view.fragments.adminscreen.BsdfChangeUserRole"
+            android:label="BsdfChangeUserRole"
+            tools:layout="@layout/bsdf_change_user_role">
+        <argument android:name="user"
+                app:argType="com.example.quizapp.model.mongodb.documents.user.User" />
     </dialog>
 
 
