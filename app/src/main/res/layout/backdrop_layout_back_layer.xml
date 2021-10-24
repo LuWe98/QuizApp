@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:id="@+id/backLayerHeader"
+            android:text="Users"
+            android:textStyle="bold"
+            android:fontFamily="@font/work_sans_medium"
+            android:textSize="24sp"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/grid_8"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/btnExpand"
+            android:background="?attr/actionBarItemBackground"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/backLayerHeader"
+            app:srcCompat="@drawable/ic_sort"
+            android:layout_marginEnd="@dimen/grid_4"
+            android:padding="7.5dp" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/btnAdd"
+            android:background="?attr/actionBarItemBackground"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/backLayerHeader"
+            app:srcCompat="@drawable/ic_add"
+            android:padding="7.5dp"
+            app:layout_constraintEnd_toStartOf="@+id/btnExpand" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Role"
+            android:fontFamily="@font/work_sans_regular"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/chipGroup"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="@dimen/grid_4"
+            android:textSize="16sp"
+            android:id="@+id/materialTextView2" />
+
+    <com.google.android.material.chip.ChipGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/chipGroup"
+            android:layout_marginHorizontal="@dimen/grid_4"
+            android:layout_marginTop="@dimen/grid_12"
+            app:layout_constraintTop_toBottomOf="@+id/backLayerHeader">
+
+        <com.google.android.material.chip.Chip
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="USER" />
+
+        <com.google.android.material.chip.Chip
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CREATOR" />
+
+        <com.google.android.material.chip.Chip
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ADMIN" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Order by"
+            android:id="@+id/radioTitle"
+            android:fontFamily="@font/work_sans_regular"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/radioGroup"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="@dimen/grid_4"
+            android:textSize="16sp" />
+
+    <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/grid_12"
+            android:layout_marginHorizontal="@dimen/grid_4"
+            app:layout_constraintTop_toBottomOf="@id/chipGroup"
+            android:id="@+id/radioGroup"
+            tools:layout_editor_absoluteX="16dp">
+
+        <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/One"
+                android:text="Name" />
+
+        <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/two"
+                android:text="Role" />
+    </RadioGroup>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

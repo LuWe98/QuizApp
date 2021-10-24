@@ -3,11 +3,16 @@ package com.example.quizapp.utils
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.SyncQuestionnairesResponse
+import com.example.quizapp.model.ktor.responses.*
+import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireResponse.DeleteFilledQuestionnaireResponseType.*
+import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
+import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.sync.LocallyAnsweredQuestionnaire
-import com.example.quizapp.model.room.entities.sync.LocallyDeletedFilledQuestionnaire
+import com.example.quizapp.model.room.entities.sync.LocallyClearedQuestionnaire
 import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
@@ -46,15 +51,13 @@ class BackendSyncer(
 
         val syncQuestionnairesAsync = async { syncQuestionnaires(locallyDeletedQuestionnaireIdsAsync.await()) }
         val locallyDeletedAsync = async { syncLocallyDeletedQuestionnaires(locallyDeletedQuestionnaireIdsAsync.await()) }
-        val locallyDeletedFilledAsync = async { syncLocallyDeletedFilledQuestionnaires() }
+        val locallyDeletedFilledAsync = async { syncLocallyClearedQuestionnaires() }
         val locallyAnsweredAsync = async { syncLocallyAnsweredQuestionnaires() }
-        val locallyDownloadAsync = async { syncLocallyDownloadedQuestionnaires() }
 
         syncQuestionnairesAsync.await()
         locallyDeletedAsync.await()
         locallyDeletedFilledAsync.await()
         locallyAnsweredAsync.await()
-        locallyDownloadAsync.await()
     }
 
     private suspend fun syncQuestionnaires(
@@ -140,7 +143,7 @@ class BackendSyncer(
         runCatching {
             backendRepository.deleteQuestionnaire(created.map { it.questionnaireId })
         }.onSuccess { response ->
-            if (response.isSuccessful) {
+            if (response.responseType == DeleteQuestionnaireResponseType.SUCCESSFUL) {
                 localRepository.delete(created)
             }
         }
@@ -152,7 +155,7 @@ class BackendSyncer(
         runCatching {
             backendRepository.deleteFilledQuestionnaire(cached.map { it.questionnaireId })
         }.onSuccess { response ->
-            if (response.isSuccessful) {
+            if (response.responseType == SUCCESSFUL) {
                 localRepository.delete(cached)
             }
         }
@@ -161,16 +164,17 @@ class BackendSyncer(
 
     /**
      * Sync of locally deleted Answers of Questionnaires, so that they will be deleted online
+     * The Questionnaire itself is still there but the given answers list should be emptied
      */
-    private suspend fun syncLocallyDeletedFilledQuestionnaires() = withContext(IO) {
-        localRepository.getAllLocallyDeletedFilledQuestionnaires().let { emptyFilledQuestionnaires ->
+    private suspend fun syncLocallyClearedQuestionnaires() = withContext(IO) {
+        localRepository.getAllLocallyClearedQuestionnaires().let { emptyFilledQuestionnaires ->
             if (emptyFilledQuestionnaires.isEmpty()) return@withContext
 
             runCatching {
                 backendRepository.insertFilledQuestionnaires(emptyFilledQuestionnaires)
             }.onSuccess { response ->
-                if (response.isSuccessful) {
-                    localRepository.delete(emptyFilledQuestionnaires.map { LocallyDeletedFilledQuestionnaire(it.questionnaireId) })
+                if (response.responseType == InsertFilledQuestionnairesResponseType.SUCCESSFUL) {
+                    localRepository.delete(emptyFilledQuestionnaires.map { LocallyClearedQuestionnaire(it.questionnaireId) })
                 }
             }
         }
@@ -187,7 +191,7 @@ class BackendSyncer(
             runCatching {
                 backendRepository.insertFilledQuestionnaires(filledQuestionnaires)
             }.onSuccess { response ->
-                if (response.isSuccessful) {
+                if (response.responseType == InsertFilledQuestionnairesResponseType.SUCCESSFUL) {
                     //TODO -> Noch nicht sicher ob das so gemacht werden muss oder nicht
                     (filledQuestionnaires.map { it.questionnaireId } - response.notInsertedQuestionnaireIds).map { LocallyAnsweredQuestionnaire(it) }.let {
                         localRepository.delete(it)
@@ -198,25 +202,6 @@ class BackendSyncer(
     }
 
 
-    /**
-     * Sync of locally downloaded Questionnaires, so that an empty MongoFilledQuestionnaire will be inserted for device change
-     */
-    private suspend fun syncLocallyDownloadedQuestionnaires() = withContext(IO) {
-        localRepository.getAllLocallyDownloadedQuestionnaireIds().let {
-//            val response = try {
-//                backendRepository.insertEmptyFilledQuestionnaire(
-//                    MongoFilledQuestionnaire(
-//                        questionnaireId = questionnaireId,
-//                        userId = preferencesRepository.userCredentialsFlow.first().id
-//                    )
-//                )
-//            } catch (e: Exception) {
-//                localRepository.insert(LocallyDownloadedQuestionnaire(questionnaireId))
-//                null
-//            }
-        }
-    }
-
 
     private suspend fun syncLocallyDeletedUsers() = withContext(IO) {
         localRepository.getAllLocallyDeletedUserIds().let { userIds ->
@@ -225,7 +210,7 @@ class BackendSyncer(
             runCatching {
                 backendRepository.deleteUsers(userIds.map { it.userId })
             }.onSuccess { response ->
-                if(response.isSuccessful){
+                if(response.responseType == DeleteUserResponseType.SUCCESSFUL){
                     localRepository.delete(userIds)
                 }
             }

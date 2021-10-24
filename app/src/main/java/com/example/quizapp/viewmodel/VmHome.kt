@@ -6,12 +6,15 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.responses.InsertQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.sync.LocallyAnsweredQuestionnaire
-import com.example.quizapp.model.room.entities.sync.LocallyDeletedFilledQuestionnaire
+import com.example.quizapp.model.room.entities.sync.LocallyClearedQuestionnaire
 import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.room.entities.sync.LocallyDownloadedQuestionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.utils.BackendSyncer
 import com.example.quizapp.viewmodel.VmHome.FragmentHomeCachedEvent.*
@@ -90,7 +93,7 @@ class VmHome @Inject constructor(
                 null
             }
 
-            if (result != null && result.isSuccessful) {
+            if (result != null && result.responseType == InsertQuestionnaireResponseType.SUCCESSFUL) {
                 localRepository.update(completeQuestionnaire.questionnaire.apply { syncStatus = SyncStatus.SYNCED })
                 fragmentHomeEventChannel.send(ShowSnackBarMessageBar(R.string.syncSuccessful))
             } else {
@@ -117,7 +120,7 @@ class VmHome @Inject constructor(
         runCatching {
             backendRepository.deleteQuestionnaire(listOf(questionnaireId))
         }.onSuccess {
-            if (it.isSuccessful) {
+            if (it.responseType == DeleteQuestionnaireResponseType.SUCCESSFUL) {
                 localRepository.delete(LocallyDeletedQuestionnaire.asOwner(questionnaireId))
             }
         }
@@ -139,20 +142,19 @@ class VmHome @Inject constructor(
         localRepository.deleteQuestionnaireWith(questionnaireId)
     }
 
-    fun onDeleteCachedQuestionnaireConfirmed(event: ShowUndoDeleteCachedQuestionnaireSnackBar) = launch(IO) {
+    fun onDeleteCachedQuestionnaireConfirmed(event: ShowUndoDeleteCachedQuestionnaireSnackBar) = applicationScope.launch(IO) {
         val questionnaireId = event.completeQuestionnaire.questionnaire.id
-        localRepository.delete(LocallyDownloadedQuestionnaire(questionnaireId))
 
         runCatching {
-            backendRepository.deleteQuestionnaire(listOf(questionnaireId))
+            backendRepository.deleteFilledQuestionnaire(listOf(questionnaireId))
         }.onSuccess {
-            if (it.isSuccessful) {
+            if (it.responseType == DeleteFilledQuestionnaireResponseType.SUCCESSFUL) {
                 localRepository.delete(LocallyDeletedQuestionnaire.notAsOwner(questionnaireId))
             }
         }
     }
 
-    fun onUndoDeleteCachedQuestionnaireClicked(event: ShowUndoDeleteCachedQuestionnaireSnackBar) = launch(IO) {
+    fun onUndoDeleteCachedQuestionnaireClicked(event: ShowUndoDeleteCachedQuestionnaireSnackBar) = applicationScope.launch(IO) {
         localRepository.insertCompleteQuestionnaire(event.completeQuestionnaire)
         localRepository.delete(LocallyDeletedQuestionnaire.notAsOwner(event.completeQuestionnaire.questionnaire.id))
     }
@@ -179,7 +181,7 @@ class VmHome @Inject constructor(
         localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let { completeQuestionnaire ->
 
             //TODO -> Inserted, dass man den hier reingeldaden hat -> Man muss noch schauen ob die Id in LocallyAnsweredQuestionnaireIds is und wenn ja rauslöschen!
-            localRepository.insert(LocallyDeletedFilledQuestionnaire(completeQuestionnaire.questionnaire.id))
+            localRepository.insert(LocallyClearedQuestionnaire(completeQuestionnaire.questionnaire.id))
             val locallyAnswered = localRepository.getLocallyAnsweredQuestionnaire(completeQuestionnaire.questionnaire.id)
             locallyAnswered?.let { localRepository.delete(it) }
 
@@ -193,15 +195,15 @@ class VmHome @Inject constructor(
         runCatching {
             backendRepository.insertFilledQuestionnaire(DataMapper.mapSqlEntitiesToEmptyFilledMongoEntity(event.completeQuestionnaire))
         }.onSuccess { response ->
-            if(response.isSuccessful){
-                localRepository.delete(LocallyDeletedFilledQuestionnaire(event.completeQuestionnaire.questionnaire.id))
+            if(response.responseType != InsertFilledQuestionnaireResponseType.ERROR){
+                localRepository.delete(LocallyClearedQuestionnaire(event.completeQuestionnaire.questionnaire.id))
             }
         }
     }
 
 
     fun onUndoDeleteFilledQuestionnaireClicked(event: ShowUndoDeleteAnswersOfQuestionnaireSnackBar) = launch(IO) {
-        localRepository.delete(LocallyDeletedFilledQuestionnaire(event.completeQuestionnaire.questionnaire.id))
+        localRepository.delete(LocallyClearedQuestionnaire(event.completeQuestionnaire.questionnaire.id))
         localRepository.update(event.completeQuestionnaire.allAnswers)
         //TODO -> Wenn vorhanden, dann wird es wieder hier eingefügt, dass es neue antworten des Users gibt
         event.locallyAnswered?.let {

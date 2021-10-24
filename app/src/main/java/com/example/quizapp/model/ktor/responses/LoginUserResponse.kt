@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class LoginUserResponse(
-    val isSuccessful: Boolean,
     val userId: String? = null,
     val role: Role? = null,
     val responseType: LoginUserResponseType,

@@ -17,7 +17,6 @@ import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmMain
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import java.util.*
 import javax.inject.Inject
@@ -67,7 +66,9 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             }
 
             addCard.onClick {
-                navigator.navigateToAddQuestionnaireScreen()
+                navigator.navigateToBackdropFragment()
+
+//                navigator.navigateToAddQuestionnaireScreen()
             }
         }
     }
@@ -80,7 +81,6 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 
         when (destination.id) {
             R.id.fragmentQuizOverview, R.id.fragmentQuizContainer, R.id.fragmentAddQuestionnaire, R.id.fragmentAddQuestion, R.id.fragmentAuth, R.id.fragmentSearch-> {
-                binding.bottomAppBar.performHide()
                 changeBottomAppBarVisibility(false)
             }
             R.id.fragmentHome -> {
@@ -95,6 +95,10 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
                 }
                 changeBottomAppBarVisibility(true)
             }
+            else -> {
+                changeBottomAppBarVisibility(false)
+            }
+
 //            R.id.fragmentSearch -> {
 //                binding.apply {
 //                    changeCustomBottomNavBarVisibility(cardSearch, ivSearch)
@@ -106,7 +110,6 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 
     private fun changeCustomBottomNavBarVisibility(cardToShow: MaterialCardView, imageViewToChangeTintOf: ImageView) {
         binding.apply {
-            bottomAppBar.performShow()
             cardHome.setCardBackgroundColor(getColor(R.color.transparent))
             ivHome.setDrawableTintWithRes(R.color.black)
             cardSearch.setCardBackgroundColor(getColor(R.color.transparent))
@@ -121,6 +124,13 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 
 
     private fun changeBottomAppBarVisibility(show: Boolean) {
+        if(show){
+            binding.bottomAppBar.performShow()
+            binding.bottomAppBar.isVisible = true
+        } else {
+            binding.bottomAppBar.performHide()
+        }
+
         binding.bottomAppBar.animate().setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 if (!show) {

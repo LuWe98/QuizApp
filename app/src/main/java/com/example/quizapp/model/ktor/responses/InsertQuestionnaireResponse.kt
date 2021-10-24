@@ -4,12 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class InsertQuestionnaireResponse(
-    val isSuccessful: Boolean,
     val responseType: InsertQuestionnaireResponseType
 ) {
     enum class  InsertQuestionnaireResponseType {
-        INSERTED,
-        REPLACED,
+        SUCCESSFUL,
         NOT_ACKNOWLEDGED,
         ERROR
     }

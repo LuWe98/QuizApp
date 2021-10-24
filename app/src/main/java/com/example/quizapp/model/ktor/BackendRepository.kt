@@ -1,16 +1,15 @@
 package com.example.quizapp.model.ktor
 
 import com.example.quizapp.model.DataMapper
-import com.example.quizapp.model.mongodb.documents.filledquestionnaire.MongoFilledQuestionnaire
+import com.example.quizapp.model.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
 import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
 import com.example.quizapp.model.mongodb.documents.user.Role
 import com.example.quizapp.model.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.apiclasses.*
+import com.example.quizapp.model.ktor.responses.GetQuestionnaireResponse
 import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -63,10 +62,13 @@ class BackendRepository @Inject constructor(
 
     suspend fun deleteQuestionnaire(questionnaireIds: List<String>) = questionnaireApi.deleteQuestionnaire(questionnaireIds)
 
-    suspend fun getPagedQuestionnaires(limit: Int, page: Int, searchString: String) = questionnaireApi.getPagedQuestionnaires(limit, page, searchString)
+    suspend fun getPagedQuestionnaires(limit: Int, page: Int, searchString: String, questionnaireIdsToIgnore: List<String>) =
+        questionnaireApi.getPagedQuestionnaires(limit, page, searchString, questionnaireIdsToIgnore)
+
+    suspend fun downloadQuestionnaire(questionnaireId: String) = questionnaireApi.downloadQuestionnaire(questionnaireId)
 
 
-    // FILLED QUESTIONNAIRED
+        // FILLED QUESTIONNAIRES
     suspend fun insertEmptyFilledQuestionnaire(mongoFilledQuestionnaire: MongoFilledQuestionnaire) =
         filledQuestionnaireApi.insertEmptyFilledQuestionnaire(mongoFilledQuestionnaire)
 

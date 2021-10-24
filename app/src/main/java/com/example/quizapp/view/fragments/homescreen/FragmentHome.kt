@@ -52,6 +52,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
                 is ShowUndoDeleteCreatedQuestionnaireSnackBar -> {
                     showSnackBar(
                         R.string.questionnaireDeleted,
+                        anchorView = bindingActivity.findViewById(R.id.bottomAppBar),
                         onDismissedAction = { vmHome.onDeleteCreatedQuestionnaireConfirmed(event) },
                         actionTextRes = R.string.undo,
                         actionClickEvent = { vmHome.onUndoDeleteCreatedQuestionnaireClicked(event) }
@@ -60,6 +61,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
                 is ShowUndoDeleteCachedQuestionnaireSnackBar -> {
                     showSnackBar(
                         R.string.questionnaireDeleted,
+                        anchorView = bindingActivity.findViewById(R.id.bottomAppBar),
                         onDismissedAction = { vmHome.onDeleteCachedQuestionnaireConfirmed(event) },
                         actionTextRes = R.string.undo,
                         actionClickEvent = { vmHome.onUndoDeleteCachedQuestionnaireClicked(event) }
@@ -68,6 +70,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
                 is ShowUndoDeleteAnswersOfQuestionnaireSnackBar -> {
                     showSnackBar(
                         R.string.answersDeleted,
+                        anchorView = bindingActivity.findViewById(R.id.bottomAppBar),
                         onDismissedAction = { vmHome.onDeleteFilledQuestionnaireConfirmed(event) },
                         actionTextRes = R.string.undo,
                         actionClickEvent =  { vmHome.onUndoDeleteFilledQuestionnaireClicked(event) }

@@ -1,7 +1,7 @@
 package com.example.quizapp.model
 
-import com.example.quizapp.model.mongodb.documents.filledquestionnaire.MongoFilledQuestion
-import com.example.quizapp.model.mongodb.documents.filledquestionnaire.MongoFilledQuestionnaire
+import com.example.quizapp.model.mongodb.documents.questionnairefilled.MongoFilledQuestion
+import com.example.quizapp.model.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
 import com.example.quizapp.model.mongodb.documents.questionnaire.MongoAnswer
 import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestion
 import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire

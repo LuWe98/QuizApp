@@ -20,8 +20,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FragmentAddQuestion : BindingFragment<FragmentAddQuestionBinding>() {
 
-    private val vmAdd : VmAddEdit by hiltNavGraphViewModels(R.id.add_nav_graph)
-    private val vmEditQuestion : VmAddEditQuestion by viewModels()
+    private val vmAddEdit : VmAddEdit by hiltNavGraphViewModels(R.id.add_nav_graph)
+    private val vmAddEditQuestion : VmAddEditQuestion by viewModels()
 
     private lateinit var rvAdapter : RvaAnswerEditQuestion
 
@@ -33,49 +33,51 @@ class FragmentAddQuestion : BindingFragment<FragmentAddQuestionBinding>() {
     }
 
     private fun initViews(){
-        binding.questionEditText.setText(vmEditQuestion.questionTitle)
-        binding.isMultipleChoiceSwitch.isChecked = vmEditQuestion.isMultipleChoice
+        binding.questionEditText.setText(vmAddEditQuestion.questionTitle)
+        binding.isMultipleChoiceSwitch.isChecked = vmAddEditQuestion.isMultipleChoice
 
-        rvAdapter = RvaAnswerEditQuestion(vmEditQuestion).apply {
-            onItemClick = vmEditQuestion::onAnswerItemClicked
-            onDeleteButtonClick = vmEditQuestion::onAnswerItemDeleteButtonClicked
-            onAnswerTextChanged = vmEditQuestion::onAnswerItemTextChanged
+        rvAdapter = RvaAnswerEditQuestion(vmAddEditQuestion).apply {
+            onItemClick = vmAddEditQuestion::onAnswerItemClicked
+            onDeleteButtonClick = vmAddEditQuestion::onAnswerItemDeleteButtonClicked
+            onAnswerTextChanged = vmAddEditQuestion::onAnswerItemTextChanged
         }
 
         binding.rv.apply {
             setHasFixedSize(true)
-            isNestedScrollingEnabled = false
             layoutManager = LinearLayoutManager(requireContext())
             adapter = rvAdapter
-            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+            disableChangeAnimation()
             addCustomItemTouchHelperCallBack().apply {
-                onSwiped = vmEditQuestion::onAnswerItemSwiped
+                onSwiped = vmAddEditQuestion::onAnswerItemSwiped
                 onDrag = rvAdapter::moveItem
-                onDragReleased = { vmEditQuestion.onAnswerItemDragReleased(rvAdapter.currentList) }
+                onDragReleased = { vmAddEditQuestion.onAnswerItemDragReleased(rvAdapter.currentList) }
             }
         }
     }
 
     private fun initListeners() {
         binding.buttonBack.onClick(navigator::popBackStack)
-        binding.buttonAdd.onClick(vmEditQuestion::onAddAnswerButtonClicked)
-        binding.fabConfirm.onClick(vmEditQuestion::onFabConfirmClicked)
-        binding.isMultipleChoiceSwitch.onCheckedChange(vmEditQuestion::onSwitchChanged)
-        binding.questionEditText.onTextChanged(vmEditQuestion::onQuestionEditTextChanged)
+        binding.buttonAdd.onClick(vmAddEditQuestion::onAddAnswerButtonClicked)
+        binding.fabConfirm.onClick(vmAddEditQuestion::onFabConfirmClicked)
+        binding.isMultipleChoiceSwitch.onCheckedChange(vmAddEditQuestion::onSwitchChanged)
+        binding.questionEditText.onTextChanged(vmAddEditQuestion::onQuestionEditTextChanged)
     }
 
     private fun initObservers(){
-        vmEditQuestion.answersLiveData.observe(viewLifecycleOwner) {
-            //binding.noDataLayout.isVisible = it.isEmpty()
-            rvAdapter.submitList(it)
+        vmAddEditQuestion.answersLiveData.observe(viewLifecycleOwner) {
+            rvAdapter.submitList(it) {
+                //binding.noDataLayout.isVisible = it.isEmpty()
+            }
         }
 
-        vmEditQuestion.fragmentEditQuestionEventChannelFlow.collect(lifecycleScope) { event ->
+        vmAddEditQuestion.fragmentEditQuestionEventChannelFlow.collect(lifecycleScope) { event ->
             when(event){
                 is ShowAnswerDeletedSuccessFullySnackBar -> {
-                    showSnackBar(R.string.answerDeleted, viewToAttachTo = bindingActivity.rootView, actionTextRes = R.string.undo) {
-                        vmEditQuestion.onUndoDeleteAnswerClicked(event)
-                    }
+                    showSnackBar(
+                        textRes = R.string.answerDeleted,
+                        actionTextRes = R.string.undo,
+                        actionClickEvent = { vmAddEditQuestion.onUndoDeleteAnswerClicked(event) }
+                    )
                 }
                 is ShowSelectAtLeastOneCorrectAnswerToast -> {
                     showToast(R.string.errorSelectOneCorrectAnswer)
@@ -84,7 +86,7 @@ class FragmentAddQuestion : BindingFragment<FragmentAddQuestionBinding>() {
                     showToast(R.string.errorAnswersDoNotHaveText)
                 }
                 is SendUpdateRequestToVmAdd -> {
-                    vmAdd.onSaveSpecificQuestionClicked(event)
+                    vmAddEdit.onSaveSpecificQuestionClicked(event)
                     navigator.popBackStack()
                 }
             }

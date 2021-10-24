@@ -9,6 +9,8 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
 import com.example.quizapp.model.ktor.paging.UserPagingSource
+import com.example.quizapp.model.ktor.responses.DeleteUserResponse
+import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
 import com.example.quizapp.model.mongodb.documents.user.Role
 import com.example.quizapp.model.mongodb.documents.user.User
 import com.example.quizapp.model.room.LocalRepository
@@ -65,7 +67,7 @@ class VmAdmin @Inject constructor(
         runCatching {
             backendRepository.deleteUser(event.user.id)
         }.onSuccess { response ->
-            if (response.isSuccessful) {
+            if (response.responseType == DeleteUserResponseType.SUCCESSFUL) {
                 localRepository.delete(LocallyDeletedUser(event.user.id))
             }
         }

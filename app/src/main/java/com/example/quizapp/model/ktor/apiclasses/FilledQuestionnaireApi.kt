@@ -6,7 +6,7 @@ import com.example.quizapp.model.ktor.requests.InsertFilledQuestionnairesRequest
 import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireResponse
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnairesResponse
-import com.example.quizapp.model.mongodb.documents.filledquestionnaire.MongoFilledQuestionnaire
+import com.example.quizapp.model.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject

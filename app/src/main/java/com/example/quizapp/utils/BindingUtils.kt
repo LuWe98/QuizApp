@@ -12,7 +12,7 @@ import java.lang.reflect.ParameterizedType
 
 @Suppress("UNCHECKED_CAST")
 object BindingUtils {
-    private const val INFLATE_METHOD = "inflate"
+    const val INFLATE_METHOD = "inflate"
 
     private fun findGenericTypeWith(classInstance: Any, genericClassToFind: Class<*>, relativePosition : Int): Class<*> {
         return try {
@@ -49,4 +49,5 @@ object BindingUtils {
 
     fun <VB : ViewBinding> getBinding(activity: BindingActivity<VB>, relativePosition : Int = 0) =
         getBindingWith(activity, activity.layoutInflater, relativePosition) as VB
+
 }

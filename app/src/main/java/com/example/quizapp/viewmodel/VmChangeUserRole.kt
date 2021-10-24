@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.responses.UpdateUserResponse
+import com.example.quizapp.model.ktor.responses.UpdateUserResponse.*
 import com.example.quizapp.model.ktor.status.Resource
 import com.example.quizapp.model.mongodb.documents.user.Role
 import com.example.quizapp.model.mongodb.documents.user.User
@@ -42,7 +44,7 @@ class VmChangeUserRole @Inject constructor(
         }.onFailure {
             fragmentChangeUserRoleEventChannel.send(StateTest(Resource.Error()))
         }.onSuccess { response ->
-            if(response.isSuccessful){
+            if(response.responseType == UpdateUserResponseType.UPDATE_SUCCESSFUL){
                 fragmentChangeUserRoleEventChannel.send(StateTest(Resource.Success(data = args.user.copy(role = newRole))))
                 delay(250)
                 fragmentChangeUserRoleEventChannel.send(NavigateBack)

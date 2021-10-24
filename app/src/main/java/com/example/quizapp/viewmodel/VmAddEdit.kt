@@ -7,6 +7,8 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.responses.InsertQuestionnaireResponse
+import com.example.quizapp.model.ktor.responses.InsertQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.Questionnaire
@@ -195,7 +197,7 @@ class VmAddEdit @Inject constructor(
             }.onFailure {
                 localRepository.update(questionnaire.apply { syncStatus = SyncStatus.UNSYNCED })
             }.onSuccess {
-                localRepository.update(questionnaire.apply { syncStatus = if (it.isSuccessful) SyncStatus.SYNCED else SyncStatus.UNSYNCED })
+                localRepository.update(questionnaire.apply { syncStatus = if (it.responseType == InsertQuestionnaireResponseType.SUCCESSFUL) SyncStatus.SYNCED else SyncStatus.UNSYNCED })
             }
         }
     }

@@ -57,7 +57,8 @@ class FragmentAdmin: BindingFragment<FragmentAdminBinding>() {
                 is ShowUserEvent -> rvAdapter.showUser(event.user)
                 is ShowUndoDeleteUserSnackBarEvent -> {
                     showSnackBar(
-                        R.string.userDeleted,
+                        textRes = R.string.userDeleted,
+                        anchorView = bindingActivity.findViewById(R.id.bottomAppBar),
                         onDismissedAction = { vmAdmin.onDeleteUserConfirmed(event) },
                         actionTextRes = R.string.undo,
                         actionClickEvent =  { vmAdmin.onUndoDeleteUserClicked(event) }

@@ -1,26 +1,27 @@
 package com.example.quizapp.viewmodel
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.*
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import androidx.paging.liveData
+import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.extensions.log
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.mongodb.documents.filledquestionnaire.MongoFilledQuestionnaire
-import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
 import com.example.quizapp.model.ktor.paging.MongoQuestionnairePagingSource
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.responses.GetQuestionnaireResponse.GetQuestionnaireResponseType
+import com.example.quizapp.model.ktor.status.DownloadStatus
 import com.example.quizapp.model.room.LocalRepository
-import com.example.quizapp.model.room.entities.sync.LocallyDownloadedQuestionnaire
+import com.example.quizapp.viewmodel.VmSearch.FragmentSearchEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,74 +39,59 @@ class VmSearch @Inject constructor(
     private val searchQuery = MutableLiveData("")
 
     val filteredPagedData = searchQuery.switchMap { query ->
-        Pager(config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
-            pagingSourceFactory = { MongoQuestionnairePagingSource(backendRepository, query) }).liveData.cachedIn(viewModelScope).distinctUntilChanged()
+        Pager(config = PagingConfig(
+            pageSize = PagingConfigValues.PAGE_SIZE,
+            maxSize = PagingConfigValues.MAX_SIZE
+        ),
+            pagingSourceFactory = {
+                MongoQuestionnairePagingSource(backendRepository, localRepository, query)
+            }).liveData.cachedIn(viewModelScope)
     }.distinctUntilChanged()
-
-//
-//    val filteredPagedData = searchQuery.switchMap { query ->
-//        if(query.isEmpty()){
-//            Pager(PagingConfig(pageSize = 0)) {  EmptyPagingSource<Int, MongoQuestionnaire>() }.liveData
-//        } else {
-//            Pager(config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
-//                pagingSourceFactory = { MongoQuestionnairePagingSource(backendRepository, query) }).liveData
-//        }
-//    }.cachedIn(viewModelScope).distinctUntilChanged()
 
 
     fun onSearchQueryChanged(query: String) {
         searchQuery.value = query
     }
 
-    fun onBackButtonClicked() {
-        launch {
-            fragmentSearchEventChannel.send(FragmentSearchEvent.NavigateBack)
-        }
+    fun onBackButtonClicked() = launch {
+        fragmentSearchEventChannel.send(NavigateBack)
     }
 
-    fun onFilterButtonClicked() {
-        launch {
-            fragmentSearchEventChannel.send(FragmentSearchEvent.NavigateToFilterScreen)
-        }
+    fun onFilterButtonClicked() = launch {
+        fragmentSearchEventChannel.send(NavigateToFilterScreen)
     }
 
 
+    fun onItemDownLoadButtonClicked(questionnaireId: String) = launch(IO) {
+        fragmentSearchEventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, DownloadStatus.DOWNLOADING))
 
-
-    //TODO -> Wenn man auf ein item draufdrückt
-    fun onItemDownLoadButtonClicked(mongoQuestionnaire: MongoQuestionnaire) = launch(IO) {
-        DataMapper.mapMongoObjectToSqlEntities(mongoQuestionnaire).let {
-            localRepository.insertCompleteQuestionnaire(it)
-            uploadEmptyFilledQuestionnaire(it.questionnaire.id)
-        }
-    }
-
-    private fun uploadEmptyFilledQuestionnaire(questionnaireId: String) = applicationScope.launch(IO) {
         runCatching {
-            backendRepository.insertEmptyFilledQuestionnaire(
-                MongoFilledQuestionnaire(
-                    questionnaireId = questionnaireId,
-                    userId = preferencesRepository.user.id
-                )
-            )
-        }.onFailure {
-            localRepository.insert(LocallyDownloadedQuestionnaire(questionnaireId))
+            backendRepository.downloadQuestionnaire(questionnaireId)
         }.onSuccess { response ->
-            when (response.responseType) {
-                InsertFilledQuestionnaireResponseType.INSERTED -> {
+            when(response.responseType){
+                GetQuestionnaireResponseType.SUCCESSFUL -> {
+                    DataMapper.mapMongoObjectToSqlEntities(response.mongoQuestionnaire!!).let {
+                        localRepository.insertCompleteQuestionnaire(it)
+                        localRepository.deleteLocallyDeletedQuestionnaireWith(it.questionnaire.id)
+                        fragmentSearchEventChannel.send(ShowMessageSnackBar(R.string.questionnaireDownloaded))
+                        fragmentSearchEventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, DownloadStatus.DOWNLOADED))
+                    }
                 }
-                InsertFilledQuestionnaireResponseType.ERROR -> {
-                }
-                InsertFilledQuestionnaireResponseType.EMPTY_INSERTION_SKIPPED -> {
-                }
-                InsertFilledQuestionnaireResponseType.QUESTIONNAIRE_DOES_NOT_EXIST_ANYMORE -> {
+                GetQuestionnaireResponseType.QUESTIONNAIRE_NOT_FOUND -> {
+                    fragmentSearchEventChannel.send(ShowMessageSnackBar(R.string.errorQuestionnaireCouldNotBeFound))
+                    fragmentSearchEventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, DownloadStatus.NOT_DOWNLOADED))
                 }
             }
+        }.onFailure {
+            fragmentSearchEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDownloadQuestionnaire))
+            fragmentSearchEventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, DownloadStatus.NOT_DOWNLOADED))
         }
     }
 
     sealed class FragmentSearchEvent {
         object NavigateBack : FragmentSearchEvent()
         object NavigateToFilterScreen : FragmentSearchEvent()
+        class ShowMessageSnackBar(@StringRes val messageRes: Int) : FragmentSearchEvent()
+        class ChangeItemDownloadStatusEvent(val questionnaireId: String, val downloadStatus: DownloadStatus): FragmentSearchEvent()
     }
 }

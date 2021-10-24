@@ -8,6 +8,10 @@ import com.example.quizapp.extensions.containsWhiteSpaces
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.responses.LoginUserResponse
+import com.example.quizapp.model.ktor.responses.LoginUserResponse.*
+import com.example.quizapp.model.ktor.responses.RegisterUserResponse
+import com.example.quizapp.model.ktor.responses.RegisterUserResponse.*
 import com.example.quizapp.viewmodel.VmAuth.FragmentAuthEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -66,7 +70,7 @@ class VmAuth @Inject constructor(
             }.onFailure {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileLoggingInUser))
             }.onSuccess { response ->
-                if (response.isSuccessful) {
+                if (response.responseType == LoginUserResponseType.LOGIN_SUCCESSFUL) {
                     preferencesRepository.updateUserCredentials(
                         id = response.userId!!,
                         name = currentLoginUserName,
@@ -134,7 +138,7 @@ class VmAuth @Inject constructor(
             }.onFailure {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileRegisteringUser))
             }.onSuccess { response ->
-                if (response.isSuccessful) {
+                if (response.responseType == RegisterUserResponseType.REGISTER_SUCCESSFUL) {
                     fragmentEventChannel.send(SetLoginCredentials(currentRegisterUserName, currentRegisterPassword))
                     fragmentEventChannel.send(SwitchPage(0))
                 }

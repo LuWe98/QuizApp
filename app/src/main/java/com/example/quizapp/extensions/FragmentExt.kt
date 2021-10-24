@@ -43,11 +43,6 @@ fun Fragment.showToast(@StringRes textRes: Int, duration: Int = Toast.LENGTH_LON
     requireContext().showToast(textRes, duration)
 }
 
-@MainThread
-fun Fragment.showSnackBar(text: String, viewToAttachTo: View = requireView(), duration: Int = Snackbar.LENGTH_LONG) {
-    Snackbar.make(viewToAttachTo, text, duration).show()
-}
-
 fun Fragment.showAlertDialog(
     @StringRes titleRes: Int,
     @StringRes textRes: Int,
@@ -64,9 +59,17 @@ fun Fragment.showAlertDialog(
         .show()
 }
 
+
 @MainThread
-fun Fragment.showSnackBar(@StringRes textRes: Int, viewToAttachTo: View = requireView(), duration: Int = Snackbar.LENGTH_LONG) =
+fun Fragment.showSnackBar(
+    @StringRes textRes: Int,
+    viewToAttachTo: View = bindingActivity.rootView,
+    anchorView: View? = null,
+    animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
+    duration: Int = Snackbar.LENGTH_LONG) =
     Snackbar.make(viewToAttachTo, textRes, duration).apply {
+        setAnchorView(anchorView)
+        this.animationMode = animationMode
         show()
     }.also {
         bindingActivity.currentSnackBar = it
@@ -74,27 +77,17 @@ fun Fragment.showSnackBar(@StringRes textRes: Int, viewToAttachTo: View = requir
 
 @MainThread
 fun Fragment.showSnackBar(
-    text: String,
-    viewToAttachTo: View = requireView(),
-    duration: Int = Snackbar.LENGTH_LONG,
-    actionText: String,
-    actionClickEvent: ((View) -> Unit)
-) = Snackbar.make(viewToAttachTo, text, duration).apply {
-    setAction(actionText, actionClickEvent)
-    show()
-}.also {
-    bindingActivity.currentSnackBar = it
-}
-
-@MainThread
-fun Fragment.showSnackBar(
     @StringRes textRes: Int,
-    viewToAttachTo: View = requireView(),
+    viewToAttachTo: View = bindingActivity.rootView,
+    anchorView: View? = null,
+    animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
     duration: Int = Snackbar.LENGTH_LONG,
     onDismissedAction: () -> (Unit) = {},
     @StringRes actionTextRes: Int,
     actionClickEvent: ((View) -> Unit)
 ) = Snackbar.make(viewToAttachTo, textRes, duration).apply {
+    setAnchorView(anchorView)
+    this.animationMode = animationMode
     addCallback(object : Snackbar.Callback() {
         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
             if (event != DISMISS_EVENT_ACTION) { onDismissedAction.invoke() }

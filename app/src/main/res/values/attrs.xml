@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="mainTransparencyColor" format="color"/>
+
+    <declare-styleable name="BackdropLayout">
+        <attr name="frontLayerTopMargin" format="dimension"/>
+        <attr name="frontLayerMinHeight" format="dimension"/>
+        <attr name="frontLayerOffset" format="dimension"/>
+        <attr name="frontLayerScale" format="float"/>
+        <attr name="animationDuration" format="integer"/>
+    </declare-styleable>
 </resources>

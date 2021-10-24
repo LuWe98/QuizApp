@@ -176,4 +176,16 @@
     <action
             android:id="@+id/action_global_bsdfQuestionnaireMoreOptions"
             app:destination="@id/bsdfQuestionnaireMoreOptions" />
+
+
+
+    <!-- BACKDROP TEST -->
+    <fragment
+            android:id="@+id/backdropFragment"
+            android:name="com.example.quizapp.view.fragments.backgroptest.BackdropFragment"
+            android:label="BackdropFragment"
+            tools:layout="@layout/fragment_backdrop"/>
+
+    <action android:id="@+id/action_global_backdropFragment"
+            app:destination="@id/backdropFragment"/>
 </navigation>

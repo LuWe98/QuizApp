@@ -1,4 +1,4 @@
-package com.example.quizapp.model.mongodb.documents.filledquestionnaire
+package com.example.quizapp.model.mongodb.documents.questionnairefilled
 
 import kotlinx.serialization.Serializable
 

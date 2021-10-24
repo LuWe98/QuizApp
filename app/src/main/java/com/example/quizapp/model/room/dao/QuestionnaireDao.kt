@@ -67,4 +67,7 @@ abstract class QuestionnaireDao : BaseDao<Questionnaire> {
 //    @Query("SELECT * FROM questionaryTable ORDER BY title")
 //    abstract fun getAllQuestionnairesWithQuestionsPagingSource() : PagingSource<Int, QuestionnaireWithQuestions>
 
+
+    @Query("SELECT id FROM questionaryTable")
+    abstract suspend fun getAllQuestionnaireIds() : List<String>
 }

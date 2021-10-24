@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class GetPagedQuestionnairesRequest(
     val limit: Int ,
     val page: Int,
-    val searchString: String
+    val searchString: String,
+    val questionnaireIdsToIgnore: List<String>
 )

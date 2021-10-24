@@ -3,7 +3,7 @@ package com.example.quizapp.model.room
 import androidx.room.Transaction
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.mongodb.documents.filledquestionnaire.MongoFilledQuestionnaire
+import com.example.quizapp.model.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
 import com.example.quizapp.model.room.dao.*
 import com.example.quizapp.model.room.dao.sync.*
 import com.example.quizapp.model.room.entities.*
@@ -11,9 +11,7 @@ import com.example.quizapp.model.room.entities.sync.*
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,9 +25,8 @@ class LocalRepository @Inject constructor(
     private val facultyDao: FacultyDao,
     private val courseOfStudiesDao: CourseOfStudiesDao,
     private val subjectDao: SubjectDao,
-    private val locallyDownloadedQuestionnaireDao: LocallyDownloadedQuestionnaireDao,
     private val locallyDeletedQuestionnaireDao: LocallyDeletedQuestionnaireDao,
-    private val locallyDeletedFilledQuestionnaireDao: LocallyDeletedFilledQuestionnaireDao,
+    private val locallyClearedQuestionnaireDao: LocallyClearedQuestionnaireDao,
     private val locallyAnsweredQuestionnaireDao: LocallyAnsweredQuestionnaireDao,
     private val locallyDeletedUserDao: LocallyDeletedUserDao
 ) {
@@ -57,9 +54,8 @@ class LocalRepository @Inject constructor(
         is CourseOfStudies -> courseOfStudiesDao
         is Subject -> subjectDao
         is LocallyDeletedQuestionnaire -> locallyDeletedQuestionnaireDao
-        is LocallyDeletedFilledQuestionnaire -> locallyDeletedFilledQuestionnaireDao
+        is LocallyClearedQuestionnaire -> locallyClearedQuestionnaireDao
         is LocallyAnsweredQuestionnaire -> locallyAnsweredQuestionnaireDao
-        is LocallyDownloadedQuestionnaire -> locallyDownloadedQuestionnaireDao
         is LocallyDeletedUser -> locallyDeletedUserDao
         else -> throw IllegalArgumentException("Entity DAO could not be found! Did you add it to the 'getBaseDaoWith' - Method?")
     } as BaseDao<T>)
@@ -69,9 +65,8 @@ class LocalRepository @Inject constructor(
         applicationScope.apply {
             launch(IO) { questionnaireDao.deleteAllQuestionnaires() }
             launch(IO) { locallyAnsweredQuestionnaireDao.deleteAllLocallyAnsweredQuestionnaires() }
-            launch(IO) { locallyDeletedFilledQuestionnaireDao.deleteAllLocallyDeletedFilledQuestionnaires() }
+            launch(IO) { locallyClearedQuestionnaireDao.deleteAllLocallyDeletedFilledQuestionnaires() }
             launch(IO) { locallyDeletedQuestionnaireDao.deleteAllLocallyDeletedQuestionnaires() }
-            launch(IO) { locallyDownloadedQuestionnaireDao.deleteAllLocallyDownloadedQuestionnaires() }
             launch(IO) { locallyDeletedUserDao.deleteAllLocallyDeletedUsers() }
             launch(IO) { facultyDao.deleteAllFaculties() }
             launch(IO) { subjectDao.deleteAllSubjects() }
@@ -101,6 +96,8 @@ class LocalRepository @Inject constructor(
     private suspend fun deleteQuestionnairesWith(questionnaireIds: List<String>) {
         delete(findQuestionnairesWith(questionnaireIds))
     }
+
+    suspend fun getAllQuestionnaireIds() = questionnaireDao.getAllQuestionnaireIds()
 
     fun findAllCompleteQuestionnairesNotForUserFlow(userId: String) = questionnaireDao.findAllCompleteQuestionnairesNotForUserFlow(userId)
 
@@ -156,19 +153,21 @@ class LocalRepository @Inject constructor(
     //LOCALLY DELETED QUESTIONNAIRE
     suspend fun getLocallyDeletedQuestionnaireIds() = locallyDeletedQuestionnaireDao.getLocallyDeletedQuestionnaireIds()
 
+    suspend fun deleteLocallyDeletedQuestionnaireWith(questionnaireId: String) =
+        locallyDeletedQuestionnaireDao.deleteLocallyDeletedQuestionnaireWith(questionnaireId)
 
 
     //LOCALLY DELETED FILLED QUESTIONNAIRE
-    suspend fun getLocallyDeletedFilledQuestionnaireIds() = locallyDeletedFilledQuestionnaireDao.getLocallyDeletedFilledQuestionnaireIds()
+    suspend fun getLocallyClearedQuestionnaireIds() = locallyClearedQuestionnaireDao.getLocallyDeletedFilledQuestionnaireIds()
 
-    suspend fun getAllLocallyDeletedFilledQuestionnaires() : List<MongoFilledQuestionnaire> {
-        getLocallyDeletedFilledQuestionnaireIds().map { it.questionnaireId }.let { locallyDeleted ->
+    suspend fun getAllLocallyClearedQuestionnaires() : List<MongoFilledQuestionnaire> {
+        getLocallyClearedQuestionnaireIds().map { it.questionnaireId }.let { locallyDeleted ->
             return if(locallyDeleted.isEmpty()) emptyList()
             else {
                 val foundCompleteQuestionnaires = findCompleteQuestionnairesWith(locallyDeleted)
                 val deletedQuestionnaireIds = locallyDeleted - foundCompleteQuestionnaires.map { it.questionnaire.id }
                 if(deletedQuestionnaireIds.isNotEmpty()){
-                    locallyDeletedFilledQuestionnaireDao.deleteLocallyDeletedFilledQuestionnairesWith(deletedQuestionnaireIds)
+                    locallyClearedQuestionnaireDao.deleteLocallyDeletedFilledQuestionnairesWith(deletedQuestionnaireIds)
                 }
                 foundCompleteQuestionnaires.map { DataMapper.mapSqlEntitiesToEmptyFilledMongoEntity(it) }
             }
@@ -196,10 +195,6 @@ class LocalRepository @Inject constructor(
     suspend fun isAnsweredQuestionnairePresent(questionnaireId: String) = locallyAnsweredQuestionnaireDao.isAnsweredQuestionnairePresent(questionnaireId) == 1
 
     suspend fun getLocallyAnsweredQuestionnaire(questionnaireId: String) = locallyAnsweredQuestionnaireDao.getLocallyAnsweredQuestionnaire(questionnaireId)
-
-
-    //LOCALLY DOWNLOADED QUESTIONNAIRE
-    suspend fun getAllLocallyDownloadedQuestionnaireIds() = locallyDownloadedQuestionnaireDao.getAllDownloadedQuestionnaireIds()
 
 
     //LOCALLY DELETED USERS

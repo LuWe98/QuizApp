@@ -42,9 +42,8 @@ class FragmentAddQuestionnaire : BindingFragment<FragmentAddQuestionnaireBinding
         binding.rv.apply {
             adapter = rvAdapter
             setHasFixedSize(true)
-            isNestedScrollingEnabled = false
             layoutManager = LinearLayoutManager(requireContext())
-            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+            disableChangeAnimation()
             addCustomItemTouchHelperCallBack().apply {
                 onSwiped = vmAdd::onQuestionItemSwiped
                 onDrag = rvAdapter::moveItem
@@ -72,9 +71,11 @@ class FragmentAddQuestionnaire : BindingFragment<FragmentAddQuestionnaireBinding
         vmAdd.fragmentAddQuestionnaireEventChannelFlow.collect(lifecycleScope){ event ->
             when(event){
                 is ShowQuestionDeletedSuccessFullySnackBar -> {
-                    showSnackBar(R.string.questionDeleted, viewToAttachTo = bindingActivity.rootView, actionTextRes = R.string.undo) {
-                        vmAdd.onUndoDeleteQuestionClicked(event)
-                    }
+                    showSnackBar(
+                        textRes = R.string.questionDeleted,
+                        actionTextRes = R.string.undo,
+                        actionClickEvent = { vmAdd.onUndoDeleteQuestionClicked(event) }
+                    )
                 }
                 is ShowQuestionDoesNotHaveTitleToast -> {
                     showToast(getString(R.string.errorQuestionDoesNotHaveTitle, event.position.toString()))

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.example.quizapp.backdrop.BackdropLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/backDropLayout"
+            app:frontLayerTopMargin="65dp"
+            app:frontLayerMinHeight="100dp"
+            app:frontLayerOffset="25dp"
+            app:frontLayerScale="0.965"
+            app:animationDuration="350">
+        <include
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/backLayer"
+                layout="@layout/backdrop_layout_back_layer"/>
+
+        <include
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/frontLayer"
+                android:layout_marginHorizontal="@dimen/grid_1"
+                layout="@layout/backdrop_layout_front_layer"/>
+    </com.example.quizapp.backdrop.BackdropLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

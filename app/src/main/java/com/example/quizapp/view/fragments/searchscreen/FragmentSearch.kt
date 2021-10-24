@@ -8,17 +8,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.databinding.FragmentSearchBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaBrowseQuestionnaires
+import com.example.quizapp.view.recyclerview.adapters.RvaBrowsableQuestionnaires
 import com.example.quizapp.viewmodel.VmSearch
+import com.example.quizapp.viewmodel.VmSearch.FragmentSearchEvent.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.channels.Channel
 
 @AndroidEntryPoint
 class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
 
     private val vmSearch : VmSearch by viewModels()
 
-    private lateinit var rvAdapter : RvaBrowseQuestionnaires
+    private lateinit var rvAdapter : RvaBrowsableQuestionnaires
+
+    //            etSearchQuery.requestFocus()
+//            showKeyboard(etSearchQuery)
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -28,14 +32,11 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
     }
 
     private fun initViews(){
-        rvAdapter = RvaBrowseQuestionnaires().apply {
+        rvAdapter = RvaBrowsableQuestionnaires().apply {
             onDownloadClick = vmSearch::onItemDownLoadButtonClicked
         }
 
         binding.apply {
-            etSearchQuery.requestFocus()
-            showKeyboard(etSearchQuery)
-
             rv.apply {
                 setHasFixedSize(true)
                 adapter = rvAdapter
@@ -50,21 +51,29 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
             btnBack.onClick(vmSearch::onBackButtonClicked)
             btnFilter.onClick(vmSearch::onFilterButtonClicked)
             etSearchQuery.onTextChanged(vmSearch::onSearchQueryChanged)
+            swipeRefreshLayout.setOnRefreshListener(rvAdapter::refresh)
         }
     }
 
     private fun initObservers(){
         vmSearch.filteredPagedData.observe(viewLifecycleOwner) {
+            binding.swipeRefreshLayout.isRefreshing = false
             rvAdapter.submitData(lifecycle, it)
         }
 
         vmSearch.fragmentSearchEventChannelFlow.collect(lifecycleScope) { event ->
             when(event){
-                VmSearch.FragmentSearchEvent.NavigateBack -> {
+                NavigateBack -> {
                     navigator.popBackStack()
                 }
-                VmSearch.FragmentSearchEvent.NavigateToFilterScreen -> {
+                NavigateToFilterScreen -> {
                     //TODO -> Navigate Back Stuff
+                }
+                is ShowMessageSnackBar -> {
+                    showSnackBar(textRes = event.messageRes)
+                }
+                is ChangeItemDownloadStatusEvent -> {
+                    rvAdapter.changeItemDownloadStatus(event.questionnaireId, event.downloadStatus)
                 }
             }
         }

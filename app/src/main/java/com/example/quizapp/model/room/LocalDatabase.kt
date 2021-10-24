@@ -26,9 +26,8 @@ import javax.inject.Singleton
         CourseOfStudies::class,
         Subject::class,
         LocallyDeletedQuestionnaire::class,
-        LocallyDeletedFilledQuestionnaire::class,
+        LocallyClearedQuestionnaire::class,
         LocallyAnsweredQuestionnaire::class,
-        LocallyDownloadedQuestionnaire::class,
         LocallyDeletedUser::class
     ],
     version = Constants.ROOM_DATABASE_VERSION,
@@ -43,9 +42,8 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun getFacultyDao(): FacultyDao
     abstract fun getCourseOfStudiesDao(): CourseOfStudiesDao
     abstract fun getSubjectDao(): SubjectDao
-    abstract fun getDownloadedQuestionnaireDao(): LocallyDownloadedQuestionnaireDao
     abstract fun getLocallyDeletedQuestionnaireDao(): LocallyDeletedQuestionnaireDao
-    abstract fun getLocallyDeletedFilledQuestionnaireDao(): LocallyDeletedFilledQuestionnaireDao
+    abstract fun getLocallyDeletedFilledQuestionnaireDao(): LocallyClearedQuestionnaireDao
     abstract fun getLocallyAnsweredQuestionnairesDao(): LocallyAnsweredQuestionnaireDao
     abstract fun getLocallyDeletedUsersDao(): LocallyDeletedUserDao
 

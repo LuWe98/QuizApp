@@ -5,13 +5,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UpdateUserResponse(
-    val isSuccessful: Boolean,
     val responseType: UpdateUserResponseType,
 ) {
     enum class UpdateUserResponseType(@StringRes val messageRes: Int) {
         UPDATE_SUCCESSFUL(0),
         UPDATE_FAILED(0),
-        USER_ALREADY_EXISTS(0),
+        USERNAME_ALREADY_TAKEN(0),
         LAST_CHANGE_TO_CLOSE(0),
         USER_DOES_NOT_EXIST(0)
     }

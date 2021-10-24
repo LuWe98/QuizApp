@@ -12,6 +12,6 @@ import kotlinx.serialization.Serializable
 @Entity(tableName = Constants.LOCALLY_DELETED_FILLED_QUESTIONNAIRES_TABLE)
 @Parcelize
 @Serializable
-data class LocallyDeletedFilledQuestionnaire(
+data class LocallyClearedQuestionnaire(
     @PrimaryKey val questionnaireId: String
 ) : EntityMarker

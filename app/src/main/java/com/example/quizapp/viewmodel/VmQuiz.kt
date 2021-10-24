@@ -5,6 +5,8 @@ import com.example.quizapp.QuizNavGraphArgs
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse
+import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.Answer
@@ -135,7 +137,7 @@ class VmQuiz @Inject constructor(
                 runCatching {
                     backendRepository.insertFilledQuestionnaire(filledQuestionnaire)
                 }.onSuccess { response ->
-                    if(response.isSuccessful){
+                    if(response.responseType != InsertFilledQuestionnaireResponseType.ERROR){
                         localRepository.delete(LocallyAnsweredQuestionnaire(filledQuestionnaire.questionnaireId))
                     }
                 }

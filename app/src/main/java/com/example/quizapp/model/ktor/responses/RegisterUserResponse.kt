@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RegisterUserResponse(
-    val isSuccessful: Boolean,
     val responseType: RegisterUserResponseType,
 ) {
     enum class RegisterUserResponseType(@StringRes val messageRes: Int)  {

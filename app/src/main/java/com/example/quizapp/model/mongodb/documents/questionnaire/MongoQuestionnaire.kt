@@ -12,10 +12,10 @@ data class MongoQuestionnaire(
     @BsonId var id : String = ObjectId().toString(),
     var title : String = "",
     var authorInfo : AuthorInfo,
-    var lastModifiedTimestamp: Long = getTimeMillis(),
     var courseOfStudies : String = "",
     var subject: String = "",
-    var questions : List<MongoQuestion> = emptyList()
+    var questions : List<MongoQuestion> = emptyList(),
+    var lastModifiedTimestamp: Long = getTimeMillis()
 ) {
     companion object {
         val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<MongoQuestionnaire> { old, new -> old.id == new.id}

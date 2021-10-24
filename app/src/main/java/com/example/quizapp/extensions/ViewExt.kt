@@ -1,6 +1,7 @@
 package com.example.quizapp.extensions
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewpager2.widget.ViewPager2
@@ -158,4 +160,16 @@ fun View.onLongClick(action : () -> (Unit)) {
 }
 
 
-fun RadioGroup.getSelectedButton() = findViewById<RadioButton>(checkedRadioButtonId)
+fun RadioGroup.getSelectedButton(): RadioButton = findViewById(checkedRadioButtonId)
+
+
+@SuppressLint("ClickableViewAccessibility")
+fun View.enableViewAndChildren(enable: Boolean){
+    isEnabled = enable
+    if(this is ViewGroup){
+//        setOnTouchListener(if(!enable) View.OnTouchListener { _, _ -> false } else View.OnTouchListener { _, _ -> true })
+        for(index in 0 .. childCount){
+            getChildAt(index)?.enableViewAndChildren(enable)
+        }
+    }
+}

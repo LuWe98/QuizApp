@@ -111,6 +111,10 @@ class Navigator @Inject constructor(
     }
 
 
+    fun navigateToBackdropFragment(){
+        navController.navigate(MainNavGraphDirections.actionGlobalBackdropFragment())
+    }
+
     companion object {
         const val FIRST_QUESTION_POSITION = 0
     }
