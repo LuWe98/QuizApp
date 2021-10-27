@@ -7,6 +7,7 @@ import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.menudatamodels.MenuItem
 import com.example.quizapp.model.menudatamodels.MenuItemDataModel
+import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptionsArgs
@@ -21,13 +22,19 @@ import javax.inject.Inject
 class VmQuestionnaireMoreOptions @Inject constructor(
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
-    private val preferencesRepository: PreferencesRepository,
-    private val state: SavedStateHandle
+    preferencesRepository: PreferencesRepository,
+    state: SavedStateHandle
 ) : ViewModel() {
 
     private val args = BsdfQuestionnaireMoreOptionsArgs.fromSavedStateHandle(state)
 
-    private val info = preferencesRepository.user
+    private val currentVisibility get() = args.questionnaire.questionnaireVisibility
+
+    private val questionnaireId get() = args.questionnaire.id
+
+
+
+    private val user = preferencesRepository.user
 
     private val questionnaireMoreOptionsEventChannel = Channel<QuestionnaireMoreOptionsEvent>()
 
@@ -46,27 +53,26 @@ class VmQuestionnaireMoreOptions @Inject constructor(
         }
     }
 
-    fun getQuestionnaireMoreOptionsMenu() : List<MenuItem> =
-        MenuItemDataModel.getQuestionnaireMoreOptionsMenu(args.authorId == info.id, info.role)
+    fun getQuestionnaireMoreOptionsMenu() : List<MenuItem> = MenuItemDataModel.getQuestionnaireMoreOptionsMenu(args, user)
 
     private fun onEditQuestionnaireSelected() = launch(IO) {
-        localRepository.findCompleteQuestionnaireWith(args.questionnaireId).let {
+        localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let {
             questionnaireMoreOptionsEventChannel.send(NavigateToEditQuestionnaireScreen(it))
         }
     }
 
     private fun onDeleteCreatedQuestionnaireSelected() = launch(IO) {
-        questionnaireMoreOptionsEventChannel.send(DeleteCreatedQuestionnaireEvent(args.questionnaireId))
+        questionnaireMoreOptionsEventChannel.send(DeleteCreatedQuestionnaireEvent(questionnaireId))
         questionnaireMoreOptionsEventChannel.send(NavigateBack)
     }
 
     private fun onDeleteCachedQuestionnaireSelected() = launch(IO) {
-        questionnaireMoreOptionsEventChannel.send(DeleteCachedQuestionnaireEvent(args.questionnaireId))
+        questionnaireMoreOptionsEventChannel.send(DeleteCachedQuestionnaireEvent(questionnaireId))
         questionnaireMoreOptionsEventChannel.send(NavigateBack)
     }
 
     private fun onDeleteAnswersOfQuestionnaireSelected() = launch(IO) {
-        questionnaireMoreOptionsEventChannel.send(DeleteGivenAnswersOfQuestionnaire(args.questionnaireId))
+        questionnaireMoreOptionsEventChannel.send(DeleteGivenAnswersOfQuestionnaire(questionnaireId))
         questionnaireMoreOptionsEventChannel.send(NavigateBack)
     }
 
@@ -75,23 +81,31 @@ class VmQuestionnaireMoreOptions @Inject constructor(
     }
 
     private fun onShareQuestionnaireWithOtherUserSelected() = launch(IO) {
-
+        questionnaireMoreOptionsEventChannel.send(NavigateBack)
+        questionnaireMoreOptionsEventChannel.send(NavigateToShareQuestionnaireDialogEvent(questionnaireId))
     }
 
     private fun onPublishQuestionnaireSelected() = launch(IO) {
-
+        val newVisibility = if(currentVisibility == QuestionnaireVisibility.PUBLIC) QuestionnaireVisibility.PRIVATE else QuestionnaireVisibility.PUBLIC
+        questionnaireMoreOptionsEventChannel.send(PublishQuestionnaireEvent(questionnaireId, newVisibility))
+        questionnaireMoreOptionsEventChannel.send(NavigateBack)
     }
 
     private fun onCopyQuestionnaireSelected() = launch(IO) {
-
+        localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let {
+            questionnaireMoreOptionsEventChannel.send(NavigateToCopyQuestionnaireScreen(it))
+        }
     }
 
 
     sealed class QuestionnaireMoreOptionsEvent {
-        class NavigateToEditQuestionnaireScreen(val completeQuestionnaire: CompleteQuestionnaireJunction?) : QuestionnaireMoreOptionsEvent()
+        class NavigateToEditQuestionnaireScreen(val completeQuestionnaire: CompleteQuestionnaireJunction) : QuestionnaireMoreOptionsEvent()
+        class NavigateToCopyQuestionnaireScreen(val completeQuestionnaire: CompleteQuestionnaireJunction) : QuestionnaireMoreOptionsEvent()
         class DeleteCreatedQuestionnaireEvent(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()
         class DeleteCachedQuestionnaireEvent(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()
         class DeleteGivenAnswersOfQuestionnaire(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()
+        class PublishQuestionnaireEvent(val questionnaireId: String, val newVisibility: QuestionnaireVisibility): QuestionnaireMoreOptionsEvent()
+        class NavigateToShareQuestionnaireDialogEvent(val questionnaireId: String): QuestionnaireMoreOptionsEvent()
         object NavigateBack : QuestionnaireMoreOptionsEvent()
     }
 }

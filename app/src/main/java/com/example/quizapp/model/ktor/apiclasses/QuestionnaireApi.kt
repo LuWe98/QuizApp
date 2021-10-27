@@ -3,10 +3,8 @@ package com.example.quizapp.model.ktor.apiclasses
 import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
 import com.example.quizapp.model.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.requests.*
-import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse
-import com.example.quizapp.model.ktor.responses.GetQuestionnaireResponse
-import com.example.quizapp.model.ktor.responses.InsertQuestionnaireResponse
-import com.example.quizapp.model.ktor.responses.SyncQuestionnairesResponse
+import com.example.quizapp.model.ktor.responses.*
+import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility
 import com.example.quizapp.model.mongodb.documents.questionnaire.browsable.BrowsableMongoQuestionnaire
 import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
 import io.ktor.client.*
@@ -58,5 +56,15 @@ class QuestionnaireApi @Inject constructor(
     suspend fun downloadQuestionnaire(questionnaireId: String) : GetQuestionnaireResponse =
         client.post("/questionnaire/download") {
             body = GetQuestionnaireRequest(questionnaireId)
+        }
+
+    suspend fun changeQuestionnaireVisibility(questionnaireId: String, newVisibility: QuestionnaireVisibility) : ChangeQuestionnaireVisibilityResponse =
+        client.post("/questionnaire/visibility"){
+            body = ChangeQuestionnaireVisibilityRequest(questionnaireId, newVisibility)
+        }
+
+    suspend fun shareQuestionnaireWithUser(questionnaireId: String, userName: String, canEdit: Boolean) : ShareQuestionnaireWithUserResponse =
+        client.post("/questionnaire/share") {
+            body = ShareQuestionnaireWithUserRequest(questionnaireId, userName, canEdit)
         }
 }

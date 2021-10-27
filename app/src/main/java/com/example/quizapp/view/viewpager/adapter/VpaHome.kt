@@ -18,4 +18,5 @@ class VpaHome(fragment: Fragment) : FragmentStateAdapter(fragment) {
     override fun getItemCount() = fragments.size
 
     override fun createFragment(position: Int) = fragments[position]
+
 }

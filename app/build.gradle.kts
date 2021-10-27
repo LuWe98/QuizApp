@@ -6,7 +6,8 @@ plugins {
     id("androidx.navigation.safeargs")
     id("kotlin-parcelize")
 
-    kotlin("plugin.serialization") version "1.5.31"
+    val kotlinVersion = "1.5.31"
+    kotlin("plugin.serialization") version kotlinVersion
 }
 
 android {
@@ -20,6 +21,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            ndkBuild {
+                cppFlags += ""
+            }
+        }
     }
 
     buildTypes {
@@ -29,6 +35,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path = file("src/main/jni/Android.mk")
         }
     }
 
@@ -89,6 +101,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-common-java8:$liveCycleVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$liveCycleVersion")
     implementation("androidx.lifecycle:lifecycle-process:$liveCycleVersion")
+
     val liveCycleVersionOlder: String by project
     implementation("androidx.lifecycle:lifecycle-extensions:$liveCycleVersionOlder")
 
@@ -156,6 +169,12 @@ dependencies {
     //BSON
     val bsonVersion: String by project
     implementation("org.mongodb:bson:$bsonVersion")
+
+
+
+    //Codec
+    val commonsCodecVersion: String by project
+    implementation("commons-codec:commons-codec:$commonsCodecVersion")
 
 
 

@@ -27,15 +27,15 @@ object BindingUtils {
         }
     }
 
-    private fun <T : ViewBinding> getBindingWith (classInstance: Any, layoutInflater: LayoutInflater, relativePosition : Int) =
+    private fun <VB : ViewBinding> getBindingWith (classInstance: Any, layoutInflater: LayoutInflater, relativePosition : Int) =
         findGenericTypeWith(classInstance, ViewBinding::class.java, relativePosition)
             .getMethod(INFLATE_METHOD, LayoutInflater::class.java)
-            .invoke(null, layoutInflater) as T
+            .invoke(null, layoutInflater) as VB
 
-    fun <T : ViewBinding> getViewHolderBindingWith(adapter: RecyclerView.Adapter<*>, parent: ViewGroup, relativePosition : Int = 0) =
+    fun <VB : ViewBinding> getViewHolderBindingWith(adapter: RecyclerView.Adapter<*>, parent: ViewGroup, relativePosition : Int = 0) =
         findGenericTypeWith(adapter, ViewBinding::class.java, relativePosition)
             .getMethod(INFLATE_METHOD, LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.java)
-            .invoke(null, LayoutInflater.from(parent.context), parent, false) as T
+            .invoke(null, LayoutInflater.from(parent.context), parent, false) as VB
 
 
     fun <VB : ViewBinding> getBinding(fragment: BindingFragment<VB>, relativePosition : Int = 0) =

@@ -4,15 +4,18 @@
         android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.example.quizapp.backdrop.BackdropLayout
+    <com.example.quizapp.view.customimplementations.backdrop.BackdropLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/backDropLayout"
+            android:clipToPadding="false"
             app:frontLayerTopMargin="65dp"
-            app:frontLayerMinHeight="100dp"
-            app:frontLayerOffset="25dp"
-            app:frontLayerScale="0.965"
-            app:animationDuration="350">
+            app:frontLayerExpandedOffset="0dp"
+            app:frontLayerCollapsedMinHeight="100dp"
+            app:frontLayerCollapsedOffset="25dp"
+            app:frontLayerCollapsedScale="0.965"
+            app:frontLayerAnimationDuration="350">
+
         <include
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -25,6 +28,17 @@
                 android:id="@+id/frontLayer"
                 android:layout_marginHorizontal="@dimen/grid_1"
                 layout="@layout/backdrop_layout_front_layer"/>
-    </com.example.quizapp.backdrop.BackdropLayout>
+
+    </com.example.quizapp.view.customimplementations.backdrop.BackdropLayout>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add"
+            android:layout_gravity="bottom|end"
+            app:tint="@color/white"
+            app:backgroundTint="@color/black"
+            android:layout_margin="@dimen/grid_6"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

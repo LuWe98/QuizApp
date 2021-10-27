@@ -1,26 +1,35 @@
 package com.example.quizapp.model.room.dao
 
 import androidx.room.*
+import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.sqlite.db.SupportSQLiteQuery
 
 @Dao
-interface BaseDao<T> {
+abstract class BaseDao<T>(private val tableName: String) {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(t: List<T>): LongArray?
+    abstract suspend fun insert(entities: List<T>): LongArray?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(t: T): Long?
+    abstract suspend fun insert(entity: T): Long?
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun update(t: List<T>): Int?
+    abstract suspend fun update(entities: List<T>): Int?
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun update(t: T): Int?
+    abstract suspend fun update(entity: T): Int?
 
     @Delete
-    suspend fun delete(t: List<T>?)
+    abstract suspend fun delete(entities: List<T>?)
 
     @Delete
-    suspend fun delete(t: T)
+    abstract suspend fun delete(entity: T)
+
+    @RawQuery
+    abstract suspend fun executeQuery(query: SupportSQLiteQuery) : Any
+
+    suspend fun deleteAll(){
+        executeQuery(SimpleSQLiteQuery("DELETE FROM $tableName"))
+    }
 
 }

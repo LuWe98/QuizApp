@@ -13,14 +13,23 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.ktor.paging.PagingConfigValues
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmMain
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
+
+//TODO -> SETTINGS ÜBERARBEITEN MIT CUSTOM VIEWS STATT RECYCLERVIEW !!
+//TODO ---> CHANGE USERNAME AND PASSWORD IMPLEMENTIEREN
+//TODO -> SHARE QUESTIONNAIRE VLLT MIT LISTE IN EINEM FRAGEBOGEN ÜBERARBEITEN, in der Liste stehen alle User mit denen der geteilt wurde, man kann den dann auch bearbeiten
+//TODO -> Faculty, CourseOfStudies und Subject implementieren | Als ein embedded Document in dem Questionnaire
+//TODO ---> Verknüpfung von Faculty, courseOfStudies und Subject
+//TODO ----> Faculty hat ne liste von CourseOfStudies und das wiederrum ne liste von Subjects ?
+//TODO ----> Oder einfach über ID verknüfen, aber als eine Liste von IDS, dass ein Fach z.B. in WIB und WNB sein kann
+//TODO -> Kennzeichnung bei eigenen Fragebögen ob der public ist oder private
 
 @AndroidEntryPoint
 class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDestinationChangedListener {
@@ -42,7 +51,6 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
         initViews()
         navigator.addOnDestinationChangedListener(this)
     }
-
 
     private fun initViews() {
         binding.apply {
@@ -66,9 +74,9 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             }
 
             addCard.onClick {
-                navigator.navigateToBackdropFragment()
+//                navigator.navigateToBackdropFragment()
 
-//                navigator.navigateToAddQuestionnaireScreen()
+                navigator.navigateToAddQuestionnaireScreen()
             }
         }
     }

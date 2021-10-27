@@ -1,4 +1,4 @@
-package com.example.quizapp.backdrop
+package com.example.quizapp.view.customimplementations.backdrop
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -30,15 +30,17 @@ class BackdropLayout constructor(
     constructor(context: Context) : this(context, null, 0, 0)
 
     companion object {
-        private const val NO_FRONT_LAYER_TOP_MARGIN = 0
-        private const val DEFAULT_ANIM_DURATION = 300
+
         private const val BACK_LAYER_INDEX = 0
         private const val FRONT_LAYER_INDEX = 1
 
-        private const val DEFAULT_TRANSLATION = 0
+        private const val DEFAULT_TOP_MARGIN = 0
+        private const val DEFAULT_EXPANDED_OFFSET = 0f
+        private const val DEFAULT_ANIM_DURATION = 300
         private const val DEFAULT_SCALE = 1f
         private const val DEFAULT_OFFSET = 0f
-        private const val DEFAULT_MIN_FRONT_LAYER_HEIGHT = 0f
+        private const val DEFAULT_MIN_COLLAPSED_HEIGHT = 0f
+        private const val DEFAULT_TRANSLATION = 0
 
 
         private const val MIN_PROGRESS = 0f
@@ -52,12 +54,13 @@ class BackdropLayout constructor(
     }
 
     init {
-        context.obtainStyledAttributes(attrs, R.styleable.BackdropLayout, 0, 0).let { typedArray ->
-            animationDuration = typedArray.getInteger(R.styleable.BackdropLayout_animationDuration, DEFAULT_ANIM_DURATION).toLong()
-            frontLayerTopMargin = typedArray.getDimension(R.styleable.BackdropLayout_frontLayerTopMargin, NO_FRONT_LAYER_TOP_MARGIN.toFloat()).toInt()
-            frontLayerMinHeight = typedArray.getDimension(R.styleable.BackdropLayout_frontLayerMinHeight, DEFAULT_MIN_FRONT_LAYER_HEIGHT).toInt()
-            frontLayerOffset = typedArray.getDimension(R.styleable.BackdropLayout_frontLayerOffset, DEFAULT_OFFSET).toInt()
-            frontLayerScale = typedArray.getFloat(R.styleable.BackdropLayout_frontLayerScale, DEFAULT_SCALE)
+        context.obtainStyledAttributes(attrs, R.styleable.BackdropLayout, defStyleAttr, defStyleRes).let { typedArray ->
+            animationDuration = typedArray.getInteger(R.styleable.BackdropLayout_frontLayerAnimationDuration, DEFAULT_ANIM_DURATION).toLong()
+            frontLayerTopMargin = typedArray.getDimension(R.styleable.BackdropLayout_frontLayerTopMargin, DEFAULT_TOP_MARGIN.toFloat()).toInt()
+            frontLayerExpandedOffset = typedArray.getDimension(R.styleable.BackdropLayout_frontLayerExpandedOffset, DEFAULT_EXPANDED_OFFSET).toInt()
+            frontLayerCollapsedMinHeight = typedArray.getDimension(R.styleable.BackdropLayout_frontLayerCollapsedMinHeight, DEFAULT_MIN_COLLAPSED_HEIGHT).toInt()
+            frontLayerCollapsedOffset = typedArray.getDimension(R.styleable.BackdropLayout_frontLayerCollapsedOffset, DEFAULT_OFFSET).toInt()
+            frontLayerCollapsedScale = typedArray.getFloat(R.styleable.BackdropLayout_frontLayerCollapsedScale, DEFAULT_SCALE)
             typedArray.recycle()
         }
     }
@@ -84,11 +87,13 @@ class BackdropLayout constructor(
 
     private var frontLayerTopMargin: Int
 
-    private var frontLayerMinHeight: Int
+    private var frontLayerExpandedOffset: Int
 
-    private var frontLayerOffset: Int
+    private var frontLayerCollapsedMinHeight: Int
 
-    private var frontLayerScale: Float
+    private var frontLayerCollapsedOffset: Int
+
+    private var frontLayerCollapsedScale: Float
 
     private var animationDuration: Long
 
@@ -105,13 +110,13 @@ class BackdropLayout constructor(
 
     private val desiredFrontLayerHeight get() = measuredHeight - frontLayerTopMargin
 
-    private val calculatedTranslation get() = max(backLayerHeight - frontLayerTopMargin, 0) + frontLayerOffset
+    private val calculatedTranslation get() = max(backLayerHeight - frontLayerTopMargin, 0) + frontLayerCollapsedOffset
 
-    private val maxTranslation get() = desiredFrontLayerHeight - frontLayerMinHeight
+    private val maxTranslation get() = desiredFrontLayerHeight - frontLayerCollapsedMinHeight
 
-    private val desiredCollapsedHeight get() = max(desiredCollapsedTranslation.toInt() - frontLayerTopMargin, 0) + frontLayerOffset
+    private val desiredCollapsedHeight get() = max(desiredCollapsedTranslation.toInt() - frontLayerTopMargin, 0) + frontLayerCollapsedOffset
 
-    private val frontLayerScaleOffset get() = (frontLayer.measuredHeight * (1 - frontLayerScale)).toInt()
+    private val frontLayerScaleOffset get() = (frontLayer.measuredHeight * (1 - frontLayerCollapsedScale)).toInt()
 
 
     private val collapsedTranslation
@@ -131,7 +136,7 @@ class BackdropLayout constructor(
 
         when (childCount - 1) {
             BACK_LAYER_INDEX -> initBackLayerHierarchyListener()
-            FRONT_LAYER_INDEX -> if (frontLayerTopMargin != NO_FRONT_LAYER_TOP_MARGIN) {
+            FRONT_LAYER_INDEX -> if (frontLayerTopMargin != DEFAULT_TOP_MARGIN) {
                 setFrontLayerTopMargin(frontLayerTopMargin)
             }
             else -> throw IllegalStateException("BackDropLayout can only have two children!")
@@ -146,7 +151,7 @@ class BackdropLayout constructor(
                 var margin = backLayerTopAnchor.bottom
                 if (backLayerTopAnchor.layoutParams.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
                     val coord = IntArray(2).apply { backLayerTopAnchor.getLocationOnScreen(this) }
-                    margin -= max(coord[Y_COORD_INDEX] - backLayerTopAnchor.top, NO_FRONT_LAYER_TOP_MARGIN)
+                    margin -= max(coord[Y_COORD_INDEX] - backLayerTopAnchor.top, DEFAULT_TOP_MARGIN)
                 }
                 setFrontLayerTopMarginInternal(margin)
             }
@@ -176,7 +181,7 @@ class BackdropLayout constructor(
 
         frontLayer.apply {
             layoutParams = (layoutParams as LayoutParams).apply {
-                topMargin = newTopMargin
+                topMargin = newTopMargin + frontLayerExpandedOffset
             }
         }
     }
@@ -196,7 +201,7 @@ class BackdropLayout constructor(
     private val regularViewPropertyAnimator: (Int) -> (ViewPropertyAnimator) = { translationAmount ->
         frontLayer.animate()
             .translationY(translationAmount.toFloat())
-            .scale(if (expanded) DEFAULT_SCALE else frontLayerScale)
+            .scale(if (expanded) DEFAULT_SCALE else frontLayerCollapsedScale)
             .setDuration(animationDuration)
             .setInterpolator(animationInterpolator)
             .setUpdateListener { onFrontLayerAnimUpdate(it) }
@@ -260,7 +265,7 @@ class BackdropLayout constructor(
     private fun forceFrontLayer(translationAmount: Int) {
         frontLayer.apply {
             translationY = translationAmount.toFloat()
-            val scaleValue = if (expanded) DEFAULT_SCALE else frontLayerScale
+            val scaleValue = if (expanded) DEFAULT_SCALE else frontLayerCollapsedScale
             scaleX = scaleValue
             scaleY = scaleValue
         }

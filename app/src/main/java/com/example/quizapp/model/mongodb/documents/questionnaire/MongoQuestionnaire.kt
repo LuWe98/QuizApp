@@ -1,6 +1,7 @@
 package com.example.quizapp.model.mongodb.documents.questionnaire
 
 import com.example.quizapp.model.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.mongodb.documents.user.SharedWithInfo
 import com.example.quizapp.utils.DiffUtilHelper
 import io.ktor.util.date.*
 import kotlinx.serialization.Serializable
@@ -12,6 +13,8 @@ data class MongoQuestionnaire(
     @BsonId var id : String = ObjectId().toString(),
     var title : String = "",
     var authorInfo : AuthorInfo,
+    var questionnaireVisibility: QuestionnaireVisibility = QuestionnaireVisibility.PRIVATE,
+    var faculty: String = "",
     var courseOfStudies : String = "",
     var subject: String = "",
     var questions : List<MongoQuestion> = emptyList(),

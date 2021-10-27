@@ -34,7 +34,7 @@ class BsdfQuestionnaireMoreOptions : BindingBottomSheetDialogFragment<BsdfQuesti
     }
 
     private fun initRecyclerView(){
-        binding.tvTitle.text = args.questionnaireTitle
+        binding.tvTitle.text = args.questionnaire.title
 
         rvAdapter = RvaBsdfMenu().apply {
             onItemClicked = vm::onMenuItemClicked
@@ -54,9 +54,12 @@ class BsdfQuestionnaireMoreOptions : BindingBottomSheetDialogFragment<BsdfQuesti
         vm.questionnaireMoreOptionsEventChannelFlow.collect(lifecycleScope) { event ->
             when(event){
                 is NavigateToEditQuestionnaireScreen -> navigator.navigateToAddQuestionnaireScreen(event.completeQuestionnaire)
+                is NavigateToCopyQuestionnaireScreen -> navigator.navigateToAddQuestionnaireScreen(event.completeQuestionnaire, true)
                 is DeleteCreatedQuestionnaireEvent -> vmHome.deleteCreatedQuestionnaire(event.questionnaireId)
                 is DeleteCachedQuestionnaireEvent -> vmHome.deleteCachedQuestionnaire(event.questionnaireId)
                 is DeleteGivenAnswersOfQuestionnaire -> vmHome.deleteFilledQuestionnaire(event.questionnaireId)
+                is PublishQuestionnaireEvent -> vmHome.onChangeQuestionnaireVisibilitySelected(event.questionnaireId, event.newVisibility)
+                is NavigateToShareQuestionnaireDialogEvent -> navigator.navigateToShareQuestionnaireDialog(event.questionnaireId)
                 NavigateBack -> navigator.popBackStack()
             }
         }

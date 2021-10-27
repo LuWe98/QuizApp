@@ -5,13 +5,11 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import com.example.quizapp.R
-import com.example.quizapp.model.datastore.EncryptionUtil
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.ktor.exceptions.BackendExceptionHandler
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.apiclasses.*
 import com.example.quizapp.model.ktor.authentification.BasicAuthCredentialsProvider
+import com.example.quizapp.model.ktor.exceptions.BackendExceptionHandler
 import com.example.quizapp.model.room.LocalDatabase
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.utils.BackendSyncer
@@ -42,24 +40,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideEncryptionUtil(
-        @ApplicationContext context: Context
-    ) = EncryptionUtil(
-        context.getString(R.string.datastoreEncryptionSecretKey),
-        context.getString(R.string.datastoreEncryptionSalt),
-        context.getString(R.string.datastoreEncryptionIv)
-    )
-
-    @Provides
-    @Singleton
     fun providePreferencesManager(
         applicationScope: CoroutineScope,
-        @ApplicationContext context: Context,
-        encryptionUtil: EncryptionUtil
+        @ApplicationContext context: Context
     ) = PreferencesRepository(
         applicationScope,
-        context.dataStore,
-        encryptionUtil
+        context.dataStore
     )
 
     @Provides
@@ -145,6 +131,8 @@ object AppModule {
             validateResponse { backendExceptionHandler.validateResponse(it) }
             handleResponseException { backendExceptionHandler.handleException(it) }
         }
+
+//        MessageDigest.getInstance("")
     }
 
 

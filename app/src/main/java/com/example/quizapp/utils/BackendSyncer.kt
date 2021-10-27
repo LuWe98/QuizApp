@@ -1,5 +1,6 @@
 package com.example.quizapp.utils
 
+import com.example.quizapp.extensions.log
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository

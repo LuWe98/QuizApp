@@ -15,6 +15,8 @@
     <string name="title">Title</string>
     <string name="addQuestionnaire">Add Questionnaire</string>
     <string name="editQuestionnaire">Edit Questionnaire</string>
+    <string name="copyQuestionnaire">Copy Questionnaire</string>
+
     <string name="addQuestion">Add Question</string>
     <string name="editQuestion">Edit Question</string>
     <string name="questionnaire">Questionnaire</string>
@@ -73,10 +75,12 @@
 
     <!-- BSDF - Questionnaire More Options -->
     <string name="shareQuestionnaireWithUser">Share with other User</string>
+    <string name="share">Share</string>
     <string name="uploadQuestionnaire">Upload</string>
     <string name="uploadAnswers">Upload answers</string>
-    <string name="copyQuestionnaire">Copy</string>
-    <string name="publishQuestionnaire">Publish</string>
+    <string name="copy">Copy</string>
+    <string name="setQuestionnaireToPublic">Set to public</string>
+    <string name="setQuestionnaireToPrivate">Set to private</string>
     <string name="hideQuestionnaire">Hide</string>
     <string name="edit">Edit</string>
     <string name="deleteGivenAnswers">Delete given answers</string>
@@ -85,8 +89,20 @@
     <string name="changeUserRole">Change role</string>
     <string name="browseUsersQuestionnaires">Browse Questionnaires</string>
 
+    <string name="changedVisibilityToPublic">Changed to public</string>
+    <string name="changedVisibilityToPrivate">Changed to private</string>
+    <string name="errorCouldNotChangeVisibility">Could not change visibility</string>
+
     <string name="changeRoleForUser">Change Role for:\n%1$s</string>
 
+
+    <string name="shareQuestionnaire">Share questionnaire</string>
+
+    <string name="shareQuestionnaireText">Enter the Username of the person you want to share this questionnaire with:</string>
+
+    <string name="sharedWithUser">%1$s can now see this questionnaire</string>
+    <string name="errorCouldNotShare">Error occurred while sharing questionnaire</string>
+    <string name="errorUserDoesNotExist">User with this Username does not exist</string>
 
     <!-- Response Message Items -->
     <string name="errorUserAlreadyExists">User already Exists!</string>

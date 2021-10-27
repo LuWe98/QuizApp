@@ -62,18 +62,27 @@ fun Fragment.showAlertDialog(
 
 @MainThread
 fun Fragment.showSnackBar(
-    @StringRes textRes: Int,
+    text: String,
     viewToAttachTo: View = bindingActivity.rootView,
     anchorView: View? = null,
     animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
     duration: Int = Snackbar.LENGTH_LONG) =
-    Snackbar.make(viewToAttachTo, textRes, duration).apply {
+    Snackbar.make(viewToAttachTo, text, duration).apply {
         setAnchorView(anchorView)
         this.animationMode = animationMode
         show()
     }.also {
         bindingActivity.currentSnackBar = it
     }
+
+@MainThread
+fun Fragment.showSnackBar(
+    @StringRes textRes: Int,
+    viewToAttachTo: View = bindingActivity.rootView,
+    anchorView: View? = null,
+    animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
+    duration: Int = Snackbar.LENGTH_LONG) =
+    showSnackBar(getString(textRes), viewToAttachTo, anchorView, animationMode, duration)
 
 @MainThread
 fun Fragment.showSnackBar(

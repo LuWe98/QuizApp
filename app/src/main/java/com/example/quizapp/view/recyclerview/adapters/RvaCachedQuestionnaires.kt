@@ -4,6 +4,7 @@ import androidx.core.view.isVisible
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviQuestionnaireCachedBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
@@ -11,7 +12,7 @@ class RvaCachedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunction
 
     var onItemClick : ((String) -> (Unit))? = null
 
-    var onItemLongClick: ((String, String, String) -> (Unit))? = null
+    var onItemLongClick: ((Questionnaire) -> (Unit))? = null
 
     override fun initListeners(binding: RviQuestionnaireCachedBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
@@ -23,10 +24,7 @@ class RvaCachedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunction
 
             root.onLongClick {
                 getItem(vh.bindingAdapterPosition)?.let {
-                    onItemLongClick?.invoke(
-                        it.questionnaire.authorInfo.userId,
-                        it.questionnaire.id,
-                        it.questionnaire.title)
+                    onItemLongClick?.invoke(it.questionnaire)
                 }
             }
         }

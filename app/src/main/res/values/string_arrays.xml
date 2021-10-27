@@ -3,5 +3,6 @@
     <string-array name="home_tab_names">
         <item>@string/downloaded</item>
         <item>@string/created</item>
+        <item>Shared</item>
     </string-array>
 </resources>

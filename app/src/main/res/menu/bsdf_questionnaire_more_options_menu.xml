@@ -17,7 +17,7 @@
             android:id="@+id/menu_id_upload_questionnaire" />
 
     <item
-            android:title="@string/publishQuestionnaire"
+            android:title="@string/changedVisibilityToPublic"
             android:icon="@drawable/ic_publish"
             android:id="@+id/menu_id_publish" />
 

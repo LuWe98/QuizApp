@@ -11,6 +11,7 @@ import com.example.quizapp.MainNavGraphDirections
 import com.example.quizapp.R
 import com.example.quizapp.extensions.initMaterialElevationScale
 import com.example.quizapp.model.mongodb.documents.user.User
+import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaireDirections
@@ -53,8 +54,8 @@ class Navigator @Inject constructor(
         navController.popBackStack()
     }
 
-    fun navigateToAddQuestionnaireScreen(completeQuestionnaire: CompleteQuestionnaireJunction? = null) {
-        navController.navigate(MainNavGraphDirections.actionGlobalGoToAddQuestionnaireScreen(completeQuestionnaire))
+    fun navigateToAddQuestionnaireScreen(completeQuestionnaire: CompleteQuestionnaireJunction? = null, copy: Boolean = false) {
+        navController.navigate(MainNavGraphDirections.actionGlobalGoToAddQuestionnaireScreen(completeQuestionnaire, copy))
     }
 
     fun navigateToEditQuestionScreen(questionPosition: Int, questionWithAnswers: QuestionWithAnswers) {
@@ -97,8 +98,8 @@ class Navigator @Inject constructor(
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToFragmentAdmin())
     }
 
-    fun navigateToQuestionnaireMoreOptions(authorId: String, questionnaireId: String, questionnaireTitle: String){
-        navController.navigate(MainNavGraphDirections.actionGlobalBsdfQuestionnaireMoreOptions(authorId, questionnaireId, questionnaireTitle))
+    fun navigateToQuestionnaireMoreOptions(questionnaire: Questionnaire){
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfQuestionnaireMoreOptions(questionnaire))
     }
 
     fun navigateToUserMoreOptions(user: User){
@@ -110,6 +111,9 @@ class Navigator @Inject constructor(
         navController.navigate(FragmentAdminDirections.actionFragmentAdminToBsdfChangeUserRole(user))
     }
 
+    fun navigateToShareQuestionnaireDialog(questionnaireId: String) {
+        navController.navigate(MainNavGraphDirections.actionGlobalDfShareQuestionnaire(questionnaireId))
+    }
 
     fun navigateToBackdropFragment(){
         navController.navigate(MainNavGraphDirections.actionGlobalBackdropFragment())

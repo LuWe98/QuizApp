@@ -2,6 +2,8 @@ package com.example.quizapp.utils
 
 object Constants {
 
+    const val C_NATIVE_LIB_NAME = "native-lib"
+
     const val DATASTORE_NAME = "quizDatastore"
 
     const val ROOM_DATABASE_NAME = "quizRoomDatabase"
@@ -9,14 +11,13 @@ object Constants {
 
     const val ANSWER_TABLE_NAME = "answerTable"
     const val QUESTION_TABLE_NAME = "questionTable"
-    const val QUESTIONARY_TABLE_NAME = "questionaryTable"
+    const val QUESTIONNAIRE_TABLE_NAME = "questionnaireTable"
     const val SUBJECT_TABLE_NAME = "subjectTable"
     const val FACULTY_TABLE_NAME = "facultyTable"
     const val COURSE_OF_STUDIES_TABLE_NAME = "courseOfStudiesTableName"
     const val LOCALLY_DELETED_QUESTIONNAIRES_TABLE = "deletedQuestionnairesTable"
-    const val LOCALLY_DELETED_FILLED_QUESTIONNAIRES_TABLE = "deletedFilledQuestionnairesTable"
+    const val LOCALLY_CLEARED_QUESTIONNAIRES_TABLE = "deletedFilledQuestionnairesTable"
     const val LOCALLY_ANSWERED_QUESTIONNAIRES_TABLE = "locallyAnsweredQuestionnairesTable"
-    const val LOCALLY_DOWNLOADED_QUESTIONNAIRES_TABLE = "downloadedQuestionnairesTable"
     const val LOCALLY_DELETED_USERS_TABLE = "locallyDeletedUsersTable"
 
 

@@ -4,9 +4,10 @@
 
     <declare-styleable name="BackdropLayout">
         <attr name="frontLayerTopMargin" format="dimension"/>
-        <attr name="frontLayerMinHeight" format="dimension"/>
-        <attr name="frontLayerOffset" format="dimension"/>
-        <attr name="frontLayerScale" format="float"/>
-        <attr name="animationDuration" format="integer"/>
+        <attr name="frontLayerExpandedOffset" format="dimension"/>
+        <attr name="frontLayerCollapsedMinHeight" format="dimension"/>
+        <attr name="frontLayerCollapsedOffset" format="dimension"/>
+        <attr name="frontLayerCollapsedScale" format="float"/>
+        <attr name="frontLayerAnimationDuration" format="integer"/>
     </declare-styleable>
 </resources>

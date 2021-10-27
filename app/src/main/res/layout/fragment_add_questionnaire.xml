@@ -38,8 +38,7 @@
             <com.google.android.material.textview.MaterialTextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/questionnaireTitle"
-                    android:text="@string/addQuestionnaire"
+                    android:id="@+id/pageTitle"
                     tools:text="@string/addQuestionnaire"
                     android:gravity="center_horizontal"
                     android:textSize="@dimen/maxHeaderTextSize"

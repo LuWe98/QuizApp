@@ -4,6 +4,7 @@ import androidx.room.Transaction
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
+import com.example.quizapp.model.mongodb.documents.user.SharedWithInfo
 import com.example.quizapp.model.room.dao.*
 import com.example.quizapp.model.room.dao.sync.*
 import com.example.quizapp.model.room.entities.*
@@ -11,9 +12,11 @@ import com.example.quizapp.model.room.entities.sync.*
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.reflect.KClass
 
 @Singleton
 class LocalRepository @Inject constructor(
@@ -31,49 +34,51 @@ class LocalRepository @Inject constructor(
     private val locallyDeletedUserDao: LocallyDeletedUserDao
 ) {
 
-    suspend fun <T : EntityMarker> insert(entity: T) = getBaseDaoWith(entity).insert(entity)
+    suspend inline fun <reified T : EntityMarker> insert(entity: T) = getBaseDaoWith(T::class).insert(entity)
 
-    suspend fun <T : EntityMarker> insert(entity: List<T>) = getBaseDaoWith(entity)?.insert(entity)
+    suspend inline fun <reified T : EntityMarker> insert(entity: List<T>) = getBaseDaoWith(T::class).insert(entity)
 
-    suspend fun <T : EntityMarker> update(entity: T) = getBaseDaoWith(entity).update(entity)
+    suspend inline fun <reified T : EntityMarker> update(entity: T) = getBaseDaoWith(T::class).update(entity)
 
-    suspend fun <T : EntityMarker> update(entity: List<T>) = getBaseDaoWith(entity)?.update(entity)
+    suspend inline fun <reified T : EntityMarker> update(entity: List<T>) = getBaseDaoWith(T::class).update(entity)
 
-    suspend fun <T : EntityMarker> delete(entity: T) = getBaseDaoWith(entity).delete(entity)
+    suspend inline fun <reified T : EntityMarker> delete(entity: T) = getBaseDaoWith(T::class).delete(entity)
 
-    suspend fun <T : EntityMarker> delete(entity: List<T>) = getBaseDaoWith(entity)?.delete(entity)
+    suspend inline fun <reified T : EntityMarker> delete(entity: List<T>) = getBaseDaoWith(T::class).delete(entity)
 
-    private fun <T : EntityMarker> getBaseDaoWith(entities: List<T>) = if (entities.isEmpty()) null else getBaseDaoWith(entities[0])
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : EntityMarker> getBaseDaoWith(entity: T) = (when (entity) {
-        is Answer -> answerDao
-        is Question -> questionDao
-        is Questionnaire -> questionnaireDao
-        is Faculty -> facultyDao
-        is CourseOfStudies -> courseOfStudiesDao
-        is Subject -> subjectDao
-        is LocallyDeletedQuestionnaire -> locallyDeletedQuestionnaireDao
-        is LocallyClearedQuestionnaire -> locallyClearedQuestionnaireDao
-        is LocallyAnsweredQuestionnaire -> locallyAnsweredQuestionnaireDao
-        is LocallyDeletedUser -> locallyDeletedUserDao
+    fun <T : EntityMarker> getBaseDaoWith(entity: KClass<T>) = (when (entity) {
+        Answer::class -> answerDao
+        Question::class -> questionDao
+        Questionnaire::class -> questionnaireDao
+        Faculty::class -> facultyDao
+        CourseOfStudies::class -> courseOfStudiesDao
+        Subject::class -> subjectDao
+        LocallyDeletedQuestionnaire::class -> locallyDeletedQuestionnaireDao
+        LocallyClearedQuestionnaire::class -> locallyClearedQuestionnaireDao
+        LocallyAnsweredQuestionnaire::class -> locallyAnsweredQuestionnaireDao
+        LocallyDeletedUser::class -> locallyDeletedUserDao
         else -> throw IllegalArgumentException("Entity DAO could not be found! Did you add it to the 'getBaseDaoWith' - Method?")
     } as BaseDao<T>)
 
 
+
     suspend fun deleteAllData() {
         applicationScope.apply {
-            launch(IO) { questionnaireDao.deleteAllQuestionnaires() }
-            launch(IO) { locallyAnsweredQuestionnaireDao.deleteAllLocallyAnsweredQuestionnaires() }
-            launch(IO) { locallyClearedQuestionnaireDao.deleteAllLocallyDeletedFilledQuestionnaires() }
-            launch(IO) { locallyDeletedQuestionnaireDao.deleteAllLocallyDeletedQuestionnaires() }
-            launch(IO) { locallyDeletedUserDao.deleteAllLocallyDeletedUsers() }
-            launch(IO) { facultyDao.deleteAllFaculties() }
-            launch(IO) { subjectDao.deleteAllSubjects() }
-            launch(IO) { courseOfStudiesDao.deleteAllCourseOfStudies() }
+            launch(IO) { questionnaireDao.deleteAll() }
+            launch(IO) { locallyAnsweredQuestionnaireDao.deleteAll() }
+            launch(IO) { locallyClearedQuestionnaireDao.deleteAll() }
+            launch(IO) { locallyDeletedQuestionnaireDao.deleteAll() }
+            launch(IO) { locallyDeletedUserDao.deleteAll() }
+            launch(IO) { facultyDao.deleteAll() }
+            launch(IO) { subjectDao.deleteAll() }
+            launch(IO) { courseOfStudiesDao.deleteAll() }
             launch(IO) { localDatabase.clearAllTables() }
         }
     }
+
+
 
 
     //QUESTIONNAIRE
@@ -98,6 +103,7 @@ class LocalRepository @Inject constructor(
     }
 
     suspend fun getAllQuestionnaireIds() = questionnaireDao.getAllQuestionnaireIds()
+
 
     fun findAllCompleteQuestionnairesNotForUserFlow(userId: String) = questionnaireDao.findAllCompleteQuestionnairesNotForUserFlow(userId)
 

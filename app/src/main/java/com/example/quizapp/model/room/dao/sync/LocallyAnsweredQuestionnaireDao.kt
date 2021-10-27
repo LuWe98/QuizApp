@@ -4,9 +4,10 @@ import androidx.room.Dao
 import androidx.room.Query
 import com.example.quizapp.model.room.dao.BaseDao
 import com.example.quizapp.model.room.entities.sync.LocallyAnsweredQuestionnaire
+import com.example.quizapp.utils.Constants
 
 @Dao
-abstract class LocallyAnsweredQuestionnaireDao: BaseDao<LocallyAnsweredQuestionnaire> {
+abstract class LocallyAnsweredQuestionnaireDao: BaseDao<LocallyAnsweredQuestionnaire>(Constants.LOCALLY_ANSWERED_QUESTIONNAIRES_TABLE) {
 
     @Query("SELECT * FROM locallyAnsweredQuestionnairesTable")
     abstract suspend fun getLocallyAnsweredQuestionnaireIds() : List<LocallyAnsweredQuestionnaire>
@@ -22,8 +23,5 @@ abstract class LocallyAnsweredQuestionnaireDao: BaseDao<LocallyAnsweredQuestionn
 
     @Query("SELECT * FROM locallyAnsweredQuestionnairesTable WHERE questionnaireId = :questionnaireId LIMIT 1")
     abstract suspend fun getLocallyAnsweredQuestionnaire(questionnaireId: String) : LocallyAnsweredQuestionnaire?
-
-    @Query("DELETE FROM locallyAnsweredQuestionnairesTable")
-    abstract suspend fun deleteAllLocallyAnsweredQuestionnaires()
 
 }

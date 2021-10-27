@@ -3,13 +3,16 @@ package com.example.quizapp.viewmodel
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.AddNavGraphArgs
+import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.extensions.log
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertQuestionnaireResponse
 import com.example.quizapp.model.ktor.responses.InsertQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
+import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
@@ -76,12 +79,16 @@ class VmAddEdit @Inject constructor(
 
     init {
         args.completeQuestionnaire?.let {
-            qId = it.questionnaire.id
+            qId = if(args.copy) ObjectId().toString() else it.questionnaire.id
             qTitle = it.questionnaire.title
             qCourseOfStudies = it.questionnaire.courseOfStudies
             qSubject = it.questionnaire.subject
             setQuestionWithAnswers(it.questionsWithAnswers.sortedBy { qwa -> qwa.question.questionPosition }.toMutableList())
         }
+    }
+
+    fun providePageTitle() : Int {
+        return if(args.completeQuestionnaire == null) R.string.addQuestionnaire else if(args.copy) R.string.copyQuestionnaire else R.string.editQuestionnaire
     }
 
 
@@ -164,24 +171,28 @@ class VmAddEdit @Inject constructor(
                 title = qTitle,
                 authorInfo = preferencesRepository.user.asAuthorInfo,
                 lastModifiedTimestamp = getTimeMillis(),
-                faculty = "WIB",
+                faculty = "WI",
                 courseOfStudies = qCourseOfStudies,
                 subject = qSubject,
-                syncStatus = SyncStatus.SYNCING
+                syncStatus = SYNCING
             )
 
             val questionsWithAnswersMapped = questionsWithAnswersLiveDataValue.onEachIndexed { questionIndex, qwa ->
+                val questionId = if(args.copy) ObjectId().toString() else qwa.question.id
+
                 qwa.question.apply {
+                    id = questionId
                     questionnaireId = qId
                     questionPosition = questionIndex
                 }
 
                 //TODO -> Schauen ob es das wirklich braucht oder nicht | Sollte immer jede Frage resettet werden?
-                val setIsSelectedToFalse = !qwa.question.isMultipleChoice && qwa.selectedAnswerIds.size > 1
+                val setIsSelectedToFalse = (!qwa.question.isMultipleChoice && qwa.selectedAnswerIds.size > 1) || args.copy
 
                 qwa.answers = qwa.answers.mapIndexed { answerIndex, answer ->
                     answer.copy(
-                        questionId = qwa.question.id,
+                        id = if(args.copy) ObjectId().toString() else answer.id,
+                        questionId = questionId,
                         isAnswerSelected = if(setIsSelectedToFalse) false else answer.isAnswerSelected,
                         answerPosition = answerIndex)
                 }
@@ -195,9 +206,9 @@ class VmAddEdit @Inject constructor(
             runCatching {
                 backendRepository.insertQuestionnaire(DataMapper.mapSqlEntitiesToMongoEntity(completeQuestionnaire))
             }.onFailure {
-                localRepository.update(questionnaire.apply { syncStatus = SyncStatus.UNSYNCED })
+                localRepository.update(questionnaire.apply { syncStatus = UNSYNCED })
             }.onSuccess {
-                localRepository.update(questionnaire.apply { syncStatus = if (it.responseType == InsertQuestionnaireResponseType.SUCCESSFUL) SyncStatus.SYNCED else SyncStatus.UNSYNCED })
+                localRepository.update(questionnaire.apply { syncStatus = if (it.responseType == InsertQuestionnaireResponseType.SUCCESSFUL) SYNCED else UNSYNCED })
             }
         }
     }

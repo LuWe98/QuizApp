@@ -1,7 +1,10 @@
 package com.example.quizapp.model.menudatamodels
 
 import com.example.quizapp.R
+import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility
 import com.example.quizapp.model.mongodb.documents.user.Role
+import com.example.quizapp.model.mongodb.documents.user.User
+import com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptionsArgs
 
 object MenuItemDataModel {
 
@@ -17,10 +20,18 @@ object MenuItemDataModel {
     const val CHANGE_USER_ROLE_ITEM_ID = 11
     const val BROWSER_USER_QUESTIONNAIRES_ITEM_ID = 12
 
-    fun getQuestionnaireMoreOptionsMenu(isOwnerOfQuestionnaire: Boolean, userRole: Role) : List<MenuItem> {
-        return if(isOwnerOfQuestionnaire) {
+    fun getQuestionnaireMoreOptionsMenu(args: BsdfQuestionnaireMoreOptionsArgs, user: User) : List<MenuItem> {
+        return if(args.questionnaire.authorInfo.userId == user.id) {
             createdQuestionnaireMoreOptionsMenu.apply {
-                if(userRole == Role.USER){ removeAt(createdQuestionnaireMoreOptionsMenu.indexOfFirst { it.id == PUBLISH_QUESTIONNAIRE_ITEM_ID }) }
+                if(user.role == Role.USER){
+                    removeAt(createdQuestionnaireMoreOptionsMenu.indexOfFirst {
+                        it.id == PUBLISH_QUESTIONNAIRE_ITEM_ID
+                    })
+                } else if(args.questionnaire.questionnaireVisibility == QuestionnaireVisibility.PUBLIC) {
+                    val index = createdQuestionnaireMoreOptionsMenu.indexOfFirst { it.id == PUBLISH_QUESTIONNAIRE_ITEM_ID }
+                    val item = removeAt(index)
+                    add(index, item.copy(iconRes = R.drawable.ic_un_publish, titleRes = R.string.setQuestionnaireToPrivate))
+                }
             }
         } else {
             cachedQuestionnaireMoreOptionsMenu
@@ -41,7 +52,7 @@ object MenuItemDataModel {
         MenuItem(
             id = COPY_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_copy,
-            titleRes = R.string.copyQuestionnaire
+            titleRes = R.string.copy
         ),
         MenuItem(
             id = UPLOAD_QUESTIONNAIRE_ITEM_ID,
@@ -51,7 +62,7 @@ object MenuItemDataModel {
         MenuItem(
             id = PUBLISH_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_publish,
-            titleRes = R.string.publishQuestionnaire
+            titleRes = R.string.setQuestionnaireToPublic
         ),
         MenuItem(
             id = DELETE_ANSWERS_QUESTIONNAIRE_ITEM_ID,
@@ -70,7 +81,7 @@ object MenuItemDataModel {
         MenuItem(
             id = COPY_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_copy,
-            titleRes = R.string.copyQuestionnaire
+            titleRes = R.string.copy
         ),
         MenuItem(
             id = DELETE_ANSWERS_QUESTIONNAIRE_ITEM_ID,

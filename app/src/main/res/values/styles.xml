@@ -31,4 +31,15 @@
     <style name="Style.QuizApp.TextInputEditText" parent="@style/Widget.MaterialComponents.TextInputEditText.FilledBox.Dense">
         <item name="android:background">@color/transparent</item>
     </style>
+
+
+    <style name="Style.QuizApp.FilterChip" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="android:textSize">12sp</item>
+        <item name="chipIconSize">15dp</item>
+        <item name="chipBackgroundColor">@color/chip_background_color_selector</item>
+        <item name="android:textColor">@color/chip_text_color_selector</item>
+        <item name="checkedIconTint">@color/white</item>
+        <item name="chipMinTouchTargetSize">46dp</item>
+    </style>
+
 </resources>

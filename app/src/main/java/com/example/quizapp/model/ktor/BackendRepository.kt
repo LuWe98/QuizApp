@@ -6,7 +6,10 @@ import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionna
 import com.example.quizapp.model.mongodb.documents.user.Role
 import com.example.quizapp.model.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.apiclasses.*
+import com.example.quizapp.model.ktor.responses.ChangeQuestionnaireVisibilityResponse
 import com.example.quizapp.model.ktor.responses.GetQuestionnaireResponse
+import com.example.quizapp.model.ktor.responses.ShareQuestionnaireWithUserResponse
+import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility
 import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import io.ktor.client.*
@@ -66,6 +69,12 @@ class BackendRepository @Inject constructor(
         questionnaireApi.getPagedQuestionnaires(limit, page, searchString, questionnaireIdsToIgnore)
 
     suspend fun downloadQuestionnaire(questionnaireId: String) = questionnaireApi.downloadQuestionnaire(questionnaireId)
+
+    suspend fun changeQuestionnaireVisibility(questionnaireId: String, newVisibility: QuestionnaireVisibility) =
+        questionnaireApi.changeQuestionnaireVisibility(questionnaireId, newVisibility)
+
+    suspend fun shareQuestionnaireWithUser(questionnaireId: String, userName: String, canEdit: Boolean) =
+        questionnaireApi.shareQuestionnaireWithUser(questionnaireId, userName, canEdit)
 
 
         // FILLED QUESTIONNAIRES

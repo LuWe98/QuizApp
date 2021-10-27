@@ -92,6 +92,10 @@
                 app:argType="com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction"
                 app:nullable="true" />
 
+        <argument
+                android:name="copy"
+                app:argType="boolean"/>
+
         <fragment
                 android:id="@+id/fragmentAddQuestionnaire"
                 android:name="com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaire"
@@ -124,15 +128,9 @@
             android:label="BsdfQuestionnaireMoreOptions"
             tools:layout="@layout/bsdf_questionnaire_more_options">
 
-        <argument
-                android:name="authorId"
-                app:argType="string" />
+        <argument android:name="questionnaire"
+                app:argType="com.example.quizapp.model.room.entities.Questionnaire" />
 
-        <argument android:name="questionnaireId"
-                app:argType="string" />
-
-        <argument android:name="questionnaireTitle"
-                app:argType="string" />
     </dialog>
 
 
@@ -153,6 +151,16 @@
             tools:layout="@layout/bsdf_change_user_role">
         <argument android:name="user"
                 app:argType="com.example.quizapp.model.mongodb.documents.user.User" />
+    </dialog>
+
+    <dialog
+            android:id="@+id/dfShareQuestionnaire"
+            android:name="com.example.quizapp.view.fragments.dialogs.DfShareQuestionnaire"
+            android:label="DfShareQuestionnaire"
+            tools:layout="@layout/df_share_questionnaire">
+        <argument
+            android:name="questionnaireId"
+            app:argType="string"/>
     </dialog>
 
 
@@ -177,6 +185,9 @@
             android:id="@+id/action_global_bsdfQuestionnaireMoreOptions"
             app:destination="@id/bsdfQuestionnaireMoreOptions" />
 
+    <action
+            android:id="@+id/action_global_dfShareQuestionnaire"
+            app:destination="@id/dfShareQuestionnaire"/>
 
 
     <!-- BACKDROP TEST -->

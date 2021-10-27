@@ -1,41 +1,47 @@
 package com.example.quizapp.viewmodel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireResponse.*
-import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.*
-import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.*
-import com.example.quizapp.model.ktor.responses.InsertQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.responses.ChangeQuestionnaireVisibilityResponse.ChangeQuestionnaireVisibilityResponseType
+import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireResponse.DeleteFilledQuestionnaireResponseType
+import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.DeleteQuestionnaireResponseType
+import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.InsertFilledQuestionnaireResponseType
+import com.example.quizapp.model.ktor.responses.InsertQuestionnaireResponse.InsertQuestionnaireResponseType
 import com.example.quizapp.model.ktor.status.SyncStatus
+import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility
+import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility.PRIVATE
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.model.room.entities.sync.LocallyAnsweredQuestionnaire
 import com.example.quizapp.model.room.entities.sync.LocallyClearedQuestionnaire
 import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.utils.BackendSyncer
-import com.example.quizapp.viewmodel.VmHome.FragmentHomeCachedEvent.*
-import com.example.quizapp.viewmodel.VmHome.FragmentHomeCreatedEvent.*
+import com.example.quizapp.viewmodel.VmHome.FragmentHomeCachedEvent.ChangeCachedSwipeRefreshLayoutVisibility
+import com.example.quizapp.viewmodel.VmHome.FragmentHomeCreatedEvent.ChangeCreatedSwipeRefreshLayoutVisibility
 import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
 
 @HiltViewModel
 class VmHome @Inject constructor(
     private val applicationScope: CoroutineScope,
     private val localRepository: LocalRepository,
-    preferencesRepository: PreferencesRepository,
     private val backendRepository: BackendRepository,
-    private val backendSyncer: BackendSyncer
+    private val backendSyncer: BackendSyncer,
+    preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
     private val fragmentHomeEventChannel = Channel<FragmentHomeEvent>()
@@ -68,7 +74,6 @@ class VmHome @Inject constructor(
     val allCreatedQuestionnairesLD = userInfoFlow.flatMapLatest {
         localRepository.findAllCompleteQuestionnairesForUserFlow(it.id)
     }.asLiveData().distinctUntilChanged()
-
 
 
     fun onSwipeRefreshCachedQuestionnairesList() = launch(IO) {
@@ -104,7 +109,6 @@ class VmHome @Inject constructor(
     }
 
 
-
     // DELETE CREATED QUESTIONNAIRE
     fun deleteCreatedQuestionnaire(questionnaireId: String) = launch(IO) {
         localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let {
@@ -132,7 +136,6 @@ class VmHome @Inject constructor(
     }
 
 
-
     // DELETE FILLED QUESTIONNAIRE
     fun deleteCachedQuestionnaire(questionnaireId: String) = launch(IO) {
         localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let {
@@ -158,11 +161,6 @@ class VmHome @Inject constructor(
         localRepository.insertCompleteQuestionnaire(event.completeQuestionnaire)
         localRepository.delete(LocallyDeletedQuestionnaire.notAsOwner(event.completeQuestionnaire.questionnaire.id))
     }
-
-
-
-
-
 
 
     // DELETE ANSWERS OF QUESTIONNAIRE
@@ -195,27 +193,38 @@ class VmHome @Inject constructor(
         runCatching {
             backendRepository.insertFilledQuestionnaire(DataMapper.mapSqlEntitiesToEmptyFilledMongoEntity(event.completeQuestionnaire))
         }.onSuccess { response ->
-            if(response.responseType != InsertFilledQuestionnaireResponseType.ERROR){
+            if (response.responseType != InsertFilledQuestionnaireResponseType.ERROR) {
                 localRepository.delete(LocallyClearedQuestionnaire(event.completeQuestionnaire.questionnaire.id))
             }
         }
     }
 
-
     fun onUndoDeleteFilledQuestionnaireClicked(event: ShowUndoDeleteAnswersOfQuestionnaireSnackBar) = launch(IO) {
         localRepository.delete(LocallyClearedQuestionnaire(event.completeQuestionnaire.questionnaire.id))
         localRepository.update(event.completeQuestionnaire.allAnswers)
         //TODO -> Wenn vorhanden, dann wird es wieder hier eingefügt, dass es neue antworten des Users gibt
-        event.locallyAnswered?.let {
-            localRepository.insert(it)
-        }
+        event.locallyAnswered?.let { localRepository.insert(it) }
     }
 
 
+    fun onChangeQuestionnaireVisibilitySelected(questionnaireId: String, newVisibility: QuestionnaireVisibility) = launch(IO) {
+        runCatching {
+            backendRepository.changeQuestionnaireVisibility(questionnaireId, newVisibility)
+        }.onSuccess { response ->
+            if (response.responseType == ChangeQuestionnaireVisibilityResponseType.SUCCESSFUL) {
+                localRepository.findQuestionnaireWith(questionnaireId)?.let {
+                    localRepository.update(it.copy(questionnaireVisibility = newVisibility))
+                }
 
-
-
-
+                val messageResource = if (newVisibility == PRIVATE) R.string.changedVisibilityToPrivate else R.string.changedVisibilityToPublic
+                fragmentHomeEventChannel.send(ShowSnackBarMessageBar(messageResource))
+            } else {
+                fragmentHomeEventChannel.send(ShowSnackBarMessageBar(R.string.errorCouldNotChangeVisibility))
+            }
+        }.onFailure {
+            fragmentHomeEventChannel.send(ShowSnackBarMessageBar(R.string.errorCouldNotChangeVisibility))
+        }
+    }
 
 
     sealed class FragmentHomeEvent {
@@ -224,12 +233,14 @@ class VmHome @Inject constructor(
         class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaireJunction) : FragmentHomeEvent()
         class ShowUndoDeleteAnswersOfQuestionnaireSnackBar(
             val completeQuestionnaire: CompleteQuestionnaireJunction,
-            val locallyAnswered : LocallyAnsweredQuestionnaire?) : FragmentHomeEvent()
+            val locallyAnswered: LocallyAnsweredQuestionnaire?
+        ) : FragmentHomeEvent()
+
         class ChangeProgressVisibility(val visible: Boolean) : FragmentHomeEvent()
     }
 
     sealed class FragmentHomeCreatedEvent {
-        class ChangeCreatedSwipeRefreshLayoutVisibility(val visible: Boolean)  : FragmentHomeCreatedEvent()
+        class ChangeCreatedSwipeRefreshLayoutVisibility(val visible: Boolean) : FragmentHomeCreatedEvent()
     }
 
     sealed class FragmentHomeCachedEvent {

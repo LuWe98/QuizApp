@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.quizapp.extensions.first
+import com.example.quizapp.utils.EncryptionUtil.decrypt
+import com.example.quizapp.utils.EncryptionUtil.encrypt
 import com.example.quizapp.model.mongodb.documents.user.Role
 import com.example.quizapp.model.mongodb.documents.user.User
 import kotlinx.coroutines.CoroutineScope
@@ -20,8 +22,7 @@ import javax.inject.Singleton
 @Singleton
 class PreferencesRepository @Inject constructor(
     private val applicationScope: CoroutineScope,
-    private val dataStore: DataStore<Preferences>,
-    private val encryptionUtil: EncryptionUtil
+    private val dataStore: DataStore<Preferences>
 ) {
 
     private val dataFlow = dataStore.data.catch { exception -> if (exception is IOException) emit(emptyPreferences()) else throw exception }
@@ -70,10 +71,10 @@ class PreferencesRepository @Inject constructor(
 
     val userFlow = dataFlow.map { preferences ->
         User(
-            id = preferences[USER_ID_KEY]?.let { if (it.isEmpty()) "" else encryptionUtil.decrypt(it) } ?: "",
-            userName = preferences[USER_NAME_KEY]?.let { if (it.isEmpty()) "" else encryptionUtil.decrypt(it) } ?: "",
-            password = preferences[USER_PASSWORD_KEY]?.let { if (it.isEmpty()) "" else encryptionUtil.decrypt(it) } ?: "",
-            role = preferences[USER_ROLE_KEY]?.let { if (it.isEmpty()) Role.USER else Role.valueOf(encryptionUtil.decrypt(it)) } ?: Role.USER).also {
+            id = preferences[USER_ID_KEY]?.let { if (it.isEmpty()) "" else it.decrypt() } ?: "",
+            userName = preferences[USER_NAME_KEY]?.let { if (it.isEmpty()) "" else it.decrypt() } ?: "",
+            password = preferences[USER_PASSWORD_KEY]?.let { if (it.isEmpty()) "" else it.decrypt() } ?: "",
+            role = preferences[USER_ROLE_KEY]?.let { if (it.isEmpty()) Role.USER else Role.valueOf(it.decrypt()) } ?: Role.USER).also {
                 cachedUser = it
         }
     }
@@ -89,14 +90,12 @@ class PreferencesRepository @Inject constructor(
     suspend fun updateUserCredentials(id: String, name: String, password: String, role: Role = Role.USER) {
         dataStore.edit { preferences ->
             cachedUser = User(id, name, password, role)
-            preferences[USER_ID_KEY] = encryptionUtil.encrypt(id)
-            preferences[USER_NAME_KEY] = encryptionUtil.encrypt(name)
-            preferences[USER_PASSWORD_KEY] = encryptionUtil.encrypt(password)
-            preferences[USER_ROLE_KEY] = encryptionUtil.encrypt(role.name)
+            preferences[USER_ID_KEY] = id.encrypt()
+            preferences[USER_NAME_KEY] = name.encrypt()
+            preferences[USER_PASSWORD_KEY] = password.encrypt()
+            preferences[USER_ROLE_KEY] = role.name.encrypt()
         }
     }
-
-
 
 
     companion object PreferencesKeys {

@@ -14,6 +14,7 @@ data class BrowsableMongoQuestionnaire(
     val questionnaireId: String,
     val title: String,
     val authorInfo: AuthorInfo,
+    val faculty: String,
     val courseOfStudies: String,
     val subject: String,
     val questionCount: Int,

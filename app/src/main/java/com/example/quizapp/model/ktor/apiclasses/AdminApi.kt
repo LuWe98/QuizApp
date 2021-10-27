@@ -25,14 +25,10 @@ class AdminApi @Inject constructor(
             body = GetPagedUserRequest(limit, page, searchString)
         }
 
-    suspend fun deleteUser(userId: String): DeleteUserResponse =
-        client.delete("/admin/user/delete") {
-            body = DeleteUsersRequest(listOf(userId))
-        }
+    suspend fun deleteUser(userId: String): DeleteUserResponse = deleteUsers(listOf(userId))
 
     suspend fun deleteUsers(userIds: List<String>): DeleteUserResponse =
-        client.delete("/admin/user/delete") {
+        client.delete("/admin/users/delete") {
             body = DeleteUsersRequest(userIds)
         }
-
 }

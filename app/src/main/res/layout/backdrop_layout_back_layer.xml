@@ -5,16 +5,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--            android:layout_width="40dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:id="@+id/btnSettings"-->
+
+
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:id="@+id/backLayerHeader"
-            android:text="Users"
+            android:text="QuizApp"
             android:textStyle="bold"
             android:fontFamily="@font/work_sans_medium"
             android:textSize="24sp"
             android:gravity="center_vertical"
             android:paddingStart="@dimen/grid_8"
+            android:background="?android:colorBackground"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -29,7 +36,7 @@
             app:layout_constraintBottom_toBottomOf="@id/backLayerHeader"
             app:srcCompat="@drawable/ic_sort"
             android:layout_marginEnd="@dimen/grid_4"
-            android:padding="7.5dp" />
+            android:padding="10dp" />
 
     <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="40dp"
@@ -38,8 +45,8 @@
             android:background="?attr/actionBarItemBackground"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/backLayerHeader"
-            app:srcCompat="@drawable/ic_add"
-            android:padding="7.5dp"
+            app:srcCompat="@drawable/ic_search"
+            android:padding="10dp"
             app:layout_constraintEnd_toStartOf="@+id/btnExpand" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -65,17 +72,29 @@
         <com.google.android.material.chip.Chip
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="USER" />
+                style="@style/Style.QuizApp.FilterChip"
+                android:checked="true"
+                app:chipStartPadding="@dimen/grid_2"
+                app:chipEndPadding="@dimen/grid_2"
+                android:text="User" />
 
         <com.google.android.material.chip.Chip
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="CREATOR" />
+                style="@style/Style.QuizApp.FilterChip"
+                android:checked="true"
+                app:chipStartPadding="@dimen/grid_2"
+                app:chipEndPadding="@dimen/grid_2"
+                android:text="Creator" />
 
         <com.google.android.material.chip.Chip
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ADMIN" />
+                style="@style/Style.QuizApp.FilterChip"
+                android:checked="true"
+                app:chipStartPadding="@dimen/grid_2"
+                app:chipEndPadding="@dimen/grid_2"
+                android:text="Admin" />
     </com.google.android.material.chip.ChipGroup>
 
     <com.google.android.material.textview.MaterialTextView

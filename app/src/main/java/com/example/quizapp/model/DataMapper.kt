@@ -20,14 +20,14 @@ object DataMapper {
     ): CompleteQuestionnaireJunction {
         val questionnaire = Questionnaire(
             id = mongoQuestionnaire.id,
-            authorInfo = mongoQuestionnaire.authorInfo,
             title = mongoQuestionnaire.title,
-            lastModifiedTimestamp = mongoQuestionnaire.lastModifiedTimestamp,
+            authorInfo = mongoQuestionnaire.authorInfo,
+            faculty = mongoQuestionnaire.faculty,
             courseOfStudies = mongoQuestionnaire.courseOfStudies,
             subject = mongoQuestionnaire.subject,
             syncStatus = SyncStatus.SYNCED,
-            faculty = "WI"
-        )
+            questionnaireVisibility = mongoQuestionnaire.questionnaireVisibility,
+            lastModifiedTimestamp = mongoQuestionnaire.lastModifiedTimestamp)
 
         val questionsWithAnswers = mongoQuestionnaire.questions.map { question ->
             QuestionWithAnswers(Question(
@@ -71,9 +71,11 @@ object DataMapper {
             id = questionnaire.id,
             title = questionnaire.title,
             authorInfo = questionnaire.authorInfo,
-            lastModifiedTimestamp = questionnaire.lastModifiedTimestamp,
+            faculty = questionnaire.faculty,
             courseOfStudies = questionnaire.courseOfStudies,
-            subject = questionnaire.subject
+            subject = questionnaire.subject,
+            questionnaireVisibility = questionnaire.questionnaireVisibility,
+            lastModifiedTimestamp = questionnaire.lastModifiedTimestamp
         ).apply {
             questions = questionsWithAnswers.map { qwa ->
                 qwa.question.let { question ->

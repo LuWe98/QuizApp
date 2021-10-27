@@ -5,6 +5,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.RviQuestionnaireCreatedNewBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.ktor.status.SyncStatus
+import com.example.quizapp.model.room.entities.Questionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
@@ -12,7 +13,7 @@ class RvaCreatedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunctio
 
     var onItemClick: ((String) -> (Unit))? = null
 
-    var onItemLongClick: ((String, String, String) -> (Unit))? = null
+    var onItemLongClick: ((Questionnaire) -> (Unit))? = null
 
     var onSyncClick: ((String) -> (Unit))? = null
 
@@ -26,10 +27,7 @@ class RvaCreatedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunctio
 
             root.onLongClick {
                 getItem(vh).let {
-                    onItemLongClick?.invoke(
-                        it.questionnaire.authorInfo.userId,
-                        it.questionnaire.id,
-                        it.questionnaire.title)
+                    onItemLongClick?.invoke(it.questionnaire)
                 }
             }
 
