@@ -7,7 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAuthBinding
-import com.example.quizapp.extensions.collect
+import com.example.quizapp.extensions.flowext.collect
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.extensions.showSnackBar
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment

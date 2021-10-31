@@ -1,8 +1,7 @@
 package com.example.quizapp.model.room.dao
 
 import androidx.room.Dao
-import androidx.room.Query
-import com.example.quizapp.model.room.entities.CourseOfStudies
+import com.example.quizapp.model.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.utils.Constants
 
 @Dao

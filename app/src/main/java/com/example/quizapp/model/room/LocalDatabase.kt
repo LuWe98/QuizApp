@@ -7,7 +7,12 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.quizapp.model.room.dao.*
 import com.example.quizapp.model.room.dao.sync.*
-import com.example.quizapp.model.room.entities.*
+import com.example.quizapp.model.room.entities.faculty.CourseOfStudies
+import com.example.quizapp.model.room.entities.faculty.Faculty
+import com.example.quizapp.model.room.entities.faculty.Subject
+import com.example.quizapp.model.room.entities.questionnaire.Answer
+import com.example.quizapp.model.room.entities.questionnaire.Question
+import com.example.quizapp.model.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.room.entities.sync.*
 import com.example.quizapp.utils.Constants
 import dagger.hilt.android.qualifiers.ApplicationContext

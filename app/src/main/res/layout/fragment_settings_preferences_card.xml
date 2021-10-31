@@ -1,53 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/preferencesCard"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="0dp"
-        android:layout_margin="@dimen/grid_2"
-        app:layout_constraintTop_toBottomOf="@id/statisticsCard"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:padding="@dimen/grid_2">
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/preferencesHeader"
+            android:text="@string/preference"
+            android:background="@drawable/background_round_corners_10dp"
+            android:backgroundTint="?android:colorBackground"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/grid_4"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <com.example.quizapp.view.customimplementations.settings.SettingsItemDropDownLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/statisticsCard">
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:id="@+id/preferencesHeader"
-                android:text="@string/preference"
-                android:background="@drawable/background_round_corners_10dp"
-                android:backgroundTint="?android:colorBackground"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="@dimen/grid_4"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent" />
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:id="@+id/darkModePreferenceText"
-                android:text="@string/darkMode"
-                android:drawableStart="@drawable/ic_dark_mode_alt"
-                android:gravity="center_vertical"
-                android:drawablePadding="@dimen/grid_3"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:paddingHorizontal="@dimen/grid_3"
-                app:layout_constraintTop_toBottomOf="@+id/preferencesHeader" />
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:id="@+id/languagePreferenceText"
-                android:text="@string/language"
-                android:drawableStart="@drawable/ic_language"
-                android:gravity="center_vertical"
-                android:drawablePadding="@dimen/grid_3"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:paddingHorizontal="@dimen/grid_3"
-                app:layout_constraintTop_toBottomOf="@+id/darkModePreferenceText" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+            android:id="@+id/btnTheme"
+            app:icon="@drawable/ic_dark_mode_alt"
+            app:title="@string/theme"
+            tools:text="Light"
+            app:dropDownIcon="@drawable/ic_arrow_down"
+            app:layout_constraintTop_toBottomOf="@+id/preferencesHeader" />
+
+    <com.example.quizapp.view.customimplementations.settings.SettingsItemDropDownLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnLanguage"
+            app:icon="@drawable/ic_language"
+            app:title="@string/language"
+            tools:text="English"
+            app:dropDownIcon="@drawable/ic_arrow_down"
+            app:layout_constraintTop_toBottomOf="@id/btnTheme" />
+</androidx.constraintlayout.widget.ConstraintLayout>

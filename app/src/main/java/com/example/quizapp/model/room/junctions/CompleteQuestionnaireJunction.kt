@@ -3,9 +3,9 @@ package com.example.quizapp.model.room.junctions
 import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.example.quizapp.model.room.entities.Answer
-import com.example.quizapp.model.room.entities.Question
-import com.example.quizapp.model.room.entities.Questionnaire
+import com.example.quizapp.model.room.entities.questionnaire.Answer
+import com.example.quizapp.model.room.entities.questionnaire.Question
+import com.example.quizapp.model.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.utils.DiffUtilHelper
 import kotlinx.parcelize.Parcelize
 

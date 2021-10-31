@@ -4,19 +4,18 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.quizapp.R
-import com.example.quizapp.extensions.containsWhiteSpaces
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.extensions.log
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.LoginUserResponse
 import com.example.quizapp.model.ktor.responses.LoginUserResponse.*
-import com.example.quizapp.model.ktor.responses.RegisterUserResponse
 import com.example.quizapp.model.ktor.responses.RegisterUserResponse.*
+import com.example.quizapp.model.mongodb.documents.user.User
+import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.viewmodel.VmAuth.FragmentAuthEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
@@ -24,6 +23,7 @@ import javax.inject.Inject
 class VmAuth @Inject constructor(
     private val backendRepository: BackendRepository,
     private val preferencesRepository: PreferencesRepository,
+    private val localRepository: LocalRepository,
     private val state: SavedStateHandle
 ) : ViewModel() {
 
@@ -32,7 +32,7 @@ class VmAuth @Inject constructor(
     val fragmentEventChannelFlow get() = fragmentEventChannel.receiveAsFlow()
 
     fun checkIfLoggedIn() = launch(IO) {
-        if (preferencesRepository.userFlow.first().isNotEmpty) {
+        if (preferencesRepository.isUserLoggedIn()) {
             fragmentEventChannel.send(NavigateToHomeScreen)
         } else {
             fragmentEventChannel.send(ShowLoginScreen)
@@ -71,12 +71,20 @@ class VmAuth @Inject constructor(
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileLoggingInUser))
             }.onSuccess { response ->
                 if (response.responseType == LoginUserResponseType.LOGIN_SUCCESSFUL) {
-                    preferencesRepository.updateUserCredentials(
+                    User(
                         id = response.userId!!,
-                        name = currentLoginUserName,
+                        userName = currentLoginUserName,
                         password = currentLoginPassword,
-                        role = response.role!!
-                    )
+                        role = response.role!!,
+                        lastModifiedTimestamp = response.lastModifiedTimeStamp!!
+                    ).let { user ->
+                        if(user.id != preferencesRepository.getUserId()){
+                            localRepository.deleteAllUserData()
+                        }
+                        preferencesRepository.updateUserCredentials(user)
+                        preferencesRepository.updateJwtToken(response.token)
+                    }
+
                     fragmentEventChannel.send(NavigateToHomeScreen)
                 }
 

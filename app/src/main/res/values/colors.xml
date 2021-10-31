@@ -18,7 +18,7 @@
     <color name="whiteBackground">#f6f6f6</color>
     <color name="niceBlack">#262626</color>
     <color name="niceBlackTwo">#202020</color>
-
+    <color name="niceBlackThree">#1f1b24</color>
 
     <color name="unselectedColor">#DDDDDD</color>
     <color name="transparent">#00000000</color>
@@ -31,7 +31,7 @@
     <!-- Light Theme Colors -->
     <color name="lightColorPrimary">#0070ba</color>
     <color name="lightColorPrimaryVariant">#1570ab</color>
-    <color name="lightColorOnPrimary">@color/white</color>
+    <color name="lightColorOnPrimary">#ffffff</color>
     <color name="lightColorSecondary">#FF03DAC5</color>
     <color name="lightColorSecondaryVariant">#FF018786</color>
     <color name="lightColorOnSecondary">@color/black</color>
@@ -40,14 +40,23 @@
 <!--    <color name="lightBackgroundColor">#f6f6f6</color>-->
 
     <color name="lightColorControlActivated">#89000000</color>
+    <color name="lightColorControlNormal"> #89000000</color>
+<!--    #42000000-->
+<!--    Not enabled-->
+<!--    #89000000-->
+<!--    Default-->
+
 
     <!-- Dark Theme Colors -->
     <color name="darkColorPrimary">#0070ba</color>
     <color name="darkColorPrimaryVariant">#1570ab</color>
-    <color name="darkColorOnPrimary">@color/white</color>
+    <color name="darkColorOnPrimary">#202020</color>
     <color name="darkColorSecondary">#FF03DAC5</color>
     <color name="darkColorSecondaryVariant">#FF018786</color>
     <color name="darkColorOnSecondary">@color/black</color>
     <color name="darkColorAccent">#add8e6</color>
-    <color name="darkBackgroundColor">#f6f6f6</color>
+    <color name="darkBackgroundColor">#262626</color>
+
+    <color name="darkColorControlActivated">#89000000</color>
+    <color name="darkColorControlNormal">#bebebe</color>
 </resources>

@@ -8,10 +8,10 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizOverviewBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.extensions.flowext.awareCollect
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionWithAnswersQuiz
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
@@ -96,7 +96,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                 }
             }
 
-            collectWhenStarted(fragmentEventChannelFlow) { event ->
+            fragmentEventChannelFlow.awareCollect(viewLifecycleOwner) { event ->
                 when (event) {
                     is ShowUndoDeleteGivenAnswersSnackBack -> {
                         showSnackBar(R.string.answersDeleted, viewToAttachTo = binding.coordRoot, actionTextRes = R.string.undo) {

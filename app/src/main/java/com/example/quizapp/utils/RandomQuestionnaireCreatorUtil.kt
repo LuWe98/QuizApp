@@ -1,9 +1,9 @@
 package com.example.quizapp.utils
 
 import com.example.quizapp.model.mongodb.documents.user.AuthorInfo
-import com.example.quizapp.model.room.entities.Answer
-import com.example.quizapp.model.room.entities.Question
-import com.example.quizapp.model.room.entities.Questionnaire
+import com.example.quizapp.model.room.entities.questionnaire.Answer
+import com.example.quizapp.model.room.entities.questionnaire.Question
+import com.example.quizapp.model.room.entities.questionnaire.Questionnaire
 import kotlin.random.Random
 
 object RandomQuestionnaireCreatorUtil {

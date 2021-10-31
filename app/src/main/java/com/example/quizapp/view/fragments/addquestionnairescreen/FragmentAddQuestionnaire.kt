@@ -3,12 +3,11 @@ package com.example.quizapp.view.fragments.addquestionnairescreen
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.quizapp.AddNavGraphArgs
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddQuestionnaireBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.extensions.flowext.collect
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionWithAnswersAddQuestionnaire
 import com.example.quizapp.viewmodel.VmAddEdit

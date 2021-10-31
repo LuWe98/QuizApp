@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfQuestionnaireMoreOptionsBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.extensions.flowext.collect
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaBsdfMenu
 import com.example.quizapp.viewmodel.VmHome

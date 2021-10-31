@@ -2,8 +2,8 @@ package com.example.quizapp.model.room.junctions
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.example.quizapp.model.room.entities.Question
-import com.example.quizapp.model.room.entities.Questionnaire
+import com.example.quizapp.model.room.entities.questionnaire.Question
+import com.example.quizapp.model.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.utils.DiffUtilHelper
 
 data class QuestionnaireWithQuestions(

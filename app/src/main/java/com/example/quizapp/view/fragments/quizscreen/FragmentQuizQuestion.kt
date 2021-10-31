@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizQuestionBinding
 import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.extensions.updateAllViewHolders
-import com.example.quizapp.model.room.entities.Question
+import com.example.quizapp.model.room.entities.questionnaire.Question
 import com.example.quizapp.view.recyclerview.adapters.RvaAnswerQuiz
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmQuiz

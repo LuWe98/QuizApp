@@ -9,6 +9,8 @@ import kotlinx.serialization.Serializable
 data class LoginUserResponse(
     val userId: String? = null,
     val role: Role? = null,
+    val lastModifiedTimeStamp: Long? = null,
+    val token: String? = null,
     val responseType: LoginUserResponseType,
 ) {
     enum class LoginUserResponseType(@StringRes val messageRes: Int) {

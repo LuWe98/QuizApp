@@ -5,11 +5,10 @@ import com.example.quizapp.QuizNavGraphArgs
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.room.LocalRepository
-import com.example.quizapp.model.room.entities.Answer
+import com.example.quizapp.model.room.entities.questionnaire.Answer
 import com.example.quizapp.model.room.entities.sync.LocallyAnsweredQuestionnaire
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel

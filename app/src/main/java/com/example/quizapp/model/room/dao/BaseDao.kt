@@ -31,5 +31,4 @@ abstract class BaseDao<T>(private val tableName: String) {
     suspend fun deleteAll(){
         executeQuery(SimpleSQLiteQuery("DELETE FROM $tableName"))
     }
-
 }

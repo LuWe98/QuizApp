@@ -11,14 +11,12 @@ import com.example.quizapp.MainNavGraphDirections
 import com.example.quizapp.R
 import com.example.quizapp.extensions.initMaterialElevationScale
 import com.example.quizapp.model.mongodb.documents.user.User
-import com.example.quizapp.model.room.entities.Questionnaire
+import com.example.quizapp.model.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaireDirections
-import com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptionsDirections
 import com.example.quizapp.view.fragments.adminscreen.FragmentAdminDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
-import com.example.quizapp.view.fragments.homescreen.FragmentHomeDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
 import com.example.quizapp.view.fragments.settingsscreen.FragmentSettingsDirections
 import java.lang.ref.WeakReference
@@ -117,6 +115,14 @@ class Navigator @Inject constructor(
 
     fun navigateToBackdropFragment(){
         navController.navigate(MainNavGraphDirections.actionGlobalBackdropFragment())
+    }
+
+    fun navigateToThemeSelection(){
+        navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToBsdfThemeSelection())
+    }
+
+    fun navigateToLanguageSelection(){
+        navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToBsdfLanguageSelection())
     }
 
     companion object {

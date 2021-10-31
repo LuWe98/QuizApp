@@ -1,10 +1,12 @@
 package com.example.quizapp.model.menudatamodels
 
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.quizapp.R
 import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility
 import com.example.quizapp.model.mongodb.documents.user.Role
 import com.example.quizapp.model.mongodb.documents.user.User
 import com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptionsArgs
+import com.example.quizapp.view.fragments.settingsscreen.QuizAppLanguage
 
 object MenuItemDataModel {
 
@@ -18,7 +20,6 @@ object MenuItemDataModel {
     const val COPY_QUESTIONNAIRE_ITEM_ID = 9
     const val DELETE_USER_ITEM_ID = 10
     const val CHANGE_USER_ROLE_ITEM_ID = 11
-    const val BROWSER_USER_QUESTIONNAIRES_ITEM_ID = 12
 
     fun getQuestionnaireMoreOptionsMenu(args: BsdfQuestionnaireMoreOptionsArgs, user: User) : List<MenuItem> {
         return if(args.questionnaire.authorInfo.userId == user.id) {
@@ -115,5 +116,44 @@ object MenuItemDataModel {
             iconRes = R.drawable.ic_delete,
             titleRes = R.string.deleteUser
         )
+    )
+
+
+    val themeOptionsMenu get() = mutableListOf(
+        MenuItem(
+            id = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
+            iconRes = R.drawable.ic_settings,
+            titleRes = R.string.systemDefault
+        ),
+        MenuItem(
+            id = AppCompatDelegate.MODE_NIGHT_YES,
+            iconRes = R.drawable.ic_dark_mode_alt,
+            titleRes = R.string.dark
+        ),
+        MenuItem(
+            id = AppCompatDelegate.MODE_NIGHT_NO,
+            iconRes = R.drawable.ic_light_mode,
+            titleRes = R.string.light
+        ),
+    )
+
+
+
+    val languageOptionsMenu get() = mutableListOf(
+        MenuItem(
+            id = QuizAppLanguage.SYSTEM_DEFAULT.ordinal,
+            iconRes = R.drawable.ic_settings,
+            titleRes = R.string.systemDefault
+        ),
+        MenuItem(
+            id = QuizAppLanguage.ENGLISH.ordinal,
+            iconRes = R.drawable.ic_language,
+            titleRes = R.string.english
+        ),
+        MenuItem(
+            id = QuizAppLanguage.GERMAN.ordinal,
+            iconRes = R.drawable.ic_language,
+            titleRes = R.string.german
+        ),
     )
 }

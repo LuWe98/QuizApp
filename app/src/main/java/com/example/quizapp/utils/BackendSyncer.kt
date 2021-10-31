@@ -1,6 +1,5 @@
 package com.example.quizapp.utils
 
-import com.example.quizapp.extensions.log
 import com.example.quizapp.model.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
@@ -34,15 +33,13 @@ class BackendSyncer(
 
     suspend fun syncData() = withContext(IO) {
         val questionnaireAsync = async { synAllQuestionnaireData() }
-        val userInfoAsync = async { syncUserData() }
         val deletedAsync = async { syncLocallyDeletedUsers() }
 
         questionnaireAsync.await()
-        userInfoAsync.await()
         deletedAsync.await()
     }
 
-    //TODO -> Die müssen auch ignoriert werden beim runterladen von den Antorten
+    //TODO -> Die müssen auch ignoriert werden beim runterladen von den Antworten
     //TODO -> IGNORE bei finden von den MongoFilledQuestionnaires
     //val locallyDeletedFilledQuestionnaireIds = localRepository.getLocallyDeletedFilledQuestionnaireIds()
 
@@ -67,30 +64,28 @@ class BackendSyncer(
         val syncedQuestionnaires = async { localRepository.findAllSyncedQuestionnaires() }
         val unsyncedQuestionnaireIds = async { localRepository.findAllNonSyncedQuestionnaireIds() }
 
-        val response = try {
+        runCatching {
             backendRepository.getQuestionnairesForSyncronization(
                 syncedQuestionnaires.await().map(CompleteQuestionnaireJunction::asQuestionnaireIdWithTimestamp),
                 unsyncedQuestionnaireIds.await(),
                 locallyDeletedQuestionnaireIds
             )
-        } catch (e: Exception) {
-            null
-        } ?: return@withContext
-
-        val insertAsync = async {
-            mapToCompleteQuestionnaire(syncedQuestionnaires.await(), response).let {
-                localRepository.insertCompleteQuestionnaires(it)
+        }.onSuccess { response ->
+            val insertAsync = async {
+                mapToCompleteQuestionnaire(syncedQuestionnaires.await(), response).let {
+                    localRepository.insertCompleteQuestionnaires(it)
+                }
             }
-        }
 
-        val updateAsync = async {
-            unsyncNonExistentQuestionnaires(syncedQuestionnaires.await(), response).let {
-                localRepository.update(it)
+            val updateAsync = async {
+                unsyncNonExistentQuestionnaires(syncedQuestionnaires.await(), response).let {
+                    localRepository.update(it)
+                }
             }
-        }
 
-        insertAsync.await()
-        updateAsync.await()
+            insertAsync.await()
+            updateAsync.await()
+        }
     }
 
     private fun mapToCompleteQuestionnaire(
@@ -224,13 +219,6 @@ class BackendSyncer(
     private suspend fun uploadUnsyncedQuestionnaires() {
 
     }
-
-
-    //TODO -> User Info validieren und gegebenenfalls username oder Role updaten
-    private suspend fun syncUserData() {
-
-    }
-
 
     //TODO -> CourseOfStudies Einträge kommen von der online Datenbank und werden hier eingetragen
     private suspend fun syncCourseOfStudies() {

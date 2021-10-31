@@ -1,40 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="0dp"
-        android:layout_margin="@dimen/grid_2"
-        app:layout_constraintTop_toBottomOf="@id/statisticsCard"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-    <androidx.constraintlayout.widget.ConstraintLayout
+        android:padding="@dimen/grid_2"
+        app:layout_constraintTop_toBottomOf="@+id/statisticsCard">
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/adminFunctionalityHeader"
+            android:text="@string/adminFunctionality"
+            android:background="@drawable/background_round_corners_10dp"
+            android:backgroundTint="?android:colorBackground"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/grid_4"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <com.example.quizapp.view.customimplementations.settings.SettingsItemLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/statisticsCard">
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:id="@+id/adminFunctionalityHeader"
-                android:text="@string/adminFunctionality"
-                android:background="@drawable/background_round_corners_10dp"
-                android:backgroundTint="?android:colorBackground"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="@dimen/grid_4"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent" />
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:id="@+id/promoteUserToAdminTv"
-                android:text="@string/promoteUserToAdmin"
-                android:drawableStart="@drawable/ic_admin_panel"
-                android:gravity="center_vertical"
-                android:drawablePadding="@dimen/grid_3"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:paddingHorizontal="@dimen/grid_3"
-                app:layout_constraintTop_toBottomOf="@+id/adminFunctionalityHeader" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+            android:id="@+id/btnAdminFunctionality"
+            app:icon="@drawable/ic_admin_panel"
+            app:title="@string/adminSettings"
+            app:layout_constraintTop_toBottomOf="@+id/adminFunctionalityHeader" />
+</androidx.constraintlayout.widget.ConstraintLayout>

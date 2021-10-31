@@ -4,8 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.mongodb.documents.user.SharedWithInfo
-import com.example.quizapp.model.room.entities.Questionnaire
+import com.example.quizapp.model.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.utils.Constants
 import kotlinx.coroutines.flow.Flow

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <integer name="recreateAnimDuration">250</integer>
+
     <integer name="defaultAnimDuration">300</integer>
     <integer name="defaultListLoadDelay">350</integer>
     <integer name="shortlistLoadDelay">125</integer>

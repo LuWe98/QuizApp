@@ -12,7 +12,6 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
-//TODO -> Hashing mit Salt macht DB immun gegen rainbow table attacks
 object EncryptionUtil {
 
     private val secretKey = Secrets.datastoreEncryptionSecretKey()
@@ -21,7 +20,7 @@ object EncryptionUtil {
 
     private const val TRANSFORMATION = "AES/CBC/PKCS7Padding"
     private const val ALGORITHM = "PBKDF2WithHmacSHA1"
-    private const val ITERATION_COUNT = 2500
+    private const val ITERATION_COUNT = 2_500
     private const val KEY_LENGTH = 256
 
 
@@ -37,7 +36,6 @@ object EncryptionUtil {
     inline fun <reified T> decryptToObject(strToDecrypt: String) = Json.decodeFromString<T>(strToDecrypt.encrypt())
 
 
-
     private fun encryptInternal(strToEncrypt: String): String {
         val cipher = initCipher(Cipher.ENCRYPT_MODE)
         return Base64.encodeToString(cipher.doFinal(strToEncrypt.toByteArray(Charsets.UTF_8)), Base64.DEFAULT)
@@ -47,7 +45,6 @@ object EncryptionUtil {
         val cipher = initCipher(Cipher.DECRYPT_MODE)
         return String(cipher.doFinal(Base64.decode(strToDecrypt, Base64.DEFAULT)))
     }
-
 
     private fun initCipher(mode: Int): Cipher {
         val factory = SecretKeyFactory.getInstance(ALGORITHM)
@@ -61,7 +58,3 @@ object EncryptionUtil {
         }
     }
 }
-
-//    val secretKey = "tK5UTui+DPh8lIlBxya5XVsmeDCoUl6vHhdIESMB6sQ="
-//    val salt = "QWlGNHNhMTJTQWZ2bGhpV3U=" // base64 decode => AiF4sa12SAfvlhiWu
-//    val iv = "bVQzNFNhRkQ1Njc4UUFaWA==" // base64 decode => mT34SaFD5678QAZX

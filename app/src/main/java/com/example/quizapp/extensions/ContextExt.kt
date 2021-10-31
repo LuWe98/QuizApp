@@ -14,7 +14,28 @@ import androidx.annotation.MainThread
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.preferencesDataStore
+import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.utils.Constants
+import com.example.quizapp.view.fragments.settingsscreen.QuizAppLanguage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
+import okio.IOException
 import java.util.*
+
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(Constants.DATASTORE_NAME)
+
+val DataStore<Preferences>.dataflow
+    get() = data.catch { exception ->
+        if (exception is IOException) emit(emptyPreferences()) else throw exception
+    }
 
 @MainThread
 fun Context.showToast(text: String, duration: Int = Toast.LENGTH_LONG) {
@@ -36,25 +57,34 @@ fun Context.getThemeColor(@AttrRes themeAttrId: Int) = TypedValue().let {
     it.data
 }
 
-fun Context.showKeyboard(view : View) {
+fun Context.showKeyboard(view: View) {
     (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).apply {
         showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 }
 
-fun Context.hideKeyboard(view : View) {
+fun Context.hideKeyboard(view: View) {
     (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).apply {
         hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
 
-fun Context.setLocale(locale: Locale) : Context {
-    Locale.setDefault(locale)
 
+
+fun Context.setLocale() = setLocale(runBlocking(Dispatchers.IO) {
+    dataStore.dataflow.map { preferences ->
+        preferences[PreferencesRepository.LANGUAGE_KEY]?.let {
+            QuizAppLanguage.valueOf(it)
+        } ?: QuizAppLanguage.SYSTEM_DEFAULT
+    }.first()
+})
+
+fun Context.setLocale(quizAppLanguage: QuizAppLanguage): Context {
+    val newLocale = quizAppLanguage.locale
+    Locale.setDefault(newLocale)
     val config = resources.configuration.apply {
-        setLocale(locale)
-        setLayoutDirection(locale)
+        setLocale(newLocale)
+        setLayoutDirection(newLocale)
     }
-
     return createConfigurationContext(config)
 }

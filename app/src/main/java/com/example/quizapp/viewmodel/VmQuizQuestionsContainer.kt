@@ -3,7 +3,6 @@ package com.example.quizapp.viewmodel
 import androidx.lifecycle.*
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.room.LocalRepository
-import com.example.quizapp.model.room.entities.Answer
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerArgs
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.FragmentQuizOverviewEvent.*
 import com.example.quizapp.view.viewpager.adapter.VpaQuiz

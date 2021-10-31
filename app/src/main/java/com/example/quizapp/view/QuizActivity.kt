@@ -3,6 +3,7 @@ package com.example.quizapp.view
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.activity.viewModels
@@ -13,14 +14,25 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.ktor.paging.PagingConfigValues
+import com.example.quizapp.extensions.flowext.awareCollect
+import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
+import com.example.quizapp.view.fragments.settingsscreen.QuizAppLanguage
 import com.example.quizapp.viewmodel.VmMain
+import com.example.quizapp.viewmodel.VmMain.*
+import com.example.quizapp.viewmodel.VmMain.MainViewModelEvent.*
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
+import kotlin.math.max
+import kotlin.math.min
+
 
 //TODO -> SETTINGS ÜBERARBEITEN MIT CUSTOM VIEWS STATT RECYCLERVIEW !!
 //TODO ---> CHANGE USERNAME AND PASSWORD IMPLEMENTIEREN
@@ -30,26 +42,27 @@ import javax.inject.Provider
 //TODO ----> Faculty hat ne liste von CourseOfStudies und das wiederrum ne liste von Subjects ?
 //TODO ----> Oder einfach über ID verknüfen, aber als eine Liste von IDS, dass ein Fach z.B. in WIB und WNB sein kann
 //TODO -> Kennzeichnung bei eigenen Fragebögen ob der public ist oder private
+//TODO -> Schauen wie Faculty, COS und Subject modellieren
+//TODO -> Subjects können zu mehreren COS gehören
+//TODO -> COS können zu genau einer Faculty gehören!
 
 @AndroidEntryPoint
-class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDestinationChangedListener {
+class QuizActivity: BindingActivity<ActivityQuizBinding>(), NavController.OnDestinationChangedListener {
 
     @Inject
     lateinit var navigatorProvider: Provider<Navigator>
     private val navigator get() = navigatorProvider.get()!!
 
-    private val vmMain : VmMain by viewModels()
-
-    override fun attachBaseContext(base: Context?) {
-        super.attachBaseContext(base?.setLocale(Locale.ENGLISH))
-    }
-
+    private val vmMain: VmMain by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        playFadeInAnim(savedInstanceState)
+
         initViews()
         navigator.addOnDestinationChangedListener(this)
+        initObservers()
     }
 
     private fun initViews() {
@@ -57,7 +70,7 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             bottomNavView.setupWithNavController(navigator.navController)
 
             cardHome.onClick {
-                if(bottomNavView.selectedItemId == R.id.fragmentSettings){
+                if (bottomNavView.selectedItemId == R.id.fragmentSettings) {
                     navigator.popBackStack()
                 } else {
                     bottomNavView.selectedItemId = R.id.fragmentHome
@@ -81,6 +94,7 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
         }
     }
 
+
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
         currentSnackBar?.let {
             it.dismiss()
@@ -88,7 +102,7 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
         }
 
         when (destination.id) {
-            R.id.fragmentQuizOverview, R.id.fragmentQuizContainer, R.id.fragmentAddQuestionnaire, R.id.fragmentAddQuestion, R.id.fragmentAuth, R.id.fragmentSearch-> {
+            R.id.fragmentQuizOverview, R.id.fragmentQuizContainer, R.id.fragmentAddQuestionnaire, R.id.fragmentAddQuestion, R.id.fragmentAuth, R.id.fragmentSearch -> {
                 changeBottomAppBarVisibility(false)
             }
             R.id.fragmentHome -> {
@@ -119,11 +133,11 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
     private fun changeCustomBottomNavBarVisibility(cardToShow: MaterialCardView, imageViewToChangeTintOf: ImageView) {
         binding.apply {
             cardHome.setCardBackgroundColor(getColor(R.color.transparent))
-            ivHome.setDrawableTintWithRes(R.color.black)
+            ivHome.setDrawableTint(getThemeColor(R.attr.colorControlNormal))
             cardSearch.setCardBackgroundColor(getColor(R.color.transparent))
-            ivSearch.setDrawableTintWithRes(R.color.black)
+            ivSearch.setDrawableTint(getThemeColor(R.attr.colorControlNormal))
             cardSettings.setCardBackgroundColor(getColor(R.color.transparent))
-            ivSettings.setDrawableTintWithRes(R.color.black)
+            ivSettings.setDrawableTint(getThemeColor(R.attr.colorControlNormal))
         }
 
         cardToShow.setCardBackgroundColor(getThemeColor(R.attr.colorPrimary))
@@ -132,7 +146,7 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 
 
     private fun changeBottomAppBarVisibility(show: Boolean) {
-        if(show){
+        if (show) {
             binding.bottomAppBar.performShow()
             binding.bottomAppBar.isVisible = true
         } else {
@@ -156,5 +170,70 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
                 }
             }
         })
+    }
+
+
+    private fun initObservers() {
+        vmMain.userFlow.awareCollect(this) {
+            vmMain.onUserDataChanged(it, navigator.currentDestinationId)
+        }
+
+        vmMain.mainViewModelEventChannelFlow.awareCollect(this) { event ->
+            when (event) {
+                NavigateToLoginScreenEvent -> navigator.navigateToLoginScreen()
+            }
+        }
+    }
+
+
+    override fun recreate() {
+        playFadeOutAnim()
+    }
+
+    private fun playFadeInAnim(savedInstanceState: Bundle?) {
+        //TODO -> Im Viewmodel flag setzen, dass anim spielen soll
+        if (savedInstanceState == null) return
+
+        binding.transitionView.apply {
+            animate()
+                .setDuration(resources.getInteger(R.integer.recreateAnimDuration).toLong())
+                .setUpdateListener {
+                    val progress = 1 - (min(max(it.currentPlayTime / it.duration.toFloat(), 0f), 1f))
+                    getHexColor(progress).let { color ->
+                        window.statusBarColor = color
+                        setBackgroundColor(color)
+                    }
+                }.withStartAction {
+                    isVisible = true
+                }.withEndAction {
+                    isVisible = false
+                }.start()
+        }
+    }
+
+    private fun playFadeOutAnim() {
+        //TODO -> Im Viewmodel flag setzen, dass anim spielen soll
+        binding.transitionView.apply {
+            animate()
+                .setDuration(resources.getInteger(R.integer.recreateAnimDuration).toLong())
+                .setUpdateListener {
+                    val progress = (min(max(it.currentPlayTime / it.duration.toFloat(), 0f), 1f))
+                    getHexColor(progress).let { color ->
+                        window.statusBarColor = color
+                        setBackgroundColor(color)
+                    }
+                }.withStartAction {
+                    isVisible = true
+                }.withEndAction {
+                    super.recreate()
+                }.start()
+        }
+    }
+
+    private fun getHexColor(progress: Float): Int {
+        val hexColor = Integer.toHexString((255 * progress).toInt()).let {
+            "#" + (if (it.length == 1) "0$it" else it) + "000000"
+        }
+        return Color.parseColor(hexColor)
     }
 }

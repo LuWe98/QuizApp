@@ -5,11 +5,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import com.example.quizapp.extensions.dataStore
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.apiclasses.*
-import com.example.quizapp.model.ktor.authentification.BasicAuthCredentialsProvider
-import com.example.quizapp.model.ktor.exceptions.BackendExceptionHandler
+import com.example.quizapp.model.ktor.client.KtorClientAuth
+import com.example.quizapp.model.ktor.client.KtorClientExceptionHandler
 import com.example.quizapp.model.room.LocalDatabase
 import com.example.quizapp.model.room.LocalRepository
 import com.example.quizapp.utils.BackendSyncer
@@ -30,23 +31,18 @@ import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(Constants.DATASTORE_NAME)
-
     @Provides
     @Singleton
     fun providePreferencesManager(
-        applicationScope: CoroutineScope,
         @ApplicationContext context: Context
-    ) = PreferencesRepository(
-        applicationScope,
-        context.dataStore
-    )
+    ) = PreferencesRepository(context)
 
     @Provides
     @Singleton
@@ -85,21 +81,26 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideBasicAuthHelper(preferencesRepository: PreferencesRepository): BasicAuthCredentialsProvider = BasicAuthCredentialsProvider(preferencesRepository)
+    fun provideBasicAuthHelper(
+        applicationScope: CoroutineScope,
+        preferencesRepository: PreferencesRepository,
+        ktorClientProvider: Provider<HttpClient>,
+        userApiProvider: Provider<UserApi>
+    ) = KtorClientAuth(applicationScope, preferencesRepository, ktorClientProvider, userApiProvider)
 
 
     @Singleton
     @Provides
-    fun provideBackendExceptionHandler(preferencesRepository: PreferencesRepository, localRepository: LocalRepository)
-        = BackendExceptionHandler(localRepository, preferencesRepository)
+    fun provideBackendExceptionHandler(preferencesRepository: PreferencesRepository) = KtorClientExceptionHandler(preferencesRepository)
 
 
     @Provides
     @Singleton
     fun provideKtorClient(
-        basicAuth: BasicAuthCredentialsProvider,
-        backendExceptionHandler: BackendExceptionHandler,
+        ktorClientAuth: KtorClientAuth,
+        ktorClientExceptionHandler: KtorClientExceptionHandler,
     ): HttpClient = HttpClient(Android) {
+
         install(DefaultRequest) {
             expectSuccess = false
 
@@ -120,7 +121,9 @@ object AppModule {
             })
         }
 
-        install(Auth, basicAuth::registerBasicAuth)
+        install(Auth) {
+            ktorClientAuth.registerJwtAuth(this)
+        }
 
         engine {
             connectTimeout = 100_000
@@ -128,25 +131,58 @@ object AppModule {
         }
 
         HttpResponseValidator {
-            validateResponse { backendExceptionHandler.validateResponse(it) }
-            handleResponseException { backendExceptionHandler.handleException(it) }
+            validateResponse { ktorClientExceptionHandler.validateResponse(it) }
+            handleResponseException { ktorClientExceptionHandler.handleException(it) }
         }
-
-//        MessageDigest.getInstance("")
     }
 
 
     @Provides
     @Singleton
-    fun provideBackendRepository(ktorClient: HttpClient) = BackendRepository(
-        ktorClient,
-        AdminApi(ktorClient),
-        UserApi(ktorClient),
-        QuestionnaireApi(ktorClient),
-        FilledQuestionnaireApi(ktorClient),
-        FacultyApi(ktorClient),
-        CourseOfStudiesApi(ktorClient),
-        SubjectApi(ktorClient)
+    fun provideAdminApi(ktorClient: HttpClient) = AdminApi(ktorClient)
+
+    @Provides
+    @Singleton
+    fun provideUserApi(ktorClient: HttpClient) = UserApi(ktorClient)
+
+    @Provides
+    @Singleton
+    fun provideQuestionnaireApi(ktorClient: HttpClient) = QuestionnaireApi(ktorClient)
+
+    @Provides
+    @Singleton
+    fun provideFilledQuestionnaireApi(ktorClient: HttpClient) = FilledQuestionnaireApi(ktorClient)
+
+    @Provides
+    @Singleton
+    fun provideFacultyApi(ktorClient: HttpClient) = FacultyApi(ktorClient)
+
+    @Provides
+    @Singleton
+    fun provideCourseOfStudiesApi(ktorClient: HttpClient) = CourseOfStudiesApi(ktorClient)
+
+    @Provides
+    @Singleton
+    fun provideSubjectApi(ktorClient: HttpClient) = SubjectApi(ktorClient)
+
+    @Provides
+    @Singleton
+    fun provideBackendRepository(
+        adminApi: AdminApi,
+        userApi: UserApi,
+        questionnaireApi: QuestionnaireApi,
+        filledQuestionnaireApi: FilledQuestionnaireApi,
+        facultyApi: FacultyApi,
+        courseOfStudiesApi: CourseOfStudiesApi,
+        subjectApi: SubjectApi
+    ) = BackendRepository(
+        adminApi,
+        userApi,
+        questionnaireApi,
+        filledQuestionnaireApi,
+        facultyApi,
+        courseOfStudiesApi,
+        subjectApi
     )
 
 

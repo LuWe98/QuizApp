@@ -1,14 +1,11 @@
 package com.example.quizapp
 
 import android.app.Application
-import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.quizapp.extensions.setLocale
 import com.example.quizapp.model.datastore.PreferencesRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.runBlocking
-import java.util.*
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -21,9 +18,4 @@ class QuizApplication : Application(){
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(runBlocking(IO) { preferencesRepository.getTheme() })
     }
-
-    override fun attachBaseContext(base: Context?) {
-        super.attachBaseContext(base?.setLocale(Locale.ENGLISH))
-    }
-
 }

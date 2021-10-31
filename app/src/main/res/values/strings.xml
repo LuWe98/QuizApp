@@ -171,6 +171,28 @@
     <string name="syncUnsuccessful">Could not sync data!</string>
     <string name="syncSuccessful">Questionnaire synced!</string>
 
+    <!-- SETTINGS -->
+    <string name="systemDefault">System default</string>
+
+
+
+    <!-- SETTINGS - THEME-->
+    <string name="theme">Theme</string>
+    <string name="themeSelection">Theme selection</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+
+    <!-- SETTINGS - LANGUAGE -->
+    <string name="languageSelection">Language selection</string>
+    <string name="english">English</string>
+    <string name="german">German</string>
+
+
+    <string name="errorCouldNotSyncUserData">Could not sync User data</string>
+    <string name="errorYourUserDoesNotExistAnymore">Your User does not exists anymore!/nYou were logged out!</string>
+    <string name="userDataUpToDate">Your data is already up to date</string>
+    <string name="userDataUpdated">User data updated</string>
+
 
     <!-- ALERT DIALOG -->
     <string name="logoutWarningTitle">Logout Warning</string>

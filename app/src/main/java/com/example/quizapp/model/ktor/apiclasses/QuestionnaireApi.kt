@@ -5,7 +5,7 @@ import com.example.quizapp.model.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.requests.*
 import com.example.quizapp.model.ktor.responses.*
 import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility
-import com.example.quizapp.model.mongodb.documents.questionnaire.browsable.BrowsableMongoQuestionnaire
+import com.example.quizapp.model.mongodb.documents.questionnaire.browsable.MongoBrowsableQuestionnaire
 import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -48,7 +48,7 @@ class QuestionnaireApi @Inject constructor(
         }
 
     //TODO -> RÜCKGABEWERT ZU RESPONSE SEALED CLASS UMÄNDERN!
-    suspend fun getPagedQuestionnaires(limit: Int, page: Int, searchString: String, questionnaireIdsToIgnore: List<String>) : List<BrowsableMongoQuestionnaire> =
+    suspend fun getPagedQuestionnaires(limit: Int, page: Int, searchString: String, questionnaireIdsToIgnore: List<String>) : List<MongoBrowsableQuestionnaire> =
         client.post("/questionnaires/paged"){
             body = GetPagedQuestionnairesRequest(limit, page, searchString, questionnaireIdsToIgnore)
         }

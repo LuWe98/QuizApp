@@ -6,9 +6,9 @@ import com.example.quizapp.model.mongodb.documents.questionnaire.MongoAnswer
 import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestion
 import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.room.entities.Answer
-import com.example.quizapp.model.room.entities.Question
-import com.example.quizapp.model.room.entities.Questionnaire
+import com.example.quizapp.model.room.entities.questionnaire.Answer
+import com.example.quizapp.model.room.entities.questionnaire.Question
+import com.example.quizapp.model.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
 
@@ -30,7 +30,8 @@ object DataMapper {
             lastModifiedTimestamp = mongoQuestionnaire.lastModifiedTimestamp)
 
         val questionsWithAnswers = mongoQuestionnaire.questions.map { question ->
-            QuestionWithAnswers(Question(
+            QuestionWithAnswers(
+                Question(
                 id = question.id,
                 questionnaireId = mongoQuestionnaire.id,
                 questionText = question.questionText,

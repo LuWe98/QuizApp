@@ -21,13 +21,19 @@
         <action
                 android:id="@+id/action_fragmentSettings_to_fragmentAdmin"
                 app:destination="@id/fragmentAdmin" />
+        <action
+                android:id="@+id/action_fragmentSettings_to_bsdfThemeSelection"
+                app:destination="@id/bsdfThemeSelection" />
+        <action
+                android:id="@+id/action_fragmentSettings_to_bsdfLanguageSelection"
+                app:destination="@id/bsdfLanguageSelection" />
     </fragment>
 
     <fragment
             android:id="@+id/fragmentAdmin"
             android:name="com.example.quizapp.view.fragments.adminscreen.FragmentAdmin"
             android:label="FragmentAdmin"
-            tools:layout="@layout/fragment_admin" >
+            tools:layout="@layout/fragment_admin">
         <action
                 android:id="@+id/action_fragmentAdmin_to_bsdfUserMoreOptions"
                 app:destination="@id/bsdfUserMoreOptions" />
@@ -94,7 +100,7 @@
 
         <argument
                 android:name="copy"
-                app:argType="boolean"/>
+                app:argType="boolean" />
 
         <fragment
                 android:id="@+id/fragmentAddQuestionnaire"
@@ -128,8 +134,9 @@
             android:label="BsdfQuestionnaireMoreOptions"
             tools:layout="@layout/bsdf_questionnaire_more_options">
 
-        <argument android:name="questionnaire"
-                app:argType="com.example.quizapp.model.room.entities.Questionnaire" />
+        <argument
+                android:name="questionnaire"
+                app:argType="com.example.quizapp.model.room.entities.questionnaire.Questionnaire" />
 
     </dialog>
 
@@ -139,17 +146,19 @@
             android:name="com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptions"
             android:label="BsdfUserMoreOptions"
             tools:layout="@layout/bsdf_user_more_options">
-        <argument android:name="user"
+        <argument
+                android:name="user"
                 app:argType="com.example.quizapp.model.mongodb.documents.user.User" />
 
     </dialog>
 
     <dialog
             android:id="@+id/bsdfChangeUserRole"
-            android:name="com.example.quizapp.view.fragments.adminscreen.BsdfChangeUserRole"
+            android:name="com.example.quizapp.view.fragments.adminscreen.BsdfUserRoleSelection"
             android:label="BsdfChangeUserRole"
-            tools:layout="@layout/bsdf_change_user_role">
-        <argument android:name="user"
+            tools:layout="@layout/bsdf_user_role_selection">
+        <argument
+                android:name="user"
                 app:argType="com.example.quizapp.model.mongodb.documents.user.User" />
     </dialog>
 
@@ -159,10 +168,23 @@
             android:label="DfShareQuestionnaire"
             tools:layout="@layout/df_share_questionnaire">
         <argument
-            android:name="questionnaireId"
-            app:argType="string"/>
+                android:name="questionnaireId"
+                app:argType="string" />
     </dialog>
 
+
+    <dialog
+            android:id="@+id/bsdfThemeSelection"
+            android:name="com.example.quizapp.view.fragments.settingsscreen.BsdfThemeSelection"
+            android:label="BsdfThemeSelection"
+            tools:layout="@layout/bsdf_theme_selection"/>
+
+
+    <dialog
+            android:id="@+id/bsdfLanguageSelection"
+            android:name="com.example.quizapp.view.fragments.settingsscreen.BsdfLanguageSelection"
+            android:label="BsdfLanguageSelection"
+            tools:layout="@layout/bsdf_language_selection"/>
 
     <!--GLOBAL ACTIONS-->
     <action
@@ -187,7 +209,7 @@
 
     <action
             android:id="@+id/action_global_dfShareQuestionnaire"
-            app:destination="@id/dfShareQuestionnaire"/>
+            app:destination="@id/dfShareQuestionnaire" />
 
 
     <!-- BACKDROP TEST -->
@@ -195,8 +217,10 @@
             android:id="@+id/backdropFragment"
             android:name="com.example.quizapp.view.fragments.backgroptest.BackdropFragment"
             android:label="BackdropFragment"
-            tools:layout="@layout/fragment_backdrop"/>
+            tools:layout="@layout/fragment_backdrop" />
 
-    <action android:id="@+id/action_global_backdropFragment"
-            app:destination="@id/backdropFragment"/>
+    <action
+            android:id="@+id/action_global_backdropFragment"
+            app:destination="@id/backdropFragment" />
+
 </navigation>

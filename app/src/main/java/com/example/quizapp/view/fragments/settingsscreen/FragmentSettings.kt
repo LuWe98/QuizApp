@@ -5,12 +5,12 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentSettingsBinding
-import com.example.quizapp.extensions.collect
-import com.example.quizapp.extensions.disableChangeAnimation
-import com.example.quizapp.extensions.showAlertDialog
+import com.example.quizapp.extensions.*
+import com.example.quizapp.extensions.flowext.awareCollect
+import com.example.quizapp.extensions.flowext.collect
+import com.example.quizapp.model.mongodb.documents.user.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmSettings
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
@@ -19,55 +19,79 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
-    private val viewModel: VmSettings by viewModels()
-
-    private lateinit var rvAdapter: RvaSettings
+    private val vmSettings: VmSettings by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initRecyclerView()
+        initViews()
         initObservers()
     }
 
-    private fun initRecyclerView() {
-        rvAdapter = RvaSettings().apply {
-            onItemClicked = {
-                when (it.id) {
-                    SettingsModel.ITEM_USER_LOGOUT_ID -> {
-                        viewModel.onLogoutClicked()
-                    }
-                    SettingsModel.ITEM_ADMIN_PAGE_ID -> {
-                        viewModel.onGoToAdminPageClicked()
-                    }
-                }
+    private fun initViews() {
+        binding.adminLayout.apply {
+            btnAdminFunctionality.onClick(vmSettings::onGoToAdminPageClicked)
+        }
+
+        binding.preferencesLayout.apply {
+            btnTheme.onClick(navigator::navigateToThemeSelection)
+            btnLanguage.onClick(navigator::navigateToLanguageSelection)
+        }
+
+        binding.userLayout.apply {
+            btnLogout.onClick(vmSettings::onLogoutClicked)
+
+            btnChangePassword.onClick {
+
+            }
+
+            btnRole.onClick {
+
+            }
+
+            btnUserName.onClick {
+
             }
         }
 
-        binding.rv.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = rvAdapter
-            disableChangeAnimation()
-        }
-
-        rvAdapter.submitList(SettingsModel.getSettingsItemList(viewModel.userInfo.role))
+        binding.swipeRefreshLayout.setOnRefreshListener(vmSettings::onRefreshListenerTriggered)
     }
 
+
     private fun initObservers() {
-        viewModel.userInfoFlow.observe(viewLifecycleOwner) {
-            rvAdapter.submitList(SettingsModel.getSettingsItemList(it.role))
+        vmSettings.userNameFlow.observe(viewLifecycleOwner) {
+            binding.userLayout.btnUserName.text = it
         }
 
-        viewModel.fragmentSettingsEventChannelFlow.collect(lifecycleScope) { event ->
+        vmSettings.userRoleFlow.observe(viewLifecycleOwner) {
+            binding.userLayout.btnRole.text = it.name
+            binding.adminLayout.root.isVisible = it == Role.ADMIN
+        }
+
+        vmSettings.themeNameResFlow.awareCollect(viewLifecycleOwner) {
+            binding.preferencesLayout.btnTheme.setTextWithRes(it)
+        }
+
+        vmSettings.languageFlow.awareCollect(viewLifecycleOwner) {
+            binding.preferencesLayout.btnLanguage.setTextWithRes(it.textRes)
+        }
+
+        vmSettings.fragmentSettingsEventChannelFlow.collect(lifecycleScope) { event ->
             when (event) {
                 NavigateToLoginScreen -> navigator.navigateToLoginScreen()
                 OnLogoutClickedEvent -> {
-                    showAlertDialog(R.string.logoutWarningTitle, R.string.logoutWarning, R.string.logout, R.string.cancel, positiveButtonClicked = {
-                        viewModel.onLogoutConfirmed()
-                    })
+                    showAlertDialog(
+                        titleRes = R.string.logoutWarningTitle,
+                        textRes = R.string.logoutWarning,
+                        positiveButtonRes = R.string.logout,
+                        negativeButtonRes = R.string.cancel,
+                        positiveButtonClicked = {
+                            vmSettings.onLogoutConfirmed()
+                        })
                 }
-                NavigateToAdminScreen -> {
-                    navigator.navigateToAdminPage()
+                NavigateToAdminScreen -> navigator.navigateToAdminPage()
+                is ShowMessageSnackBarEvent -> {
+                    showSnackBar(event.messageRes)
+                    binding.swipeRefreshLayout.isRefreshing = false
                 }
             }
         }

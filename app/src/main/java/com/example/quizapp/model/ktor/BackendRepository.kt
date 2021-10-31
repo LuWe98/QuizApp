@@ -1,24 +1,19 @@
 package com.example.quizapp.model.ktor
 
 import com.example.quizapp.model.DataMapper
-import com.example.quizapp.model.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
-import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
-import com.example.quizapp.model.mongodb.documents.user.Role
 import com.example.quizapp.model.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.apiclasses.*
-import com.example.quizapp.model.ktor.responses.ChangeQuestionnaireVisibilityResponse
-import com.example.quizapp.model.ktor.responses.GetQuestionnaireResponse
-import com.example.quizapp.model.ktor.responses.ShareQuestionnaireWithUserResponse
+import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
 import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility
+import com.example.quizapp.model.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
+import com.example.quizapp.model.mongodb.documents.user.Role
 import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
-import io.ktor.client.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class BackendRepository @Inject constructor(
-    private val client: HttpClient,
     private val adminApi: AdminApi,
     private val userApi: UserApi,
     private val questionnaireApi: QuestionnaireApi,
@@ -36,9 +31,13 @@ class BackendRepository @Inject constructor(
 
     suspend fun deleteUsers(userIds: List<String>) = adminApi.deleteUsers(userIds)
 
+    suspend fun syncUserData(userId: String) = userApi.syncUserData(userId)
 
-    // USER
+
+        // USER
     suspend fun loginUser(userName: String, password: String) = userApi.loginUser(userName, password)
+
+    suspend fun refreshJwtToken(userName: String, password: String) = userApi.refreshJwtToken(userName, password)
 
     suspend fun registerUser(userName: String, password: String) = userApi.registerUser(userName, password)
 

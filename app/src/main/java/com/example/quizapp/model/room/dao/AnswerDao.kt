@@ -2,7 +2,7 @@ package com.example.quizapp.model.room.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.example.quizapp.model.room.entities.Answer
+import com.example.quizapp.model.room.entities.questionnaire.Answer
 import com.example.quizapp.utils.Constants
 import kotlinx.coroutines.flow.Flow
 

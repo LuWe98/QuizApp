@@ -6,7 +6,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_gravity="bottom"
         android:paddingVertical="@dimen/grid_4"
-        android:background="@drawable/background_round_corners_top_15dp">
+        android:background="@drawable/background_round_corners_top_15dp"
+        android:backgroundTint="?colorOnPrimary">
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
@@ -14,6 +15,7 @@
             android:id="@+id/tvTitle"
             tools:text="Questionnaire Title"
             android:background="@drawable/background_round_corners_10dp"
+            android:backgroundTint="@color/transparent"
             android:gravity="center_vertical"
             android:paddingHorizontal="@dimen/grid_4"
             app:autoSizeMaxTextSize="20sp"

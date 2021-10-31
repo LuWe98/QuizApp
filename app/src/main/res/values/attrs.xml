@@ -10,4 +10,24 @@
         <attr name="frontLayerCollapsedScale" format="float"/>
         <attr name="frontLayerAnimationDuration" format="integer"/>
     </declare-styleable>
+
+    <declare-styleable name="SettingsItemLayout">
+        <attr name="title" format="string"/>
+        <attr name="icon" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="SettingsItemTextLayout" parent="SettingsItemLayout">
+        <attr name="title"/>
+        <attr name="text" format="string"/>
+        <attr name="icon"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="SettingsItemDropDownLayout" parent="SettingsItemTextLayout">
+        <attr name="title"/>
+        <attr name="text"/>
+        <attr name="icon"/>
+        <attr name="dropDownIcon" format="reference"/>
+    </declare-styleable>
+
 </resources>

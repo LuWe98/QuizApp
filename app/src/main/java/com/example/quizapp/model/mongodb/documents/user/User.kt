@@ -17,20 +17,20 @@ data class User(
     var userName: String,
     var password: String,
     var role: Role,
-    var lastModifiedTimestamp : Long = getTimeMillis()
+    var lastModifiedTimestamp : Long
 ) : Parcelable {
 
     val isNotEmpty get() = id.isNotEmpty() && userName.isNotEmpty() && password.isNotEmpty()
+
+    val isEmpty get() = !isNotEmpty
 
     val asAuthorInfo get() = AuthorInfo(id, userName)
 
     val asBasicAuthCredentials get() = BasicAuthCredentials(userName, password)
 
+    val asBasicCredentials get() = Credentials.basic(userName, password, Charsets.UTF_8)
+
     companion object {
         val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<User> { old, new -> old.id == new.id }
     }
-
-
-    val asBasicCredentials get() = Credentials.basic(userName, password, Charsets.UTF_8)
-
 }

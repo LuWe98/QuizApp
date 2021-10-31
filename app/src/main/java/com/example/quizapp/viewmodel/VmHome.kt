@@ -1,8 +1,7 @@
 package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.DataMapper
@@ -30,8 +29,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -53,7 +51,7 @@ class VmHome @Inject constructor(
     val fragmentHomeCreatedEventChannelFlow get() = fragmentHomeCreatedEventChannel.receiveAsFlow()
 
     init {
-        launch(IO) {
+        applicationScope.launch(IO) {
             fragmentHomeEventChannel.send(ChangeProgressVisibility(true))
 //            fragmentHomeCachedEventChannel.send(ChangeCachedSwipeRefreshLayoutVisibility(true))
 //            fragmentHomeCreatedEventChannel.send(ChangeCreatedSwipeRefreshLayoutVisibility(true))
@@ -65,15 +63,16 @@ class VmHome @Inject constructor(
         }
     }
 
-    private val userInfoFlow = preferencesRepository.userFlow
+    private val userIdFlow = preferencesRepository.userIdFlow.flowOn(IO)
 
-    val allCachedQuestionnairesLD = userInfoFlow.flatMapLatest {
-        localRepository.findAllCompleteQuestionnairesNotForUserFlow(it.id)
-    }.asLiveData().distinctUntilChanged()
+    val allCachedQuestionnairesFlow = userIdFlow.flatMapLatest { id ->
+        localRepository.findAllCompleteQuestionnairesNotForUserFlow(id)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    val allCreatedQuestionnairesLD = userInfoFlow.flatMapLatest {
-        localRepository.findAllCompleteQuestionnairesForUserFlow(it.id)
-    }.asLiveData().distinctUntilChanged()
+    val allCreatedQuestionnairesFlow = userIdFlow.flatMapLatest { id ->
+        localRepository.findAllCompleteQuestionnairesForUserFlow(id)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
 
 
     fun onSwipeRefreshCachedQuestionnairesList() = launch(IO) {
@@ -207,6 +206,8 @@ class VmHome @Inject constructor(
     }
 
 
+
+
     fun onChangeQuestionnaireVisibilitySelected(questionnaireId: String, newVisibility: QuestionnaireVisibility) = launch(IO) {
         runCatching {
             backendRepository.changeQuestionnaireVisibility(questionnaireId, newVisibility)
@@ -225,6 +226,8 @@ class VmHome @Inject constructor(
             fragmentHomeEventChannel.send(ShowSnackBarMessageBar(R.string.errorCouldNotChangeVisibility))
         }
     }
+
+
 
 
     sealed class FragmentHomeEvent {

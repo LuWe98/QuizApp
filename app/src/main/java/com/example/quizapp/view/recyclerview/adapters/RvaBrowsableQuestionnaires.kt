@@ -9,14 +9,14 @@ import com.example.quizapp.extensions.context
 import com.example.quizapp.extensions.getColor
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.model.ktor.status.DownloadStatus
-import com.example.quizapp.model.mongodb.documents.questionnaire.browsable.BrowsableMongoQuestionnaire
+import com.example.quizapp.model.mongodb.documents.questionnaire.browsable.MongoBrowsableQuestionnaire
 import com.example.quizapp.view.recyclerview.impl.BindingPagingDataAdapter
 
-class RvaBrowsableQuestionnaires : BindingPagingDataAdapter<BrowsableMongoQuestionnaire, RviQuestionnaireBrowseNewBinding>(BrowsableMongoQuestionnaire.DIFF_CALLBACK) {
+class RvaBrowsableQuestionnaires : BindingPagingDataAdapter<MongoBrowsableQuestionnaire, RviQuestionnaireBrowseNewBinding>(MongoBrowsableQuestionnaire.DIFF_CALLBACK) {
 
     var onDownloadClick : ((String) -> (Unit))? = null
 
-    var onMoreOptionsClicked : ((BrowsableMongoQuestionnaire) -> (Unit))? = null
+    var onMoreOptionsClicked : ((MongoBrowsableQuestionnaire) -> (Unit))? = null
 
     override fun initListeners(binding: RviQuestionnaireBrowseNewBinding, vh: BindingPagingDataAdapterViewHolder) {
         binding.apply {
@@ -36,7 +36,7 @@ class RvaBrowsableQuestionnaires : BindingPagingDataAdapter<BrowsableMongoQuesti
         }
     }
 
-    override fun bindViews(binding: RviQuestionnaireBrowseNewBinding, item: BrowsableMongoQuestionnaire, position: Int) {
+    override fun bindViews(binding: RviQuestionnaireBrowseNewBinding, item: MongoBrowsableQuestionnaire, position: Int) {
         binding.apply {
             tvTitle.text = item.title
             tvInfo.text = context.getString(R.string.test, item.authorInfo.userName, item.courseOfStudies, item.subject, item.questionCount.toString())

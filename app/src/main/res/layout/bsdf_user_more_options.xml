@@ -6,6 +6,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@drawable/background_round_corners_top_15dp"
+        android:backgroundTint="?colorOnPrimary"
         android:paddingVertical="@dimen/grid_4">
 
     <com.google.android.material.textview.MaterialTextView
@@ -14,6 +15,7 @@
             android:id="@+id/tvUserName"
             tools:text="Username"
             android:background="@drawable/background_round_corners_10dp"
+            android:backgroundTint="@color/transparent"
             android:gravity="center_vertical"
             android:paddingHorizontal="@dimen/grid_3"
             app:autoSizeMaxTextSize="20sp"

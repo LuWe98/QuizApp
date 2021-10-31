@@ -1,12 +1,7 @@
 package com.example.quizapp.model.ktor.apiclasses
 
-import com.example.quizapp.model.ktor.requests.LoginUserRequest
-import com.example.quizapp.model.ktor.requests.RegisterUserRequest
-import com.example.quizapp.model.ktor.requests.UpdateUserNameRequest
-import com.example.quizapp.model.ktor.responses.DeleteUserResponse
-import com.example.quizapp.model.ktor.responses.LoginUserResponse
-import com.example.quizapp.model.ktor.responses.RegisterUserResponse
-import com.example.quizapp.model.ktor.responses.UpdateUserResponse
+import com.example.quizapp.model.ktor.requests.*
+import com.example.quizapp.model.ktor.responses.*
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject
@@ -33,5 +28,15 @@ class UserApi @Inject constructor(
         }
 
     suspend fun deleteSelf(): DeleteUserResponse = client.delete("/user/delete")
+
+    suspend fun syncUserData(userId: String) : SyncUserDataResponse =
+        client.post("user/sync"){
+            body = SyncUserDataRequest(userId)
+        }
+
+    suspend fun refreshJwtToken(userName: String, password: String) : RefreshJwtTokenResponse =
+        client.post("user/token") {
+            body = RefreshJwtTokenRequest(userName, password)
+        }
 
 }

@@ -142,12 +142,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion")
 
-
-    //Settings-Preferences
-    val preferencesVersion: String by project
-    implementation("androidx.preference:preference-ktx:$preferencesVersion")
-
-
+    
     //Preference-Datastore
     val preferenceDatastoreVersion: String by project
     implementation("androidx.datastore:datastore-preferences:$preferenceDatastoreVersion")
@@ -161,6 +156,9 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization:$ktorVersion")
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
 
+    val auth0Version: String by project
+    implementation("com.auth0:java-jwt:$auth0Version")
+
 
     //Kotlin Serialisation
     val kotlinSerialisationVersion: String by project
@@ -169,12 +167,6 @@ dependencies {
     //BSON
     val bsonVersion: String by project
     implementation("org.mongodb:bson:$bsonVersion")
-
-
-
-    //Codec
-    val commonsCodecVersion: String by project
-    implementation("commons-codec:commons-codec:$commonsCodecVersion")
 
 
 
