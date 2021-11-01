@@ -2,7 +2,7 @@ package com.example.quizapp.view
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.content.Context
+import android.animation.ValueAnimator
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.ImageView
@@ -15,24 +15,15 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.flowext.awareCollect
-import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
-import com.example.quizapp.view.fragments.settingsscreen.QuizAppLanguage
 import com.example.quizapp.viewmodel.VmMain
-import com.example.quizapp.viewmodel.VmMain.*
-import com.example.quizapp.viewmodel.VmMain.MainViewModelEvent.*
+import com.example.quizapp.viewmodel.VmMain.MainViewModelEvent.NavigateToLoginScreenEvent
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.math.max
 import kotlin.math.min
-
 
 //TODO -> SETTINGS ÜBERARBEITEN MIT CUSTOM VIEWS STATT RECYCLERVIEW !!
 //TODO ---> CHANGE USERNAME AND PASSWORD IMPLEMENTIEREN
@@ -190,16 +181,15 @@ class QuizActivity: BindingActivity<ActivityQuizBinding>(), NavController.OnDest
         playFadeOutAnim()
     }
 
+    //TODO -> Im Viewmodel flag setzen, dass anim spielen soll
     private fun playFadeInAnim(savedInstanceState: Bundle?) {
-        //TODO -> Im Viewmodel flag setzen, dass anim spielen soll
         if (savedInstanceState == null) return
 
         binding.transitionView.apply {
             animate()
                 .setDuration(resources.getInteger(R.integer.recreateAnimDuration).toLong())
                 .setUpdateListener {
-                    val progress = 1 - (min(max(it.currentPlayTime / it.duration.toFloat(), 0f), 1f))
-                    getHexColor(progress).let { color ->
+                    getHexColor(1 - it.progress).let { color ->
                         window.statusBarColor = color
                         setBackgroundColor(color)
                     }
@@ -211,14 +201,13 @@ class QuizActivity: BindingActivity<ActivityQuizBinding>(), NavController.OnDest
         }
     }
 
+    //TODO -> Im Viewmodel flag setzen, dass anim spielen soll
     private fun playFadeOutAnim() {
-        //TODO -> Im Viewmodel flag setzen, dass anim spielen soll
         binding.transitionView.apply {
             animate()
                 .setDuration(resources.getInteger(R.integer.recreateAnimDuration).toLong())
                 .setUpdateListener {
-                    val progress = (min(max(it.currentPlayTime / it.duration.toFloat(), 0f), 1f))
-                    getHexColor(progress).let { color ->
+                    getHexColor(it.progress).let { color ->
                         window.statusBarColor = color
                         setBackgroundColor(color)
                     }
@@ -230,10 +219,13 @@ class QuizActivity: BindingActivity<ActivityQuizBinding>(), NavController.OnDest
         }
     }
 
+    val ValueAnimator.progress get() = min(max(currentPlayTime / duration.toFloat(), 0f), 1f)
+
     private fun getHexColor(progress: Float): Int {
-        val hexColor = Integer.toHexString((255 * progress).toInt()).let {
+        return Integer.toHexString((255 * progress).toInt()).let {
             "#" + (if (it.length == 1) "0$it" else it) + "000000"
+        }.let { hexColor ->
+            Color.parseColor(hexColor)
         }
-        return Color.parseColor(hexColor)
     }
 }

@@ -2,25 +2,21 @@ package com.example.quizapp.viewmodel
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_CHANGED
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_UP_TO_DATE
-import com.example.quizapp.model.mongodb.documents.user.User
-import com.example.quizapp.model.room.LocalRepository
+import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,9 +34,9 @@ class VmSettings @Inject constructor(
 
     private val userFlow = preferencesRepository.userFlow.flowOn(IO).distinctUntilChanged()
 
-    val userRoleFlow = userFlow.map { it.role }.asLiveData().distinctUntilChanged()
+    val userRoleFlow = userFlow.map { it.role }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val userNameFlow = userFlow.map { it.userName }.asLiveData().distinctUntilChanged()
+    val userNameFlow = userFlow.map { it.userName }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     val themeNameResFlow = preferencesRepository.themeFlow.map {
         when (it) {
@@ -49,10 +45,9 @@ class VmSettings @Inject constructor(
             AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM -> R.string.systemDefault
             else -> throw IllegalStateException()
         }
-    }.distinctUntilChanged()
+    }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val languageFlow = preferencesRepository.languageFlow.distinctUntilChanged()
-
+    val languageFlow = preferencesRepository.languageFlow.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     fun onLogoutClicked() = launch(IO) {
         fragmentSettingsEventChannel.send(OnLogoutClickedEvent)

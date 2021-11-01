@@ -1,7 +1,7 @@
 package com.example.quizapp.model.ktor.paging
 
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.user.User
 
 class UserPagingSource (
     private val backendRepository: BackendRepository,

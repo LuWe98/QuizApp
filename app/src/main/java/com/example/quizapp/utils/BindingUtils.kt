@@ -12,7 +12,7 @@ import java.lang.reflect.ParameterizedType
 
 @Suppress("UNCHECKED_CAST")
 object BindingUtils {
-    const val INFLATE_METHOD = "inflate"
+    private const val INFLATE_METHOD = "inflate"
 
     private fun findGenericTypeWith(classInstance: Any, genericClassToFind: Class<*>, relativePosition : Int): Class<*> {
         return try {
@@ -23,7 +23,7 @@ object BindingUtils {
                     genericClassToFind.isAssignableFrom(it)
                 }[relativePosition]
         }  catch (e: Exception) {
-            throw IllegalArgumentException("Could Not find generic Class '$genericClassToFind' of Instance '$classInstance'!")
+            throw IllegalArgumentException("Could not find generic Class '$genericClassToFind' of Instance '$classInstance'!")
         }
     }
 

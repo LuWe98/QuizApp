@@ -95,7 +95,7 @@
             app:startDestination="@id/fragmentAddQuestionnaire">
         <argument
                 android:name="completeQuestionnaire"
-                app:argType="com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction"
+                app:argType="com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction"
                 app:nullable="true" />
 
         <argument
@@ -122,7 +122,7 @@
                     app:argType="integer" />
             <argument
                     android:name="questionWithAnswers"
-                    app:argType="com.example.quizapp.model.room.junctions.QuestionWithAnswers" />
+                    app:argType="com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers" />
         </fragment>
     </navigation>
 
@@ -136,7 +136,7 @@
 
         <argument
                 android:name="questionnaire"
-                app:argType="com.example.quizapp.model.room.entities.questionnaire.Questionnaire" />
+                app:argType="com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire" />
 
     </dialog>
 
@@ -148,7 +148,7 @@
             tools:layout="@layout/bsdf_user_more_options">
         <argument
                 android:name="user"
-                app:argType="com.example.quizapp.model.mongodb.documents.user.User" />
+                app:argType="com.example.quizapp.model.databases.mongodb.documents.user.User" />
 
     </dialog>
 
@@ -159,7 +159,7 @@
             tools:layout="@layout/bsdf_user_role_selection">
         <argument
                 android:name="user"
-                app:argType="com.example.quizapp.model.mongodb.documents.user.User" />
+                app:argType="com.example.quizapp.model.databases.mongodb.documents.user.User" />
     </dialog>
 
     <dialog

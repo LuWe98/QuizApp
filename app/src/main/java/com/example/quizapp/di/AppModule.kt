@@ -1,18 +1,14 @@
 package com.example.quizapp.di
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import com.example.quizapp.extensions.dataStore
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.apiclasses.*
 import com.example.quizapp.model.ktor.client.KtorClientAuth
 import com.example.quizapp.model.ktor.client.KtorClientExceptionHandler
-import com.example.quizapp.model.room.LocalDatabase
-import com.example.quizapp.model.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalDatabase
+import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.utils.BackendSyncer
 import com.example.quizapp.utils.ConnectivityHelper
 import com.example.quizapp.utils.Constants

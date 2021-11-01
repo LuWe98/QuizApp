@@ -8,7 +8,7 @@ import com.example.quizapp.databinding.FragmentBackdropBinding
 import com.example.quizapp.databinding.RviUserBinding
 import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.onClick
-import com.example.quizapp.utils.DiffUtilHelper
+import com.example.quizapp.utils.DiffCallbackUtil
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,7 +87,7 @@ class BackdropFragment : BindingFragment<FragmentBackdropBinding>() {
 
 
 
-    class RvaTest : BindingListAdapter<String, RviUserBinding>(DiffUtilHelper.createDiffUtil { t, t2 -> t == t2 }) {
+    class RvaTest : BindingListAdapter<String, RviUserBinding>(DiffCallbackUtil.createDiffUtil { t, t2 -> t == t2 }) {
 
         override fun initListeners(binding: RviUserBinding, vh: BindingListAdapterViewHolder) {
 

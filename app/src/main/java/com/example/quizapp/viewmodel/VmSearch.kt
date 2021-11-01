@@ -8,14 +8,14 @@ import androidx.paging.cachedIn
 import androidx.paging.liveData
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.DataMapper
+import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.MongoQuestionnairePagingSource
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
 import com.example.quizapp.model.ktor.responses.GetQuestionnaireResponse.GetQuestionnaireResponseType
 import com.example.quizapp.model.ktor.status.DownloadStatus
-import com.example.quizapp.model.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.viewmodel.VmSearch.FragmentSearchEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope

@@ -2,7 +2,7 @@ package com.example.quizapp.model.ktor.responses
 
 import androidx.annotation.StringRes
 import com.example.quizapp.R
-import com.example.quizapp.model.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import kotlinx.serialization.Serializable
 
 @Serializable

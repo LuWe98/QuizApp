@@ -1,6 +1,6 @@
 package com.example.quizapp.utils
 
-import com.example.quizapp.model.DataMapper
+import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.*
@@ -10,12 +10,12 @@ import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.room.LocalRepository
-import com.example.quizapp.model.room.entities.sync.LocallyAnsweredQuestionnaire
-import com.example.quizapp.model.room.entities.sync.LocallyClearedQuestionnaire
-import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
-import com.example.quizapp.model.room.junctions.QuestionWithAnswers
+import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.entities.sync.LocallyAnsweredQuestionnaire
+import com.example.quizapp.model.databases.room.entities.sync.LocallyClearedQuestionnaire
+import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async

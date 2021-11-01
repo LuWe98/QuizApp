@@ -6,8 +6,8 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.UpdateUserResponse.*
 import com.example.quizapp.model.ktor.status.Resource
-import com.example.quizapp.model.mongodb.documents.user.Role
-import com.example.quizapp.model.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.view.fragments.adminscreen.BsdfUserRoleSelectionArgs
 import com.example.quizapp.viewmodel.VmChangeUserRole.FragmentChangeUserRoleEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel

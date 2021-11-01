@@ -5,8 +5,8 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.RviQuestionnaireCreatedNewBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.room.entities.questionnaire.Questionnaire
-import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
 class RvaCreatedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunction, RviQuestionnaireCreatedNewBinding>(CompleteQuestionnaireJunction.DIFF_CALLBACK) {

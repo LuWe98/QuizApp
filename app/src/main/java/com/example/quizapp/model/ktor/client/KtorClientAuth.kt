@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT
 import com.example.quizapp.extensions.log
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.apiclasses.UserApi
-import com.example.quizapp.model.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.features.auth.*

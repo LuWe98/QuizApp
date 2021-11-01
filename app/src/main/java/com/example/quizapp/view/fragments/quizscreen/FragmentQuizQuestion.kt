@@ -9,7 +9,7 @@ import com.example.quizapp.databinding.FragmentQuizQuestionBinding
 import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.extensions.updateAllViewHolders
-import com.example.quizapp.model.room.entities.questionnaire.Question
+import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.view.recyclerview.adapters.RvaAnswerQuiz
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmQuiz

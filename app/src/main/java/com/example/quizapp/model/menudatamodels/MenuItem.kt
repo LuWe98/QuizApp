@@ -3,7 +3,7 @@ package com.example.quizapp.model.menudatamodels
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
-import com.example.quizapp.utils.DiffUtilHelper
+import com.example.quizapp.utils.DiffCallbackUtil
 
 data class MenuItem(
     @IdRes val id: Int,
@@ -11,6 +11,6 @@ data class MenuItem(
     @StringRes val titleRes: Int
 ){
     companion object {
-        val DIFF_CALLBACK = DiffUtilHelper.createDiffUtil<MenuItem> { old, new ->  old.id == new.id }
+        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<MenuItem> { old, new ->  old.id == new.id }
     }
 }

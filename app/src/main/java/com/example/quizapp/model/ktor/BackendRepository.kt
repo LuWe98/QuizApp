@@ -1,14 +1,14 @@
 package com.example.quizapp.model.ktor
 
-import com.example.quizapp.model.DataMapper
-import com.example.quizapp.model.dto.QuestionnaireIdWithTimestamp
+import com.example.quizapp.model.databases.DataMapper
+import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.apiclasses.*
-import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
-import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility
-import com.example.quizapp.model.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
-import com.example.quizapp.model.mongodb.documents.user.Role
-import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility
+import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
 import javax.inject.Inject
 import javax.inject.Singleton
 

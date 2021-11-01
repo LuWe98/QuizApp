@@ -1,6 +1,6 @@
 package com.example.quizapp.model.ktor.requests
 
-import com.example.quizapp.model.dto.QuestionnaireIdWithTimestamp
+import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
 import kotlinx.serialization.Serializable
 
 @Serializable

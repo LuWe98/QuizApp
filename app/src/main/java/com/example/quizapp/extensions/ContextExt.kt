@@ -2,15 +2,20 @@ package com.example.quizapp.extensions
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Point
 import android.hardware.input.InputManager
+import android.os.Build
 import android.widget.Toast
 
 import android.util.TypedValue
 import android.view.ContextThemeWrapper
 import android.view.View
+import android.view.WindowInsets
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.AttrRes
 import androidx.annotation.MainThread
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -70,7 +75,6 @@ fun Context.hideKeyboard(view: View) {
 }
 
 
-
 fun Context.setLocale() = setLocale(runBlocking(Dispatchers.IO) {
     dataStore.dataflow.map { preferences ->
         preferences[PreferencesRepository.LANGUAGE_KEY]?.let {
@@ -88,3 +92,28 @@ fun Context.setLocale(quizAppLanguage: QuizAppLanguage): Context {
     }
     return createConfigurationContext(config)
 }
+
+
+@Suppress("DEPRECATION")
+val Context.navigationBarHeight: Int
+    get() = if (Build.VERSION.SDK_INT >= 30) {
+        (getSystemService(Context.WINDOW_SERVICE) as WindowManager)
+            .currentWindowMetrics
+            .windowInsets
+            .getInsets(WindowInsets.Type.navigationBars())
+            .bottom
+
+    } else {
+        val appUsableSize = Point()
+        val realScreenSize = Point()
+
+        (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.apply {
+            getSize(appUsableSize)
+            getRealSize(realScreenSize)
+        }
+        when{
+            appUsableSize.x < realScreenSize.x -> realScreenSize.x - appUsableSize.x
+            appUsableSize.y < realScreenSize.y -> realScreenSize.y - appUsableSize.y
+            else -> 0
+        }
+    }

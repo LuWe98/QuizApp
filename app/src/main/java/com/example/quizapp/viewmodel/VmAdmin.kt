@@ -9,12 +9,11 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
 import com.example.quizapp.model.ktor.paging.UserPagingSource
-import com.example.quizapp.model.ktor.responses.DeleteUserResponse
 import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
-import com.example.quizapp.model.mongodb.documents.user.Role
-import com.example.quizapp.model.mongodb.documents.user.User
-import com.example.quizapp.model.room.LocalRepository
-import com.example.quizapp.model.room.entities.sync.LocallyDeletedUser
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedUser
 import com.example.quizapp.viewmodel.VmAdmin.FragmentAdminEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope

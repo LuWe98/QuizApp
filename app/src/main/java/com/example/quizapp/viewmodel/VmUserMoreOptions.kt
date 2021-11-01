@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.menudatamodels.MenuItemDataModel
-import com.example.quizapp.model.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptionsArgs
 import com.example.quizapp.viewmodel.VmUserMoreOptions.UserMoreOptionsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel

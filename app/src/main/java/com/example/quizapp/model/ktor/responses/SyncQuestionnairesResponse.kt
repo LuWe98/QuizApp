@@ -1,7 +1,7 @@
 package com.example.quizapp.model.ktor.responses
 
-import com.example.quizapp.model.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
-import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestionnaire
 import kotlinx.serialization.Serializable
 
 @Serializable

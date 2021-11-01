@@ -6,7 +6,7 @@ import androidx.core.view.isVisible
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviQuestionQuizBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.room.junctions.QuestionWithAnswers
+import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 import com.example.quizapp.viewmodel.VmQuiz
 

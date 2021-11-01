@@ -5,13 +5,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.extensions.log
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.LoginUserResponse.*
 import com.example.quizapp.model.ktor.responses.RegisterUserResponse.*
-import com.example.quizapp.model.mongodb.documents.user.User
-import com.example.quizapp.model.room.LocalRepository
+import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.viewmodel.VmAuth.FragmentAuthEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO

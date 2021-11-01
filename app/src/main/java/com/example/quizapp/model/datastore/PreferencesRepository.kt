@@ -6,8 +6,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.quizapp.extensions.dataStore
 import com.example.quizapp.extensions.dataflow
-import com.example.quizapp.model.mongodb.documents.user.Role
-import com.example.quizapp.model.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.utils.EncryptionUtil.decrypt
 import com.example.quizapp.utils.EncryptionUtil.encrypt
 import com.example.quizapp.view.fragments.settingsscreen.QuizAppLanguage

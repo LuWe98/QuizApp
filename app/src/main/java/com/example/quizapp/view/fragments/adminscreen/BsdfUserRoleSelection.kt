@@ -12,7 +12,7 @@ import com.example.quizapp.databinding.BsdfUserRoleSelectionBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.flowext.awareCollect
 import com.example.quizapp.model.ktor.status.Resource
-import com.example.quizapp.model.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.viewmodel.VmAdmin
 import com.example.quizapp.viewmodel.VmChangeUserRole

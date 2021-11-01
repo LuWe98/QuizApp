@@ -12,7 +12,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizOverviewBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.flowext.awareCollect
-import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionWithAnswersQuiz
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmQuiz

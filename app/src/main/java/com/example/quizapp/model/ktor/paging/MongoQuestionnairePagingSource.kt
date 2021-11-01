@@ -1,8 +1,8 @@
 package com.example.quizapp.model.ktor.paging
 
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.mongodb.documents.questionnaire.browsable.MongoBrowsableQuestionnaire
-import com.example.quizapp.model.room.LocalRepository
+import com.example.quizapp.model.databases.mongodb.documents.questionnaire.browsable.MongoBrowsableQuestionnaire
+import com.example.quizapp.model.databases.room.LocalRepository
 
 class MongoQuestionnairePagingSource(
     private val backendRepository: BackendRepository,

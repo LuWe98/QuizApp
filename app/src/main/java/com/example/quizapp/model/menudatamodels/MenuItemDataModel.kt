@@ -2,9 +2,9 @@ package com.example.quizapp.model.menudatamodels
 
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.quizapp.R
-import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility
-import com.example.quizapp.model.mongodb.documents.user.Role
-import com.example.quizapp.model.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptionsArgs
 import com.example.quizapp.view.fragments.settingsscreen.QuizAppLanguage
 

@@ -10,10 +10,10 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.quizapp.MainNavGraphDirections
 import com.example.quizapp.R
 import com.example.quizapp.extensions.initMaterialElevationScale
-import com.example.quizapp.model.mongodb.documents.user.User
-import com.example.quizapp.model.room.entities.questionnaire.Questionnaire
-import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
-import com.example.quizapp.model.room.junctions.QuestionWithAnswers
+import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaireDirections
 import com.example.quizapp.view.fragments.adminscreen.FragmentAdminDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections

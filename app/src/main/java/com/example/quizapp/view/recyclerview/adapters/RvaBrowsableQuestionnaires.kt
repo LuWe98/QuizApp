@@ -9,7 +9,7 @@ import com.example.quizapp.extensions.context
 import com.example.quizapp.extensions.getColor
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.model.ktor.status.DownloadStatus
-import com.example.quizapp.model.mongodb.documents.questionnaire.browsable.MongoBrowsableQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.questionnaire.browsable.MongoBrowsableQuestionnaire
 import com.example.quizapp.view.recyclerview.impl.BindingPagingDataAdapter
 
 class RvaBrowsableQuestionnaires : BindingPagingDataAdapter<MongoBrowsableQuestionnaire, RviQuestionnaireBrowseNewBinding>(MongoBrowsableQuestionnaire.DIFF_CALLBACK) {

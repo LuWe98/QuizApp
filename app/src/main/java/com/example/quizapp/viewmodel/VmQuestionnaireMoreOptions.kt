@@ -7,9 +7,9 @@ import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.menudatamodels.MenuItem
 import com.example.quizapp.model.menudatamodels.MenuItemDataModel
-import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility
-import com.example.quizapp.model.room.LocalRepository
-import com.example.quizapp.model.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility
+import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
 import com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptionsArgs
 import com.example.quizapp.viewmodel.VmQuestionnaireMoreOptions.QuestionnaireMoreOptionsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel

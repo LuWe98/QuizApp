@@ -38,5 +38,4 @@ class UserApi @Inject constructor(
         client.post("user/token") {
             body = RefreshJwtTokenRequest(userName, password)
         }
-
 }

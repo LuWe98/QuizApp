@@ -10,7 +10,7 @@ import com.example.quizapp.databinding.FragmentSettingsBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.flowext.awareCollect
 import com.example.quizapp.extensions.flowext.collect
-import com.example.quizapp.model.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmSettings
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
@@ -58,21 +58,21 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
 
     private fun initObservers() {
-        vmSettings.userNameFlow.observe(viewLifecycleOwner) {
-            binding.userLayout.btnUserName.text = it
+        vmSettings.userNameFlow.awareCollect(viewLifecycleOwner) {
+            binding.userLayout.btnUserName.text = it ?: ""
         }
 
-        vmSettings.userRoleFlow.observe(viewLifecycleOwner) {
-            binding.userLayout.btnRole.text = it.name
+        vmSettings.userRoleFlow.awareCollect(viewLifecycleOwner) {
+            binding.userLayout.btnRole.text = it?.name ?: ""
             binding.adminLayout.root.isVisible = it == Role.ADMIN
         }
 
         vmSettings.themeNameResFlow.awareCollect(viewLifecycleOwner) {
-            binding.preferencesLayout.btnTheme.setTextWithRes(it)
+            binding.preferencesLayout.btnTheme.text = it?.let { getString(it) } ?: ""
         }
 
         vmSettings.languageFlow.awareCollect(viewLifecycleOwner) {
-            binding.preferencesLayout.btnLanguage.setTextWithRes(it.textRes)
+            binding.preferencesLayout.btnLanguage.text = it?.let { getString(it.textRes) } ?: ""
         }
 
         vmSettings.fragmentSettingsEventChannelFlow.collect(lifecycleScope) { event ->

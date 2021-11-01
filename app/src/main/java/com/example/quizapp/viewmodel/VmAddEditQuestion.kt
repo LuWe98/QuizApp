@@ -5,8 +5,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.room.entities.questionnaire.Answer
-import com.example.quizapp.model.room.junctions.QuestionWithAnswers
+import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
+import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionArgs
 import com.example.quizapp.viewmodel.VmAddEditQuestion.FragmentEditQuestionEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel

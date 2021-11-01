@@ -1,12 +1,12 @@
 package com.example.quizapp.model.ktor.apiclasses
 
-import com.example.quizapp.model.mongodb.documents.questionnaire.MongoQuestionnaire
-import com.example.quizapp.model.dto.QuestionnaireIdWithTimestamp
+import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestionnaire
+import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.requests.*
 import com.example.quizapp.model.ktor.responses.*
-import com.example.quizapp.model.mongodb.documents.questionnaire.QuestionnaireVisibility
-import com.example.quizapp.model.mongodb.documents.questionnaire.browsable.MongoBrowsableQuestionnaire
-import com.example.quizapp.model.room.entities.sync.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility
+import com.example.quizapp.model.databases.mongodb.documents.questionnaire.browsable.MongoBrowsableQuestionnaire
+import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject

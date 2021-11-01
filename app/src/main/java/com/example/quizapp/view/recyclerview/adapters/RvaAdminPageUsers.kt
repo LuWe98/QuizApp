@@ -5,11 +5,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviUserBinding
 import com.example.quizapp.extensions.context
-import com.example.quizapp.extensions.log
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.onLongClick
-import com.example.quizapp.model.mongodb.documents.user.Role
-import com.example.quizapp.model.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.view.recyclerview.impl.BindingPagingDataAdapter
 
 class RvaAdminPageUsers : BindingPagingDataAdapter<User, RviUserBinding>(User.DIFF_CALLBACK) {

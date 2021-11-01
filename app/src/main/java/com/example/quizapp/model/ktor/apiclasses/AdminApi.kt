@@ -3,8 +3,8 @@ package com.example.quizapp.model.ktor.apiclasses
 import com.example.quizapp.model.ktor.requests.*
 import com.example.quizapp.model.ktor.responses.DeleteUserResponse
 import com.example.quizapp.model.ktor.responses.UpdateUserResponse
-import com.example.quizapp.model.mongodb.documents.user.Role
-import com.example.quizapp.model.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.mongodb.documents.user.User
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject

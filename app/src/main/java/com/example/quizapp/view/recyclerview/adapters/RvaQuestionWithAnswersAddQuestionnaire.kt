@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviAddQuestionBinding
 import com.example.quizapp.extensions.setImageDrawable
-import com.example.quizapp.model.room.junctions.QuestionWithAnswers
+import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
 class RvaQuestionWithAnswersAddQuestionnaire : BindingListAdapter<QuestionWithAnswers, RviAddQuestionBinding>(QuestionWithAnswers.DIFF_CALLBACK){

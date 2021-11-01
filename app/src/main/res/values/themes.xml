@@ -39,6 +39,7 @@
         <item name="android:dialogTheme">@style/Theme.QuizApp.DialogFragment</item>
         <item name="dialogTheme">@style/Theme.QuizApp.DialogFragment</item>
 <!--       <item name="textInputStyle">@style/Style.QuizApp.TextInputLayout</item>-->
+
     </style>
 
 
@@ -67,6 +68,9 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="bottomSheetStyle">@style/Style.ModalBottomSheet.Transparent</item>
+        <!--        <item name="android:windowIsFloating">false</item>-->
+<!--        <item name="android:navigationBarColor">@color/white</item>-->
+
     </style>
 
 

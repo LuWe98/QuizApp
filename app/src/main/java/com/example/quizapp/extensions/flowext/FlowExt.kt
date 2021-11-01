@@ -20,6 +20,9 @@ inline fun <reified T> Flow<T>.collect(scope: CoroutineScope, crossinline action
     }
 }
 
+/**
+ * Livecycle aware Flow-Collection
+ */
 inline fun <reified T> Flow<T>.awareCollect(
     lifecycleOwner: LifecycleOwner,
     lifeCycleState: Lifecycle.State = Lifecycle.State.STARTED,
