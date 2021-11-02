@@ -1,5 +1,6 @@
 package com.example.quizapp.model.databases
 
+import com.example.quizapp.model.databases.mongodb.documents.faculty.MongoCourseOfStudies
 import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestion
 import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoAnswer
@@ -12,16 +13,19 @@ import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
+import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
-import com.example.quizapp.model.databases.room.junctions.FacultyWithCoursesOfStudiesJunction
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 
+/**
+ * DataMapper for ROOM and MONGO Entities/Documents
+ */
 object DataMapper {
 
-    fun mapMongoObjectToSqlEntities(
+    fun mapMongoQuestionnaireToRoomCompleteQuestionnaire(
         mongoQuestionnaire: MongoQuestionnaire,
         mongoFilledQuestionnaire: MongoFilledQuestionnaire? = null
-    ): CompleteQuestionnaireJunction {
+    ): CompleteQuestionnaire {
         val questionnaire = Questionnaire(
             id = mongoQuestionnaire.id,
             title = mongoQuestionnaire.title,
@@ -31,44 +35,45 @@ object DataMapper {
             subject = mongoQuestionnaire.subject,
             syncStatus = SyncStatus.SYNCED,
             questionnaireVisibility = mongoQuestionnaire.questionnaireVisibility,
-            lastModifiedTimestamp = mongoQuestionnaire.lastModifiedTimestamp)
+            lastModifiedTimestamp = mongoQuestionnaire.lastModifiedTimestamp
+        )
 
         val questionsWithAnswers = mongoQuestionnaire.questions.map { question ->
             QuestionWithAnswers(
                 Question(
-                id = question.id,
-                questionnaireId = mongoQuestionnaire.id,
-                questionText = question.questionText,
-                isMultipleChoice = question.isMultipleChoice,
-                questionPosition = question.questionPosition
-            ), question.answers.map { answer ->
-                Answer(
-                    id = answer.id,
-                    questionId = question.id,
-                    answerText = answer.answerText,
-                    isAnswerCorrect = answer.isAnswerCorrect,
-                    answerPosition = answer.answerPosition,
-                    isAnswerSelected = mongoFilledQuestionnaire?.isAnswerSelected(question.id, answer.id) ?: false
-                )
-            })
+                    id = question.id,
+                    questionnaireId = mongoQuestionnaire.id,
+                    questionText = question.questionText,
+                    isMultipleChoice = question.isMultipleChoice,
+                    questionPosition = question.questionPosition
+                ), question.answers.map { answer ->
+                    Answer(
+                        id = answer.id,
+                        questionId = question.id,
+                        answerText = answer.answerText,
+                        isAnswerCorrect = answer.isAnswerCorrect,
+                        answerPosition = answer.answerPosition,
+                        isAnswerSelected = mongoFilledQuestionnaire?.isAnswerSelected(question.id, answer.id) ?: false
+                    )
+                })
         }.toMutableList()
 
-        return CompleteQuestionnaireJunction(questionnaire, questionsWithAnswers)
+        return CompleteQuestionnaire(questionnaire, questionsWithAnswers)
     }
 
 
-    fun mapSqlEntitiesToMongoEntity(
-        completeCompleteQuestionnaire: CompleteQuestionnaireJunction
-    ) = completeCompleteQuestionnaire.run { mapSqlEntitiesToMongoEntity(questionnaire, questionsWithAnswers) }
+    fun mapRoomQuestionnaireToMongoQuestionnaire(
+        completeCompleteQuestionnaire: CompleteQuestionnaire
+    ) = completeCompleteQuestionnaire.run { mapRoomQuestionnaireToMongoQuestionnaire(questionnaire, questionsWithAnswers) }
 
-    fun mapSqlEntitiesToMongoEntity(
+    fun mapRoomQuestionnaireToMongoQuestionnaire(
         questionnaire: Questionnaire,
         questions: List<Question>, answers: List<Answer>
-    ) = mapSqlEntitiesToMongoEntity(questionnaire, questions.map { question ->
+    ) = mapRoomQuestionnaireToMongoQuestionnaire(questionnaire, questions.map { question ->
         QuestionWithAnswers(question = question, answers = answers.filter { answer -> answer.questionId == question.id })
     })
 
-    fun mapSqlEntitiesToMongoEntity(
+    fun mapRoomQuestionnaireToMongoQuestionnaire(
         questionnaire: Questionnaire,
         questionsWithAnswers: List<QuestionWithAnswers>
     ): MongoQuestionnaire {
@@ -105,19 +110,19 @@ object DataMapper {
     }
 
 
-    fun mapSqlEntitiesToFilledMongoEntity(
-        completeCompleteQuestionnaire: CompleteQuestionnaireJunction
-    ) = completeCompleteQuestionnaire.run { mapSqlEntitiesToFilledMongoEntity(questionnaire, questionsWithAnswers) }
+    fun mapRoomQuestionnaireToMongoFilledQuestionnaire(
+        completeCompleteQuestionnaire: CompleteQuestionnaire
+    ) = completeCompleteQuestionnaire.run { mapRoomQuestionnaireToMongoFilledQuestionnaire(questionnaire, questionsWithAnswers) }
 
-    fun mapSqlEntitiesToFilledMongoEntity(
+    fun mapRoomQuestionnaireToMongoFilledQuestionnaire(
         questionnaire: Questionnaire,
         questions: List<Question>,
         answers: List<Answer>
-    ) = mapSqlEntitiesToFilledMongoEntity(questionnaire, questions.map { question ->
+    ) = mapRoomQuestionnaireToMongoFilledQuestionnaire(questionnaire, questions.map { question ->
         QuestionWithAnswers(question = question, answers = answers.filter { answer -> answer.questionId == question.id })
     })
 
-    fun mapSqlEntitiesToFilledMongoEntity(
+    fun mapRoomQuestionnaireToMongoFilledQuestionnaire(
         questionnaire: Questionnaire,
         questionsWithAnswers: List<QuestionWithAnswers>
     ) = MongoFilledQuestionnaire(
@@ -135,11 +140,11 @@ object DataMapper {
         }
     }
 
-    fun mapSqlEntitiesToEmptyFilledMongoEntity(
-        completeCompleteQuestionnaire: CompleteQuestionnaireJunction
-    ) = completeCompleteQuestionnaire.run { mapSqlEntitiesToEmptyFilledMongoEntity(questionnaire) }
+    fun mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(
+        completeCompleteQuestionnaire: CompleteQuestionnaire
+    ) = completeCompleteQuestionnaire.run { mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(questionnaire) }
 
-    fun mapSqlEntitiesToEmptyFilledMongoEntity(
+    fun mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(
         questionnaire: Questionnaire
     ) = MongoFilledQuestionnaire(
         questionnaireId = questionnaire.id,
@@ -147,23 +152,26 @@ object DataMapper {
     )
 
 
-    fun mapMongoFacultyToRoomEntity(mongoFaculty: MongoFaculty) : FacultyWithCoursesOfStudiesJunction {
-        val faculty = Faculty(
-            id = mongoFaculty.id,
-            abbreviation = mongoFaculty.abbreviation,
-            name = mongoFaculty.name,
-            lastModifiedTimestamp = mongoFaculty.lastModifiedTimestamp
+    fun mapMongoFacultyToRoomFaculty(mongoFaculty: MongoFaculty) = Faculty(
+        id = mongoFaculty.id,
+        abbreviation = mongoFaculty.abbreviation,
+        name = mongoFaculty.name,
+        lastModifiedTimestamp = mongoFaculty.lastModifiedTimestamp
+    )
+
+    fun mapMongoCourseOfStudiesToRoomCourseOfStudies(mongoCourseOfStudies: MongoCourseOfStudies) : Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>> {
+        val courseOfStudies = CourseOfStudies(
+            id = mongoCourseOfStudies.id,
+            abbreviation = mongoCourseOfStudies.abbreviation,
+            name = mongoCourseOfStudies.name,
+            degree = mongoCourseOfStudies.degree,
+            lastModifiedTimestamp = mongoCourseOfStudies.lastModifiedTimestamp
         )
 
-        val coursesOfStudies = mongoFaculty.coursesOfStudies.map {
-            CourseOfStudies(
-                id = it.id,
-                facultyId = faculty.id,
-                abbreviation = it.abbreviation,
-                name = it.name,
-                lastModifiedTimestamp = it.lastModifiedTimestamp
-            )
+        val facultyCourseOfStudiesRelation = mongoCourseOfStudies.facultyIds.map { facultyId ->
+            FacultyCourseOfStudiesRelation(facultyId, courseOfStudies.id)
         }
-        return FacultyWithCoursesOfStudiesJunction(faculty, coursesOfStudies)
+
+        return Pair(courseOfStudies, facultyCourseOfStudiesRelation)
     }
 }

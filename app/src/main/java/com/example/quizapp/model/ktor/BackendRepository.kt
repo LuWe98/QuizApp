@@ -1,6 +1,8 @@
 package com.example.quizapp.model.ktor
 
 import com.example.quizapp.model.databases.DataMapper
+import com.example.quizapp.model.databases.dto.CourseOfStudiesIdWithTimeStamp
+import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
 import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.apiclasses.*
 import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestionnaire
@@ -8,7 +10,7 @@ import com.example.quizapp.model.databases.mongodb.documents.questionnaire.Quest
 import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,16 +36,16 @@ class BackendRepository @Inject constructor(
     suspend fun syncUserData(userId: String) = userApi.syncUserData(userId)
 
 
-        // USER
-    suspend fun loginUser(userName: String, password: String) = userApi.loginUser(userName, password)
 
-    suspend fun refreshJwtToken(userName: String, password: String) = userApi.refreshJwtToken(userName, password)
+    // USER
+    suspend fun loginUser(userName: String, password: String) = userApi.loginUser(userName, password)
 
     suspend fun registerUser(userName: String, password: String) = userApi.registerUser(userName, password)
 
     suspend fun updateUsername(newUserName: String) = userApi.updateUsername(newUserName)
 
     suspend fun deleteSelf() = userApi.deleteSelf()
+
 
 
     // QUESTIONNAIRES
@@ -53,8 +55,8 @@ class BackendRepository @Inject constructor(
 
     suspend fun insertQuestionnaire(mongoQuestionnaire: MongoQuestionnaire) = questionnaireApi.insertQuestionnaire(mongoQuestionnaire)
 
-    suspend fun insertQuestionnaire(completeCompleteQuestionnaire: CompleteQuestionnaireJunction) =
-        questionnaireApi.insertQuestionnaire(DataMapper.mapSqlEntitiesToMongoEntity(completeCompleteQuestionnaire))
+    suspend fun insertQuestionnaire(completeCompleteQuestionnaire: CompleteQuestionnaire) =
+        questionnaireApi.insertQuestionnaire(DataMapper.mapRoomQuestionnaireToMongoQuestionnaire(completeCompleteQuestionnaire))
 
     suspend fun getQuestionnairesForSyncronization(
         syncedQuestionnaireIdsWithTimestamp: List<QuestionnaireIdWithTimestamp>,
@@ -76,7 +78,8 @@ class BackendRepository @Inject constructor(
         questionnaireApi.shareQuestionnaireWithUser(questionnaireId, userName, canEdit)
 
 
-        // FILLED QUESTIONNAIRES
+
+    // FILLED QUESTIONNAIRES
     suspend fun insertEmptyFilledQuestionnaire(mongoFilledQuestionnaire: MongoFilledQuestionnaire) =
         filledQuestionnaireApi.insertEmptyFilledQuestionnaire(mongoFilledQuestionnaire)
 
@@ -90,10 +93,17 @@ class BackendRepository @Inject constructor(
         filledQuestionnaireApi.deleteFilledQuestionnaire(questionnaireIds)
 
 
+
     // FACULTY
+    suspend fun getFacultySynchronizationData(localFacultyIdsWithTimeStamp: List<FacultyIdWithTimeStamp>) =
+        facultyApi.getFacultySynchronizationData(localFacultyIdsWithTimeStamp)
+
 
 
     // COURSE OF STUDIES
+    suspend fun getCourseOfStudiesSynchronizationData(localCourseIfStudiesIdsWithTimeStamp: List<CourseOfStudiesIdWithTimeStamp>) =
+        courseOfStudiesApi.getCourseOfStudiesSynchronizationData(localCourseIfStudiesIdsWithTimeStamp)
+
 
 
     // SUBJECT

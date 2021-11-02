@@ -95,7 +95,7 @@
             app:startDestination="@id/fragmentAddQuestionnaire">
         <argument
                 android:name="completeQuestionnaire"
-                app:argType="com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction"
+                app:argType="com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire"
                 app:nullable="true" />
 
         <argument
@@ -222,5 +222,28 @@
     <action
             android:id="@+id/action_global_backdropFragment"
             app:destination="@id/backdropFragment" />
+
+
+    <!-- FACULTY TEST -->
+
+    <dialog
+            android:id="@+id/bsdfFacultySelectionTest"
+            android:name="com.example.quizapp.view.fragments.dialogs.BsdfFacultySelectionTest"
+            android:label="BsdfFacultySelectionTest" >
+        <action
+                android:id="@+id/action_bsdfFacultySelectionTest_to_bsdfCourseOfStudiesSelectionTest"
+                app:destination="@id/bsdfCourseOfStudiesSelectionTest" />
+    </dialog>
+
+    <action android:id="@+id/action_global_bsdfFacultySelectionTest"
+            app:destination="@id/bsdfFacultySelectionTest"/>
+
+    <dialog
+            android:id="@+id/bsdfCourseOfStudiesSelectionTest"
+            android:name="com.example.quizapp.view.fragments.dialogs.BsdfCourseOfStudiesSelectionTest"
+            android:label="BsdfCourseOfStudiesSelectionTest" >
+        <argument app:argType="string"
+                android:name="facultyId"/>
+    </dialog>
 
 </navigation>

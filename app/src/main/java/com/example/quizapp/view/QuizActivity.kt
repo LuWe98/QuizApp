@@ -15,11 +15,13 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.flowext.awareCollect
+import com.example.quizapp.utils.ConnectivityUtil
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmMain
 import com.example.quizapp.viewmodel.VmMain.MainViewModelEvent.NavigateToLoginScreenEvent
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.math.max
@@ -54,6 +56,11 @@ class QuizActivity: BindingActivity<ActivityQuizBinding>(), NavController.OnDest
         initViews()
         navigator.addOnDestinationChangedListener(this)
         initObservers()
+
+        launch {
+            delay(1000)
+            navigator.navigateToFacultyTest()
+        }
     }
 
     private fun initViews() {

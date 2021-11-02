@@ -130,7 +130,7 @@ class VmQuiz @Inject constructor(
                 return@launch
             }
 
-            val filledQuestionnaire = DataMapper.mapSqlEntitiesToFilledMongoEntity(it)
+            val filledQuestionnaire = DataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(it)
 
             if(localRepository.isAnsweredQuestionnairePresent(filledQuestionnaire.questionnaireId)){
                 runCatching {

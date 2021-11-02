@@ -1,8 +1,11 @@
 package com.example.quizapp.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
+import com.example.quizapp.extensions.app
+import com.example.quizapp.extensions.isConnectedToInternet
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
@@ -19,7 +22,7 @@ import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.sync.LocallyAnsweredQuestionnaire
 import com.example.quizapp.model.databases.room.entities.sync.LocallyClearedQuestionnaire
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.utils.BackendSyncer
 import com.example.quizapp.viewmodel.VmHome.FragmentHomeCachedEvent.ChangeCachedSwipeRefreshLayoutVisibility
 import com.example.quizapp.viewmodel.VmHome.FragmentHomeCreatedEvent.ChangeCreatedSwipeRefreshLayoutVisibility
@@ -39,8 +42,9 @@ class VmHome @Inject constructor(
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
     private val backendSyncer: BackendSyncer,
-    preferencesRepository: PreferencesRepository
-) : ViewModel() {
+    preferencesRepository: PreferencesRepository,
+    application: Application
+) : AndroidViewModel(application) {
 
     private val fragmentHomeEventChannel = Channel<FragmentHomeEvent>()
     private val fragmentHomeCachedEventChannel = Channel<FragmentHomeCachedEvent>()
@@ -51,17 +55,20 @@ class VmHome @Inject constructor(
     val fragmentHomeCreatedEventChannelFlow get() = fragmentHomeCreatedEventChannel.receiveAsFlow()
 
     init {
-        applicationScope.launch(IO) {
-            fragmentHomeEventChannel.send(ChangeProgressVisibility(true))
+        if(app.isConnectedToInternet) {
+            applicationScope.launch(IO) {
+                fragmentHomeEventChannel.send(ChangeProgressVisibility(true))
 //            fragmentHomeCachedEventChannel.send(ChangeCachedSwipeRefreshLayoutVisibility(true))
 //            fragmentHomeCreatedEventChannel.send(ChangeCreatedSwipeRefreshLayoutVisibility(true))
-            backendSyncer.syncData()
-            delay(500)
+                backendSyncer.syncData()
+                delay(500)
 //            fragmentHomeCachedEventChannel.send(ChangeCachedSwipeRefreshLayoutVisibility(false))
 //            fragmentHomeCreatedEventChannel.send(ChangeCreatedSwipeRefreshLayoutVisibility(false))
-            fragmentHomeEventChannel.send(ChangeProgressVisibility(false))
+                fragmentHomeEventChannel.send(ChangeProgressVisibility(false))
+            }
         }
     }
+
 
     private val userIdFlow = preferencesRepository.userIdFlow.flowOn(IO)
 
@@ -190,7 +197,7 @@ class VmHome @Inject constructor(
 
     fun onDeleteFilledQuestionnaireConfirmed(event: ShowUndoDeleteAnswersOfQuestionnaireSnackBar) = launch(IO) {
         runCatching {
-            backendRepository.insertFilledQuestionnaire(DataMapper.mapSqlEntitiesToEmptyFilledMongoEntity(event.completeQuestionnaire))
+            backendRepository.insertFilledQuestionnaire(DataMapper.mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(event.completeQuestionnaire))
         }.onSuccess { response ->
             if (response.responseType != InsertFilledQuestionnaireResponseType.ERROR) {
                 localRepository.delete(LocallyClearedQuestionnaire(event.completeQuestionnaire.questionnaire.id))
@@ -232,10 +239,10 @@ class VmHome @Inject constructor(
 
     sealed class FragmentHomeEvent {
         class ShowSnackBarMessageBar(val messageRes: Int) : FragmentHomeEvent()
-        class ShowUndoDeleteCreatedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaireJunction) : FragmentHomeEvent()
-        class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaireJunction) : FragmentHomeEvent()
+        class ShowUndoDeleteCreatedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
+        class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
         class ShowUndoDeleteAnswersOfQuestionnaireSnackBar(
-            val completeQuestionnaire: CompleteQuestionnaireJunction,
+            val completeQuestionnaire: CompleteQuestionnaire,
             val locallyAnswered: LocallyAnsweredQuestionnaire?
         ) : FragmentHomeEvent()
 

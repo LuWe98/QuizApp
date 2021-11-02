@@ -5,10 +5,10 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.RviQuestionnaireCachedBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
-class RvaCachedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunction, RviQuestionnaireCachedBinding>(CompleteQuestionnaireJunction.DIFF_CALLBACK) {
+class RvaCachedQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuestionnaireCachedBinding>(CompleteQuestionnaire.DIFF_CALLBACK) {
 
     var onItemClick : ((String) -> (Unit))? = null
 
@@ -30,7 +30,7 @@ class RvaCachedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunction
         }
     }
 
-    override fun bindViews(binding: RviQuestionnaireCachedBinding, item: CompleteQuestionnaireJunction, position: Int) {
+    override fun bindViews(binding: RviQuestionnaireCachedBinding, item: CompleteQuestionnaire, position: Int) {
         binding.apply {
             tvTitle.text = item.questionnaire.title
             tvAuthorDateAndQuestionAmount.text = context.getString(R.string.authorNameDateAndQuestionAmount,

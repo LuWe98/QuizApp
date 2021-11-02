@@ -1,6 +1,12 @@
 package com.example.quizapp.utils
 
 import com.example.quizapp.model.databases.DataMapper
+import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.entities.sync.LocallyAnsweredQuestionnaire
+import com.example.quizapp.model.databases.room.entities.sync.LocallyClearedQuestionnaire
+import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
+import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.*
@@ -10,13 +16,6 @@ import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.sync.LocallyAnsweredQuestionnaire
-import com.example.quizapp.model.databases.room.entities.sync.LocallyClearedQuestionnaire
-import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
-import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -25,18 +24,22 @@ import kotlinx.coroutines.withContext
 //TODO -> Soll dann überhaupt noch eine Frage slected sein oder lieber alle deselecten?
 //TODO -> Vllt timestamp auf den Fragen, wann diese bearbeitet wurden? Wenn Timestamp abweicht werden gegebene Antworten gelöscht / nicht gewertet
 class BackendSyncer(
-    private val applicationScope: CoroutineScope,
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
     private val preferencesRepository: PreferencesRepository
 ) {
 
     suspend fun syncData() = withContext(IO) {
-        val questionnaireAsync = async { synAllQuestionnaireData() }
-        val deletedAsync = async { syncLocallyDeletedUsers() }
+        val questionnaireAsync = async {
+            syncFacultiesAndCoursesOfStudies()
+            synAllQuestionnaireData()
+        }
+
+        //TODO -> DELETED USER ENTFERNEN UND EINFACH NUR ZULASSEN WENN MAN CONNECTION HAT
+        val deletedUserAsync = async { syncLocallyDeletedUsers() }
 
         questionnaireAsync.await()
-        deletedAsync.await()
+        deletedUserAsync.await()
     }
 
     //TODO -> Die müssen auch ignoriert werden beim runterladen von den Antworten
@@ -46,7 +49,6 @@ class BackendSyncer(
     suspend fun synAllQuestionnaireData() = withContext(IO) {
         localRepository.unsyncAllSyncingQuestionnaires()
         val locallyDeletedQuestionnaireIdsAsync = async { localRepository.getLocallyDeletedQuestionnaireIds() }
-
         val syncQuestionnairesAsync = async { syncQuestionnaires(locallyDeletedQuestionnaireIdsAsync.await()) }
         val locallyDeletedAsync = async { syncLocallyDeletedQuestionnaires(locallyDeletedQuestionnaireIdsAsync.await()) }
         val locallyDeletedFilledAsync = async { syncLocallyClearedQuestionnaires() }
@@ -58,27 +60,25 @@ class BackendSyncer(
         locallyAnsweredAsync.await()
     }
 
-    private suspend fun syncQuestionnaires(
-        locallyDeletedQuestionnaireIds: List<LocallyDeletedQuestionnaire>
-    ) = withContext(IO) {
-        val syncedQuestionnaires = async { localRepository.findAllSyncedQuestionnaires() }
-        val unsyncedQuestionnaireIds = async { localRepository.findAllNonSyncedQuestionnaireIds() }
+    private suspend fun syncQuestionnaires(locallyDeletedQuestionnaireIds: List<LocallyDeletedQuestionnaire>) = withContext(IO) {
+        val unsyncedQuestionnaireIdsAsync = async { localRepository.findAllNonSyncedQuestionnaireIds() }
+        val syncedQuestionnaires = localRepository.findAllSyncedQuestionnaires()
 
         runCatching {
             backendRepository.getQuestionnairesForSyncronization(
-                syncedQuestionnaires.await().map(CompleteQuestionnaireJunction::asQuestionnaireIdWithTimestamp),
-                unsyncedQuestionnaireIds.await(),
+                syncedQuestionnaires.map(CompleteQuestionnaire::asQuestionnaireIdWithTimestamp),
+                unsyncedQuestionnaireIdsAsync.await(),
                 locallyDeletedQuestionnaireIds
             )
         }.onSuccess { response ->
             val insertAsync = async {
-                mapToCompleteQuestionnaire(syncedQuestionnaires.await(), response).let {
+                mapToCompleteQuestionnaire(syncedQuestionnaires, response).let {
                     localRepository.insertCompleteQuestionnaires(it)
                 }
             }
 
             val updateAsync = async {
-                unsyncNonExistentQuestionnaires(syncedQuestionnaires.await(), response).let {
+                unsyncNonExistentQuestionnaires(syncedQuestionnaires, response).let {
                     localRepository.update(it)
                 }
             }
@@ -89,9 +89,9 @@ class BackendSyncer(
     }
 
     private fun mapToCompleteQuestionnaire(
-        syncedCompleteQuestionnaires: List<CompleteQuestionnaireJunction>,
+        syncedCompleteQuestionnaires: List<CompleteQuestionnaire>,
         response: SyncQuestionnairesResponse
-    ) = response.mongoQuestionnaires.map(DataMapper::mapMongoObjectToSqlEntities).onEach { q ->
+    ) = response.mongoQuestionnaires.map(DataMapper::mapMongoQuestionnaireToRoomCompleteQuestionnaire).onEach { q ->
         response.mongoFilledQuestionnaires.firstOrNull { it.questionnaireId == q.questionnaire.id }?.let { remoteFilledQuestionnaire ->
             q.questionsWithAnswers = q.questionsWithAnswers.map { qwa ->
                 selectAnswers(qwa, remoteFilledQuestionnaire.allSelectedAnswerIds)
@@ -113,11 +113,11 @@ class BackendSyncer(
 
 
     private fun unsyncNonExistentQuestionnaires(
-        syncedCompleteQuestionnaires: List<CompleteQuestionnaireJunction>,
+        syncedCompleteQuestionnaires: List<CompleteQuestionnaire>,
         response: SyncQuestionnairesResponse
     ) = syncedCompleteQuestionnaires
         .filter { response.questionnaireIdsToUnsync.any { id -> id == it.questionnaire.id } }
-        .map(CompleteQuestionnaireJunction::questionnaire)
+        .map(CompleteQuestionnaire::questionnaire)
         .onEach { it.syncStatus = SyncStatus.UNSYNCED }
 
 
@@ -198,15 +198,14 @@ class BackendSyncer(
     }
 
 
-
     private suspend fun syncLocallyDeletedUsers() = withContext(IO) {
         localRepository.getAllLocallyDeletedUserIds().let { userIds ->
-            if(userIds.isEmpty()) return@withContext
+            if (userIds.isEmpty()) return@withContext
 
             runCatching {
                 backendRepository.deleteUsers(userIds.map { it.userId })
             }.onSuccess { response ->
-                if(response.responseType == DeleteUserResponseType.SUCCESSFUL){
+                if (response.responseType == DeleteUserResponseType.SUCCESSFUL) {
                     localRepository.delete(userIds)
                 }
             }
@@ -214,24 +213,53 @@ class BackendSyncer(
     }
 
 
-
     //TODO -> BULK INSERT/UPDATE OF ALL LOCALLY UNSYNCED QUESTIONNAIRES ONLINE
     private suspend fun uploadUnsyncedQuestionnaires() {
 
+
+    }
+
+    private suspend fun syncFacultiesAndCoursesOfStudies() = withContext(IO) {
+        val facultiesAsync = getFacultiesAsync()
+        val coursesOfStudiesAsync = getCourseOfStudiesAsync()
+
+        localRepository.insert(facultiesAsync.await())
+
+        coursesOfStudiesAsync.await().let { result ->
+            localRepository.insert(result.map { it.first })
+            localRepository.insert(result.flatMap { it.second })
+        }
     }
 
     //TODO -> CourseOfStudies Einträge kommen von der online Datenbank und werden hier eingetragen
-    private suspend fun syncCourseOfStudies() {
+    private suspend fun getFacultiesAsync() = withContext(IO) {
+        async {
+            runCatching {
+                localRepository.getFacultyIdsWithTimestamp().let { facultiesWithTimestamp ->
+                    backendRepository.getFacultySynchronizationData(facultiesWithTimestamp)
+                }
+            }.onSuccess { response ->
+                return@async response.faculties.map { DataMapper.mapMongoFacultyToRoomFaculty(it) }
+            }
+            return@async emptyList()
+        }
+    }
 
+    private suspend fun getCourseOfStudiesAsync() = withContext(IO) {
+        async {
+            runCatching {
+                localRepository.getCourseOfStudiesIdsWithTimestamp().let { coursesOfStudiesWithTimestamp ->
+                    backendRepository.getCourseOfStudiesSynchronizationData(coursesOfStudiesWithTimestamp)
+                }
+            }.onSuccess { response ->
+                return@async response.coursesOfStudies.map { DataMapper.mapMongoCourseOfStudiesToRoomCourseOfStudies(it) }
+            }
+            return@async emptyList()
+        }
     }
 
     //TODO -> Subject Einträge kommen von der online Datenbank und werden hier eingetragen
-    private suspend fun syncSubject() {
-
-    }
-
-    //TODO -> Faculty Einträge kommen von der online Datenbank und werden hier eingetragen
-    private suspend fun syncFaculties() {
+    private suspend fun syncSubject() = withContext(IO) {
 
     }
 }

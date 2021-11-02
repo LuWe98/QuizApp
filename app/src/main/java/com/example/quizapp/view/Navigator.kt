@@ -12,11 +12,12 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.initMaterialElevationScale
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaireDirections
 import com.example.quizapp.view.fragments.adminscreen.FragmentAdminDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
+import com.example.quizapp.view.fragments.dialogs.BsdfFacultySelectionTestDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
 import com.example.quizapp.view.fragments.settingsscreen.FragmentSettingsDirections
 import java.lang.ref.WeakReference
@@ -52,7 +53,7 @@ class Navigator @Inject constructor(
         navController.popBackStack()
     }
 
-    fun navigateToAddQuestionnaireScreen(completeQuestionnaire: CompleteQuestionnaireJunction? = null, copy: Boolean = false) {
+    fun navigateToAddQuestionnaireScreen(completeQuestionnaire: CompleteQuestionnaire? = null, copy: Boolean = false) {
         navController.navigate(MainNavGraphDirections.actionGlobalGoToAddQuestionnaireScreen(completeQuestionnaire, copy))
     }
 
@@ -123,6 +124,14 @@ class Navigator @Inject constructor(
 
     fun navigateToLanguageSelection(){
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToBsdfLanguageSelection())
+    }
+
+    fun navigateToFacultyTest() {
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfFacultySelectionTest())
+    }
+
+    fun navigateToCourseOfStudiesTest(facultyId: String) {
+        navController.navigate(BsdfFacultySelectionTestDirections.actionBsdfFacultySelectionTestToBsdfCourseOfStudiesSelectionTest(facultyId))
     }
 
     companion object {

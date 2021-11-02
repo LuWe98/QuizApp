@@ -13,6 +13,7 @@ import com.example.quizapp.model.databases.room.entities.faculty.Subject
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
+import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.entities.sync.*
 import com.example.quizapp.utils.Constants
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -30,6 +31,7 @@ import javax.inject.Singleton
         Faculty::class,
         CourseOfStudies::class,
         Subject::class,
+        FacultyCourseOfStudiesRelation::class,
         LocallyDeletedQuestionnaire::class,
         LocallyClearedQuestionnaire::class,
         LocallyAnsweredQuestionnaire::class,
@@ -47,6 +49,7 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun getFacultyDao(): FacultyDao
     abstract fun getCourseOfStudiesDao(): CourseOfStudiesDao
     abstract fun getSubjectDao(): SubjectDao
+    abstract fun getFacultyCourseOfStudiesRelationDao(): FacultyCourseOfStudiesRelationDao
     abstract fun getLocallyDeletedQuestionnaireDao(): LocallyDeletedQuestionnaireDao
     abstract fun getLocallyDeletedFilledQuestionnaireDao(): LocallyClearedQuestionnaireDao
     abstract fun getLocallyAnsweredQuestionnairesDao(): LocallyAnsweredQuestionnaireDao

@@ -12,7 +12,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizOverviewBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.flowext.awareCollect
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionWithAnswersQuiz
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmQuiz
@@ -118,7 +118,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         }
     }
 
-    private fun onShouldDisplaySolutionChanged(shouldDisplay: Boolean, completeCompleteQuestionnaire: CompleteQuestionnaireJunction) {
+    private fun onShouldDisplaySolutionChanged(shouldDisplay: Boolean, completeCompleteQuestionnaire: CompleteQuestionnaire) {
         val cqp = completeCompleteQuestionnaire.correctQuestionsPercentage
         binding.apply {
             progressCorrect.setProgressWithAnimation(if (shouldDisplay) cqp else 0)

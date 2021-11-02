@@ -6,10 +6,10 @@ import com.example.quizapp.databinding.RviQuestionnaireCreatedNewBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
-class RvaCreatedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunction, RviQuestionnaireCreatedNewBinding>(CompleteQuestionnaireJunction.DIFF_CALLBACK) {
+class RvaCreatedQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuestionnaireCreatedNewBinding>(CompleteQuestionnaire.DIFF_CALLBACK) {
 
     var onItemClick: ((String) -> (Unit))? = null
 
@@ -41,7 +41,7 @@ class RvaCreatedQuestionnaires : BindingListAdapter<CompleteQuestionnaireJunctio
         }
     }
 
-    override fun bindViews(binding: RviQuestionnaireCreatedNewBinding, item: CompleteQuestionnaireJunction, position: Int) {
+    override fun bindViews(binding: RviQuestionnaireCreatedNewBinding, item: CompleteQuestionnaire, position: Int) {
         binding.apply {
             tvTitle.text = item.questionnaire.title
             tvDateAndQuestionAmount.text = context.getString(

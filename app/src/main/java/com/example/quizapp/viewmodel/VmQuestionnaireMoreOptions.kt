@@ -9,7 +9,7 @@ import com.example.quizapp.model.menudatamodels.MenuItem
 import com.example.quizapp.model.menudatamodels.MenuItemDataModel
 import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptionsArgs
 import com.example.quizapp.viewmodel.VmQuestionnaireMoreOptions.QuestionnaireMoreOptionsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -99,8 +99,8 @@ class VmQuestionnaireMoreOptions @Inject constructor(
 
 
     sealed class QuestionnaireMoreOptionsEvent {
-        class NavigateToEditQuestionnaireScreen(val completeQuestionnaire: CompleteQuestionnaireJunction) : QuestionnaireMoreOptionsEvent()
-        class NavigateToCopyQuestionnaireScreen(val completeQuestionnaire: CompleteQuestionnaireJunction) : QuestionnaireMoreOptionsEvent()
+        class NavigateToEditQuestionnaireScreen(val completeQuestionnaire: CompleteQuestionnaire) : QuestionnaireMoreOptionsEvent()
+        class NavigateToCopyQuestionnaireScreen(val completeQuestionnaire: CompleteQuestionnaire) : QuestionnaireMoreOptionsEvent()
         class DeleteCreatedQuestionnaireEvent(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()
         class DeleteCachedQuestionnaireEvent(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()
         class DeleteGivenAnswersOfQuestionnaire(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()

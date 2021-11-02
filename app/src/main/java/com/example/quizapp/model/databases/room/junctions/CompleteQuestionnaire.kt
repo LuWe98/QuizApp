@@ -10,7 +10,7 @@ import com.example.quizapp.utils.DiffCallbackUtil
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class CompleteQuestionnaireJunction(
+data class CompleteQuestionnaire(
     @Embedded
     var questionnaire: Questionnaire,
     @Relation(entity = Question::class, entityColumn = "questionnaireId", parentColumn = "id")
@@ -46,6 +46,6 @@ data class CompleteQuestionnaireJunction(
     val asQuestionnaireIdWithTimestamp get() = questionnaire.asQuestionnaireIdWithTimeStamp
 
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<CompleteQuestionnaireJunction> { old, new -> old.questionnaire.id == new.questionnaire.id }
+        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<CompleteQuestionnaire> { old, new -> old.questionnaire.id == new.questionnaire.id }
     }
 }

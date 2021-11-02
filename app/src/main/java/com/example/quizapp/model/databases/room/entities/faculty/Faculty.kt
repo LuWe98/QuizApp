@@ -1,5 +1,6 @@
 package com.example.quizapp.model.databases.room.entities.faculty
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -21,7 +22,7 @@ import org.bson.types.ObjectId
 )
 @Parcelize
 data class Faculty(
-    @PrimaryKey var id: String = ObjectId().toString(),
+    @PrimaryKey @ColumnInfo(name = "facultyId") var id: String = ObjectId().toString(),
     var abbreviation: String,
     var name: String,
     var lastModifiedTimestamp : Long = getTimeMillis()

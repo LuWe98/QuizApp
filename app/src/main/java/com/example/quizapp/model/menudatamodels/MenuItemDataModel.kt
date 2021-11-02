@@ -6,7 +6,7 @@ import com.example.quizapp.model.databases.mongodb.documents.questionnaire.Quest
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptionsArgs
-import com.example.quizapp.view.fragments.settingsscreen.QuizAppLanguage
+import com.example.quizapp.model.datastore.QuizAppLanguage
 
 object MenuItemDataModel {
 

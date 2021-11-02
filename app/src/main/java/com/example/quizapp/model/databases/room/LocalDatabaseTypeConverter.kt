@@ -1,6 +1,7 @@
 package com.example.quizapp.model.databases.room
 
 import androidx.room.TypeConverter
+import com.example.quizapp.model.databases.Degree
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility
 import com.example.quizapp.model.databases.mongodb.documents.user.SharedWithInfo
@@ -23,9 +24,14 @@ class LocalDatabaseTypeConverter {
     fun fromQuestionnaireVisibility(questionnaireVisibility: QuestionnaireVisibility) = questionnaireVisibility.name
 
     @TypeConverter
+    fun toCourseOfStudiesDegree(degreeName: String) = Degree.valueOf(degreeName)
+
+    @TypeConverter
+    fun fromCourseOfStudiesDegree(degree: Degree) = degree.name
+
+    @TypeConverter
     fun fromShareWithInfoList(list: List<SharedWithInfo>) : String = Json.encodeToString(list)
 
     @TypeConverter
     fun toSharedWithInfoList(json: String) : List<SharedWithInfo> = Json.decodeFromString(json)
-
 }

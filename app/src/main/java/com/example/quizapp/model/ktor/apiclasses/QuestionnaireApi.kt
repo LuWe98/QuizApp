@@ -34,7 +34,7 @@ class QuestionnaireApi @Inject constructor(
         unsyncedQuestionnaireIds: List<String>,
         locallyDeletedQuestionnaire: List<LocallyDeletedQuestionnaire>
     ): SyncQuestionnairesResponse =
-        client.post("/questionnaire/user/sync") {
+        client.post("/questionnaire/sync") {
             body = SyncQuestionnairesRequest(
                 syncedQuestionnaireIdsWithTimestamp,
                 unsyncedQuestionnaireIds,

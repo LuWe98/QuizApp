@@ -53,10 +53,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRoomRepository(
-        applicationScope: CoroutineScope,
         roomDatabase: LocalDatabase
     ) = LocalRepository(
-        applicationScope,
         roomDatabase,
         roomDatabase.getQuestionaryDao(),
         roomDatabase.getQuestionDao(),
@@ -64,6 +62,7 @@ object AppModule {
         roomDatabase.getFacultyDao(),
         roomDatabase.getCourseOfStudiesDao(),
         roomDatabase.getSubjectDao(),
+        roomDatabase.getFacultyCourseOfStudiesRelationDao(),
         roomDatabase.getLocallyDeletedQuestionnaireDao(),
         roomDatabase.getLocallyDeletedFilledQuestionnaireDao(),
         roomDatabase.getLocallyAnsweredQuestionnairesDao(),
@@ -190,10 +189,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSyncHelper(
-        applicationScope: CoroutineScope,
         localRepository: LocalRepository,
         backendRepository: BackendRepository,
         preferencesRepository: PreferencesRepository
-    ) = BackendSyncer(applicationScope, localRepository, backendRepository, preferencesRepository)
+    ) = BackendSyncer(localRepository, backendRepository, preferencesRepository)
 
 }

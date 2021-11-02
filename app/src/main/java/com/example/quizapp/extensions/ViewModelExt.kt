@@ -1,8 +1,10 @@
 package com.example.quizapp.extensions
 
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
+import com.example.quizapp.QuizApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
@@ -44,3 +46,5 @@ inline fun ViewModel.launch(
         block.invoke(this)
     }
 }
+
+val AndroidViewModel.app get() = getApplication<QuizApplication>()

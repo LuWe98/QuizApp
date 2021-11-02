@@ -8,7 +8,12 @@ import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class CourseOfStudiesWithFacultyJunction(
+data class CourseOfStudiesWithFaculty(
     @Embedded val courseOfStudies: CourseOfStudies,
-    @Relation(entity = CourseOfStudies::class, entityColumn = "facultyId", parentColumn = "id") val faculty: Faculty
+    @Relation(
+        entity = CourseOfStudies::class,
+        entityColumn = "facultyId",
+        parentColumn = "id"
+    )
+    val faculty: Faculty
 ): Parcelable

@@ -1,5 +1,6 @@
 package com.example.quizapp.model.ktor.apiclasses
 
+import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
 import com.example.quizapp.model.ktor.requests.SyncFacultiesRequest
 import com.example.quizapp.model.ktor.responses.SyncFacultiesResponse
 import io.ktor.client.*
@@ -12,10 +13,9 @@ class FacultyApi @Inject constructor(
     private val client: HttpClient
 ) {
 
-    suspend fun testFacultyStuff(locallyPresentFacultyIds: List<String>, locallyPresentCourseOfStudiesIds: List<String>) : SyncFacultiesResponse =
-        client.get("/faculty/sync") {
-            //TODO -> Timestamp noch mit einbeziehen!
-            body = SyncFacultiesRequest(locallyPresentFacultyIds, locallyPresentCourseOfStudiesIds)
+    suspend fun getFacultySynchronizationData(localFacultyIdsWithTimeStamp: List<FacultyIdWithTimeStamp>) : SyncFacultiesResponse =
+        client.post("/faculty/sync") {
+            body = SyncFacultiesRequest(localFacultyIdsWithTimeStamp)
         }
 
 }

@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CourseOfStudiesIdWithTimeStamp(
     val courseOfStudiesId: String,
-    val lastModifiedTimeStamp: Long
+    val lastModifiedTimestamp: Long
 )

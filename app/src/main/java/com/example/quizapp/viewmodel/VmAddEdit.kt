@@ -12,7 +12,7 @@ import com.example.quizapp.model.ktor.responses.InsertQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaireJunction
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.viewmodel.VmAddEdit.FragmentAddQuestionnaireEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -195,13 +195,13 @@ class VmAddEdit @Inject constructor(
                 }
             }
 
-            val completeQuestionnaire = CompleteQuestionnaireJunction(questionnaire, questionsWithAnswersMapped)
+            val completeQuestionnaire = CompleteQuestionnaire(questionnaire, questionsWithAnswersMapped)
 
             localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
             fragmentAddQuestionnaireEventChannel.send(NavigateBackEvent)
 
             runCatching {
-                backendRepository.insertQuestionnaire(DataMapper.mapSqlEntitiesToMongoEntity(completeQuestionnaire))
+                backendRepository.insertQuestionnaire(DataMapper.mapRoomQuestionnaireToMongoQuestionnaire(completeQuestionnaire))
             }.onFailure {
                 localRepository.update(questionnaire.apply { syncStatus = UNSYNCED })
             }.onSuccess {

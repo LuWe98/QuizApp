@@ -10,7 +10,6 @@ import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.utils.EncryptionUtil.decrypt
 import com.example.quizapp.utils.EncryptionUtil.encrypt
-import com.example.quizapp.view.fragments.settingsscreen.QuizAppLanguage
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first

@@ -70,7 +70,7 @@ class VmSearch @Inject constructor(
         }.onSuccess { response ->
             when(response.responseType){
                 GetQuestionnaireResponseType.SUCCESSFUL -> {
-                    DataMapper.mapMongoObjectToSqlEntities(response.mongoQuestionnaire!!).let {
+                    DataMapper.mapMongoQuestionnaireToRoomCompleteQuestionnaire(response.mongoQuestionnaire!!).let {
                         localRepository.insertCompleteQuestionnaire(it)
                         localRepository.deleteLocallyDeletedQuestionnaireWith(it.questionnaire.id)
                         fragmentSearchEventChannel.send(ShowMessageSnackBar(R.string.questionnaireDownloaded))

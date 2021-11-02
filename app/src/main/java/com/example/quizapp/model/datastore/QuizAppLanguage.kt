@@ -1,4 +1,4 @@
-package com.example.quizapp.view.fragments.settingsscreen
+package com.example.quizapp.model.datastore
 
 import android.content.res.Resources
 import android.os.Build
@@ -15,15 +15,17 @@ enum class QuizAppLanguage(@StringRes val textRes: Int) {
         get() = run {
         when(this) {
             SYSTEM_DEFAULT -> {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                val locale = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
                     Resources.getSystem().configuration.locales[0]
                 } else {
                     Resources.getSystem().configuration.locale
                 }
+                //TODO -> SCHAUEN WAS PASSIERT WENN MAN KEINE DER SPRACHEN ALS DEFAULT SPRACHE HAT
+                // EVENTUEL SYSTEM DEAFAULT ENTFERNEN FÜR DIE SPRACHE
+                locale
             }
             ENGLISH -> Locale.ENGLISH
             GERMAN -> Locale.GERMAN
         }
     }
-
 }

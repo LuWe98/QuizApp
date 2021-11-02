@@ -3,8 +3,7 @@ package com.example.quizapp.viewmodel
 import androidx.lifecycle.ViewModel
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.menudatamodels.MenuItemDataModel
-import com.example.quizapp.view.fragments.settingsscreen.QuizAppLanguage
+import com.example.quizapp.model.datastore.QuizAppLanguage
 import com.example.quizapp.viewmodel.VmSettingsLanguageSelection.LanguageSelectionEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -12,7 +11,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.runBlocking
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel

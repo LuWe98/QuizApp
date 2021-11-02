@@ -9,7 +9,6 @@ import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.client.KtorClientAuth
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.utils.ConnectivityHelper
 import com.example.quizapp.viewmodel.VmMain.MainViewModelEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -25,7 +24,6 @@ import javax.inject.Inject
 class VmMain @Inject constructor(
     val localRepository: LocalRepository,
     val backendRepository: BackendRepository,
-    val connectivityHelper: ConnectivityHelper,
     preferencesRepository: PreferencesRepository,
     private val ktorClientAuth: KtorClientAuth
 ) : ViewModel() {
