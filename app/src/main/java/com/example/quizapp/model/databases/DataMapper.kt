@@ -30,11 +30,11 @@ object DataMapper {
             id = mongoQuestionnaire.id,
             title = mongoQuestionnaire.title,
             authorInfo = mongoQuestionnaire.authorInfo,
-            faculty = mongoQuestionnaire.faculty,
-            courseOfStudies = mongoQuestionnaire.courseOfStudies,
+            facultyId = mongoQuestionnaire.facultyId,
+            courseOfStudiesId = mongoQuestionnaire.courseOfStudiesId,
             subject = mongoQuestionnaire.subject,
             syncStatus = SyncStatus.SYNCED,
-            questionnaireVisibility = mongoQuestionnaire.questionnaireVisibility,
+            visibility = mongoQuestionnaire.questionnaireVisibility,
             lastModifiedTimestamp = mongoQuestionnaire.lastModifiedTimestamp
         )
 
@@ -58,7 +58,7 @@ object DataMapper {
                 })
         }.toMutableList()
 
-        return CompleteQuestionnaire(questionnaire, questionsWithAnswers)
+        return CompleteQuestionnaire(questionnaire, questionsWithAnswers, null, null)
     }
 
 
@@ -81,10 +81,10 @@ object DataMapper {
             id = questionnaire.id,
             title = questionnaire.title,
             authorInfo = questionnaire.authorInfo,
-            faculty = questionnaire.faculty,
-            courseOfStudies = questionnaire.courseOfStudies,
+            facultyId = questionnaire.facultyId,
+            courseOfStudiesId = questionnaire.courseOfStudiesId,
             subject = questionnaire.subject,
-            questionnaireVisibility = questionnaire.questionnaireVisibility,
+            questionnaireVisibility = questionnaire.visibility,
             lastModifiedTimestamp = questionnaire.lastModifiedTimestamp
         ).apply {
             questions = questionsWithAnswers.map { qwa ->

@@ -1,30 +1,34 @@
 package com.example.quizapp.model.databases.room.entities.faculty
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.quizapp.model.databases.room.entities.EntityMarker
-import com.example.quizapp.utils.Constants
 import com.example.quizapp.utils.DiffCallbackUtil
 import io.ktor.util.date.*
 import kotlinx.parcelize.Parcelize
 import org.bson.types.ObjectId
 
-
-//TODO -> Sollte auf COS verweisen über
-// 1) Beziehungstabelle: Wenn Subjects zu mehreren COS gehören können
-// 2) Über einfachen FK wenn nicht
-@Entity(
-    tableName = Constants.SUBJECT_TABLE_NAME
-)
+@Entity(tableName = Subject.TABLE_NAME)
 @Parcelize
 data class Subject(
-    @PrimaryKey var id: String = ObjectId().toString(),
+    @PrimaryKey
+    @ColumnInfo(name = ID_COLUMN)
+    var id: String = ObjectId().toString(),
+    @ColumnInfo(name = NAME_COLUMN)
     var name: String,
+    @ColumnInfo(name = LAST_MODIFIED_TIMESTAMP_COLUMN)
     var lastModifiedTimestamp : Long = getTimeMillis()
 ) : EntityMarker {
 
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<Subject> { old, new ->  old.id == new.id}
+        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<Subject> { old, new ->  old.id == new.id }
+
+        const val TABLE_NAME = "subjectTable"
+
+        const val ID_COLUMN = "id"
+        const val NAME_COLUMN = "name"
+        const val LAST_MODIFIED_TIMESTAMP_COLUMN = "lastModifiedTimestamp"
     }
 
 }

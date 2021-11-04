@@ -13,29 +13,28 @@ import kotlinx.parcelize.Parcelize
 data class QuestionWithAnswers(
     @Embedded
     var question: Question,
-    @Relation(entity = Answer::class, entityColumn = "questionId", parentColumn = "id")
+    @Relation(
+        entity = Answer::class,
+        entityColumn = Answer.QUESTION_ID_COLUMN,
+        parentColumn = Question.ID_COLUMN
+    )
     var answers: List<Answer>
 ) : Parcelable {
 
-    val isAnsweredCorrectly : Boolean get() = answers.all { it.isAnswerCorrect == it.isAnswerSelected }
+    val isAnsweredCorrectly: Boolean get() = answers.all { it.isAnswerCorrect == it.isAnswerSelected }
 
-    val isAnswered : Boolean get() = answers.any { it.isAnswerSelected }
+    val isAnswered: Boolean get() = answers.any { it.isAnswerSelected }
 
     val answersSortedByPosition get() = answers.sortedBy { it.answerPosition }
 
     val selectedAnswerIds get() = answers.filter { it.isAnswerSelected }.map { it.id }
 
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<QuestionWithAnswers> { old, new ->  old.question.id == new.question.id}
+        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<QuestionWithAnswers> { old, new -> old.question.id == new.question.id }
 
-        fun createEmptyQuestionWithAnswers() : QuestionWithAnswers {
-            return Question(
-                questionnaireId =  "",
-                questionText =  "",
-                isMultipleChoice =  true,
-                questionPosition = getTimeMillis().toInt()).let { question ->
-                QuestionWithAnswers(question, emptyList())
-            }
-        }
+        fun createEmptyQuestionWithAnswers() = QuestionWithAnswers(
+            Question(questionnaireId = "", questionText = "", isMultipleChoice = true, questionPosition = getTimeMillis().toInt()),
+            emptyList()
+        )
     }
 }

@@ -21,6 +21,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
@@ -36,18 +39,17 @@ class VmSearch @Inject constructor(
 
     val fragmentSearchEventChannelFlow get() = fragmentSearchEventChannel.receiveAsFlow()
 
-    private val searchQuery = MutableLiveData("")
+    private val searchQuery = MutableStateFlow("")
 
-    val filteredPagedData = searchQuery.switchMap { query ->
-        Pager(config = PagingConfig(
-            pageSize = PagingConfigValues.PAGE_SIZE,
-            maxSize = PagingConfigValues.MAX_SIZE
-        ),
+    val filteredPagedData = searchQuery.flatMapLatest { query ->
+        Pager(
+            config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
             pagingSourceFactory = {
                 MongoQuestionnairePagingSource(backendRepository, localRepository, query)
-            }).liveData.cachedIn(viewModelScope)
-    }.distinctUntilChanged()
+            }).flow.cachedIn(viewModelScope)
+    }
 
+    suspend fun getCourseOfStudiesNameWithId(courseOfStudiesId: String) = localRepository.getCourseOfStudiesNameWithId(courseOfStudiesId)
 
     fun onSearchQueryChanged(query: String) {
         searchQuery.value = query

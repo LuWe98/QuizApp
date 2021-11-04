@@ -17,8 +17,8 @@
             android:layout_margin="@dimen/grid_2">
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:id="@+id/ivRing"
                 app:srcCompat="@drawable/shape_ring"
                 app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +51,7 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:background="@android:color/transparent"
-                android:layout_marginStart="@dimen/grid_2"
+                android:layout_marginStart="@dimen/grid_1"
                 app:layout_constraintEnd_toStartOf="@+id/btnDelete" />
 
         <androidx.appcompat.widget.AppCompatImageView

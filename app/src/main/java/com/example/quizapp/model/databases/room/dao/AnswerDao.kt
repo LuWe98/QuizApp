@@ -3,11 +3,10 @@ package com.example.quizapp.model.databases.room.dao
 import androidx.room.Dao
 import androidx.room.Query
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
-import com.example.quizapp.utils.Constants
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class AnswerDao : BaseDao<Answer>(Constants.ANSWER_TABLE_NAME) {
+abstract class AnswerDao : BaseDao<Answer>(Answer.TABLE_NAME) {
 
     @Query("SELECT * FROM answerTable WHERE questionId =:questionId")
     abstract fun findAnswersWithQuestionId(questionId : String) : List<Answer>

@@ -6,7 +6,7 @@ import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
 import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.apiclasses.*
 import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestionnaire
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility
+import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
@@ -53,10 +53,16 @@ class BackendRepository @Inject constructor(
 
     suspend fun getAllQuestionnaires() = questionnaireApi.getAllQuestionnaires()
 
-    suspend fun insertQuestionnaire(mongoQuestionnaire: MongoQuestionnaire) = questionnaireApi.insertQuestionnaire(mongoQuestionnaire)
-
     suspend fun insertQuestionnaire(completeCompleteQuestionnaire: CompleteQuestionnaire) =
-        questionnaireApi.insertQuestionnaire(DataMapper.mapRoomQuestionnaireToMongoQuestionnaire(completeCompleteQuestionnaire))
+        insertQuestionnaire(DataMapper.mapRoomQuestionnaireToMongoQuestionnaire(completeCompleteQuestionnaire))
+
+    suspend fun insertQuestionnaire(mongoQuestionnaire: MongoQuestionnaire) =
+        questionnaireApi.insertQuestionnaires(listOf(mongoQuestionnaire))
+
+    suspend fun insertQuestionnaires(mongoQuestionnaires: List<MongoQuestionnaire>) =
+        questionnaireApi.insertQuestionnaires(mongoQuestionnaires)
+
+
 
     suspend fun getQuestionnairesForSyncronization(
         syncedQuestionnaireIdsWithTimestamp: List<QuestionnaireIdWithTimestamp>,

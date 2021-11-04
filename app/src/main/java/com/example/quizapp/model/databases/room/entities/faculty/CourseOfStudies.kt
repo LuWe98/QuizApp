@@ -6,29 +6,42 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.quizapp.model.databases.Degree
 import com.example.quizapp.model.databases.room.entities.EntityMarker
-import com.example.quizapp.utils.Constants
 import com.example.quizapp.utils.DiffCallbackUtil
 import io.ktor.util.date.*
 import kotlinx.parcelize.Parcelize
 import org.bson.types.ObjectId
 
 @Entity(
-    tableName = Constants.COURSE_OF_STUDIES_TABLE_NAME,
+    tableName = CourseOfStudies.TABLE_NAME,
     indices = [
-        Index(value = ["abbreviation"], unique = true)
+        Index(value = [CourseOfStudies.ABBREVIATION_COLUMN], unique = true)
     ]
 )
 @Parcelize
 data class CourseOfStudies(
-    @PrimaryKey @ColumnInfo(name = "courseOfStudiesId") var id: String = ObjectId().toString(),
+    @PrimaryKey
+    @ColumnInfo(name = ID_COLUMN)
+    var id: String = ObjectId().toString(),
+    @ColumnInfo(name = ABBREVIATION_COLUMN)
     var abbreviation: String,
+    @ColumnInfo(name = NAME_COLUMN)
     var name: String,
+    @ColumnInfo(name = DEGREE_COLUMN)
     var degree: Degree,
+    @ColumnInfo(name = LAST_MODIFIED_TIMESTAMP_COLUMN)
     var lastModifiedTimestamp : Long = getTimeMillis()
 ) : EntityMarker {
 
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<CourseOfStudies> { old, new ->  old.id == new.id}
+        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<CourseOfStudies> { old, new ->  old.id == new.id }
+
+        const val TABLE_NAME = "courseOfStudiesTable"
+
+        const val ID_COLUMN = "courseOfStudiesId"
+        const val ABBREVIATION_COLUMN = "abbreviation"
+        const val NAME_COLUMN = "name"
+        const val DEGREE_COLUMN = "degree"
+        const val LAST_MODIFIED_TIMESTAMP_COLUMN = "lastModifiedTimestamp"
     }
 
 }

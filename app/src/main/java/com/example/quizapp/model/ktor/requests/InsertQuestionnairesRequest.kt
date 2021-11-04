@@ -4,6 +4,6 @@ import com.example.quizapp.model.databases.mongodb.documents.questionnaire.Mongo
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class InsertQuestionnaireRequest(
-    val mongoQuestionnaire: MongoQuestionnaire
+data class InsertQuestionnairesRequest(
+    val mongoQuestionnaires: List<MongoQuestionnaire>
 )

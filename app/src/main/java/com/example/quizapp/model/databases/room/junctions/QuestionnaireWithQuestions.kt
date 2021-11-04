@@ -9,7 +9,11 @@ import com.example.quizapp.utils.DiffCallbackUtil
 data class QuestionnaireWithQuestions(
     @Embedded
     var questionnaire: Questionnaire,
-    @Relation(entity = Question::class, entityColumn = "questionnaireId", parentColumn = "id")
+    @Relation(
+        entity = Question::class,
+        entityColumn = Question.QUESTIONNAIRE_ID_COLUMN,
+        parentColumn = Questionnaire.ID_COLUMN
+    )
     var questions: List<Question>
 ) {
 

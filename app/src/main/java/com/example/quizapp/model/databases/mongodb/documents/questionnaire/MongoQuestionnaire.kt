@@ -1,5 +1,6 @@
 package com.example.quizapp.model.databases.mongodb.documents.questionnaire
 
+import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.utils.DiffCallbackUtil
 import io.ktor.util.date.*
@@ -13,8 +14,8 @@ data class MongoQuestionnaire(
     var title : String = "",
     var authorInfo : AuthorInfo,
     var questionnaireVisibility: QuestionnaireVisibility = QuestionnaireVisibility.PRIVATE,
-    var faculty: String = "",
-    var courseOfStudies : String = "",
+    var facultyId: String? = null,
+    var courseOfStudiesId: String? = null,
     var subject: String = "",
     var questions : List<MongoQuestion> = emptyList(),
     var lastModifiedTimestamp: Long = getTimeMillis()

@@ -14,10 +14,10 @@ import com.example.quizapp.model.ktor.responses.ChangeQuestionnaireVisibilityRes
 import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireResponse.DeleteFilledQuestionnaireResponseType
 import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.DeleteQuestionnaireResponseType
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.InsertFilledQuestionnaireResponseType
-import com.example.quizapp.model.ktor.responses.InsertQuestionnaireResponse.InsertQuestionnaireResponseType
+import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.InsertQuestionnairesResponseType
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility.PRIVATE
+import com.example.quizapp.model.databases.QuestionnaireVisibility
+import com.example.quizapp.model.databases.QuestionnaireVisibility.PRIVATE
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.sync.LocallyAnsweredQuestionnaire
 import com.example.quizapp.model.databases.room.entities.sync.LocallyClearedQuestionnaire
@@ -72,13 +72,30 @@ class VmHome @Inject constructor(
 
     private val userIdFlow = preferencesRepository.userIdFlow.flowOn(IO)
 
-    val allCachedQuestionnairesFlow = userIdFlow.flatMapLatest { id ->
-        localRepository.findAllCompleteQuestionnairesNotForUserFlow(id)
-    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    val allCachedQuestionnairesFlow = userIdFlow
+        .flatMapLatest(localRepository::findAllCompleteQuestionnairesNotForUserFlow)
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    val allCreatedQuestionnairesFlow = userIdFlow.flatMapLatest { id ->
-        localRepository.findAllCompleteQuestionnairesForUserFlow(id)
-    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    val allCreatedQuestionnairesFlow = userIdFlow
+        .flatMapLatest(localRepository::findAllCompleteQuestionnairesForUserFlow)
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+//    val allCachedQuestionnairesStateFlow = userIdFlow.flatMapLatest { id ->
+//        Pager(
+//            config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
+//            pagingSourceFactory = {
+//                localRepository.findAllCompleteQuestionnairesNotForUserPagingSource(id)
+//            }).flow.cachedIn(viewModelScope)
+//    }.stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+//    val allCreatedQuestionnairesStateFlow = userIdFlow.flatMapLatest { id ->
+//        Pager(
+//            config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
+//            pagingSourceFactory = {
+//                localRepository.findAllCompleteQuestionnairesForUserPagingSource(id)
+//            }).flow.cachedIn(viewModelScope)
+//    }.stateIn(viewModelScope, SharingStarted.Lazily, null)
+
 
 
 
@@ -104,7 +121,7 @@ class VmHome @Inject constructor(
                 null
             }
 
-            if (result != null && result.responseType == InsertQuestionnaireResponseType.SUCCESSFUL) {
+            if (result != null && result.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) {
                 localRepository.update(completeQuestionnaire.questionnaire.apply { syncStatus = SyncStatus.SYNCED })
                 fragmentHomeEventChannel.send(ShowSnackBarMessageBar(R.string.syncSuccessful))
             } else {
@@ -221,7 +238,7 @@ class VmHome @Inject constructor(
         }.onSuccess { response ->
             if (response.responseType == ChangeQuestionnaireVisibilityResponseType.SUCCESSFUL) {
                 localRepository.findQuestionnaireWith(questionnaireId)?.let {
-                    localRepository.update(it.copy(questionnaireVisibility = newVisibility))
+                    localRepository.update(it.copy(visibility = newVisibility))
                 }
 
                 val messageResource = if (newVisibility == PRIVATE) R.string.changedVisibilityToPrivate else R.string.changedVisibilityToPublic

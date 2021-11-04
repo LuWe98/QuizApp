@@ -1,4 +1,4 @@
-package com.example.quizapp.model.menudatamodels
+package com.example.quizapp.model.menus
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes

@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class InsertFilledQuestionnairesRequest(
-    val mongoFilledQuestionnaire: List<MongoFilledQuestionnaire>
+    val mongoFilledQuestionnaires: List<MongoFilledQuestionnaire>
 )

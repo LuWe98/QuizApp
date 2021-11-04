@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
-import okio.IOException
+import java.io.IOException
 import java.util.*
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(Constants.DATASTORE_NAME)

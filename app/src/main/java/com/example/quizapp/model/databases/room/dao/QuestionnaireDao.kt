@@ -1,24 +1,34 @@
 package com.example.quizapp.model.databases.room.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
-import com.example.quizapp.utils.Constants
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class QuestionnaireDao : BaseDao<Questionnaire>(Constants.QUESTIONNAIRE_TABLE_NAME) {
+abstract class QuestionnaireDao : BaseDao<Questionnaire>(Questionnaire.TABLE_NAME) {
 
     @Transaction
     @Query("SELECT * FROM questionnaireTable WHERE userId != :userId ORDER BY title")
     abstract fun findAllCompleteQuestionnairesNotForUserFlow(userId: String) : Flow<List<CompleteQuestionnaire>>
 
     @Transaction
+    @Query("SELECT * FROM questionnaireTable WHERE userId != :userId ORDER BY title")
+    abstract fun findAllCompleteQuestionnairesNotForUserPagingSource(userId: String): PagingSource<Int, CompleteQuestionnaire>
+
+    @Transaction
     @Query("SELECT * FROM questionnaireTable WHERE userId = :userId ORDER BY title")
     abstract fun findAllCompleteQuestionnairesForUserFlow(userId : String) : Flow<List<CompleteQuestionnaire>>
+
+    @Transaction
+    @Query("SELECT * FROM questionnaireTable WHERE userId = :userId ORDER BY title")
+    abstract fun findAllCompleteQuestionnairesForUserPagingSource(userId: String): PagingSource<Int, CompleteQuestionnaire>
+
 
     @Transaction
     @Query("SELECT * FROM questionnaireTable WHERE id = :questionnaireId")
@@ -57,4 +67,8 @@ abstract class QuestionnaireDao : BaseDao<Questionnaire>(Constants.QUESTIONNAIRE
 
     @Query("SELECT id FROM questionnaireTable")
     abstract suspend fun getAllQuestionnaireIds() : List<String>
+
+    @Query("UPDATE questionnaireTable SET syncStatus = :syncStatus WHERE id IN (:questionnaireIdsToSync)")
+    abstract suspend fun setStatusToSynced(questionnaireIdsToSync: List<String>, syncStatus: SyncStatus = SyncStatus.SYNCED)
+
 }

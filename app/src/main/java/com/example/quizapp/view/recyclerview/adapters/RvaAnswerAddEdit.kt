@@ -2,15 +2,15 @@ package com.example.quizapp.view.recyclerview.adapters
 
 import androidx.core.view.isVisible
 import com.example.quizapp.R
-import com.example.quizapp.databinding.RviAnswerEditBinding
+import com.example.quizapp.databinding.RviAnswerAddEditBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 import com.example.quizapp.viewmodel.VmAddEditQuestion
 
-class RvaAnswerEditQuestion(
+class RvaAnswerAddEdit(
     private val vmEditQuestion: VmAddEditQuestion
-) : BindingListAdapter<Answer, RviAnswerEditBinding>(Answer.DIFF_CALLBACK) {
+) : BindingListAdapter<Answer, RviAnswerAddEditBinding>(Answer.DIFF_CALLBACK) {
 
     var onItemClick: ((List<Answer>) -> (Unit))? = null
 
@@ -18,7 +18,7 @@ class RvaAnswerEditQuestion(
 
     var onAnswerTextChanged: ((Int, String) -> (Unit))? = null
 
-    override fun initListeners(binding: RviAnswerEditBinding, vh: BindingListAdapterViewHolder) {
+    override fun initListeners(binding: RviAnswerAddEditBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
             root.setOnClickListener {
                 getItem(vh.bindingAdapterPosition).let { answer ->
@@ -57,7 +57,7 @@ class RvaAnswerEditQuestion(
         })
     }
 
-    override fun bindViews(binding: RviAnswerEditBinding, item: Answer, position: Int) {
+    override fun bindViews(binding: RviAnswerAddEditBinding, item: Answer, position: Int) {
         binding.apply {
             val lastSelectionPos = etAnswer.selectionStart
             etAnswer.setText(item.answerText)

@@ -9,7 +9,7 @@ import com.example.quizapp.databinding.FragmentAddQuestionnaireBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.flowext.collect
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaQuestionWithAnswersAddQuestionnaire
+import com.example.quizapp.view.recyclerview.adapters.RvaQuestionAddEdit
 import com.example.quizapp.viewmodel.VmAddEdit
 import com.example.quizapp.viewmodel.VmAddEdit.FragmentAddQuestionnaireEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,7 +19,7 @@ class FragmentAddQuestionnaire : BindingFragment<FragmentAddQuestionnaireBinding
 
     private val vmAdd : VmAddEdit by hiltNavDestinationViewModels(R.id.add_nav_graph)
 
-    private lateinit var rvAdapter: RvaQuestionWithAnswersAddQuestionnaire
+    private lateinit var rvAdapter: RvaQuestionAddEdit
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,11 +32,11 @@ class FragmentAddQuestionnaire : BindingFragment<FragmentAddQuestionnaireBinding
         binding.apply {
             pageTitle.setText(vmAdd.providePageTitle())
             editTextName.setText(vmAdd.qTitle)
-            editTextCourseOfStudies.setText(vmAdd.qCourseOfStudies)
+            editTextCourseOfStudies.setText(vmAdd.qCourseOfStudies?.abbreviation)
             editTextSubject.setText(vmAdd.qSubject)
         }
 
-        rvAdapter = RvaQuestionWithAnswersAddQuestionnaire().apply {
+        rvAdapter = RvaQuestionAddEdit().apply {
             onItemClick = navigator::navigateToEditQuestionScreen
         }
 
@@ -59,7 +59,6 @@ class FragmentAddQuestionnaire : BindingFragment<FragmentAddQuestionnaireBinding
         binding.buttonAdd.onClick(vmAdd::onAddQuestionButtonClicked)
 
         binding.editTextName.onTextChanged(vmAdd::onQuestionnaireTitleTextChanged)
-        binding.editTextCourseOfStudies.onTextChanged(vmAdd::onQuestionnaireCourseOfStudiesTextChanged)
         binding.editTextSubject.onTextChanged(vmAdd::onQuestionnaireSubjectTextChanged)
     }
 

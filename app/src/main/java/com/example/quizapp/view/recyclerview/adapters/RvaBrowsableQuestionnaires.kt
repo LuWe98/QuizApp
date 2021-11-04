@@ -2,6 +2,7 @@ package com.example.quizapp.view.recyclerview.adapters
 
 import android.content.res.ColorStateList
 import androidx.core.view.isVisible
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviQuestionnaireBrowseNewBinding
@@ -9,14 +10,21 @@ import com.example.quizapp.extensions.context
 import com.example.quizapp.extensions.getColor
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.model.ktor.status.DownloadStatus
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.browsable.MongoBrowsableQuestionnaire
+import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
 import com.example.quizapp.view.recyclerview.impl.BindingPagingDataAdapter
+import com.example.quizapp.viewmodel.VmSearch
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class RvaBrowsableQuestionnaires : BindingPagingDataAdapter<MongoBrowsableQuestionnaire, RviQuestionnaireBrowseNewBinding>(MongoBrowsableQuestionnaire.DIFF_CALLBACK) {
+class RvaBrowsableQuestionnaires(
+    private val vmSearch: VmSearch
+) : BindingPagingDataAdapter<BrowsableQuestionnaire, RviQuestionnaireBrowseNewBinding>(BrowsableQuestionnaire.DIFF_CALLBACK) {
 
     var onDownloadClick : ((String) -> (Unit))? = null
 
-    var onMoreOptionsClicked : ((MongoBrowsableQuestionnaire) -> (Unit))? = null
+    var onMoreOptionsClicked : ((BrowsableQuestionnaire) -> (Unit))? = null
 
     override fun initListeners(binding: RviQuestionnaireBrowseNewBinding, vh: BindingPagingDataAdapterViewHolder) {
         binding.apply {
@@ -36,10 +44,16 @@ class RvaBrowsableQuestionnaires : BindingPagingDataAdapter<MongoBrowsableQuesti
         }
     }
 
-    override fun bindViews(binding: RviQuestionnaireBrowseNewBinding, item: MongoBrowsableQuestionnaire, position: Int) {
+    override fun bindViews(binding: RviQuestionnaireBrowseNewBinding, item: BrowsableQuestionnaire, position: Int) {
         binding.apply {
             tvTitle.text = item.title
-            tvInfo.text = context.getString(R.string.test, item.authorInfo.userName, item.courseOfStudies, item.subject, item.questionCount.toString())
+
+            vmSearch.viewModelScope.launch(IO) {
+                val courseOfStudiesText = vmSearch.getCourseOfStudiesNameWithId(item.courseOfStudiesId)
+                withContext(Main){
+                    tvInfo.text = context.getString(R.string.test, item.authorInfo.userName, courseOfStudiesText, item.subject, item.questionCount.toString())
+                }
+            }
 
             when(item.downloadStatus){
                 DownloadStatus.DOWNLOADED -> {

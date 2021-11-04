@@ -132,9 +132,10 @@ dependencies {
 
 
     //Paging 3
-    val pagingVersion: String by project
-    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
-    testImplementation("androidx.paging:paging-common-ktx:$pagingVersion")
+    val pagingMainVersion: String by project
+    implementation("androidx.paging:paging-runtime-ktx:$pagingMainVersion")
+    val paging3BetaVersion: String by project
+    implementation("androidx.room:room-paging:$paging3BetaVersion")
 
 
     //Coroutines
@@ -152,10 +153,11 @@ dependencies {
     val ktorVersion: String by project
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-android:$ktorVersion")
-    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
     implementation("io.ktor:ktor-client-serialization:$ktorVersion")
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
 
+
+    //AUTH 0 - JWT
     val auth0Version: String by project
     implementation("com.auth0:java-jwt:$auth0Version")
 

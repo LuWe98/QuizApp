@@ -10,7 +10,7 @@ import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 import com.example.quizapp.viewmodel.VmQuiz
 
-class RvaQuestionWithAnswersQuiz(
+class RvaQuestionQuiz(
     private val vmQuiz: VmQuiz
 ) : BindingListAdapter<QuestionWithAnswers, RviQuestionQuizBinding>(QuestionWithAnswers.DIFF_CALLBACK) {
 
@@ -27,13 +27,13 @@ class RvaQuestionWithAnswersQuiz(
     @SuppressLint("SetTextI18n")
     override fun bindViews(binding: RviQuestionQuizBinding, item: QuestionWithAnswers, position: Int) {
         binding.apply {
-            tvNumber.text = "${position + 1})"
+            tvNumber.text = "${position + 1}"
             tvTitle.text = item.question.questionText
 
             val tint: Int
 
             if (item.isAnswered) {
-                ivResultIcon.isVisible = vmQuiz.shouldDisplaySolution
+//                ivResultIcon.isVisible = vmQuiz.shouldDisplaySolution
                 if (vmQuiz.shouldDisplaySolution) {
                     val drawableRes: Int
                     if (item.isAnsweredCorrectly) {
@@ -43,16 +43,18 @@ class RvaQuestionWithAnswersQuiz(
                         drawableRes = R.drawable.ic_cross
                         tint = getColor(R.color.red)
                     }
-                    ivResultIcon.setImageDrawable(drawableRes)
-                    ivResultIcon.setDrawableTint(tint)
+//                    ivResultIcon.setImageDrawable(drawableRes)
+//                    ivResultIcon.setDrawableTint(tint)
                 } else {
                     tint = context.getThemeColor(R.attr.colorAccent)
                 }
             } else {
-                ivResultIcon.isVisible = false
+//                ivResultIcon.isVisible = false
                 tint = getColor(R.color.unselectedColor)
             }
+
             ivRing.setDrawableTint(tint)
+            tvNumber.setTextColor(tint)
         }
     }
 }

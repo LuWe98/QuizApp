@@ -51,7 +51,7 @@ class RvaCreatedQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQu
                 item.questionsAmount.toString()
             )
             tvInfo.text = context.getString(R.string.cosAndSubject,
-                item.questionnaire.courseOfStudies,
+                item.courseOfStudies?.abbreviation,
                 item.questionnaire.subject)
 
             syncProgress.isVisible = item.questionnaire.syncStatus == SyncStatus.SYNCING

@@ -3,6 +3,8 @@ package com.example.quizapp.model.databases.room.junctions
 import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
@@ -13,8 +15,24 @@ import kotlinx.parcelize.Parcelize
 data class CompleteQuestionnaire(
     @Embedded
     var questionnaire: Questionnaire,
-    @Relation(entity = Question::class, entityColumn = "questionnaireId", parentColumn = "id")
-    var questionsWithAnswers: MutableList<QuestionWithAnswers>
+    @Relation(
+        entity = Question::class,
+        entityColumn = Question.QUESTIONNAIRE_ID_COLUMN,
+        parentColumn = Questionnaire.ID_COLUMN
+    )
+    var questionsWithAnswers: MutableList<QuestionWithAnswers>,
+    @Relation(
+        entity = Faculty::class,
+        entityColumn = Faculty.ID_COLUMN,
+        parentColumn = Questionnaire.FACULTY_ID_COLUMN
+    )
+    var faculty: Faculty?,
+    @Relation(
+        entity = CourseOfStudies::class,
+        entityColumn = CourseOfStudies.ID_COLUMN,
+        parentColumn = Questionnaire.COURSE_OF_STUDIES_ID_COLUMN
+    )
+    var courseOfStudies: CourseOfStudies?,
 ) : Parcelable {
 
     val allQuestions: List<Question> get() = questionsWithAnswers.map { item -> item.question }
@@ -37,7 +55,7 @@ data class CompleteQuestionnaire(
 
     val areAllQuestionsAnswered get() = questionsAmount == answeredQuestionsAmount
 
-    val correctQuestionsAmount get() = questionsWithAnswers.filter { it.isAnsweredCorrectly }.size
+    private val correctQuestionsAmount get() = questionsWithAnswers.filter { it.isAnsweredCorrectly }.size
 
     val correctQuestionsPercentage get() = (correctQuestionsAmount*100/questionsAmount.toFloat()).toInt()
 

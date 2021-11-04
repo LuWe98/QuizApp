@@ -38,7 +38,7 @@ class RvaSharedQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQue
                 item.questionnaire.timeStampAsDate,
                 item.questionsAmount.toString())
 
-            tvInfo.text = context.getString(R.string.cosAndSubject, item.questionnaire.courseOfStudies, item.questionnaire.subject)
+            tvInfo.text = context.getString(R.string.cosAndSubject, item.courseOfStudies?.abbreviation, item.questionnaire.subject)
 
 //            val answersPresent = item.allAnswers.isNotEmpty()
             progressIndicator.progress = item.answeredQuestionsPercentage

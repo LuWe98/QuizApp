@@ -89,13 +89,17 @@
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_settings_user_data_card.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_add_question.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer.xml" value="0.67" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer_add_edit.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer_edit.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer_quiz.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_course_of_studies.xml" value="0.2901709401709402" />
-        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_faculty.xml" value="0.4688034188034188" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_faculty.xml" value="0.67" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_faculty_old.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_menu.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_question.xml" value="0.559375" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_question_add_edit_old.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_question_quiz.xml" value="0.559375" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_question_quiz_old.xml" value="0.4688034188034188" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_questionnaire.xml" value="0.5932475884244373" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_questionnaire_browse.xml" value="0.67" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_questionnaire_browse_new.xml" value="0.6703196347031963" />

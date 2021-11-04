@@ -1,41 +1,51 @@
 package com.example.quizapp.model.databases.room.entities.questionnaire
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.example.quizapp.model.databases.room.entities.EntityMarker
-import com.example.quizapp.utils.Constants
 import com.example.quizapp.utils.DiffCallbackUtil
 import kotlinx.parcelize.Parcelize
 import org.bson.types.ObjectId
 
 @Entity(
-    tableName = Constants.QUESTION_TABLE_NAME,
+    tableName = Question.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = Questionnaire::class,
-            parentColumns = ["id"],
-            childColumns = ["questionnaireId"],
+            parentColumns = [Questionnaire.ID_COLUMN],
+            childColumns = [Question.QUESTIONNAIRE_ID_COLUMN],
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [
-        Index(value = ["questionnaireId"])
+        Index(value = [Question.QUESTIONNAIRE_ID_COLUMN])
     ]
 )
 @Parcelize
 data class Question(
-    @PrimaryKey var id: String = ObjectId().toString(),
+    @PrimaryKey
+    @ColumnInfo(name = ID_COLUMN)
+    var id: String = ObjectId().toString(),
+    @ColumnInfo(name = QUESTIONNAIRE_ID_COLUMN)
     var questionnaireId: String,
+    @ColumnInfo(name = TEXT_COLUMN)
     var questionText: String,
+    @ColumnInfo(name = IS_MULTIPLE_CHOICE_COLUMN)
     var isMultipleChoice: Boolean = true,
+    @ColumnInfo(name = POSITION_COLUMN)
     var questionPosition: Int
 ) : EntityMarker {
 
     companion object {
         val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<Question> { old, new ->  old.id == new.id}
+
+        const val TABLE_NAME = "questionTable"
+
+        const val ID_COLUMN = "id"
+        const val QUESTIONNAIRE_ID_COLUMN = "questionnaireId"
+        const val TEXT_COLUMN = "questionText"
+        const val IS_MULTIPLE_CHOICE_COLUMN = "isMultipleChoice"
+        const val POSITION_COLUMN = "questionPosition"
     }
 
 }

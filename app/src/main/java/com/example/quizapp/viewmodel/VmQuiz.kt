@@ -15,7 +15,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -59,49 +61,45 @@ class VmQuiz @Inject constructor(
         shouldDisplaySolutionLiveData.value = shouldDisplaySolution
     }
 
-    fun onShowSolutionClick() {
+    fun onShowSolutionClick() = launch(IO) {
         completeQuestionnaire?.let {
             if (it.areAllQuestionsAnswered) {
                 setShouldDisplaySolution(!shouldDisplaySolution)
             } else {
-                launch(IO) { fragmentEventChannel.send(ShowCompleteAllAnswersToast) }
+                fragmentEventChannel.send(ShowCompleteAllAnswersToast)
             }
         }
     }
 
-    fun onMoreOptionsItemClicked() {
-        launch(IO) { fragmentEventChannel.send(ShowPopupMenu) }
+    fun onMoreOptionsItemClicked() = launch(IO) {
+        fragmentEventChannel.send(ShowPopupMenu)
     }
 
-    fun onUndoDeleteGivenAnswersClick(event: ShowUndoDeleteGivenAnswersSnackBack) {
-        launch(IO) { localRepository.update(event.lastAnswerValues) }
+    fun onUndoDeleteGivenAnswersClick(event: ShowUndoDeleteGivenAnswersSnackBack) = launch(IO) {
+        localRepository.update(event.lastAnswerValues)
     }
 
-    fun onClearGivenAnswersClicked() {
-        launch(IO) {
-            completeQuestionnaire?.apply {
-                mutableListOf<Answer>().let { list ->
-                    list.addAll(allAnswers)
-                    fragmentEventChannel.send(ShowUndoDeleteGivenAnswersSnackBack(list))
-                    list.map {
-                        it.copy(isAnswerSelected = false)
-                    }.also {
-                        localRepository.update(it)
-                    }
+
+    fun onClearGivenAnswersClicked() = launch(IO) {
+        completeQuestionnaire?.apply {
+            mutableListOf<Answer>().let { list ->
+                list.addAll(allAnswers)
+                fragmentEventChannel.send(ShowUndoDeleteGivenAnswersSnackBack(list))
+                list.map {
+                    it.copy(isAnswerSelected = false)
+                }.also {
+                    localRepository.update(it)
                 }
             }
         }
     }
 
-    fun onFabClicked() {
+    fun onFabClicked() = launch(IO) {
         if (shouldDisplaySolution) {
             setShouldDisplaySolution(false)
         }
-        launch(IO) {
-            fragmentEventChannel.send(NavigateToQuizScreen)
-        }
+        fragmentEventChannel.send(NavigateToQuizScreen)
     }
-
 
 
     fun onAnswerItemClicked(selectedAnswerId: String, allAnswers: List<Answer>, isQuestionMultipleChoice: Boolean) = launch(IO) {
@@ -126,24 +124,23 @@ class VmQuiz @Inject constructor(
 
     private fun uploadGivenAnswers() = applicationScope.launch(IO) {
         completeQuestionnaire?.let {
-            if(it.questionnaire.syncStatus != SyncStatus.SYNCED) {
+            if (it.questionnaire.syncStatus != SyncStatus.SYNCED) {
                 return@launch
             }
 
             val filledQuestionnaire = DataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(it)
 
-            if(localRepository.isAnsweredQuestionnairePresent(filledQuestionnaire.questionnaireId)){
+            if (localRepository.isAnsweredQuestionnairePresent(filledQuestionnaire.questionnaireId)) {
                 runCatching {
                     backendRepository.insertFilledQuestionnaire(filledQuestionnaire)
                 }.onSuccess { response ->
-                    if(response.responseType != InsertFilledQuestionnaireResponseType.ERROR){
+                    if (response.responseType != InsertFilledQuestionnaireResponseType.ERROR) {
                         localRepository.delete(LocallyAnsweredQuestionnaire(filledQuestionnaire.questionnaireId))
                     }
                 }
             }
         }
     }
-
 
 
     sealed class FragmentQuizEvent {

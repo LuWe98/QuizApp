@@ -81,7 +81,7 @@
                 android:layout_height="0dp"
                 android:id="@+id/rv"
                 tools:visibility="gone"
-                tools:listitem="@layout/rvi_answer_edit"
+                tools:listitem="@layout/rvi_answer_add_edit"
                 android:layoutAnimation="@anim/recyclerview_layout_animation"
                 android:background="?android:colorBackground"
                 android:layout_marginHorizontal="@dimen/grid_1"

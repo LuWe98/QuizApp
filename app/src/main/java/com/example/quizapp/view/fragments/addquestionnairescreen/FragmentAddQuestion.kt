@@ -10,7 +10,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddQuestionBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.flowext.collect
-import com.example.quizapp.view.recyclerview.adapters.RvaAnswerEditQuestion
+import com.example.quizapp.view.recyclerview.adapters.RvaAnswerAddEdit
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmAddEdit
 import com.example.quizapp.viewmodel.VmAddEditQuestion
@@ -23,7 +23,7 @@ class FragmentAddQuestion : BindingFragment<FragmentAddQuestionBinding>() {
     private val vmAddEdit : VmAddEdit by hiltNavGraphViewModels(R.id.add_nav_graph)
     private val vmAddEditQuestion : VmAddEditQuestion by viewModels()
 
-    private lateinit var rvAdapter : RvaAnswerEditQuestion
+    private lateinit var rvAdapter : RvaAnswerAddEdit
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,7 +36,7 @@ class FragmentAddQuestion : BindingFragment<FragmentAddQuestionBinding>() {
         binding.questionEditText.setText(vmAddEditQuestion.questionTitle)
         binding.isMultipleChoiceSwitch.isChecked = vmAddEditQuestion.isMultipleChoice
 
-        rvAdapter = RvaAnswerEditQuestion(vmAddEditQuestion).apply {
+        rvAdapter = RvaAnswerAddEdit(vmAddEditQuestion).apply {
             onItemClick = vmAddEditQuestion::onAnswerItemClicked
             onDeleteButtonClick = vmAddEditQuestion::onAnswerItemDeleteButtonClicked
             onAnswerTextChanged = vmAddEditQuestion::onAnswerItemTextChanged

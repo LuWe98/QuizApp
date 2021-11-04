@@ -1,42 +1,54 @@
 package com.example.quizapp.model.databases.room.entities.questionnaire
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.example.quizapp.model.databases.room.entities.EntityMarker
-import com.example.quizapp.utils.Constants
 import com.example.quizapp.utils.DiffCallbackUtil
 import kotlinx.parcelize.Parcelize
 import org.bson.types.ObjectId
 
 @Entity(
-    tableName = Constants.ANSWER_TABLE_NAME,
+    tableName = Answer.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = Question::class,
-            parentColumns = ["id"],
-            childColumns = ["questionId"],
+            parentColumns = [Question.ID_COLUMN],
+            childColumns = [Answer.QUESTION_ID_COLUMN],
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [
-        Index(value = ["questionId"])
+        Index(value = [Answer.QUESTION_ID_COLUMN])
     ]
 )
 @Parcelize
 data class Answer(
-    @PrimaryKey var id: String = ObjectId().toString(),
+    @PrimaryKey
+    @ColumnInfo(name = ID_COLUMN)
+    var id: String = ObjectId().toString(),
+    @ColumnInfo(name = QUESTION_ID_COLUMN)
     var questionId: String = "",
+    @ColumnInfo(name = TEXT_COLUMN)
     var answerText: String = "",
+    @ColumnInfo(name = IS_ANSWER_CORRECT_COLUMN)
     var isAnswerCorrect: Boolean = false,
+    @ColumnInfo(name = IS_ANSWER_SELECTED_COLUMN)
     var isAnswerSelected: Boolean = false,
+    @ColumnInfo(name = POSITION_COLUMN)
     var answerPosition: Int = 0
 ) : EntityMarker {
 
     companion object {
         val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<Answer> { old, new ->  old.id == new.id}
+
+        const val TABLE_NAME = "answerTable"
+
+        const val ID_COLUMN = "id"
+        const val QUESTION_ID_COLUMN = "questionId"
+        const val TEXT_COLUMN = "answerText"
+        const val IS_ANSWER_CORRECT_COLUMN = "isAnswerCorrect"
+        const val IS_ANSWER_SELECTED_COLUMN = "isAnswerSelected"
+        const val POSITION_COLUMN = "answerPosition"
     }
 
 }

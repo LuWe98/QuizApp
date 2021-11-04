@@ -4,8 +4,8 @@ import com.example.quizapp.model.databases.mongodb.documents.questionnaire.Mongo
 import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.requests.*
 import com.example.quizapp.model.ktor.responses.*
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.browsable.MongoBrowsableQuestionnaire
+import com.example.quizapp.model.databases.QuestionnaireVisibility
+import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -23,10 +23,9 @@ class QuestionnaireApi @Inject constructor(
     suspend fun getAllQuestionnaires(): List<MongoQuestionnaire> =
         client.get("/questionnaires")
 
-
-    suspend fun insertQuestionnaire(mongoQuestionnaire: MongoQuestionnaire): InsertQuestionnaireResponse =
-        client.post("/questionnaire/insert") {
-            body = InsertQuestionnaireRequest(mongoQuestionnaire)
+    suspend fun insertQuestionnaires(mongoQuestionnaires: List<MongoQuestionnaire>): InsertQuestionnairesResponse =
+        client.post("/questionnaires/insert") {
+            body = InsertQuestionnairesRequest(mongoQuestionnaires)
         }
 
     suspend fun getQuestionnairesForSyncronization(
@@ -48,7 +47,7 @@ class QuestionnaireApi @Inject constructor(
         }
 
     //TODO -> RÜCKGABEWERT ZU RESPONSE SEALED CLASS UMÄNDERN!
-    suspend fun getPagedQuestionnaires(limit: Int, page: Int, searchString: String, questionnaireIdsToIgnore: List<String>) : List<MongoBrowsableQuestionnaire> =
+    suspend fun getPagedQuestionnaires(limit: Int, page: Int, searchString: String, questionnaireIdsToIgnore: List<String>) : List<BrowsableQuestionnaire> =
         client.post("/questionnaires/paged"){
             body = GetPagedQuestionnairesRequest(limit, page, searchString, questionnaireIdsToIgnore)
         }

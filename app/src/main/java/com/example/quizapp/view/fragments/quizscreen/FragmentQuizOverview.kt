@@ -13,7 +13,7 @@ import com.example.quizapp.databinding.FragmentQuizOverviewBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.flowext.awareCollect
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
-import com.example.quizapp.view.recyclerview.adapters.RvaQuestionWithAnswersQuiz
+import com.example.quizapp.view.recyclerview.adapters.RvaQuestionQuiz
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmQuiz
 import com.example.quizapp.viewmodel.VmQuiz.*
@@ -26,7 +26,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
     val viewModel: VmQuiz by hiltNavGraphViewModels(R.id.quiz_nav_graph)
 
-    private lateinit var rvAdapter: RvaQuestionWithAnswersQuiz
+    private lateinit var rvAdapter: RvaQuestionQuiz
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,7 +37,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
     }
 
     private fun initRecyclerView() {
-        rvAdapter = RvaQuestionWithAnswersQuiz(viewModel).apply {
+        rvAdapter = RvaQuestionQuiz(viewModel).apply {
             onItemClick = { position, questionId, card ->
                 //navigator.navigateToQuizContainerScreenWithQuestionCardClick(position, questionId, card)
                 navigator.navigateToQuizContainerScreen(position)
@@ -66,7 +66,6 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                 binding.apply {
                     tvTitle.text = it.title
                     tvAuthor.text = it.authorInfo.userName
-                    tvCourseOfStudies.text = it.courseOfStudies
                     tvSubject.text = it.subject
                 }
             }
@@ -78,7 +77,10 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             }
 
             completeQuestionnaireLiveData.observe(viewLifecycleOwner) {
-                binding.tvQuestionsAnswered.text = "${it.answeredQuestionsAmount} / ${it.questionsAmount}"
+                binding.apply {
+                    tvCourseOfStudies.text = it.courseOfStudies?.abbreviation
+                    tvQuestionsAnswered.text = "${it.answeredQuestionsAmount} / ${it.questionsAmount}"
+                }
                 onShouldDisplaySolutionChanged(shouldDisplaySolution, it)
             }
 

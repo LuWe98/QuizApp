@@ -1,8 +1,8 @@
-package com.example.quizapp.model.menudatamodels
+package com.example.quizapp.model.menus
 
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.quizapp.R
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility
+import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptionsArgs
@@ -28,7 +28,7 @@ object MenuItemDataModel {
                     removeAt(createdQuestionnaireMoreOptionsMenu.indexOfFirst {
                         it.id == PUBLISH_QUESTIONNAIRE_ITEM_ID
                     })
-                } else if(args.questionnaire.questionnaireVisibility == QuestionnaireVisibility.PUBLIC) {
+                } else if(args.questionnaire.visibility == QuestionnaireVisibility.PUBLIC) {
                     val index = createdQuestionnaireMoreOptionsMenu.indexOfFirst { it.id == PUBLISH_QUESTIONNAIRE_ITEM_ID }
                     val item = removeAt(index)
                     add(index, item.copy(iconRes = R.drawable.ic_un_publish, titleRes = R.string.setQuestionnaireToPrivate))
@@ -97,14 +97,6 @@ object MenuItemDataModel {
     )
 
 
-    /*
-    MenuItem(
-            id = BROWSER_USER_QUESTIONNAIRES_ITEM_ID,
-            iconRes = R.drawable.ic_question,
-            titleRes = R.string.browseUsersQuestionnaires
-        ),
-     */
-
     val userMoreOptionsMenu get() = mutableListOf(
         MenuItem(
           id = CHANGE_USER_ROLE_ITEM_ID,
@@ -117,6 +109,13 @@ object MenuItemDataModel {
             titleRes = R.string.deleteUser
         )
     )
+    /*
+MenuItem(
+        id = BROWSER_USER_QUESTIONNAIRES_ITEM_ID,
+        iconRes = R.drawable.ic_question,
+        titleRes = R.string.browseUsersQuestionnaires
+    ),
+ */
 
 
     val themeOptionsMenu get() = mutableListOf(

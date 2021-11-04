@@ -2,6 +2,7 @@ package com.example.quizapp.model.ktor.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.quizapp.extensions.log
 
 open class BasicPagingSource <T: Any> (
     private val getRefreshKeyAction : (PagingState<Int, T>) -> (Int?) = { state ->
@@ -27,7 +28,6 @@ open class BasicPagingSource <T: Any> (
             )
 
         } catch (e: Exception) {
-            //HANDLE ERRORS HERE
             LoadResult.Error(e)
         }
     }

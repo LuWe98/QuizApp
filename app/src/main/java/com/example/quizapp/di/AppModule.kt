@@ -191,7 +191,6 @@ object AppModule {
     fun provideSyncHelper(
         localRepository: LocalRepository,
         backendRepository: BackendRepository,
-        preferencesRepository: PreferencesRepository
-    ) = BackendSyncer(localRepository, backendRepository, preferencesRepository)
+    ) = BackendSyncer(localRepository, backendRepository)
 
 }

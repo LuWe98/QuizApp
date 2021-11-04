@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import com.example.quizapp.R
 import java.util.*
 
+@Suppress("DEPRECATION")
 enum class QuizAppLanguage(@StringRes val textRes: Int) {
     SYSTEM_DEFAULT(R.string.systemDefault),
     ENGLISH(R.string.english),

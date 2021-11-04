@@ -15,6 +15,7 @@ import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.entities.sync.*
+import com.example.quizapp.model.databases.room.typeconverter.LocalDatabaseTypeConverter
 import com.example.quizapp.utils.Constants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope

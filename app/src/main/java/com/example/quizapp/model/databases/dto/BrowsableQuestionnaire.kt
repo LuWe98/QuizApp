@@ -1,4 +1,4 @@
-package com.example.quizapp.model.databases.mongodb.documents.questionnaire.browsable
+package com.example.quizapp.model.databases.dto
 
 import com.example.quizapp.model.ktor.status.DownloadStatus
 import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestion
@@ -10,19 +10,21 @@ import kotlinx.serialization.Serializable
  * This Entity is a lightweight version of the regular MongoQuestionnaire in order to have less size
  */
 @Serializable
-data class MongoBrowsableQuestionnaire(
+data class BrowsableQuestionnaire(
     val questionnaireId: String,
     val title: String,
     val authorInfo: AuthorInfo,
-    val faculty: String,
-    val courseOfStudies: String,
+    val facultyId: String,
+    val courseOfStudiesId: String,
     val subject: String,
     val questionCount: Int,
     val questionsPreview: List<MongoQuestion>,
     val lastModifiedTimestamp: Long,
     var downloadStatus: DownloadStatus = DownloadStatus.NOT_DOWNLOADED
 ) {
+
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<MongoBrowsableQuestionnaire> { old, new -> old.questionnaireId == new.questionnaireId }
+        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<BrowsableQuestionnaire> { old, new -> old.questionnaireId == new.questionnaireId }
     }
+
 }

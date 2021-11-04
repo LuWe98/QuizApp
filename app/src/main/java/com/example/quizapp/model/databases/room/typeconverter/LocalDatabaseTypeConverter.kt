@@ -1,9 +1,9 @@
-package com.example.quizapp.model.databases.room
+package com.example.quizapp.model.databases.room.typeconverter
 
 import androidx.room.TypeConverter
 import com.example.quizapp.model.databases.Degree
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility
+import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.mongodb.documents.user.SharedWithInfo
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString

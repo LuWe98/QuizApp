@@ -4,10 +4,9 @@ import androidx.room.Dao
 import androidx.room.Query
 import com.example.quizapp.model.databases.room.dao.BaseDao
 import com.example.quizapp.model.databases.room.entities.sync.LocallyClearedQuestionnaire
-import com.example.quizapp.utils.Constants
 
 @Dao
-abstract class LocallyClearedQuestionnaireDao: BaseDao<LocallyClearedQuestionnaire>(Constants.LOCALLY_CLEARED_QUESTIONNAIRES_TABLE) {
+abstract class LocallyClearedQuestionnaireDao: BaseDao<LocallyClearedQuestionnaire>(LocallyClearedQuestionnaire.TABLE_NAME) {
 
     @Query("SELECT * FROM deletedFilledQuestionnairesTable")
     abstract suspend fun getLocallyDeletedFilledQuestionnaireIds() : List<LocallyClearedQuestionnaire>

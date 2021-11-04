@@ -8,9 +8,11 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.InsertQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
@@ -54,7 +56,13 @@ class VmAddEdit @Inject constructor(
             field = value
         }
 
-    var qCourseOfStudies = state.get<String>(QUESTIONNAIRE_COURSE_OF_STUDIES) ?: ""
+    var qFaculty = state.get<Faculty>(QUESTIONNAIRE_FACULTY)
+        set(value) {
+            state.set(QUESTIONNAIRE_FACULTY, value)
+            field = value
+        }
+
+    var qCourseOfStudies = state.get<CourseOfStudies>(QUESTIONNAIRE_COURSE_OF_STUDIES)
         set(value) {
             state.set(QUESTIONNAIRE_COURSE_OF_STUDIES, value)
             field = value
@@ -78,7 +86,8 @@ class VmAddEdit @Inject constructor(
         args.completeQuestionnaire?.let {
             qId = if(args.copy) ObjectId().toString() else it.questionnaire.id
             qTitle = it.questionnaire.title
-            qCourseOfStudies = it.questionnaire.courseOfStudies
+            qFaculty = it.faculty
+            qCourseOfStudies = it.courseOfStudies
             qSubject = it.questionnaire.subject
             setQuestionWithAnswers(it.questionsWithAnswers.sortedBy { qwa -> qwa.question.questionPosition }.toMutableList())
         }
@@ -146,8 +155,12 @@ class VmAddEdit @Inject constructor(
         qTitle = text
     }
 
-    fun onQuestionnaireCourseOfStudiesTextChanged(text: String) {
-        qCourseOfStudies = text
+    fun onCourseOfStudiesSelected(courseOfStudies: CourseOfStudies) {
+        qCourseOfStudies = courseOfStudies
+    }
+
+    fun onFacultySelected(faculty: Faculty) {
+        qFaculty = faculty
     }
 
     fun onQuestionnaireSubjectTextChanged(text: String) {
@@ -168,8 +181,8 @@ class VmAddEdit @Inject constructor(
                 title = qTitle,
                 authorInfo = preferencesRepository.user.asAuthorInfo,
                 lastModifiedTimestamp = getTimeMillis(),
-                faculty = "WI",
-                courseOfStudies = qCourseOfStudies,
+                facultyId = qFaculty?.id,
+                courseOfStudiesId = qCourseOfStudies?.id,
                 subject = qSubject,
                 syncStatus = SYNCING
             )
@@ -195,7 +208,7 @@ class VmAddEdit @Inject constructor(
                 }
             }
 
-            val completeQuestionnaire = CompleteQuestionnaire(questionnaire, questionsWithAnswersMapped)
+            val completeQuestionnaire = CompleteQuestionnaire(questionnaire, questionsWithAnswersMapped, null, null)
 
             localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
             fragmentAddQuestionnaireEventChannel.send(NavigateBackEvent)
@@ -205,7 +218,7 @@ class VmAddEdit @Inject constructor(
             }.onFailure {
                 localRepository.update(questionnaire.apply { syncStatus = UNSYNCED })
             }.onSuccess {
-                localRepository.update(questionnaire.apply { syncStatus = if (it.responseType == InsertQuestionnaireResponseType.SUCCESSFUL) SYNCED else UNSYNCED })
+                localRepository.update(questionnaire.apply { syncStatus = if (it.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) SYNCED else UNSYNCED })
             }
         }
     }
@@ -239,6 +252,7 @@ class VmAddEdit @Inject constructor(
         const val QUESTIONNAIRE_ID = "questionnaireId"
         const val QUESTIONNAIRE_TITLE = "questionnaireTitle"
         const val QUESTIONNAIRE_COURSE_OF_STUDIES = "questionnaireCourseOfStudies"
+        const val QUESTIONNAIRE_FACULTY = "questionnaireFaculty"
         const val QUESTIONNAIRE_SUBJECT = "questionnaireSubject"
         const val QUESTIONS = "questionsWithAnswers"
     }

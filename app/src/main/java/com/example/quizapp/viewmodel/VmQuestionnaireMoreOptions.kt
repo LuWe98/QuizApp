@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.menudatamodels.MenuItem
-import com.example.quizapp.model.menudatamodels.MenuItemDataModel
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.QuestionnaireVisibility
+import com.example.quizapp.model.menus.MenuItem
+import com.example.quizapp.model.menus.MenuItemDataModel
+import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptionsArgs
@@ -28,7 +28,7 @@ class VmQuestionnaireMoreOptions @Inject constructor(
 
     private val args = BsdfQuestionnaireMoreOptionsArgs.fromSavedStateHandle(state)
 
-    private val currentVisibility get() = args.questionnaire.questionnaireVisibility
+    private val currentVisibility get() = args.questionnaire.visibility
 
     private val questionnaireId get() = args.questionnaire.id
 

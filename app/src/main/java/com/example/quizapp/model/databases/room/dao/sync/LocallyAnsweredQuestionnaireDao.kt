@@ -4,10 +4,9 @@ import androidx.room.Dao
 import androidx.room.Query
 import com.example.quizapp.model.databases.room.dao.BaseDao
 import com.example.quizapp.model.databases.room.entities.sync.LocallyAnsweredQuestionnaire
-import com.example.quizapp.utils.Constants
 
 @Dao
-abstract class LocallyAnsweredQuestionnaireDao: BaseDao<LocallyAnsweredQuestionnaire>(Constants.LOCALLY_ANSWERED_QUESTIONNAIRES_TABLE) {
+abstract class LocallyAnsweredQuestionnaireDao: BaseDao<LocallyAnsweredQuestionnaire>(LocallyAnsweredQuestionnaire.TABLE_NAME) {
 
     @Query("SELECT * FROM locallyAnsweredQuestionnairesTable")
     abstract suspend fun getLocallyAnsweredQuestionnaireIds() : List<LocallyAnsweredQuestionnaire>
