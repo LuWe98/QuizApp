@@ -3,13 +3,12 @@ package com.example.quizapp.view.fragments.dialogs
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfQuestionnaireMoreOptionsBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.flowext.collect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaBsdfMenu
 import com.example.quizapp.viewmodel.VmHome
@@ -52,7 +51,7 @@ class BsdfQuestionnaireMoreOptions : BindingBottomSheetDialogFragment<BsdfQuesti
     }
 
     private fun initObservers(){
-        vm.questionnaireMoreOptionsEventChannelFlow.collect(lifecycleScope) { event ->
+        vm.questionnaireMoreOptionsEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event){
                 is NavigateToEditQuestionnaireScreen -> navigator.navigateToAddQuestionnaireScreen(event.completeQuestionnaire)
                 is NavigateToCopyQuestionnaireScreen -> navigator.navigateToAddQuestionnaireScreen(event.completeQuestionnaire, true)

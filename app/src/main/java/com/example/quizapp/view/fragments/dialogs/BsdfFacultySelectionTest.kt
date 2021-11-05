@@ -5,16 +5,11 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.databinding.BsdfFacultySelectionTestBinding
 import com.example.quizapp.extensions.disableChangeAnimation
-import com.example.quizapp.extensions.flowext.awareCollect
-import com.example.quizapp.extensions.launch
-import com.example.quizapp.extensions.log
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.bindingsuperclasses.BindingFullScreenBottomSheetDialogFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaFaculty
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -47,7 +42,7 @@ class BsdfFacultySelectionTest: BindingFullScreenBottomSheetDialogFragment<BsdfF
     }
 
     private fun registerObservers(){
-        localRepository.allFacultiesFlow.awareCollect(viewLifecycleOwner) {
+        localRepository.allFacultiesFlow.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitList(it)
         }
     }

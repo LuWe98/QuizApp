@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeCreatedBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.flowext.awareCollect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaCreatedQuestionnaires
 import com.example.quizapp.viewmodel.VmHome
@@ -47,7 +47,7 @@ class FragmentHomeCreated : BindingFragment<FragmentHomeCreatedBinding>() {
     }
 
     private fun initObservers() {
-        vmHome.allCreatedQuestionnairesFlow.awareCollect(viewLifecycleOwner) {
+        vmHome.allCreatedQuestionnairesFlow.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitList(it) {
                 if (it.isEmpty()) {
 
@@ -55,7 +55,7 @@ class FragmentHomeCreated : BindingFragment<FragmentHomeCreatedBinding>() {
             }
         }
 
-        vmHome.fragmentHomeCreatedEventChannelFlow.awareCollect(viewLifecycleOwner) { event ->
+        vmHome.fragmentHomeCreatedEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 is ChangeCreatedSwipeRefreshLayoutVisibility -> {
                     binding.swipeRefreshLayout.isRefreshing = event.visible

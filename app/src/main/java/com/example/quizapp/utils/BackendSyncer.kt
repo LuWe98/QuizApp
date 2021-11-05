@@ -9,6 +9,7 @@ import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQues
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedUser
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
+import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.*
 import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireResponse.*
@@ -26,6 +27,7 @@ import javax.inject.Singleton
 
 @Singleton
 class BackendSyncer @Inject constructor(
+    private val preferencesRepository: PreferencesRepository,
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository
 ) {
@@ -71,7 +73,6 @@ class BackendSyncer @Inject constructor(
         }
     }
 
-    //TODO -> CourseOfStudies Einträge kommen von der online Datenbank und werden hier eingetragen
     private suspend fun getCourseOfStudiesAsync() = withContext(IO) {
         async {
             runCatching {
@@ -91,11 +92,18 @@ class BackendSyncer @Inject constructor(
     }
 
 
-
     //TODO -> Die müssen auch ignoriert werden beim runterladen von den Antworten
     //TODO -> IGNORE bei finden von den MongoFilledQuestionnaires
     //val locallyDeletedFilledQuestionnaireIds = localRepository.getLocallyDeletedFilledQuestionnaireIds()
 
+    //TODO -> Upload von unsynced Questionnaires erst nachdem die online abgecheckt wurden um zu schauen, welche es online nicht mehr gibt
+
+    //    val uploadUnsyncedQuestionnairesAsync = async {
+    //      uploadUnsyncedQuestionnaires {
+    //          unsyncedQuestionnaireIdsAsync.await()
+    //      }
+    //    }
+    //    uploadUnsyncedQuestionnairesAsync.await()
     suspend fun synAllQuestionnaireData() = withContext(IO) {
         localRepository.unsyncAllSyncingQuestionnaires()
 
@@ -130,17 +138,10 @@ class BackendSyncer @Inject constructor(
             }
         }
 
-        val uploadUnsyncedQuestionnairesAsync = async {
-            uploadUnsyncedQuestionnaires {
-                unsyncedQuestionnaireIdsAsync.await()
-            }
-        }
-
         syncQuestionnairesAsync.await()
         locallyDeletedAsync.await()
         locallyDeletedFilledAsync.await()
         locallyAnsweredAsync.await()
-        uploadUnsyncedQuestionnairesAsync.await()
     }
 
     private suspend fun syncQuestionnaires(
@@ -170,6 +171,8 @@ class BackendSyncer @Inject constructor(
 
             insertAsync.await()
             updateAsync.await()
+
+            uploadUnsyncedQuestionnaires()
         }
     }
 
@@ -189,7 +192,7 @@ class BackendSyncer @Inject constructor(
     }
 
     private fun selectAnswers(qwa: QuestionWithAnswers, selectedAnswerIds: List<String>) = qwa.apply {
-        if (!question.isMultipleChoice && answers.count { answer -> answer.id in selectedAnswerIds } > 1) {
+        if (!question.isMultipleChoice && answers.count { it.id in selectedAnswerIds } > 1) {
             answers.onEach { it.isAnswerSelected = false }
         } else {
             answers.onEach { it.isAnswerSelected = it.id in selectedAnswerIds }
@@ -275,7 +278,7 @@ class BackendSyncer @Inject constructor(
 
         val unsyncedQuestionnaireIds = unsyncedQuestionnaireIdsProvider()
 
-        localRepository.getAllLocallyAnsweredFilledQuestionnaires().filter { it.questionnaireId !in unsyncedQuestionnaireIds}.let { filledQuestionnaires ->
+        localRepository.getAllLocallyAnsweredFilledQuestionnaires().filter { it.questionnaireId !in unsyncedQuestionnaireIds }.let { filledQuestionnaires ->
             if (filledQuestionnaires.isEmpty()) return@withContext
 
             runCatching {
@@ -293,18 +296,21 @@ class BackendSyncer @Inject constructor(
     }
 
     //TODO -> BULK INSERT/UPDATE OF ALL LOCALLY UNSYNCED QUESTIONNAIRES ONLINE
+    //TODO -> Should only upload own Questionnaires
     private suspend fun uploadUnsyncedQuestionnaires(
         unsyncedQuestionnaireIdsProvider: suspend (() -> List<String>) = { localRepository.findAllNonSyncedQuestionnaireIds() }
-    ) {
+    ) = withContext(IO) {
         unsyncedQuestionnaireIdsProvider().let { unsyncedQuestionnaireIds ->
-            if (unsyncedQuestionnaireIds.isEmpty()) return
+            if (unsyncedQuestionnaireIds.isEmpty()) return@withContext
+
+            val userId = preferencesRepository.getUserId()
 
             runCatching {
-                localRepository.findCompleteQuestionnairesWith(unsyncedQuestionnaireIds).map(DataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
+                localRepository.findCompleteQuestionnairesWith(unsyncedQuestionnaireIds, userId).map(DataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
                     backendRepository.insertQuestionnaires(it)
                 }
             }.onSuccess { response ->
-                if(response.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) {
+                if (response.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) {
                     localRepository.setStatusToSynced(unsyncedQuestionnaireIds)
                 }
             }

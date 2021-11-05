@@ -3,12 +3,10 @@ package com.example.quizapp.view.fragments.searchscreen
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.databinding.FragmentSearchBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.flowext.awareCollect
-import com.example.quizapp.extensions.flowext.collect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaBrowsableQuestionnaires
 import com.example.quizapp.viewmodel.VmSearch
@@ -58,12 +56,12 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
     }
 
     private fun initObservers(){
-        vmSearch.filteredPagedData.awareCollect(viewLifecycleOwner) {
+        vmSearch.filteredPagedData.collectWhenStarted(viewLifecycleOwner) {
             binding.swipeRefreshLayout.isRefreshing = false
             rvAdapter.submitData(lifecycle, it)
         }
 
-        vmSearch.fragmentSearchEventChannelFlow.collect(lifecycleScope) { event ->
+        vmSearch.fragmentSearchEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event){
                 NavigateBack -> {
                     navigator.popBackStack()

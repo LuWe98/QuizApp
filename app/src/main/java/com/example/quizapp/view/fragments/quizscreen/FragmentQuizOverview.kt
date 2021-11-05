@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizOverviewBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.flowext.awareCollect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionQuiz
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
@@ -62,7 +62,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
     private fun initObservers() {
         viewModel.apply {
-            questionnaireLiveData.observe(viewLifecycleOwner) {
+            questionnaireSharedFlow.collectWhenStarted(viewLifecycleOwner) {
                 binding.apply {
                     tvTitle.text = it.title
                     tvAuthor.text = it.authorInfo.userName
@@ -70,21 +70,23 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                 }
             }
 
-            questionsWithAnswersLiveData.observe(viewLifecycleOwner) { questionsWithAnswers ->
+            questionsWithAnswersSharedFlow.collectWhenStarted(viewLifecycleOwner) { questionsWithAnswers ->
                 rvAdapter.submitList(questionsWithAnswers) {
                     binding.rv.scheduleLayoutAnimation()
                 }
             }
 
-            completeQuestionnaireLiveData.observe(viewLifecycleOwner) {
-                binding.apply {
-                    tvCourseOfStudies.text = it.courseOfStudies?.abbreviation
-                    tvQuestionsAnswered.text = "${it.answeredQuestionsAmount} / ${it.questionsAmount}"
+            completeQuestionnaireStateFlow.collectWhenStarted(viewLifecycleOwner) {
+                it?.let {
+                    binding.apply {
+                        tvCourseOfStudies.text = it.courseOfStudies?.abbreviation
+                        tvQuestionsAnswered.text = "${it.answeredQuestionsAmount} / ${it.questionsAmount}"
+                    }
+                    onShouldDisplaySolutionChanged(shouldDisplaySolution, it)
                 }
-                onShouldDisplaySolutionChanged(shouldDisplaySolution, it)
             }
 
-            answeredQuestionsPercentageLiveData.observe(viewLifecycleOwner) { percentage ->
+            answeredQuestionsPercentageSharedFlow.collectWhenStarted(viewLifecycleOwner) { percentage ->
                 if (percentage != 100) {
                     setShouldDisplaySolution(false)
                 }
@@ -92,13 +94,13 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             }
 
 
-            shouldDisplaySolutionLiveData.observe(viewLifecycleOwner) { shouldDisplay ->
+            shouldDisplaySolutionStateFlow.collectWhenStarted(viewLifecycleOwner) { shouldDisplay ->
                 completeQuestionnaire?.let {
                     onShouldDisplaySolutionChanged(shouldDisplay, it)
                 }
             }
 
-            fragmentEventChannelFlow.awareCollect(viewLifecycleOwner) { event ->
+            fragmentEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
                 when (event) {
                     is ShowUndoDeleteGivenAnswersSnackBack -> {
                         showSnackBar(R.string.answersDeleted, viewToAttachTo = binding.coordRoot, actionTextRes = R.string.undo) {

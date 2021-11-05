@@ -7,16 +7,21 @@ import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.apiclasses.*
 import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestionnaire
 import com.example.quizapp.model.databases.QuestionnaireVisibility
+import com.example.quizapp.model.databases.mongodb.documents.faculty.MongoCourseOfStudies
+import com.example.quizapp.model.databases.mongodb.documents.faculty.MongoFaculty
 import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
+import com.example.quizapp.model.ktor.responses.DeleteCourseOfStudiesResponse
+import com.example.quizapp.model.ktor.responses.DeleteFacultyResponse
+import com.example.quizapp.model.ktor.responses.InsertCourseOfStudiesResponse
+import com.example.quizapp.model.ktor.responses.InsertFacultyResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class BackendRepository @Inject constructor(
-    private val adminApi: AdminApi,
     private val userApi: UserApi,
     private val questionnaireApi: QuestionnaireApi,
     private val filledQuestionnaireApi: FilledQuestionnaireApi,
@@ -24,17 +29,6 @@ class BackendRepository @Inject constructor(
     private val courseOfStudiesApi: CourseOfStudiesApi,
     private val subjectApi: SubjectApi
 ) {
-    // ADMIN
-    suspend fun updateUserRole(userId: String, newRole: Role) = adminApi.updateUserRole(userId, newRole)
-
-    suspend fun getPagedUsers(limit: Int, page: Int, searchString: String) = adminApi.getPagedUsers(limit, page, searchString)
-
-    suspend fun deleteUser(userId: String) = adminApi.deleteUser(userId)
-
-    suspend fun deleteUsers(userIds: List<String>) = adminApi.deleteUsers(userIds)
-
-    suspend fun syncUserData(userId: String) = userApi.syncUserData(userId)
-
 
 
     // USER
@@ -46,13 +40,19 @@ class BackendRepository @Inject constructor(
 
     suspend fun deleteSelf() = userApi.deleteSelf()
 
+    suspend fun updateUserRole(userId: String, newRole: Role) = userApi.updateUserRole(userId, newRole)
+
+    suspend fun getPagedUsers(limit: Int, page: Int, searchString: String) = userApi.getPagedUsers(limit, page, searchString)
+
+    suspend fun deleteUser(userId: String) = userApi.deleteUser(userId)
+
+    suspend fun deleteUsers(userIds: List<String>) = userApi.deleteUsers(userIds)
+
+    suspend fun syncUserData(userId: String) = userApi.syncUserData(userId)
+
 
 
     // QUESTIONNAIRES
-    suspend fun getQuestionnairesOfUser() = questionnaireApi.getQuestionnaireOfUser()
-
-    suspend fun getAllQuestionnaires() = questionnaireApi.getAllQuestionnaires()
-
     suspend fun insertQuestionnaire(completeCompleteQuestionnaire: CompleteQuestionnaire) =
         insertQuestionnaire(DataMapper.mapRoomQuestionnaireToMongoQuestionnaire(completeCompleteQuestionnaire))
 
@@ -61,8 +61,6 @@ class BackendRepository @Inject constructor(
 
     suspend fun insertQuestionnaires(mongoQuestionnaires: List<MongoQuestionnaire>) =
         questionnaireApi.insertQuestionnaires(mongoQuestionnaires)
-
-
 
     suspend fun getQuestionnairesForSyncronization(
         syncedQuestionnaireIdsWithTimestamp: List<QuestionnaireIdWithTimestamp>,
@@ -104,11 +102,19 @@ class BackendRepository @Inject constructor(
     suspend fun getFacultySynchronizationData(localFacultyIdsWithTimeStamp: List<FacultyIdWithTimeStamp>) =
         facultyApi.getFacultySynchronizationData(localFacultyIdsWithTimeStamp)
 
+    suspend fun insertFaculty(faculty: MongoFaculty) = facultyApi.insertFaculty(faculty)
+
+    suspend fun deleteFaculty(facultyId: String) = facultyApi.deleteFaculty(facultyId)
+
 
 
     // COURSE OF STUDIES
     suspend fun getCourseOfStudiesSynchronizationData(localCourseIfStudiesIdsWithTimeStamp: List<CourseOfStudiesIdWithTimeStamp>) =
         courseOfStudiesApi.getCourseOfStudiesSynchronizationData(localCourseIfStudiesIdsWithTimeStamp)
+
+    suspend fun insertCourseOfStudies(courseOfStudies: MongoCourseOfStudies) = courseOfStudiesApi.insertCourseOfStudies(courseOfStudies)
+
+    suspend fun deleteCourseOfStudies(courseOfStudiesId: String) = courseOfStudiesApi.deleteCourseOfStudies(courseOfStudiesId)
 
 
 

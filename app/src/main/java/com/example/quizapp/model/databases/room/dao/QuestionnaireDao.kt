@@ -38,6 +38,10 @@ abstract class QuestionnaireDao : BaseDao<Questionnaire>(Questionnaire.TABLE_NAM
     @Query("SELECT * FROM questionnaireTable WHERE id IN(:questionnaireIds)")
     abstract suspend fun findCompleteQuestionnairesWith(questionnaireIds: List<String>) : List<CompleteQuestionnaire>
 
+    @Transaction
+    @Query("SELECT * FROM questionnaireTable WHERE userId =:userId AND id IN(:questionnaireIds)")
+    abstract suspend fun findCompleteQuestionnairesWith(questionnaireIds: List<String>, userId: String) : List<CompleteQuestionnaire>
+
     @Query("SELECT * FROM questionnaireTable WHERE id = :questionnaireId")
     abstract suspend fun findQuestionnaireWith(questionnaireId: String) : Questionnaire?
 

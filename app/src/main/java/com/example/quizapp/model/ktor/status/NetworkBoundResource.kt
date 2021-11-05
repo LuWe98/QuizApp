@@ -1,6 +1,5 @@
-package com.example.quizapp.model
+package com.example.quizapp.model.ktor.status
 
-import com.example.quizapp.model.ktor.status.Resource
 import kotlinx.coroutines.flow.*
 
 inline fun <ResultType, RequestType> networkBoundResource(

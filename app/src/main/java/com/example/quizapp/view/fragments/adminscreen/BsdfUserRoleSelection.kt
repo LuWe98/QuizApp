@@ -10,7 +10,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfUserRoleSelectionBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.flowext.awareCollect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.model.ktor.status.Resource
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
@@ -74,7 +74,7 @@ class BsdfUserRoleSelection : BindingBottomSheetDialogFragment<BsdfUserRoleSelec
     }
 
     private fun initObservers(){
-        vmRole.fragmentChangeUserRoleEventChannelFlow.awareCollect(viewLifecycleOwner) { event ->
+        vmRole.fragmentChangeUserRoleEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
                 VmChangeUserRole.FragmentChangeUserRoleEvent.NavigateBack -> {
                     navigator.popBackStack()

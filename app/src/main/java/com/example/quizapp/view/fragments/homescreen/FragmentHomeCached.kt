@@ -7,7 +7,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeCachedBinding
 import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
-import com.example.quizapp.extensions.flowext.awareCollect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaCachedQuestionnaires
 import com.example.quizapp.viewmodel.VmHome
@@ -47,7 +47,7 @@ class FragmentHomeCached : BindingFragment<FragmentHomeCachedBinding>() {
     }
 
     private fun initObservers() {
-        vmHome.allCachedQuestionnairesFlow.awareCollect(viewLifecycleOwner) {
+        vmHome.allCachedQuestionnairesFlow.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitList(it){
                 if(it.isEmpty()){
 
@@ -55,7 +55,7 @@ class FragmentHomeCached : BindingFragment<FragmentHomeCachedBinding>() {
             }
         }
 
-        vmHome.fragmentHomeCachedEventChannelFlow.awareCollect(viewLifecycleOwner){ event ->
+        vmHome.fragmentHomeCachedEventChannelFlow.collectWhenStarted(viewLifecycleOwner){ event ->
             when(event) {
                 is ChangeCachedSwipeRefreshLayoutVisibility -> {
                     binding.swipeRefreshLayout.isRefreshing = event.visible

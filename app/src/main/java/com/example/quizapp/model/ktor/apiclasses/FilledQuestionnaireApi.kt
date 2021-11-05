@@ -7,6 +7,7 @@ import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireRespons
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnairesResponse
 import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
+import com.quizappbackend.routing.ApiPaths.*
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject
@@ -18,22 +19,22 @@ class FilledQuestionnaireApi @Inject constructor(
 )  {
 
     suspend fun insertEmptyFilledQuestionnaire(mongoFilledQuestionnaire: MongoFilledQuestionnaire) : InsertFilledQuestionnaireResponse =
-        client.post("/questionnaire/filled/insert") {
+        client.post(FilledQuestionnairePaths.INSERT) {
             body = InsertFilledQuestionnaireRequest(true, mongoFilledQuestionnaire)
         }
 
     suspend fun insertFilledQuestionnaire(mongoFilledQuestionnaire: MongoFilledQuestionnaire) : InsertFilledQuestionnaireResponse =
-        client.post("/questionnaire/filled/insert") {
+        client.post(FilledQuestionnairePaths.INSERT) {
             body = InsertFilledQuestionnaireRequest(false, mongoFilledQuestionnaire)
         }
 
     suspend fun insertFilledQuestionnaires(mongoFilledQuestionnaires: List<MongoFilledQuestionnaire>) : InsertFilledQuestionnairesResponse =
-        client.post("/questionnaires/filled/insert") {
+        client.post(FilledQuestionnairePaths.INSERTS) {
             body = InsertFilledQuestionnairesRequest(mongoFilledQuestionnaires)
         }
 
     suspend fun deleteFilledQuestionnaire(questionnaireIds: List<String>) : DeleteFilledQuestionnaireResponse =
-        client.delete("/questionnaire/filled/delete"){
+        client.delete(FilledQuestionnairePaths.DELETE){
             body = DeleteFilledQuestionnaireRequest(questionnaireIds)
         }
 

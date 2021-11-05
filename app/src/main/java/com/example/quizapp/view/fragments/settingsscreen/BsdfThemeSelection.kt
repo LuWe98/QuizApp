@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfThemeSelectionBinding
 import com.example.quizapp.extensions.disableChangeAnimation
-import com.example.quizapp.extensions.flowext.awareCollect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.getThemeColor
 import com.example.quizapp.model.menus.MenuItemDataModel
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
@@ -48,7 +48,7 @@ class BsdfThemeSelection : BindingBottomSheetDialogFragment<BsdfThemeSelectionBi
     }
 
     private fun initObserver(){
-        vmTheme.themeSelectionEventChannelFlow.awareCollect(viewLifecycleOwner) { event ->
+        vmTheme.themeSelectionEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event){
                 is OnThemeSelectedEvent -> {
                     navigator.popBackStack()

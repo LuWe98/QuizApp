@@ -2,12 +2,11 @@ package com.example.quizapp.view.fragments.addquestionnairescreen
 
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddQuestionnaireBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.flowext.collect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionAddEdit
 import com.example.quizapp.viewmodel.VmAddEdit
@@ -68,7 +67,7 @@ class FragmentAddQuestionnaire : BindingFragment<FragmentAddQuestionnaireBinding
             rvAdapter.submitList(it)
         }
 
-        vmAdd.fragmentAddQuestionnaireEventChannelFlow.collect(lifecycleScope){ event ->
+        vmAdd.fragmentAddQuestionnaireEventChannelFlow.collectWhenStarted(viewLifecycleOwner){ event ->
             when(event){
                 is ShowQuestionDeletedSuccessFullySnackBar -> {
                     showSnackBar(

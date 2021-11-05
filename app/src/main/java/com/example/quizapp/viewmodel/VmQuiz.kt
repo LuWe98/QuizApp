@@ -2,6 +2,7 @@ package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.*
 import com.example.quizapp.QuizNavGraphArgs
+import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.ktor.BackendRepository
@@ -15,9 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,36 +36,53 @@ class VmQuiz @Inject constructor(
 
     private val completeQuestionnaireFlow = localRepository.findCompleteQuestionnaireAsFlowWith(args.questionnaireId)
 
-    val completeQuestionnaireLiveData = completeQuestionnaireFlow.asLiveData().distinctUntilChanged()
+    val completeQuestionnaireStateFlow = completeQuestionnaireFlow.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val completeQuestionnaire get() = completeQuestionnaireLiveData.value
+    val completeQuestionnaire get() = completeQuestionnaireStateFlow.value
 
-    fun getQuestionWithAnswersLiveData(questionId: String) = completeQuestionnaireLiveData.map { it.getQuestionWithAnswers(questionId) }.distinctUntilChanged()
+    fun getQuestionWithAnswersSharedFlow(questionId: String) = completeQuestionnaireStateFlow
+        .mapNotNull { it?.getQuestionWithAnswers(questionId) }
+        .shareIn(viewModelScope, SharingStarted.Lazily)
+        .distinctUntilChanged()
 
-    val questionnaireLiveData get() = completeQuestionnaireLiveData.map { it.questionnaire }.distinctUntilChanged()
+    val questionnaireSharedFlow get() = completeQuestionnaireStateFlow
+        .mapNotNull { it?.questionnaire }
+        .shareIn(viewModelScope, SharingStarted.Lazily)
+        .distinctUntilChanged()
 
-    val questionsWithAnswersLiveData get() = completeQuestionnaireLiveData.map { it.questionsWithAnswers }.distinctUntilChanged()
+    val questionsWithAnswersSharedFlow get() = completeQuestionnaireStateFlow
+        .mapNotNull { it?.questionsWithAnswers }
+        .shareIn(viewModelScope, SharingStarted.Lazily)
+        .distinctUntilChanged()
 
-    val answeredQuestionsPercentageLiveData get() = completeQuestionnaireLiveData.map { it.answeredQuestionsPercentage }.distinctUntilChanged()
+    val answeredQuestionsPercentageSharedFlow get() = completeQuestionnaireStateFlow
+        .mapNotNull { it?.answeredQuestionsPercentage }
+        .shareIn(viewModelScope, SharingStarted.Lazily)
+        .distinctUntilChanged()
 
-    val allQuestionsAnsweredLiveData get() = answeredQuestionsPercentageLiveData.map { it == 100 }.distinctUntilChanged()
+    val allQuestionsAnsweredSharedFlow get() = answeredQuestionsPercentageSharedFlow
+        .map { it == 100 }
+        .shareIn(viewModelScope, SharingStarted.Lazily)
+        .distinctUntilChanged()
 
-    val shouldDisplaySolutionLiveData get() = state.getLiveData(SHOULD_DISPLAY_SOLUTION, false)
 
-    val shouldDisplaySolution get() = shouldDisplaySolutionLiveData.value!!
+    val shouldDisplaySolutionStateFlow = state.getMutableStateFlow(SHOULD_DISPLAY_SOLUTION, false)
 
+    val shouldDisplaySolution get() = shouldDisplaySolutionStateFlow.value
 
     fun setShouldDisplaySolution(shouldDisplaySolution: Boolean) {
         state.set(SHOULD_DISPLAY_SOLUTION, shouldDisplaySolution)
-        shouldDisplaySolutionLiveData.value = shouldDisplaySolution
+        shouldDisplaySolutionStateFlow.value = shouldDisplaySolution
     }
 
-    fun onShowSolutionClick() = launch(IO) {
+    fun onShowSolutionClick() {
         completeQuestionnaire?.let {
             if (it.areAllQuestionsAnswered) {
                 setShouldDisplaySolution(!shouldDisplaySolution)
             } else {
-                fragmentEventChannel.send(ShowCompleteAllAnswersToast)
+                launch(IO) {
+                    fragmentEventChannel.send(ShowCompleteAllAnswersToast)
+                }
             }
         }
     }
@@ -94,11 +110,14 @@ class VmQuiz @Inject constructor(
         }
     }
 
-    fun onFabClicked() = launch(IO) {
+    fun onFabClicked() {
         if (shouldDisplaySolution) {
             setShouldDisplaySolution(false)
         }
-        fragmentEventChannel.send(NavigateToQuizScreen)
+
+        launch(IO){
+            fragmentEventChannel.send(NavigateToQuizScreen)
+        }
     }
 
 

@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddQuestionBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.flowext.collect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.view.recyclerview.adapters.RvaAnswerAddEdit
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmAddEdit
@@ -70,7 +69,7 @@ class FragmentAddQuestion : BindingFragment<FragmentAddQuestionBinding>() {
             }
         }
 
-        vmAddEditQuestion.fragmentEditQuestionEventChannelFlow.collect(lifecycleScope) { event ->
+        vmAddEditQuestion.fragmentEditQuestionEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event){
                 is ShowAnswerDeletedSuccessFullySnackBar -> {
                     showSnackBar(

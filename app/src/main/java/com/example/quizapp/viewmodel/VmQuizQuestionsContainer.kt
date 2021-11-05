@@ -22,7 +22,7 @@ class VmQuizQuestionsContainer @Inject constructor(
 
     private val fragmentEventChannel = Channel<FragmentQuizOverviewEvent>()
 
-    val fragmentEventChannelLD get() = fragmentEventChannel.receiveAsFlow().asLiveData()
+    val fragmentEventChannelFlow get() = fragmentEventChannel.receiveAsFlow()
 
     var lastAdapterPosition = state.get<Int>(LAST_ADAPTER_POSITION_KEY) ?: args.questionPosition
         set(value) {

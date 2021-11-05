@@ -12,14 +12,13 @@ object MenuItemDataModel {
 
     const val EDIT_QUESTIONNAIRE_ITEM_ID = 0
     const val SHARE_QUESTIONNAIRE_ITEM_ID = 1
-    const val UPLOAD_QUESTIONNAIRE_ITEM_ID = 3
-    const val PUBLISH_QUESTIONNAIRE_ITEM_ID = 4
-    const val DELETE_ANSWERS_QUESTIONNAIRE_ITEM_ID = 5
-    const val DELETE_CREATED_QUESTIONNAIRE_ITEM_ID = 6
-    const val DELETE_CACHED_QUESTIONNAIRE_ITEM_ID = 8
-    const val COPY_QUESTIONNAIRE_ITEM_ID = 9
-    const val DELETE_USER_ITEM_ID = 10
-    const val CHANGE_USER_ROLE_ITEM_ID = 11
+    const val PUBLISH_QUESTIONNAIRE_ITEM_ID = 3
+    const val DELETE_ANSWERS_QUESTIONNAIRE_ITEM_ID = 4
+    const val DELETE_CREATED_QUESTIONNAIRE_ITEM_ID = 5
+    const val DELETE_CACHED_QUESTIONNAIRE_ITEM_ID = 6
+    const val COPY_QUESTIONNAIRE_ITEM_ID = 7
+    const val DELETE_USER_ITEM_ID = 8
+    const val CHANGE_USER_ROLE_ITEM_ID = 9
 
     fun getQuestionnaireMoreOptionsMenu(args: BsdfQuestionnaireMoreOptionsArgs, user: User) : List<MenuItem> {
         return if(args.questionnaire.authorInfo.userId == user.id) {
@@ -54,11 +53,6 @@ object MenuItemDataModel {
             id = COPY_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_copy,
             titleRes = R.string.copy
-        ),
-        MenuItem(
-            id = UPLOAD_QUESTIONNAIRE_ITEM_ID,
-            iconRes = R.drawable.ic_cloud_upload,
-            titleRes = R.string.uploadQuestionnaire
         ),
         MenuItem(
             id = PUBLISH_QUESTIONNAIRE_ITEM_ID,

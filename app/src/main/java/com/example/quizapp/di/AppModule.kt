@@ -131,11 +131,6 @@ object AppModule {
         }
     }
 
-
-    @Provides
-    @Singleton
-    fun provideAdminApi(ktorClient: HttpClient) = AdminApi(ktorClient)
-
     @Provides
     @Singleton
     fun provideUserApi(ktorClient: HttpClient) = UserApi(ktorClient)
@@ -163,7 +158,6 @@ object AppModule {
     @Provides
     @Singleton
     fun provideBackendRepository(
-        adminApi: AdminApi,
         userApi: UserApi,
         questionnaireApi: QuestionnaireApi,
         filledQuestionnaireApi: FilledQuestionnaireApi,
@@ -171,7 +165,6 @@ object AppModule {
         courseOfStudiesApi: CourseOfStudiesApi,
         subjectApi: SubjectApi
     ) = BackendRepository(
-        adminApi,
         userApi,
         questionnaireApi,
         filledQuestionnaireApi,
@@ -189,8 +182,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSyncHelper(
+        preferencesRepository: PreferencesRepository,
         localRepository: LocalRepository,
         backendRepository: BackendRepository,
-    ) = BackendSyncer(localRepository, backendRepository)
+    ) = BackendSyncer(preferencesRepository, localRepository, backendRepository)
 
 }

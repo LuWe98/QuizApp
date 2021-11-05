@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizQuestionBinding
 import com.example.quizapp.extensions.disableChangeAnimation
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.extensions.updateAllViewHolders
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
@@ -50,7 +51,7 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
     }
 
     private fun initObservers(){
-        vmQuiz.getQuestionWithAnswersLiveData(questionId).observe(viewLifecycleOwner) {
+        vmQuiz.getQuestionWithAnswersSharedFlow(questionId).collectWhenStarted(viewLifecycleOwner) {
             binding.tvQuestion.text = it.question.questionText
             rvaAdapter.submitList(it.answers)
         }

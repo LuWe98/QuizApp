@@ -9,7 +9,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfUserMoreOptionsBinding
 import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
-import com.example.quizapp.extensions.flowext.awareCollect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.model.menus.MenuItemDataModel
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaBsdfMenu
@@ -53,7 +53,7 @@ class BsdfUserMoreOptions : BindingBottomSheetDialogFragment<BsdfUserMoreOptions
     }
 
     private fun initObservers(){
-        vmOptions.userMoreOptionsEventChannelFlow.awareCollect(viewLifecycleOwner){ event ->
+        vmOptions.userMoreOptionsEventChannelFlow.collectWhenStarted(viewLifecycleOwner){ event ->
             when(event){
                 is NavigateToChangeUserRoleDialogEvent -> navigator.navigateToChangeUserRoleDialog(event.user)
                 is DeleteUserEvent -> vmAdmin.onDeleteUserClicked(event.user)

@@ -4,12 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentSettingsBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.flowext.awareCollect
-import com.example.quizapp.extensions.flowext.collect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmSettings
@@ -58,24 +56,24 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
 
     private fun initObservers() {
-        vmSettings.userNameFlow.awareCollect(viewLifecycleOwner) {
+        vmSettings.userNameFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.userLayout.btnUserName.text = it ?: ""
         }
 
-        vmSettings.userRoleFlow.awareCollect(viewLifecycleOwner) {
+        vmSettings.userRoleFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.userLayout.btnRole.text = it?.name ?: ""
             binding.adminLayout.root.isVisible = it == Role.ADMIN
         }
 
-        vmSettings.themeNameResFlow.awareCollect(viewLifecycleOwner) {
+        vmSettings.themeNameResFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.preferencesLayout.btnTheme.text = it?.let { getString(it) } ?: ""
         }
 
-        vmSettings.languageFlow.awareCollect(viewLifecycleOwner) {
+        vmSettings.languageFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.preferencesLayout.btnLanguage.text = it?.let { getString(it.textRes) } ?: ""
         }
 
-        vmSettings.fragmentSettingsEventChannelFlow.collect(lifecycleScope) { event ->
+        vmSettings.fragmentSettingsEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 NavigateToLoginScreen -> navigator.navigateToLoginScreen()
                 OnLogoutClickedEvent -> {

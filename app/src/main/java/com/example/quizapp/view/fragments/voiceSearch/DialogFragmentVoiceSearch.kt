@@ -104,7 +104,7 @@ class DialogFragmentVoiceSearch : BindingDialogFragment<DfVoiceSearchBinding>(),
                     showToast("Ist Korrekt so!")
                 }
             } else {
-                launchDelayed(startDelay = 500) {
+                launch(startDelay = 500) {
 
                 }
             }

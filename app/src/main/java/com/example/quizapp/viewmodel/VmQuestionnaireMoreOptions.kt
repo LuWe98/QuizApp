@@ -46,7 +46,6 @@ class VmQuestionnaireMoreOptions @Inject constructor(
             MenuItemDataModel.DELETE_CREATED_QUESTIONNAIRE_ITEM_ID -> onDeleteCreatedQuestionnaireSelected()
             MenuItemDataModel.DELETE_CACHED_QUESTIONNAIRE_ITEM_ID -> onDeleteCachedQuestionnaireSelected()
             MenuItemDataModel.DELETE_ANSWERS_QUESTIONNAIRE_ITEM_ID -> onDeleteAnswersOfQuestionnaireSelected()
-            MenuItemDataModel.UPLOAD_QUESTIONNAIRE_ITEM_ID -> onUploadQuestionnaireSelected()
             MenuItemDataModel.SHARE_QUESTIONNAIRE_ITEM_ID -> onShareQuestionnaireWithOtherUserSelected()
             MenuItemDataModel.PUBLISH_QUESTIONNAIRE_ITEM_ID -> onPublishQuestionnaireSelected()
             MenuItemDataModel.COPY_QUESTIONNAIRE_ITEM_ID -> onCopyQuestionnaireSelected()
@@ -74,10 +73,6 @@ class VmQuestionnaireMoreOptions @Inject constructor(
     private fun onDeleteAnswersOfQuestionnaireSelected() = launch(IO) {
         questionnaireMoreOptionsEventChannel.send(DeleteGivenAnswersOfQuestionnaire(questionnaireId))
         questionnaireMoreOptionsEventChannel.send(NavigateBack)
-    }
-
-    private fun onUploadQuestionnaireSelected() = launch(IO) {
-
     }
 
     private fun onShareQuestionnaireWithOtherUserSelected() = launch(IO) {

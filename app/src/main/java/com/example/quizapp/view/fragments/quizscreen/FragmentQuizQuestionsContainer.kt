@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
-import androidx.lifecycle.lifecycleScope
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizQuestionsContainerBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmQuiz
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer
@@ -60,11 +60,11 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
     }
 
     private fun initObservers() {
-        vmQuiz.allQuestionsAnsweredLiveData.observe(viewLifecycleOwner) { allAnswered ->
+        vmQuiz.allQuestionsAnsweredSharedFlow.collectWhenStarted(viewLifecycleOwner) { allAnswered ->
             binding.btnCheckResults.isVisible = allAnswered
         }
 
-        vmContainer.fragmentEventChannelLD.observe(viewLifecycleOwner) { event ->
+        vmContainer.fragmentEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event){
                 is SelectDifferentPage -> binding.viewPager.currentItem = event.newPosition
                 is ChangeSolutionButtonTint -> changeShowSolutionButtonTint(event.show)

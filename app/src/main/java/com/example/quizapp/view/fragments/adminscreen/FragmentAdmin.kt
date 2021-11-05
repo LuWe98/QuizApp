@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.flowext.awareCollect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaAdminPageUsers
 import com.example.quizapp.viewmodel.VmAdmin
@@ -51,7 +51,7 @@ class FragmentAdmin: BindingFragment<FragmentAdminBinding>() {
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        vmAdmin.fragmentAdminEventChannelFlow.awareCollect(viewLifecycleOwner){ event ->
+        vmAdmin.fragmentAdminEventChannelFlow.collectWhenStarted(viewLifecycleOwner){ event ->
             when(event) {
                 is UpdateUserRoleEvent -> rvAdapter.updateUserRole(event.userId, event.newRole)
                 is HideUserEvent -> rvAdapter.hideUser(event.userId)

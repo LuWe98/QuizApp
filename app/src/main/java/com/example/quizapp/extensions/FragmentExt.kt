@@ -11,14 +11,10 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.HiltViewModelFactory
-import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.transition.Slide
 import com.example.quizapp.R
-import com.example.quizapp.view.QuizActivity
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
@@ -85,15 +81,15 @@ fun Fragment.showSnackBar(
     showSnackBar(getString(textRes), viewToAttachTo, anchorView, animationMode, duration)
 
 @MainThread
-fun Fragment.showSnackBar(
+inline fun Fragment.showSnackBar(
     @StringRes textRes: Int,
     viewToAttachTo: View = bindingActivity.rootView,
     anchorView: View? = null,
     animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
     duration: Int = Snackbar.LENGTH_LONG,
-    onDismissedAction: () -> (Unit) = {},
+    crossinline onDismissedAction: () -> (Unit) = {},
     @StringRes actionTextRes: Int,
-    actionClickEvent: ((View) -> Unit)
+    crossinline actionClickEvent: ((View) -> Unit)
 ) = Snackbar.make(viewToAttachTo, textRes, duration).apply {
     setAnchorView(anchorView)
     this.animationMode = animationMode
@@ -102,7 +98,7 @@ fun Fragment.showSnackBar(
             if (event != DISMISS_EVENT_ACTION) { onDismissedAction.invoke() }
         }
     })
-    setAction(actionTextRes, actionClickEvent)
+    setAction(actionTextRes) { actionClickEvent(it) }
     show()
 }.also {
     bindingActivity.currentSnackBar = it
@@ -126,17 +122,8 @@ fun Fragment.getThemeColor(@AttrRes themeAttrId: Int) = requireContext().getThem
 inline fun Fragment.launch(
     dispatcher: CoroutineContext = EmptyCoroutineContext,
     scope: CoroutineScope = lifecycleScope,
+    startDelay: Long = 0,
     crossinline block: suspend CoroutineScope.() -> Unit
-) {
-    scope.launch(dispatcher) {
-        block.invoke(this)
-    }
-}
-
-inline fun Fragment.launchDelayed(
-    scope: CoroutineScope = lifecycleScope,
-    dispatcher: CoroutineContext = EmptyCoroutineContext,
-    startDelay: Long, crossinline block: suspend CoroutineScope.() -> Unit
 ) {
     scope.launch(dispatcher) {
         delay(startDelay)
@@ -144,12 +131,15 @@ inline fun Fragment.launchDelayed(
     }
 }
 
+
 inline fun Fragment.launchWhenStarted(
     scope: LifecycleCoroutineScope = lifecycleScope,
     crossinline block: suspend CoroutineScope.() -> Unit
 ) {
-    scope.launchWhenStarted {
-        block.invoke(this)
+    scope.launch {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            block.invoke(this)
+        }
     }
 }
 
@@ -196,8 +186,14 @@ fun Fragment.hideKeyboard(view: View) {
 }
 
 
+
+
+
 //ANIMATION EXTENSIONS
-fun Fragment.initContainerTransitionAnimation(parsedStartView: View, animationDuration: Long = resources.getInteger(R.integer.defaultAnimDuration).toLong()) {
+fun Fragment.initContainerTransitionAnimation(
+    parsedStartView: View,
+    animationDuration: Long = resources.getInteger(R.integer.defaultAnimDuration).toLong()
+) {
     enterTransition = MaterialContainerTransform(requireContext(), true).apply {
         startView = parsedStartView
         endView = view

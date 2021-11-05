@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.DfShareQuestionnaireBinding
-import com.example.quizapp.extensions.flowext.awareCollect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.onTextChanged
 import com.example.quizapp.extensions.showSnackBar
@@ -41,7 +41,7 @@ class DfShareQuestionnaire : BindingDialogFragment<DfShareQuestionnaireBinding>(
     }
 
     private fun initObservers(){
-        vmShare.dfShareQuestionnaireEventChannelFlow.awareCollect(viewLifecycleOwner) { event ->
+        vmShare.dfShareQuestionnaireEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event){
                 is ShowMessageSnackBar -> showSnackBar(event.message)
                 NavigateBackEvent -> navigator.popBackStack()

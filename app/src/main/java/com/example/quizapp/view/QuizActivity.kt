@@ -14,7 +14,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.flowext.awareCollect
+import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmMain
 import com.example.quizapp.viewmodel.VmMain.MainViewModelEvent.NavigateToLoginScreenEvent
@@ -165,11 +165,11 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 
 
     private fun registerObservers() {
-        vmMain.userFlow.awareCollect(this) {
+        vmMain.userFlow.collectWhenStarted(this) {
             vmMain.onUserDataChanged(it, navigator.currentDestinationId)
         }
 
-        vmMain.mainViewModelEventChannelFlow.awareCollect(this) { event ->
+        vmMain.mainViewModelEventChannelFlow.collectWhenStarted(this) { event ->
             when (event) {
                 NavigateToLoginScreenEvent -> navigator.navigateToLoginScreen()
             }
