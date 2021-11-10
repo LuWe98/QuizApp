@@ -71,7 +71,7 @@
                 android:id="@+id/fragmentQuizOverview"
                 android:name="com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverview"
                 android:label="FragmentQuiz"
-                tools:layout="@layout/fragment_quiz_overview">
+                tools:layout="@layout/fragment_quiz_overview_old">
             <action
                     android:id="@+id/action_fragmentQuizOverview_to_fragmentQuizContainer"
                     app:destination="@id/fragmentQuizContainer" />
@@ -228,7 +228,7 @@
 
     <dialog
             android:id="@+id/bsdfFacultySelectionTest"
-            android:name="com.example.quizapp.view.fragments.dialogs.BsdfFacultySelectionTest"
+            android:name="com.example.quizapp.view.fragments.test.BsdfFacultySelectionTest"
             android:label="BsdfFacultySelectionTest" >
         <action
                 android:id="@+id/action_bsdfFacultySelectionTest_to_bsdfCourseOfStudiesSelectionTest"
@@ -240,10 +240,19 @@
 
     <dialog
             android:id="@+id/bsdfCourseOfStudiesSelectionTest"
-            android:name="com.example.quizapp.view.fragments.dialogs.BsdfCourseOfStudiesSelectionTest"
+            android:name="com.example.quizapp.view.fragments.test.BsdfCourseOfStudiesSelectionTest"
             android:label="BsdfCourseOfStudiesSelectionTest" >
         <argument app:argType="string"
                 android:name="facultyId"/>
     </dialog>
+
+
+    <fragment
+            android:id="@+id/fragmentQuizOverviewNewVersion"
+            android:name="com.example.quizapp.view.fragments.test.FragmentQuizOverviewNewVersion"
+            android:label="FragmentQuizOverviewNewVersion" />
+
+    <action android:id="@+id/action_global_fragmentQuizOverviewNewVersion"
+            app:destination="@id/fragmentQuizOverviewNewVersion"/>
 
 </navigation>

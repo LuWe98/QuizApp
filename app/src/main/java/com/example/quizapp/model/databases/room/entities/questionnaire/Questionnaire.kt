@@ -37,6 +37,7 @@ data class Questionnaire(
     @ColumnInfo(name = SUBJECT_COLUMN)
     var subject: String,
     @Transient
+    @ColumnInfo(name = SYNC_STATUS_COLUMN)
     var syncStatus: SyncStatus = SyncStatus.UNSYNCED,
     @ColumnInfo(name = VISIBILITY_COLUMN)
     var visibility: QuestionnaireVisibility = QuestionnaireVisibility.PRIVATE,
@@ -56,6 +57,7 @@ data class Questionnaire(
         const val FACULTY_ID_COLUMN = "facultyId"
         const val COURSE_OF_STUDIES_ID_COLUMN = "courseOfStudiesId"
         const val SUBJECT_COLUMN = "subject"
+        const val SYNC_STATUS_COLUMN = "syncStatus"
         const val VISIBILITY_COLUMN = "visibility"
         const val LAST_MODIFIED_TIMESTAMP_COLUMN = "lastModifiedTimestamp"
     }

@@ -123,20 +123,38 @@ fun TextView.textAsFloat() = text.toString().toFloat()
 fun TextView.textAsDouble() = text.toString().toDouble()
 
 
-fun EditText.onTextChanged(action : (String) -> (Unit)) {
+inline fun EditText.onTextChanged(crossinline action : (String) -> (Unit)) {
     doOnTextChanged { text, _, _, _ ->  action.invoke(text.toString())}
 }
 
-fun SwitchMaterial.onCheckedChange(action : (Boolean) -> (Unit)) {
+inline fun SwitchMaterial.onCheckedChange(crossinline action : (Boolean) -> (Unit)) {
     setOnCheckedChangeListener { _, checked ->  action.invoke(checked)}
 }
 
-fun ViewPager2.onPageSelected(action : (Int) -> (Unit)){
+inline fun ViewPager2.onPageSelected(crossinline action : (Int) -> (Unit)){
     registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
             action.invoke(position)
         }
+    })
+}
+
+inline fun TabLayout.forEachTab(crossinline action: (TabLayout.Tab, Int) -> (Unit)) {
+    for (i in 0 .. tabCount){
+        getTabAt(i)?.let { tab ->
+            action.invoke(tab, i)
+        }
+    }
+}
+
+fun TabLayout.getCustomViewAt(index: Int) = getTabAt(index)?.customView
+
+inline fun TabLayout.onTabSelected(crossinline action: (TabLayout.Tab?) -> Unit) {
+    addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        override fun onTabSelected(tab: TabLayout.Tab?) { action(tab) }
+        override fun onTabUnselected(tab: TabLayout.Tab?) {}
+        override fun onTabReselected(tab: TabLayout.Tab?) {}
     })
 }
 
@@ -146,13 +164,13 @@ fun View.findColor(@ColorRes res : Int) = ContextCompat.getColor(context, res)
 
 fun View.getThemeColor(@AttrRes res : Int) = context.getThemeColor(res)
 
-fun View.onClick(action : () -> (Unit)) {
+inline fun View.onClick(crossinline action : () -> (Unit)) {
     setOnClickListener {
         action.invoke()
     }
 }
 
-fun View.onLongClick(action : () -> (Unit)) {
+inline fun View.onLongClick(crossinline action : () -> (Unit)) {
     setOnLongClickListener {
         action.invoke()
         return@setOnLongClickListener true

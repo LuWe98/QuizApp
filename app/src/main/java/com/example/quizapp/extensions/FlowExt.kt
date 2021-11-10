@@ -33,14 +33,14 @@ inline fun <reified T> Flow<T>.collectWhenCreated(
 
 
 inline fun <reified T> Flow<T>.collectWhen(
-    viewLifecycleOwner: LifecycleOwner,
+    lifecycleOwner: LifecycleOwner,
     firstTimeDelay: Long = 0L,
     onLifeCycleState: Lifecycle.State,
     crossinline collector: suspend (T) -> Unit = {}
 ) {
-    viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+    lifecycleOwner.lifecycleScope.launchWhenStarted {
         delay(firstTimeDelay)
-        viewLifecycleOwner.lifecycle.repeatOnLifecycle(onLifeCycleState) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(onLifeCycleState) {
             collect(collector)
         }
     }

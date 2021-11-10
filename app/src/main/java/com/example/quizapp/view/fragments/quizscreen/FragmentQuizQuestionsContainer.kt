@@ -60,8 +60,8 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
     }
 
     private fun initObservers() {
-        vmQuiz.allQuestionsAnsweredSharedFlow.collectWhenStarted(viewLifecycleOwner) { allAnswered ->
-            binding.btnCheckResults.isVisible = allAnswered
+        vmQuiz.questionStatisticsSharedFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.btnCheckResults.isVisible = it.isEverythingAnswered
         }
 
         vmContainer.fragmentEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->

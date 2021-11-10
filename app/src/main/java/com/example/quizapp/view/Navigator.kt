@@ -17,9 +17,9 @@ import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaireDirections
 import com.example.quizapp.view.fragments.adminscreen.FragmentAdminDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
-import com.example.quizapp.view.fragments.dialogs.BsdfFacultySelectionTestDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
 import com.example.quizapp.view.fragments.settingsscreen.FragmentSettingsDirections
+import com.example.quizapp.view.fragments.test.BsdfFacultySelectionTestDirections
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -132,6 +132,10 @@ class Navigator @Inject constructor(
 
     fun navigateToCourseOfStudiesTest(facultyId: String) {
         navController.navigate(BsdfFacultySelectionTestDirections.actionBsdfFacultySelectionTestToBsdfCourseOfStudiesSelectionTest(facultyId))
+    }
+
+    fun navigateToQuizOverviewNew(){
+        navController.navigate(MainNavGraphDirections.actionGlobalFragmentQuizOverviewNewVersion())
     }
 
     companion object {

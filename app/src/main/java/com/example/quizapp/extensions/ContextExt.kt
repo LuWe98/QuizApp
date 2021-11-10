@@ -6,14 +6,11 @@ import android.graphics.Point
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.widget.Toast
-
-import android.util.TypedValue
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import androidx.annotation.AttrRes
+import android.widget.Toast
 import androidx.annotation.MainThread
 import androidx.annotation.StringRes
 import androidx.datastore.core.DataStore
@@ -22,8 +19,8 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.utils.Constants
 import com.example.quizapp.model.datastore.QuizAppLanguage
+import com.example.quizapp.utils.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -52,11 +49,6 @@ fun Context.showToast(@StringRes textRes: Int, duration: Int = Toast.LENGTH_LONG
 fun Context.isPermissionGranted(permission: String) = checkCallingOrSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
 
 
-fun Context.getThemeColor(@AttrRes themeAttrId: Int) = TypedValue().let {
-    theme.resolveAttribute(themeAttrId, it, true)
-    it.data
-}
-
 fun Context.showKeyboard(view: View) {
     (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).apply {
         showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
@@ -68,7 +60,6 @@ fun Context.hideKeyboard(view: View) {
         hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
-
 
 fun Context.setLocale() = setLocale(runBlocking(Dispatchers.IO) {
     dataStore.dataflow.map { preferences ->

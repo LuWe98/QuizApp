@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:transitionName="@string/questionClickedTransitionName"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="?colorOnPrimary"
+        app:cardCornerRadius="@dimen/defaultBackgroundCardCornerRadius">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/btnBack"
+                android:background="?attr/actionBarItemBackground"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/ic_arrow_back"
+                android:padding="6dp"
+                android:elevation="10dp"
+                android:layout_marginStart="@dimen/grid_1_5"
+                android:layout_marginTop="@dimen/grid_3" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/btnShowSolution"
+                android:backgroundTint="?colorControlActivated"
+                app:srcCompat="@drawable/ic_question_mark"
+                android:padding="6dp"
+                android:elevation="10dp"
+                android:layout_marginEnd="@dimen/grid_1_5"
+                android:layout_marginTop="@dimen/grid_3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:id="@+id/tvQuestionType"
+                android:elevation="@dimen/defaultElevation"
+                android:text="@string/multipleChoice"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="@dimen/grid_2"
+                app:layout_constraintTop_toTopOf="@+id/btnShowSolution"
+                app:layout_constraintEnd_toStartOf="@+id/btnShowSolution"
+                app:layout_constraintBottom_toBottomOf="@+id/btnShowSolution" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/ivQuestionType"
+                android:elevation="@dimen/defaultElevation"
+                android:padding="7.5dp"
+                app:srcCompat="@drawable/ic_check_circle"
+                app:layout_constraintEnd_toStartOf="@+id/tvQuestionType"
+                app:layout_constraintBottom_toBottomOf="@+id/tvQuestionType"
+                app:layout_constraintTop_toTopOf="@+id/tvQuestionType" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/bottomView"
+                android:background="?colorOnPrimary">
+            <ProgressBar
+                    android:layout_width="0dp"
+                    android:layout_height="3.5dp"
+                    android:progress="60"
+                    android:id="@+id/answeredQuestionsProgress"
+                    android:background="@color/white"
+                    android:progressTint="?colorAccent"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:progressDrawable="@drawable/horizontal_indicator_progress_bar_no_round_corners"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/tabLayout" />
+            <com.google.android.material.tabs.TabLayout
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:id="@+id/tabLayout"
+                    android:background="@color/transparent"
+                    app:tabGravity="center"
+                    app:tabMode="scrollable"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabIndicatorGravity="center"
+                    app:tabIndicatorAnimationMode="elastic"
+                    app:tabIndicator="@drawable/shape_circle"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabMinWidth="0dp"
+                    app:tabPaddingEnd="0dp"
+                    app:tabPaddingStart="0dp"
+                    app:tabUnboundedRipple="false"
+                    app:layout_constraintTop_toBottomOf="@id/answeredQuestionsProgress"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/viewPager"
+                android:elevation="-1dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/bottomView"
+                app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

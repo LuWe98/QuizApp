@@ -23,11 +23,11 @@ data class QuestionWithAnswers(
 
     val isAnsweredCorrectly: Boolean get() = answers.all { it.isAnswerCorrect == it.isAnswerSelected }
 
-    val isAnswered: Boolean get() = answers.any { it.isAnswerSelected }
+    val isAnswered: Boolean get() = answers.any(Answer::isAnswerSelected)
 
-    val answersSortedByPosition get() = answers.sortedBy { it.answerPosition }
+    val answersSortedByPosition get() = answers.sortedBy(Answer::answerPosition)
 
-    val selectedAnswerIds get() = answers.filter { it.isAnswerSelected }.map { it.id }
+    val selectedAnswerIds get() = answers.filter(Answer::isAnswerSelected).map(Answer::id)
 
     companion object {
         val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<QuestionWithAnswers> { old, new -> old.question.id == new.question.id }

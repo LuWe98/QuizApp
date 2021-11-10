@@ -34,7 +34,10 @@ class VmQuizQuestionsContainer @Inject constructor(
 
     private val questionIdList get() = questionIdListLiveData.value!!
 
-    fun questionIdLiveData(questionId: String) = questionIdListLiveData.map { it.firstOrNull { id -> id == questionId } }.distinctUntilChanged()
+    fun questionIdLiveData(questionId: String) = questionIdListLiveData
+        .map { it.firstOrNull { id -> id == questionId } }
+        .distinctUntilChanged()
+
 
     private fun addOrRemoveQuestionToDisplaySolution(questionId: String) {
         if (questionIdList.contains(questionId)) {
@@ -68,12 +71,13 @@ class VmQuizQuestionsContainer @Inject constructor(
         fragmentEventChannel.send(CheckResultsEvent)
     }
 
-    fun onShowSolutionButtonClicked(vpaQuiz: VpaQuiz) = launch(IO) {
+    fun onShowSolutionButtonClicked(vpaQuiz: VpaQuiz)  {
         vpaQuiz.getFragment(lastAdapterPosition).questionId.let {
             addOrRemoveQuestionToDisplaySolution(it)
-            fragmentEventChannel.send(ChangeSolutionButtonTint(shouldDisplayQuestionSolution(it)))
+            launch(IO) {
+                fragmentEventChannel.send(ChangeSolutionButtonTint(shouldDisplayQuestionSolution(it)))
+            }
         }
-
     }
 
 

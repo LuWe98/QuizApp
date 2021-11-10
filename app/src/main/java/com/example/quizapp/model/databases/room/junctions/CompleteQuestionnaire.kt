@@ -35,13 +35,13 @@ data class CompleteQuestionnaire(
     var courseOfStudies: CourseOfStudies?,
 ) : Parcelable {
 
-    val allQuestions: List<Question> get() = questionsWithAnswers.map { item -> item.question }
+    val allQuestions: List<Question> get() = questionsWithAnswers.map(QuestionWithAnswers::question)
 
-    val allAnswers: List<Answer> get() = questionsWithAnswers.flatMap { item -> item.answers }
+    val allAnswers: List<Answer> get() = questionsWithAnswers.flatMap(QuestionWithAnswers::answers)
 
-    val allSelectedAnswerIds: List<String> get() = allAnswers.filter { it.isAnswerSelected }.map { it.id }
+    val allSelectedAnswerIds: List<String> get() = allAnswers.filter(Answer::isAnswerSelected).map(Answer::id)
 
-    fun isAnswerSelected(answerId : String) = allAnswers.firstOrNull { it.id == answerId }?.isAnswerSelected ?: false
+    fun isAnswerSelected(answerId: String) = allAnswers.firstOrNull { it.id == answerId }?.isAnswerSelected ?: false
 
     fun getQuestionWithAnswers(questionId: String): QuestionWithAnswers = questionsWithAnswers.first { qwa -> qwa.question.id == questionId }
 
@@ -49,21 +49,37 @@ data class CompleteQuestionnaire(
 
     val questionsAmount get() = questionsWithAnswers.size
 
-    val answeredQuestionsAmount get() = questionsWithAnswers.filter { it.isAnswered }.size
+    val answeredQuestionsAmount get() = questionsWithAnswers.filter(QuestionWithAnswers::isAnswered).size
 
-    val answeredQuestionsPercentage get() = (answeredQuestionsAmount*100/questionsAmount.toFloat()).toInt()
+    val answeredQuestionsPercentage get() = (answeredQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
 
     val areAllQuestionsAnswered get() = questionsAmount == answeredQuestionsAmount
 
-    private val correctQuestionsAmount get() = questionsWithAnswers.filter { it.isAnsweredCorrectly }.size
+    val correctQuestionsAmount get() = questionsWithAnswers.filter(QuestionWithAnswers::isAnsweredCorrectly).size
 
-    val correctQuestionsPercentage get() = (correctQuestionsAmount*100/questionsAmount.toFloat()).toInt()
+    val correctQuestionsPercentage get() = (correctQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
 
     val areAllQuestionsCorrectlyAnswered get() = questionsWithAnswers.size == correctQuestionsAmount
 
     val asQuestionnaireIdWithTimestamp get() = questionnaire.asQuestionnaireIdWithTimeStamp
 
+    val toQuizStatisticNumbers get() = QuizStatisticNumbers(questionsAmount, answeredQuestionsAmount, correctQuestionsAmount)
+
     companion object {
         val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<CompleteQuestionnaire> { old, new -> old.questionnaire.id == new.questionnaire.id }
+    }
+
+
+    data class QuizStatisticNumbers(
+        val questionsAmount: Int,
+        val answeredQuestionsAmount: Int,
+        val correctQuestionsAmount: Int
+    ) {
+        val answeredQuestionsPercentage = (answeredQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
+        val correctQuestionsPercentage = (correctQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
+        val incorrectQuestionsAmount = answeredQuestionsAmount - correctQuestionsAmount
+        val incorrectQuestionsPercentage = (incorrectQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
+        val isEverythingCorrect = correctQuestionsPercentage == 100
+        val isEverythingAnswered = questionsAmount == answeredQuestionsAmount
     }
 }

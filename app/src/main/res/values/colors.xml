@@ -27,6 +27,14 @@
     <color name="colorAccentLighter">#99add8e6</color>
 
 
+    <color name="blueTest">#3670e5</color>
+    <color name="lightBlueTest">#4f84ef</color>
+
+    <color name="baige">#e6d8cf</color>
+    <color name="violet">#443b8a</color>
+
+
+
 
     <!-- Light Theme Colors -->
     <color name="lightColorPrimary">#0070ba</color>

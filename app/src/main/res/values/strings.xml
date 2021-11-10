@@ -150,9 +150,18 @@
 
 
     <!-- Quiz Screen-->
-    <string name="showSolution">Show Solution</string>
-    <string name="shuffleQuestions">Shuffle Questions</string>
-
+    <string name="showSolution">Show solution</string>
+    <string name="shuffleQuestions">Shuffle questions</string>
+    <string name="lastUpdated">Last updated</string>
+    <string name="correctlyAnswered">Correctly answered</string>
+    <string name="incorrectlyAnswered">Incorrectly answered</string>
+    <string name="totalQuestions">Total questions</string>
+    <string name="answeredQuestions">Answered questions</string>
+    <string name="author">Author</string>
+    <string name="faculty">Faculty</string>
+    <string name="answered">answered</string>
+    <string name="percentSign">%</string>
+    <string name="performance">Performance</string>
 
     <!-- Strings for voice Search functionality -->
     <string name="voiceSearchStartTalking">Sprechen Sie los…</string>

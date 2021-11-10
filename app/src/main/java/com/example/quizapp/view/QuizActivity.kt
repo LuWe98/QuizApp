@@ -80,7 +80,9 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             addCard.onClick {
 //                navigator.navigateToBackdropFragment()
 //                navigator.navigateToAddQuestionnaireScreen()
-                navigator.navigateToFacultyTest()
+//                navigator.navigateToFacultyTest()
+
+                navigator.navigateToQuizOverviewNew()
             }
         }
     }

@@ -112,12 +112,11 @@ fun Fragment.getDrawable(@DrawableRes id: Int) = AppCompatResources.getDrawable(
 
 fun Fragment.getColor(@ColorRes id: Int) = ContextCompat.getColor(requireContext(), id)
 
-fun Fragment.getColorStateList(@ColorRes id: Int): ColorStateList = AppCompatResources.getColorStateList(requireContext(), id)
+fun Fragment.getColorStateListWithRes(@ColorRes id: Int): ColorStateList = AppCompatResources.getColorStateList(requireContext(), id)
+
+fun Fragment.getColorStateList(@ColorInt colorInt: Int): ColorStateList = ColorStateList.valueOf(colorInt)
 
 fun Fragment.getStringArray(@ArrayRes id: Int): Array<String> = resources.getStringArray(id)
-
-fun Fragment.getThemeColor(@AttrRes themeAttrId: Int) = requireContext().getThemeColor(themeAttrId)
-
 
 inline fun Fragment.launch(
     dispatcher: CoroutineContext = EmptyCoroutineContext,

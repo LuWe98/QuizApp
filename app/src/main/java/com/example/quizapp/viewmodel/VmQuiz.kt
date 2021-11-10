@@ -55,13 +55,8 @@ class VmQuiz @Inject constructor(
         .shareIn(viewModelScope, SharingStarted.Lazily)
         .distinctUntilChanged()
 
-    val answeredQuestionsPercentageSharedFlow get() = completeQuestionnaireStateFlow
-        .mapNotNull { it?.answeredQuestionsPercentage }
-        .shareIn(viewModelScope, SharingStarted.Lazily)
-        .distinctUntilChanged()
-
-    val allQuestionsAnsweredSharedFlow get() = answeredQuestionsPercentageSharedFlow
-        .map { it == 100 }
+    val questionStatisticsSharedFlow get() = completeQuestionnaireStateFlow
+        .mapNotNull { it?.toQuizStatisticNumbers }
         .shareIn(viewModelScope, SharingStarted.Lazily)
         .distinctUntilChanged()
 
