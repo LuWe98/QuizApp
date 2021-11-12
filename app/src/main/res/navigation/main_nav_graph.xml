@@ -71,7 +71,7 @@
                 android:id="@+id/fragmentQuizOverview"
                 android:name="com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverview"
                 android:label="FragmentQuiz"
-                tools:layout="@layout/fragment_quiz_overview_old">
+                tools:layout="@layout/fragment_quiz_overview">
             <action
                     android:id="@+id/action_fragmentQuizOverview_to_fragmentQuizContainer"
                     app:destination="@id/fragmentQuizContainer" />
@@ -85,6 +85,22 @@
             <argument
                     android:name="questionPosition"
                     app:argType="integer" />
+            <argument
+                    android:name="isShowSolutionScreen"
+                    app:argType="boolean"/>
+            <action
+                    android:id="@+id/action_fragmentQuizContainer_to_fragmentQuizResult"
+                    app:destination="@id/fragmentQuizResult" />
+        </fragment>
+
+        <fragment
+                android:id="@+id/fragmentQuizResult"
+                android:name="com.example.quizapp.view.fragments.quizscreen.FragmentQuizResult"
+                android:label="FragmentQuizResult"
+                tools:layout="@layout/fragment_quiz_result">
+            <action
+                    android:id="@+id/action_fragmentQuizResult_to_fragmentQuizContainer"
+                    app:destination="@id/fragmentQuizContainer" />
         </fragment>
     </navigation>
 
@@ -215,7 +231,7 @@
     <!-- BACKDROP TEST -->
     <fragment
             android:id="@+id/backdropFragment"
-            android:name="com.example.quizapp.view.fragments.backgroptest.BackdropFragment"
+            android:name="com.example.quizapp.view.fragments.backdroptest.BackdropFragment"
             android:label="BackdropFragment"
             tools:layout="@layout/fragment_backdrop" />
 

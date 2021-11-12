@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -163,6 +164,11 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
                 }
             }
         })
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        //TODO -> When Destination is Quiz Result, dann zu Overview zurück navigieren
     }
 
 

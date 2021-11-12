@@ -118,8 +118,8 @@
                         app:layout_constraintBottom_toBottomOf="@id/progress" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
                         android:id="@+id/ivResultIcon"
                         android:visibility="gone"
                         tools:visibility="gone"
@@ -153,7 +153,7 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:fontFamily="@font/work_sans_bold"
-                        android:textSize="15sp"
+                        android:textSize="13sp"
                         android:textColor="@color/black"
                         app:layout_constraintTop_toTopOf="@+id/tvQuestionsAnswered"
                         app:layout_constraintStart_toEndOf="@+id/tvQuestionsAnswered" />

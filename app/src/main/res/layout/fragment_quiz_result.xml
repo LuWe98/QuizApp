@@ -1,6 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/defaultBackgroundCardCornerRadius">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvResultHeader"
+                android:text="@string/quizResult"
+                app:layout_constraintTop_toTopOf="parent"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/grid_16"
+                android:textStyle="bold"
+                android:textSize="26sp"
+                android:letterSpacing="0.2"
+                android:fontFamily="@font/work_sans_medium" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="175dp"
+                android:layout_height="175dp"
+                android:id="@+id/progressCorrect"
+                tools:progress="80"
+                app:indicatorSize="175dp"
+                app:indicatorColor="@color/green"
+                app:trackColor="?android:colorBackground"
+                app:trackThickness="10dp"
+                android:layout_marginTop="@dimen/grid_16"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvResultHeader" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="175dp"
+                android:layout_height="175dp"
+                android:id="@+id/progressIncorrect"
+                tools:progress="20"
+                app:indicatorSize="175dp"
+                app:indicatorColor="@color/red"
+                app:trackColor="@android:color/transparent"
+                app:trackThickness="10dp"
+                android:scaleX="-1"
+                app:layout_constraintTop_toTopOf="@id/progressCorrect"
+                app:layout_constraintStart_toStartOf="@id/progressCorrect"
+                app:layout_constraintEnd_toEndOf="@id/progressCorrect"
+                app:layout_constraintBottom_toBottomOf="@id/progressCorrect" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:id="@+id/ivResultIcon"
+                android:visibility="visible"
+                app:layout_constraintTop_toTopOf="@id/progressCorrect"
+                app:layout_constraintStart_toStartOf="@id/progressCorrect"
+                app:layout_constraintEnd_toEndOf="@id/progressCorrect"
+                app:layout_constraintBottom_toBottomOf="@id/progressCorrect"
+                app:srcCompat="@drawable/ic_check"
+                app:tint="@color/green" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvScoreHeader"
+                app:layout_constraintTop_toBottomOf="@id/progressCorrect"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/yourScore"
+                android:fontFamily="@font/work_sans_regular"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.2"
+                android:layout_marginTop="@dimen/grid_12" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvScoreText"
+                tools:text="21 / 23"
+                android:textStyle="bold"
+                android:fontFamily="@font/work_sans_medium"
+                android:textSize="30sp"
+                android:letterSpacing="0.05"
+                android:layout_marginTop="@dimen/grid_6"
+                app:layout_constraintTop_toBottomOf="@id/tvScoreHeader"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="52.5dp"
+                android:id="@+id/cardRetry"
+                app:cardBackgroundColor="?android:colorBackground"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp"
+                android:layout_marginTop="@dimen/grid_12"
+                android:layout_marginHorizontal="@dimen/grid_12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvScoreText">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/iconRetry"
+                        android:background="@drawable/shape_circle"
+                        android:backgroundTint="?android:colorBackground"
+                        app:srcCompat="@drawable/ic_replay"
+                        android:padding="12.5dp"
+                        android:layout_marginStart="@dimen/grid_3"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toEndOf="@id/iconRetry"
+                        android:text="@string/retakeQuiz"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginHorizontal="@dimen/grid_3"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/work_sans_medium"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="52.5dp"
+                android:id="@+id/cardShowSolutions"
+                app:cardBackgroundColor="?android:colorBackground"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp"
+                android:layout_marginTop="@dimen/grid_6"
+                android:layout_marginHorizontal="@dimen/grid_12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardRetry">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/iconShowSolutions"
+                        android:background="@drawable/shape_circle"
+                        android:backgroundTint="?android:colorBackground"
+                        app:srcCompat="@drawable/ic_question_mark"
+                        android:padding="12.5dp"
+                        android:layout_marginStart="@dimen/grid_3"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toEndOf="@id/iconShowSolutions"
+                        android:text="@string/showSolutions"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginHorizontal="@dimen/grid_3"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/work_sans_medium"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:id="@+id/btnExit"
+                android:background="@drawable/shape_ring"
+                android:backgroundTint="?android:colorBackground"
+                app:srcCompat="@drawable/ic_cross"
+                android:padding="20dp"
+                android:layout_marginBottom="@dimen/grid_8"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

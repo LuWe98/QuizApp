@@ -11,8 +11,6 @@ class VpaQuiz(fragment: Fragment, questions : List<Question>) : FragmentStateAda
         FragmentQuizQuestion.newInstance(questions[it])
     }
 
-    fun getFragment(position: Int) = fragments[position]
-
     override fun getItemCount() = fragments.size
 
     override fun createFragment(position: Int) = fragments[position]

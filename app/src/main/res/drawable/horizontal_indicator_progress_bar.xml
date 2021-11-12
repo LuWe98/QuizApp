@@ -9,4 +9,10 @@
                 android:scaleWidth="100%"
                 android:drawable="@drawable/horizontal_indicator_progress_drawable" />
     </item>
+
+    <item android:id="@android:id/secondaryProgress">
+        <scale
+                android:scaleWidth="100%"
+                android:drawable="@drawable/horizontal_indicator_progress_drawable" />
+    </item>
 </layer-list>

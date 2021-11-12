@@ -69,7 +69,7 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
 
     val languageFlow = dataFlow.map { preferences ->
-        preferences[LANGUAGE_KEY]?.let { QuizAppLanguage.valueOf(it) } ?: QuizAppLanguage.SYSTEM_DEFAULT
+        preferences[LANGUAGE_KEY]?.let { QuizAppLanguage.valueOf(it) } ?: QuizAppLanguage.ENGLISH
     }
 
     suspend fun getLanguage(): QuizAppLanguage = languageFlow.first()

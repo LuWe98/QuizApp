@@ -82,7 +82,7 @@
 
             <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="65dp"
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="@color/white"
                     android:id="@+id/authorCard"
@@ -129,6 +129,7 @@
                             android:textStyle="bold"
                             android:fontFamily="@font/work_sans_medium"
                             android:textSize="15sp"
+                            android:maxLines="1"
                             app:layout_constraintStart_toEndOf="@+id/authorIcon"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/rvAuthorTitle"
@@ -149,7 +150,7 @@
 
             <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="65dp"
                     app:cardElevation="0dp"
                     android:id="@+id/facultyCard"
                     app:cardBackgroundColor="@color/white"
@@ -192,6 +193,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/tvFaculty"
                             tools:text="Wirtschaftsinformatik"
+                            android:maxLines="1"
                             android:textColor="@color/black"
                             android:layout_marginStart="@dimen/grid_3"
                             android:textStyle="bold"
@@ -216,7 +218,7 @@
 
             <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="65dp"
                     app:cardElevation="0dp"
                     android:id="@+id/cosCard"
                     android:layout_marginTop="@dimen/grid_2"
@@ -264,6 +266,7 @@
                             android:textStyle="bold"
                             android:fontFamily="@font/work_sans_medium"
                             android:textSize="15sp"
+                            android:maxLines="1"
                             app:layout_constraintStart_toEndOf="@+id/cosIcon"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tvCosTitle"
@@ -283,7 +286,7 @@
 
             <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="65dp"
                     app:cardElevation="0dp"
                     android:id="@+id/subjectCard"
                     app:cardBackgroundColor="@color/white"
@@ -331,6 +334,7 @@
                             android:textStyle="bold"
                             android:fontFamily="@font/work_sans_medium"
                             android:textSize="15sp"
+                            android:maxLines="1"
                             app:layout_constraintStart_toEndOf="@+id/subjectIcon"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tvSubjectTitle"
@@ -350,7 +354,7 @@
 
             <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="65dp"
                     app:cardElevation="0dp"
                     android:id="@+id/lastUpdatedCard"
                     app:cardBackgroundColor="@color/white"

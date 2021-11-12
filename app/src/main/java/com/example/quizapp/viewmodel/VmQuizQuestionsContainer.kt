@@ -1,6 +1,7 @@
 package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.*
+import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerArgs
@@ -9,7 +10,7 @@ import com.example.quizapp.view.viewpager.adapter.VpaQuiz
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,6 +20,8 @@ class VmQuizQuestionsContainer @Inject constructor(
 ) : ViewModel() {
 
     private val args = FragmentQuizQuestionsContainerArgs.fromSavedStateHandle(state)
+
+    val isShowSolutionScreen get() = args.isShowSolutionScreen
 
     private val fragmentEventChannel = Channel<FragmentQuizOverviewEvent>()
 
@@ -30,65 +33,73 @@ class VmQuizQuestionsContainer @Inject constructor(
             field = value
         }
 
-    private val questionIdListLiveData = state.getLiveData<MutableList<String>>(QUESTION_ID_LIST_KEY, mutableListOf())
-
-    private val questionIdList get() = questionIdListLiveData.value!!
-
-    fun questionIdLiveData(questionId: String) = questionIdListLiveData
-        .map { it.firstOrNull { id -> id == questionId } }
-        .distinctUntilChanged()
-
-
-    private fun addOrRemoveQuestionToDisplaySolution(questionId: String) {
-        if (questionIdList.contains(questionId)) {
-            questionIdList.remove(questionId)
-        } else {
-            questionIdList.add(questionId)
+    fun onMoreOptionsClicked(){
+        launch(IO) {
+            fragmentEventChannel.send(ShowMoreOptionsPopUpMenu)
         }
-        state.set(QUESTION_ID_LIST_KEY, questionIdList)
     }
-
-    fun shouldDisplayQuestionSolution(questionId: String) = questionIdList.contains(questionId)
-
 
     fun onViewPagerPageSelected(position: Int) {
         lastAdapterPosition = position
     }
 
-    fun onSelectPreviousPageButtonClicked() = launch(IO) {
-        if (lastAdapterPosition != 0) {
-            fragmentEventChannel.send(SelectDifferentPage(lastAdapterPosition - 1))
-        }
-    }
-
-    fun onSelectNextPageButtonClicked(vpaQuiz: VpaQuiz) = launch(IO) {
-        if (lastAdapterPosition != vpaQuiz.itemCount - 1) {
-            fragmentEventChannel.send(SelectDifferentPage(lastAdapterPosition + 1))
-        }
-    }
-
-    fun onCheckResultsButtonClicked() = launch(IO) {
-        fragmentEventChannel.send(CheckResultsEvent)
-    }
-
-    fun onShowSolutionButtonClicked(vpaQuiz: VpaQuiz)  {
-        vpaQuiz.getFragment(lastAdapterPosition).questionId.let {
-            addOrRemoveQuestionToDisplaySolution(it)
+    fun onSubmitButtonClicked(areAllQuestionsAnswered: Boolean?) {
+        if (areAllQuestionsAnswered == true) {
             launch(IO) {
-                fragmentEventChannel.send(ChangeSolutionButtonTint(shouldDisplayQuestionSolution(it)))
+                fragmentEventChannel.send(OnSubmitButtonClickedEvent)
             }
         }
     }
 
-
     sealed class FragmentQuizOverviewEvent {
-        object CheckResultsEvent : FragmentQuizOverviewEvent()
         data class SelectDifferentPage(val newPosition: Int) : FragmentQuizOverviewEvent()
-        data class ChangeSolutionButtonTint(val show: Boolean) : FragmentQuizOverviewEvent()
+        object ShowMoreOptionsPopUpMenu: FragmentQuizOverviewEvent()
+        object OnSubmitButtonClickedEvent : FragmentQuizOverviewEvent()
     }
 
     companion object {
         const val LAST_ADAPTER_POSITION_KEY = "currentVpaPosition"
-        const val QUESTION_ID_LIST_KEY = "questionIdListKey"
     }
 }
+
+
+//fun onSelectPreviousPageButtonClicked() = launch(IO) {
+//    if (lastAdapterPosition != 0) {
+//        fragmentEventChannel.send(SelectDifferentPage(lastAdapterPosition - 1))
+//    }
+//}
+//
+//fun onSelectNextPageButtonClicked(vpaQuiz: VpaQuiz) = launch(IO) {
+//    if (lastAdapterPosition != vpaQuiz.itemCount - 1) {
+//        fragmentEventChannel.send(SelectDifferentPage(lastAdapterPosition + 1))
+//    }
+//}
+//    private val questionIdListMutableStateFlow = state.getMutableStateFlow<MutableList<String>>(QUESTION_ID_LIST_KEY, mutableListOf())
+//
+//    private val questionIdList get() = questionIdListMutableStateFlow.value
+//
+//    fun questionIdStateFlow(questionId: String) = questionIdListMutableStateFlow
+//        .map { it.firstOrNull { id -> id == questionId } }
+//        .distinctUntilChanged()
+//
+//
+//    private fun addOrRemoveQuestionToDisplaySolution(questionId: String) {
+//        if (questionIdList.contains(questionId)) {
+//            questionIdList.remove(questionId)
+//        } else {
+//            questionIdList.add(questionId)
+//        }
+//        state.set(QUESTION_ID_LIST_KEY, questionIdList)
+//    }
+//
+//    fun shouldDisplayQuestionSolution(questionId: String) = questionIdList.contains(questionId)
+//
+//
+//    fun onShowSolutionButtonClicked(vpaQuiz: VpaQuiz) {
+//        vpaQuiz.createFragment(lastAdapterPosition).questionId.let {
+//            addOrRemoveQuestionToDisplaySolution(it)
+//            launch(IO) {
+//                fragmentEventChannel.send(ChangeSolutionButtonTint(shouldDisplayQuestionSolution(it)))
+//            }
+//        }
+//    }

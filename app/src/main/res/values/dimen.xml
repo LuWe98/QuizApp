@@ -13,6 +13,8 @@
     <dimen name="grid_8">32dp</dimen>
     <dimen name="grid_12">48dp</dimen>
     <dimen name="grid_16">64dp</dimen>
+    <dimen name="grid_24">96dp</dimen>
+    <dimen name="grid_32">128dp</dimen>
 
     <dimen name="quizTopLayoutHeight">265dp</dimen>
     <dimen name="defaultMinCardHeight">67.5dp</dimen>

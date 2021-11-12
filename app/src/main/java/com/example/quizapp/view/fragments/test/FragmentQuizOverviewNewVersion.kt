@@ -69,8 +69,6 @@ class FragmentQuizOverviewNewVersion : BindingFragment<FragmentQuizQuestionsCont
 
         checkLine(tabBinding, index)
         tabBinding.tvNumber.setTextColor(textColor)
-        tabBinding.backGroundView.setStrokeColor(strokeColor)
-        tabBinding.backGroundView.setCardBackgroundColor(strokeColor)
         tabBinding.selectedView.animate()
             .scaleX(scale)
             .scaleY(scale)

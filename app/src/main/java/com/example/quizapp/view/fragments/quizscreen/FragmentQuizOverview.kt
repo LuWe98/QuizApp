@@ -102,6 +102,13 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         }
     }
 
+    private fun toggleBottomSheet() {
+        if (bottomSheetBehaviour.state == BottomSheetBehavior.STATE_COLLAPSED) {
+            bottomSheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
+        } else if (bottomSheetBehaviour.state == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehaviour.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+    }
 
     private fun initClickListener() {
         binding.apply {
@@ -110,14 +117,6 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             btnMoreOptions.onClick(vmQuiz::onMoreOptionsItemClicked)
             bottomSheet.sheetHeader.onClick(this@FragmentQuizOverview::toggleBottomSheet)
             bottomSheet.btnCollapse.onClick(this@FragmentQuizOverview::toggleBottomSheet)
-        }
-    }
-
-    private fun toggleBottomSheet() {
-        if (bottomSheetBehaviour.state == BottomSheetBehavior.STATE_COLLAPSED) {
-            bottomSheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
-        } else if (bottomSheetBehaviour.state == BottomSheetBehavior.STATE_EXPANDED) {
-            bottomSheetBehaviour.state = BottomSheetBehavior.STATE_COLLAPSED
         }
     }
 
@@ -134,13 +133,13 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         }
 
 
-        vmQuiz.questionsWithAnswersSharedFlow.collectWhenStarted(viewLifecycleOwner) { questionsWithAnswers ->
+        vmQuiz.questionsWithAnswersFlow.collectWhenStarted(viewLifecycleOwner) { questionsWithAnswers ->
             rvAdapter.submitList(questionsWithAnswers)
             binding.bottomSheet.tvQuestionsAmount.text = questionsWithAnswers.size.toString()
         }
 
 
-        vmQuiz.questionnaireSharedFlow.collectWhenStarted(viewLifecycleOwner) { questionnaire ->
+        vmQuiz.questionnaireFlow.collectWhenStarted(viewLifecycleOwner) { questionnaire ->
             binding.apply {
                 tvTitle.text = questionnaire.title
                 generalInfoCard.apply {
@@ -152,20 +151,21 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         }
 
 
-        vmQuiz.questionStatisticsSharedFlow.collectWhenStarted(viewLifecycleOwner) {
+        vmQuiz.questionStatisticsFlow.collectWhenStarted(viewLifecycleOwner) {
             if (it.answeredQuestionsPercentage != 100) {
                 vmQuiz.setShouldDisplaySolution(false)
             }
 
             binding.apply {
                 tvQuestionsAnswered.text = it.answeredQuestionsPercentage.toString()
-                ivResultIcon.isVisible = it.isEverythingCorrect
-                tvQuestionsAnswered.isVisible = !it.isEverythingCorrect
-                tvQuestionsAnsweredLabel.isVisible = !it.isEverythingCorrect
-                tvQuestionsAnsweredPercentage.isVisible = !it.isEverythingCorrect
+                ivResultIcon.isVisible = it.areAllQuestionsCorrectlyAnswered
+                tvQuestionsAnswered.isVisible = !it.areAllQuestionsCorrectlyAnswered
+                tvQuestionsAnsweredLabel.isVisible = !it.areAllQuestionsCorrectlyAnswered
+                tvQuestionsAnsweredPercentage.isVisible = !it.areAllQuestionsCorrectlyAnswered
 
                 progress.setProgressWithAnimation(it.answeredQuestionsPercentage, (it.answeredQuestionsPercentage * 3.5f).toLong())
-                progressCorrect.setProgressWithAnimation(if (it.isEverythingCorrect) 100 else 0, 350)
+                progressCorrect.setProgressWithAnimation(if (it.areAllQuestionsAnswered) it.correctQuestionsPercentage else 0, 350)
+                progressIncorrect.setProgressWithAnimation(if (it.areAllQuestionsAnswered) it.incorrectQuestionsPercentage else 0, 350)
             }
 
             binding.statisticsCard.apply {
@@ -191,7 +191,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         vmQuiz.fragmentEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 is ShowUndoDeleteGivenAnswersSnackBack -> {
-                    showSnackBar(R.string.answersDeleted, viewToAttachTo = binding.coordRoot, actionTextRes = R.string.undo) {
+                    showSnackBar(R.string.answersDeleted, anchorView = binding.bottomSheet.root, actionTextRes = R.string.undo) {
                         vmQuiz.onUndoDeleteGivenAnswersClick(event)
                     }
                 }
@@ -199,20 +199,20 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                     PopupMenu(requireContext(), binding.btnMoreOptions).apply {
                         inflate(R.menu.quiz_popup_menu)
                         setOnMenuItemClickListener(this@FragmentQuizOverview)
-                        menu.findItem(R.id.menu_item_allow_show_answers).isChecked = vmQuiz.shouldDisplaySolution
+                        //menu.findItem(R.id.menu_item_show_solutions).isChecked = vmQuiz.shouldDisplaySolution
                         show()
                     }
                 }
-                ShowCompleteAllAnswersToast -> showToast(R.string.pleaseAnswerAllQuestionsText)
-                NavigateToQuizScreen -> navigator.navigateToQuizContainerScreen()
+                is NavigateToQuizScreen -> navigator.navigateToQuizContainerScreen(isShowSolutionScreen = event.isShowSolutionScreen)
+                is ShowMessageSnackBar -> showSnackBar(event.messageRes, anchorView = binding.bottomSheet.root)
             }
         }
     }
 
 
-    private fun onShouldDisplaySolutionChanged(shouldDisplay: Boolean, completeCompleteQuestionnaire: CompleteQuestionnaire) {
+    private fun onShouldDisplaySolutionChanged(shouldDisplay: Boolean, completeQuestionnaire: CompleteQuestionnaire) {
         return
-        val cqp = completeCompleteQuestionnaire.correctQuestionsPercentage
+        val cqp = completeQuestionnaire.correctQuestionsPercentage
         binding.apply {
             progressCorrect.setProgressWithAnimation(if (shouldDisplay) cqp else 0)
             progressIncorrect.setProgressWithAnimation(if (shouldDisplay) 100 - cqp else 0)
@@ -232,14 +232,10 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
     override fun onMenuItemClick(item: MenuItem?) = item?.let {
         when (item.itemId) {
-            R.id.menu_item_delete_given_answers -> vmQuiz.onClearGivenAnswersClicked()
-            R.id.menu_item_allow_show_answers -> vmQuiz.onShowSolutionClick()
-            R.id.menu_item_hide_completed_questions -> {
-
-            }
-            R.id.menu_item_shuffle_questions -> {
-
-            }
+            R.id.menu_item_delete_given_answers -> vmQuiz.onMenuItemClearGivenAnswersClicked()
+            R.id.menu_item_show_solutions -> vmQuiz.onMenuItemShowSolutionClicked()
+            R.id.menu_item_shuffle_questions -> vmQuiz.onMenuItemShuffleClicked()
+            else -> return@let false
         }
         true
     } ?: false

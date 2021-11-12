@@ -2,16 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-            android:id="@+id/menu_item_delete_given_answers"
+            android:id="@+id/menu_item_quiz_container_delete_given_answers"
             android:title="@string/deleteGivenAnswers"
             android:icon="@drawable/ic_delete"/>
     <item
-            android:id="@+id/menu_item_shuffle_questions"
+            android:id="@+id/menu_item_quiz_container_shuffle_questions"
             android:title="@string/shuffleQuestions"
             android:icon="@drawable/ic_shuffle"/>
-    <item
-            android:id="@+id/menu_item_show_solutions"
-            android:title="@string/showSolutions"
-            android:icon="@drawable/ic_question_mark"/>
 
 </menu>

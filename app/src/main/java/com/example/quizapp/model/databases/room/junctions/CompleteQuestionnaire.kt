@@ -45,6 +45,10 @@ data class CompleteQuestionnaire(
 
     fun getQuestionWithAnswers(questionId: String): QuestionWithAnswers = questionsWithAnswers.first { qwa -> qwa.question.id == questionId }
 
+    fun isQuestionAnswered(questionId: String): Boolean = getQuestionWithAnswers(questionId).isAnswered
+
+    fun isQuestionAnsweredCorrectly(questionId: String) : Boolean = getQuestionWithAnswers(questionId).isAnsweredCorrectly
+
     fun getAnswersForQuestion(questionId: String): List<Answer> = getQuestionWithAnswers(questionId).answers
 
     val questionsAmount get() = questionsWithAnswers.size
@@ -75,11 +79,14 @@ data class CompleteQuestionnaire(
         val answeredQuestionsAmount: Int,
         val correctQuestionsAmount: Int
     ) {
-        val answeredQuestionsPercentage = (answeredQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
-        val correctQuestionsPercentage = (correctQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
         val incorrectQuestionsAmount = answeredQuestionsAmount - correctQuestionsAmount
-        val incorrectQuestionsPercentage = (incorrectQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
-        val isEverythingCorrect = correctQuestionsPercentage == 100
-        val isEverythingAnswered = questionsAmount == answeredQuestionsAmount
+
+        val answeredQuestionsPercentage = (answeredQuestionsAmount * 100f / questionsAmount).toInt()
+        val correctQuestionsPercentage = (correctQuestionsAmount * 100f / questionsAmount).toInt()
+        val incorrectQuestionsPercentage = (incorrectQuestionsAmount * 100f / questionsAmount).toInt()
+        val areAllQuestionsCorrectlyAnswered = questionsAmount == correctQuestionsAmount
+        val areAllQuestionsAnswered = questionsAmount == answeredQuestionsAmount
+
+        val incorrectQuestionsPercentageDiff get() = 100 - correctQuestionsPercentage
     }
 }

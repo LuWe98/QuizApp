@@ -39,26 +39,42 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvQuestionType"
+                android:text="@string/multipleChoice"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="@dimen/grid_2"
+                android:drawableStart="@drawable/ic_check_circle"
+                android:drawablePadding="@dimen/grid_2"
+                android:background="@drawable/background_round_corners_45dp"
+                android:backgroundTint="?android:colorBackground"
+                android:paddingHorizontal="@dimen/grid_2"
+                android:paddingVertical="@dimen/grid_1"
+                app:layout_constraintTop_toTopOf="@+id/btnShowSolution"
+                app:layout_constraintEnd_toStartOf="@+id/btnShowSolution"
+                app:layout_constraintBottom_toBottomOf="@+id/btnShowSolution" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:id="@+id/bottomView"
-                android:background="?android:colorBackground">
+                android:translationY="70dp"
+                android:background="?colorOnPrimary">
             <ProgressBar
                     android:layout_width="0dp"
                     android:layout_height="3.5dp"
-                    android:progress="60"
+                    tools:progress="60"
                     android:id="@+id/answeredQuestionsProgress"
-                    android:background="@color/white"
+                    android:background="?android:colorBackground"
                     android:progressTint="?colorAccent"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:progressDrawable="@drawable/horizontal_indicator_progress_bar_no_round_corners"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/tabLayout" />
+                    app:layout_constraintTop_toTopOf="parent"/>
             <com.google.android.material.tabs.TabLayout
                     android:layout_width="0dp"
                     android:layout_height="70dp"
@@ -75,12 +91,23 @@
                     app:tabPaddingEnd="0dp"
                     app:tabPaddingStart="0dp"
                     app:tabUnboundedRipple="false"
-                    app:layout_constraintTop_toBottomOf="@id/answeredQuestionsProgress"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:id="@+id/btnSubmit"
+                    android:text="@string/submit"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/work_sans_medium"
+                    android:gravity="center"
+                    app:layout_constraintTop_toBottomOf="@id/tabLayout"
+                    android:background="?colorPrimary" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         <androidx.viewpager2.widget.ViewPager2
                 android:layout_width="match_parent"

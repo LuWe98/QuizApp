@@ -2,7 +2,6 @@ package com.example.quizapp.view.recyclerview.adapters
 
 import android.annotation.SuppressLint
 import androidx.cardview.widget.CardView
-import androidx.core.view.isVisible
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviQuestionQuizBinding
 import com.example.quizapp.extensions.*
@@ -30,31 +29,17 @@ class RvaQuestionQuiz(
             tvNumber.text = "${position + 1}"
             tvTitle.text = item.question.questionText
 
-            val tint: Int
-
-            if (item.isAnswered) {
-//                ivResultIcon.isVisible = vmQuiz.shouldDisplaySolution
+            val backgroundTint: Int = if (item.isAnswered) {
                 if (vmQuiz.shouldDisplaySolution) {
-                    val drawableRes: Int
-                    if (item.isAnsweredCorrectly) {
-                        drawableRes = R.drawable.ic_check
-                        tint = getColor(R.color.green)
-                    } else {
-                        drawableRes = R.drawable.ic_cross
-                        tint = getColor(R.color.red)
-                    }
-//                    ivResultIcon.setImageDrawable(drawableRes)
-//                    ivResultIcon.setDrawableTint(tint)
+                    getColor(if (item.isAnsweredCorrectly) R.color.green else R.color.red)
                 } else {
-                    tint = context.getThemeColor(R.attr.colorAccent)
+                    context.getThemeColor(R.attr.colorAccent)
                 }
             } else {
-//                ivResultIcon.isVisible = false
-                tint = getColor(R.color.unselectedColor)
+                getColor(defaultBackgroundColor)
             }
-
-            ivRing.setDrawableTint(tint)
-            tvNumber.setTextColor(tint)
+            ivRing.setBackgroundTint(backgroundTint)
+            tvNumber.setTextColor(if(item.isAnswered) getColor(R.color.white) else getThemeColor(R.attr.colorControlNormal))
         }
     }
 }

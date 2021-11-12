@@ -6,10 +6,7 @@ import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizQuestionBinding
-import com.example.quizapp.extensions.disableChangeAnimation
-import com.example.quizapp.extensions.collectWhenStarted
-import com.example.quizapp.extensions.hiltNavDestinationViewModels
-import com.example.quizapp.extensions.updateAllViewHolders
+import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.view.recyclerview.adapters.RvaAnswerQuiz
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
@@ -20,8 +17,21 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
 
-    val questionId : String by lazy { requireArguments().getString(QUESTION_ID_KEY)!! }
-    val isMultipleChoice : Boolean by lazy { requireArguments().getBoolean(QUESTION_TYPE_KEY) }
+    companion object {
+        private const val QUESTION_ID_KEY = "questionIdKey"
+        private const val QUESTION_TYPE_KEY = "questionTypeKey"
+
+        fun newInstance(question : Question) = FragmentQuizQuestion().apply {
+            arguments = Bundle().apply {
+                putString(QUESTION_ID_KEY, question.id)
+                putBoolean(QUESTION_TYPE_KEY, question.isMultipleChoice)
+            }
+        }
+    }
+
+    val questionId : String by lazy { arguments!!.getString(QUESTION_ID_KEY)!! }
+
+    val isMultipleChoice : Boolean by lazy { arguments!!.getBoolean(QUESTION_TYPE_KEY) }
 
     private val vmQuiz : VmQuiz by hiltNavGraphViewModels(R.id.quiz_nav_graph)
 
@@ -36,7 +46,7 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
     }
 
     private fun initRecyclerView(){
-        rvaAdapter = RvaAnswerQuiz(vmQuiz, vmContainer, isMultipleChoice).apply {
+        rvaAdapter = RvaAnswerQuiz(vmQuiz, isMultipleChoice, vmContainer.isShowSolutionScreen).apply {
             onItemClick = { selectedAnswerId, currentList ->
                 vmQuiz.onAnswerItemClicked(selectedAnswerId, currentList, isMultipleChoice)
             }
@@ -51,29 +61,9 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
     }
 
     private fun initObservers(){
-        vmQuiz.getQuestionWithAnswersSharedFlow(questionId).collectWhenStarted(viewLifecycleOwner) {
+        vmQuiz.getQuestionWithAnswersFlow(questionId).collectWhenStarted(viewLifecycleOwner) {
             binding.tvQuestion.text = it.question.questionText
             rvaAdapter.submitList(it.answers)
-        }
-
-//        vmQuiz.shouldDisplaySolutionLiveData.observe(viewLifecycleOwner) {
-//            binding.rv.updateAllViewHolders()
-//        }
-
-        vmContainer.questionIdLiveData(questionId).observe(viewLifecycleOwner) {
-            binding.rv.updateAllViewHolders()
-        }
-    }
-
-    companion object {
-        private const val QUESTION_ID_KEY = "questionIdKey"
-        private const val QUESTION_TYPE_KEY = "questionTypeKey"
-
-        fun newInstance(question : Question) = FragmentQuizQuestion().apply {
-            arguments = Bundle().apply {
-                putString(QUESTION_ID_KEY, question.id)
-                putBoolean(QUESTION_TYPE_KEY, question.isMultipleChoice)
-            }
         }
     }
 }

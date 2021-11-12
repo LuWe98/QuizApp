@@ -134,11 +134,6 @@ MenuItem(
 
     val languageOptionsMenu get() = mutableListOf(
         MenuItem(
-            id = QuizAppLanguage.SYSTEM_DEFAULT.ordinal,
-            iconRes = R.drawable.ic_settings,
-            titleRes = R.string.systemDefault
-        ),
-        MenuItem(
             id = QuizAppLanguage.ENGLISH.ordinal,
             iconRes = R.drawable.ic_language,
             titleRes = R.string.english

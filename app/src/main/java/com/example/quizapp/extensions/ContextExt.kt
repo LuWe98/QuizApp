@@ -65,7 +65,7 @@ fun Context.setLocale() = setLocale(runBlocking(Dispatchers.IO) {
     dataStore.dataflow.map { preferences ->
         preferences[PreferencesRepository.LANGUAGE_KEY]?.let {
             QuizAppLanguage.valueOf(it)
-        } ?: QuizAppLanguage.SYSTEM_DEFAULT
+        } ?: QuizAppLanguage.ENGLISH
     }.first()
 })
 

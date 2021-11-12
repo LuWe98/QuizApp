@@ -2,6 +2,7 @@ package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.*
 import com.example.quizapp.QuizNavGraphArgs
+import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
@@ -34,32 +35,29 @@ class VmQuiz @Inject constructor(
 
     val fragmentEventChannelFlow get() = fragmentEventChannel.receiveAsFlow()
 
-    private val completeQuestionnaireFlow = localRepository.findCompleteQuestionnaireAsFlowWith(args.questionnaireId)
-
-    val completeQuestionnaireStateFlow = completeQuestionnaireFlow.stateIn(viewModelScope, SharingStarted.Lazily, null)
+    val completeQuestionnaireStateFlow = localRepository.findCompleteQuestionnaireAsFlowWith(args.questionnaireId)
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     val completeQuestionnaire get() = completeQuestionnaireStateFlow.value
 
-    fun getQuestionWithAnswersSharedFlow(questionId: String) = completeQuestionnaireStateFlow
+    fun getQuestionWithAnswersFlow(questionId: String) = completeQuestionnaireStateFlow
         .mapNotNull { it?.getQuestionWithAnswers(questionId) }
-        .shareIn(viewModelScope, SharingStarted.Lazily)
         .distinctUntilChanged()
 
-    val questionnaireSharedFlow get() = completeQuestionnaireStateFlow
-        .mapNotNull { it?.questionnaire }
-        .shareIn(viewModelScope, SharingStarted.Lazily)
-        .distinctUntilChanged()
+    val questionnaireFlow
+        get() = completeQuestionnaireStateFlow
+            .mapNotNull { it?.questionnaire }
+            .distinctUntilChanged()
 
-    val questionsWithAnswersSharedFlow get() = completeQuestionnaireStateFlow
-        .mapNotNull { it?.questionsWithAnswers }
-        .shareIn(viewModelScope, SharingStarted.Lazily)
-        .distinctUntilChanged()
+    val questionsWithAnswersFlow
+        get() = completeQuestionnaireStateFlow
+            .mapNotNull { it?.questionsWithAnswers }
+            .distinctUntilChanged()
 
-    val questionStatisticsSharedFlow get() = completeQuestionnaireStateFlow
-        .mapNotNull { it?.toQuizStatisticNumbers }
-        .shareIn(viewModelScope, SharingStarted.Lazily)
-        .distinctUntilChanged()
-
+    val questionStatisticsFlow
+        get() = completeQuestionnaireStateFlow
+            .mapNotNull { it?.toQuizStatisticNumbers }
+            .distinctUntilChanged()
 
     val shouldDisplaySolutionStateFlow = state.getMutableStateFlow(SHOULD_DISPLAY_SOLUTION, false)
 
@@ -70,16 +68,21 @@ class VmQuiz @Inject constructor(
         shouldDisplaySolutionStateFlow.value = shouldDisplaySolution
     }
 
-    fun onShowSolutionClick() {
+    fun onMenuItemShowSolutionClicked() {
         completeQuestionnaire?.let {
-            if (it.areAllQuestionsAnswered) {
-                setShouldDisplaySolution(!shouldDisplaySolution)
-            } else {
-                launch(IO) {
-                    fragmentEventChannel.send(ShowCompleteAllAnswersToast)
+            launch(IO) {
+                if (it.areAllQuestionsAnswered) {
+//                setShouldDisplaySolution(!shouldDisplaySolution)
+                    fragmentEventChannel.send(NavigateToQuizScreen(true))
+                } else {
+                    fragmentEventChannel.send(ShowMessageSnackBar(R.string.pleaseAnswerAllQuestionsText))
                 }
             }
         }
+    }
+
+    fun onMenuItemShuffleClicked() {
+
     }
 
     fun onMoreOptionsItemClicked() = launch(IO) {
@@ -91,7 +94,7 @@ class VmQuiz @Inject constructor(
     }
 
 
-    fun onClearGivenAnswersClicked() = launch(IO) {
+    fun onMenuItemClearGivenAnswersClicked() = launch(IO) {
         completeQuestionnaire?.apply {
             mutableListOf<Answer>().let { list ->
                 list.addAll(allAnswers)
@@ -110,8 +113,8 @@ class VmQuiz @Inject constructor(
             setShouldDisplaySolution(false)
         }
 
-        launch(IO){
-            fragmentEventChannel.send(NavigateToQuizScreen)
+        launch(IO) {
+            fragmentEventChannel.send(NavigateToQuizScreen(false))
         }
     }
 
@@ -138,9 +141,7 @@ class VmQuiz @Inject constructor(
 
     private fun uploadGivenAnswers() = applicationScope.launch(IO) {
         completeQuestionnaire?.let {
-            if (it.questionnaire.syncStatus != SyncStatus.SYNCED) {
-                return@launch
-            }
+            if (it.questionnaire.syncStatus != SyncStatus.SYNCED) return@launch
 
             val filledQuestionnaire = DataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(it)
 
@@ -158,10 +159,10 @@ class VmQuiz @Inject constructor(
 
 
     sealed class FragmentQuizEvent {
-        object ShowCompleteAllAnswersToast : FragmentQuizEvent()
-        data class ShowUndoDeleteGivenAnswersSnackBack(val lastAnswerValues: List<Answer>) : FragmentQuizEvent()
+        class ShowUndoDeleteGivenAnswersSnackBack(val lastAnswerValues: List<Answer>) : FragmentQuizEvent()
+        class ShowMessageSnackBar(val messageRes: Int) : FragmentQuizEvent()
+        class NavigateToQuizScreen(val isShowSolutionScreen: Boolean) : FragmentQuizEvent()
         object ShowPopupMenu : FragmentQuizEvent()
-        object NavigateToQuizScreen : FragmentQuizEvent()
     }
 
     companion object {

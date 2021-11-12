@@ -150,6 +150,7 @@
 
 
     <!-- Quiz Screen-->
+    <string name="showSolutions">Show solutions</string>
     <string name="showSolution">Show solution</string>
     <string name="shuffleQuestions">Shuffle questions</string>
     <string name="lastUpdated">Last updated</string>
@@ -162,6 +163,12 @@
     <string name="answered">answered</string>
     <string name="percentSign">%</string>
     <string name="performance">Performance</string>
+    <string name="submit">Submit</string>
+    <string name="quizResult">QUIZ RESULT</string>
+    <string name="retakeQuiz">Try again</string>
+    <string name="yourScore">YOUR SCORE</string>
+    <string name="outOf">%1$s / %2$s</string>
+    <string name="outOfAnswered">%1$s / %2$s answered</string>
 
     <!-- Strings for voice Search functionality -->
     <string name="voiceSearchStartTalking">Sprechen Sie los…</string>

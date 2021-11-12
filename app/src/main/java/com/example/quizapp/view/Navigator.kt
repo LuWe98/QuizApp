@@ -18,6 +18,8 @@ import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQues
 import com.example.quizapp.view.fragments.adminscreen.FragmentAdminDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
+import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerDirections
+import com.example.quizapp.view.fragments.quizscreen.FragmentQuizResultDirections
 import com.example.quizapp.view.fragments.settingsscreen.FragmentSettingsDirections
 import com.example.quizapp.view.fragments.test.BsdfFacultySelectionTestDirections
 import java.lang.ref.WeakReference
@@ -65,8 +67,18 @@ class Navigator @Inject constructor(
         navController.navigate(MainNavGraphDirections.actionGlobalGoToQuizScreen(questionnaireId))
     }
 
-    fun navigateToQuizContainerScreen(questionPosition: Int = FIRST_QUESTION_POSITION) {
-        navController.navigate(FragmentQuizOverviewDirections.actionFragmentQuizOverviewToFragmentQuizContainer(questionPosition))
+    fun navigateToQuizContainerScreen(questionPosition: Int = FIRST_QUESTION_POSITION, isShowSolutionScreen: Boolean = false) {
+        navController.navigate(FragmentQuizOverviewDirections.actionFragmentQuizOverviewToFragmentQuizContainer(questionPosition, isShowSolutionScreen))
+    }
+
+    fun navigateToQuizResultScreen() {
+        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentQuizOverview, false).build()
+        navController.navigate(FragmentQuizQuestionsContainerDirections.actionFragmentQuizContainerToFragmentQuizResult(), navOptions)
+    }
+
+    fun navigateToQuizContainerScreenFromResultScreen(showSolutions: Boolean){
+        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentQuizOverview, false).build()
+        navController.navigate(FragmentQuizResultDirections.actionFragmentQuizResultToFragmentQuizContainer(FIRST_QUESTION_POSITION, showSolutions), navOptions)
     }
 
     fun navigateToQuizContainerScreenWithQuestionCardClick(questionPosition: Int, questionId: Long, clickedCard: CardView) {
@@ -74,7 +86,7 @@ class Navigator @Inject constructor(
             initMaterialElevationScale()
             clickedCard.transitionName = questionId.toString()
             val extras = FragmentNavigatorExtras(clickedCard to getString(R.string.questionClickedTransitionName))
-            navController.navigate(FragmentQuizOverviewDirections.actionFragmentQuizOverviewToFragmentQuizContainer(questionPosition), extras)
+            navController.navigate(FragmentQuizOverviewDirections.actionFragmentQuizOverviewToFragmentQuizContainer(questionPosition, false), extras)
         }
     }
 

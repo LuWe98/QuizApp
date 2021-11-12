@@ -28,6 +28,16 @@ fun View.makeFullScreen() = apply {
     layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, context.resources.displayMetrics.heightPixels)
 }
 
+fun View.setBackgroundColorWithRes(@ColorRes res: Int) = setBackgroundColor(ContextCompat.getColor(context, res))
+
+fun View.setBackgroundTint(@ColorInt colorInt: Int) {
+    backgroundTintList = ColorStateList.valueOf(colorInt)
+}
+
+fun View.setBackgroundTintWithRes(@ColorRes res: Int) {
+    setBackgroundTint(ContextCompat.getColor(context, res))
+}
+
 fun TabLayout.attachToViewPager(viewPager: ViewPager2, tabConfigurationStrategy: TabLayoutMediator.TabConfigurationStrategy) =
     TabLayoutMediator(this, viewPager) { tab, pos ->
         tabConfigurationStrategy.onConfigureTab(tab, pos)
