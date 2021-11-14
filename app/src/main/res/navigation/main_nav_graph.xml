@@ -27,6 +27,9 @@
         <action
                 android:id="@+id/action_fragmentSettings_to_bsdfLanguageSelection"
                 app:destination="@id/bsdfLanguageSelection" />
+        <action
+                android:id="@+id/action_fragmentSettings_to_bsdfShuffleTypeSelection"
+                app:destination="@id/bsdfShuffleTypeSelection" />
     </fragment>
 
     <fragment
@@ -201,6 +204,12 @@
             android:name="com.example.quizapp.view.fragments.settingsscreen.BsdfLanguageSelection"
             android:label="BsdfLanguageSelection"
             tools:layout="@layout/bsdf_language_selection"/>
+
+    <dialog
+            android:id="@+id/bsdfShuffleTypeSelection"
+            android:name="com.example.quizapp.view.fragments.settingsscreen.BsdfShuffleTypeSelection"
+            android:label="BsdfShuffleTypeSelection"
+            tools:layout="@layout/bsdf_shuffle_type_selection"/>
 
     <!--GLOBAL ACTIONS-->
     <action

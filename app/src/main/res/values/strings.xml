@@ -152,12 +152,6 @@
     <!-- Quiz Screen-->
     <string name="showSolutions">Show solutions</string>
     <string name="showSolution">Show solution</string>
-    <string name="shuffling">Shuffling</string>
-    <string name="questionsAnsAnswersOrdering">Order questions and answers</string>
-    <string name="regularOrder">Regular order</string>
-    <string name="shuffledQuestions">Shuffled questions</string>
-    <string name="shuffledAnswers">Shuffled answers</string>
-    <string name="shuffledQuestionsAndAnswers">Shuffled questions and answers</string>
     <string name="lastUpdated">Last updated</string>
     <string name="correctlyAnswered">Correctly answered</string>
     <string name="incorrectlyAnswered">Incorrectly answered</string>
@@ -174,6 +168,16 @@
     <string name="yourScore">YOUR SCORE</string>
     <string name="outOf">%1$s / %2$s</string>
     <string name="outOfAnswered">%1$s / %2$s answered</string>
+
+    <string name="shuffleType">Shuffle Type</string>
+    <string name="shuffleTypeSelection">Shuffle type selection</string>
+    <string name="shuffledQuestions">Shuffled questions</string>
+    <string name="shuffledAnswers">Shuffled answers</string>
+    <string name="shuffledQuestionsAndAnswers">Shuffled questions and answers</string>
+    <string name="shuffleTypeNone">None</string>
+    <string name="shuffleTypeQuestions">Questions</string>
+    <string name="shuffleTypeAnswers">Answers</string>
+    <string name="shuffleTypeQuestionsAndAnswers">Q &amp; A</string>
 
     <!-- Strings for voice Search functionality -->
     <string name="voiceSearchStartTalking">Sprechen Sie los…</string>

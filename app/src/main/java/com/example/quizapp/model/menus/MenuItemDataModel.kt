@@ -5,6 +5,7 @@ import com.example.quizapp.R
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.datastore.QuestionnaireShuffleType
 import com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptionsArgs
 import com.example.quizapp.model.datastore.QuizAppLanguage
 
@@ -72,7 +73,7 @@ object MenuItemDataModel {
     )
 
 
-    private val cachedQuestionnaireMoreOptionsMenu get() = mutableListOf(
+    private val cachedQuestionnaireMoreOptionsMenu get() = listOf(
         MenuItem(
             id = COPY_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_copy,
@@ -91,7 +92,7 @@ object MenuItemDataModel {
     )
 
 
-    val userMoreOptionsMenu get() = mutableListOf(
+    val userMoreOptionsMenu get() = listOf(
         MenuItem(
           id = CHANGE_USER_ROLE_ITEM_ID,
           iconRes = R.drawable.ic_role_badge,
@@ -112,7 +113,7 @@ MenuItem(
  */
 
 
-    val themeOptionsMenu get() = mutableListOf(
+    val themeOptionsMenu get() = listOf(
         MenuItem(
             id = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
             iconRes = R.drawable.ic_settings,
@@ -132,7 +133,7 @@ MenuItem(
 
 
 
-    val languageOptionsMenu get() = mutableListOf(
+    val languageOptionsMenu get() = listOf(
         MenuItem(
             id = QuizAppLanguage.ENGLISH.ordinal,
             iconRes = R.drawable.ic_language,
@@ -142,6 +143,29 @@ MenuItem(
             id = QuizAppLanguage.GERMAN.ordinal,
             iconRes = R.drawable.ic_language,
             titleRes = R.string.german
+        ),
+    )
+
+    val shuffleQuestionsOptionsMenu get() = listOf(
+        MenuItem(
+            id = QuestionnaireShuffleType.NONE.ordinal,
+            iconRes = R.drawable.ic_cross,
+            titleRes = R.string.shuffleTypeNone
+        ),
+        MenuItem(
+            id = QuestionnaireShuffleType.SHUFFLED_QUESTIONS.ordinal,
+            iconRes = R.drawable.ic_shuffle_new,
+            titleRes = R.string.shuffledQuestions
+        ),
+        MenuItem(
+            id = QuestionnaireShuffleType.SHUFFLED_ANSWERS.ordinal,
+            iconRes = R.drawable.ic_shuffle_new,
+            titleRes = R.string.shuffledAnswers
+        ),
+        MenuItem(
+            id = QuestionnaireShuffleType.SHUFFLED_QUESTIONS_AND_ANSWERS.ordinal,
+            iconRes = R.drawable.ic_shuffle_new,
+            titleRes = R.string.shuffledQuestionsAndAnswers
         ),
     )
 }

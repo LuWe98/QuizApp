@@ -73,38 +73,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/btnQuestionType"
                 app:layout_constraintBottom_toBottomOf="@+id/btnMoreOptions" />
 
-
-        <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/tabLayoutCard"
-                app:cardCornerRadius="0dp"
-                app:cardBackgroundColor="@color/transparent"
-                app:cardElevation="0dp"
-                android:layout_marginTop="@dimen/grid_4"
-                app:layout_constraintTop_toBottomOf="@+id/btnBack"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
-
-            <com.google.android.material.tabs.TabLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:id="@+id/tabLayout"
-                    android:backgroundTint="@color/transparent"
-                    app:tabGravity="center"
-                    app:tabMode="scrollable"
-                    app:tabIndicatorHeight="0dp"
-                    app:tabIndicatorGravity="center"
-                    app:tabIndicatorAnimationMode="elastic"
-                    app:tabIndicator="@drawable/shape_circle"
-                    app:tabIndicatorFullWidth="false"
-                    app:tabMinWidth="0dp"
-                    app:tabPaddingEnd="0dp"
-                    app:tabPaddingStart="0dp"
-                    app:tabUnboundedRipple="false" />
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.example.quizapp.view.customimplementations.lazytablayout.LazyTabLayout
+        <com.example.quizapp.view.customimplementations.quizscreen.lazytablayout.LazyQuestionTabLayout
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:id="@+id/lazyTabLayout"
@@ -120,7 +89,7 @@
                 android:id="@+id/separatorView"
                 android:background="?android:colorBackground"
                 android:layout_marginTop="@dimen/grid_4"
-                app:layout_constraintTop_toBottomOf="@id/tabLayoutCard"
+                app:layout_constraintTop_toBottomOf="@id/lazyTabLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 

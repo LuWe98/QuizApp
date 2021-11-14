@@ -1,8 +1,11 @@
 package com.example.quizapp.model.datastore
 
-enum class QuestionnaireShuffleType {
-    NOT_SHUFFLED,
-    SHUFFLED_QUESTIONS,
-    SHUFFLED_ANSWERS,
-    SHUFFLED_QUESTIONS_AND_ANSWERS
+import androidx.annotation.StringRes
+import com.example.quizapp.R
+
+enum class QuestionnaireShuffleType(@StringRes val textRes: Int ) {
+    NONE(R.string.shuffleTypeNone),
+    SHUFFLED_QUESTIONS(R.string.shuffleTypeQuestions),
+    SHUFFLED_ANSWERS(R.string.shuffleTypeAnswers),
+    SHUFFLED_QUESTIONS_AND_ANSWERS(R.string.shuffleTypeQuestionsAndAnswers)
 }

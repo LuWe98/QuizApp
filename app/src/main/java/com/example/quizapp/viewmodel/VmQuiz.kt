@@ -20,7 +20,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
@@ -48,7 +47,7 @@ class VmQuiz @Inject constructor(
     val completeQuestionnaire get() = completeQuestionnaireStateFlow.value
 
     val questionList get() = when (shuffleType) {
-        SHUFFLED_QUESTIONS, SHUFFLED_QUESTIONS_AND_ANSWERS -> completeQuestionnaire?.allQuestions?.shuffled(Random(shuffleTypeSeed))
+        SHUFFLED_QUESTIONS, SHUFFLED_QUESTIONS_AND_ANSWERS -> completeQuestionnaire?.allQuestions?.shuffled(Random(shuffleSeed))
         else -> completeQuestionnaire?.allQuestions
     } ?: emptyList()
 
@@ -71,13 +70,13 @@ class VmQuiz @Inject constructor(
             .mapNotNull { it?.toQuizStatisticNumbers }
             .distinctUntilChanged()
 
-    private var _shuffleTypeSeed= state.get<Long>(SEQUENCE_SEED_KEY) ?: getTimeMillis()
+    private var _shuffleSeed= state.get<Long>(SHUFFLE_SEED_KEY) ?: getTimeMillis()
         set(value) {
-            state.set(SEQUENCE_SEED_KEY, value)
+            state.set(SHUFFLE_SEED_KEY, value)
             field = value
         }
 
-    val shuffleTypeSeed get() = _shuffleTypeSeed
+    val shuffleSeed get() = _shuffleSeed
 
     val shuffleTypeStateFlow = preferencesRepository.shuffleTypeFlow
         .stateIn(viewModelScope, SharingStarted.Lazily, runBlocking { preferencesRepository.getShuffleType() })
@@ -90,7 +89,7 @@ class VmQuiz @Inject constructor(
     }
 
     fun updateShuffleTypeSeed(newSeed: Long = getTimeMillis()) {
-        _shuffleTypeSeed = newSeed
+        _shuffleSeed = newSeed
     }
 
 
@@ -194,7 +193,6 @@ class VmQuiz @Inject constructor(
 
     companion object {
         const val SHOULD_DISPLAY_SOLUTION = "shouldDisplaySolutionKey"
-        const val SEQUENCE_SEED_KEY = "sequenceSeedKey"
-        const val SEQUENCE_TYPE_KEY = "sequenceTypeKey"
+        const val SHUFFLE_SEED_KEY = "shuffleSeedKey"
     }
 }

@@ -33,6 +33,7 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
         binding.preferencesLayout.apply {
             btnTheme.onClick(navigator::navigateToThemeSelection)
             btnLanguage.onClick(navigator::navigateToLanguageSelection)
+            btnShuffleType.onClick(navigator::navigateToShuffleTypeSelection)
         }
 
         binding.userLayout.apply {
@@ -73,6 +74,10 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
             binding.preferencesLayout.btnLanguage.text = it?.let { getString(it.textRes) } ?: ""
         }
 
+        vmSettings.shuffleTypeFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.preferencesLayout.btnShuffleType.text = it?.let { getString(it.textRes) } ?: ""
+        }
+
         vmSettings.fragmentSettingsEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 NavigateToLoginScreen -> navigator.navigateToLoginScreen()
@@ -88,8 +93,11 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
                 }
                 NavigateToAdminScreen -> navigator.navigateToAdminPage()
                 is ShowMessageSnackBarEvent -> {
-                    showSnackBar(event.messageRes)
                     binding.swipeRefreshLayout.isRefreshing = false
+                    showSnackBar(
+                        textRes = event.messageRes,
+                        anchorView = bindingActivity.binding.root.findViewById(R.id.bottomAppBar)
+                    )
                 }
             }
         }

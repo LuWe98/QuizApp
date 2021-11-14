@@ -8,23 +8,23 @@
 
     <item
             android:id="@+id/menu_item_quiz_order_by"
-            android:title="@string/questionsAnsAnswersOrdering"
+            android:title="@string/shuffleType"
             android:icon="@drawable/ic_shuffle">
         <menu>
             <item
-                    android:id="@+id/menu_item_quiz_order_regular"
-                    android:title="@string/regularOrder"
+                    android:id="@+id/menu_item_quiz_shuffle_type_none"
+                    android:title="@string/shuffleTypeNone"
                     android:checkable="true"/>
             <item
-                    android:id="@+id/menu_item_quiz_order_shuffle_questions"
+                    android:id="@+id/menu_item_quiz_shuffle_type_questions"
                     android:title="@string/shuffledQuestions"
                     android:checkable="true"/>
             <item
-                    android:id="@+id/menu_item_quiz_order_shuffle_answers"
+                    android:id="@+id/menu_item_quiz_shuffle_type_answers"
                     android:title="@string/shuffledAnswers"
                     android:checkable="true"/>
             <item
-                    android:id="@+id/menu_item_quiz_order_shuffle_questions_and_answers"
+                    android:id="@+id/menu_item_quiz_shuffle_type_questions_and_answers"
                     android:title="@string/shuffledQuestionsAndAnswers"
                     android:checkable="true"/>
         </menu>

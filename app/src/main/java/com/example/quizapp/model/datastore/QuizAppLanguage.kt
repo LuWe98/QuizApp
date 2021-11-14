@@ -9,10 +9,8 @@ enum class QuizAppLanguage(@StringRes val textRes: Int) {
     GERMAN(R.string.german);
 
     val locale: Locale
-        get() = run {
-        when(this) {
+        get() = when (this) {
             ENGLISH -> Locale.ENGLISH
             GERMAN -> Locale.GERMAN
         }
-    }
 }

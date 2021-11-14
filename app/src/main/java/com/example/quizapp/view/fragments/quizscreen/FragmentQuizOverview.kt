@@ -199,10 +199,10 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                         inflate(R.menu.quiz_popup_menu)
                         setOnMenuItemClickListener(this@FragmentQuizOverview)
                         menu.apply {
-                            findItem(R.id.menu_item_quiz_order_regular).isChecked = vmQuiz.shuffleType == NOT_SHUFFLED
-                            findItem(R.id.menu_item_quiz_order_shuffle_questions).isChecked = vmQuiz.shuffleType == SHUFFLED_QUESTIONS
-                            findItem(R.id.menu_item_quiz_order_shuffle_answers).isChecked = vmQuiz.shuffleType == SHUFFLED_ANSWERS
-                            findItem(R.id.menu_item_quiz_order_shuffle_questions_and_answers).isChecked = vmQuiz.shuffleType == SHUFFLED_QUESTIONS_AND_ANSWERS
+                            findItem(R.id.menu_item_quiz_shuffle_type_none).isChecked = vmQuiz.shuffleType == NONE
+                            findItem(R.id.menu_item_quiz_shuffle_type_questions).isChecked = vmQuiz.shuffleType == SHUFFLED_QUESTIONS
+                            findItem(R.id.menu_item_quiz_shuffle_type_answers).isChecked = vmQuiz.shuffleType == SHUFFLED_ANSWERS
+                            findItem(R.id.menu_item_quiz_shuffle_type_questions_and_answers).isChecked = vmQuiz.shuffleType == SHUFFLED_QUESTIONS_AND_ANSWERS
                         }
                         show()
                     }
@@ -235,28 +235,14 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
     }
 
     override fun onMenuItemClick(item: MenuItem?) = item?.let {
-        when (item.itemId) {
-            R.id.menu_item_quiz_delete_given_answers -> vmQuiz.onMenuItemClearGivenAnswersClicked()
-            R.id.menu_item_quiz_show_solutions -> vmQuiz.onMenuItemShowSolutionClicked()
-            R.id.menu_item_quiz_order_regular -> {
-                launch {
-                    vmQuiz.onMenuItemOrderSelected(NOT_SHUFFLED)
-                }
-            }
-            R.id.menu_item_quiz_order_shuffle_questions -> {
-                launch {
-                    vmQuiz.onMenuItemOrderSelected(SHUFFLED_QUESTIONS)
-                }
-            }
-            R.id.menu_item_quiz_order_shuffle_answers -> {
-                launch {
-                    vmQuiz.onMenuItemOrderSelected(SHUFFLED_ANSWERS)
-                }
-            }
-            R.id.menu_item_quiz_order_shuffle_questions_and_answers -> {
-                launch {
-                    vmQuiz.onMenuItemOrderSelected(SHUFFLED_QUESTIONS_AND_ANSWERS)
-                }
+        launch {
+            when (item.itemId) {
+                R.id.menu_item_quiz_delete_given_answers -> vmQuiz.onMenuItemClearGivenAnswersClicked()
+                R.id.menu_item_quiz_show_solutions -> vmQuiz.onMenuItemShowSolutionClicked()
+                R.id.menu_item_quiz_shuffle_type_none -> vmQuiz.onMenuItemOrderSelected(NONE)
+                R.id.menu_item_quiz_shuffle_type_questions -> vmQuiz.onMenuItemOrderSelected(SHUFFLED_QUESTIONS)
+                R.id.menu_item_quiz_shuffle_type_answers -> vmQuiz.onMenuItemOrderSelected(SHUFFLED_ANSWERS)
+                R.id.menu_item_quiz_shuffle_type_questions_and_answers -> vmQuiz.onMenuItemOrderSelected(SHUFFLED_QUESTIONS_AND_ANSWERS)
             }
         }
         true

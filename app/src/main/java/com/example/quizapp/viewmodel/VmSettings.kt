@@ -1,16 +1,15 @@
 package com.example.quizapp.viewmodel
 
-import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_CHANGED
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_UP_TO_DATE
-import com.example.quizapp.model.databases.mongodb.documents.user.User
-import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -24,8 +23,7 @@ import javax.inject.Inject
 class VmSettings @Inject constructor(
     private val applicationScope: CoroutineScope,
     private val preferencesRepository: PreferencesRepository,
-    private val backendRepository: BackendRepository,
-    private val localRepository: LocalRepository
+    private val backendRepository: BackendRepository
 ) : ViewModel() {
 
     private val fragmentSettingsEventChannel = Channel<FragmentSettingsEvent>()
@@ -40,14 +38,18 @@ class VmSettings @Inject constructor(
 
     val themeNameResFlow = preferencesRepository.themeFlow.map {
         when (it) {
-            AppCompatDelegate.MODE_NIGHT_NO -> R.string.light
-            AppCompatDelegate.MODE_NIGHT_YES -> R.string.dark
-            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM -> R.string.systemDefault
+            MODE_NIGHT_NO -> R.string.light
+            MODE_NIGHT_YES -> R.string.dark
+            MODE_NIGHT_FOLLOW_SYSTEM -> R.string.systemDefault
             else -> throw IllegalStateException()
         }
     }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     val languageFlow = preferencesRepository.languageFlow.stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+    val shuffleTypeFlow = preferencesRepository.shuffleTypeFlow.stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+
 
     fun onLogoutClicked() = launch(IO) {
         fragmentSettingsEventChannel.send(OnLogoutClickedEvent)

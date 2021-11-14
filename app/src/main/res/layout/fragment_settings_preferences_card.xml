@@ -38,4 +38,14 @@
             tools:text="English"
             app:dropDownIcon="@drawable/ic_arrow_down"
             app:layout_constraintTop_toBottomOf="@id/btnTheme" />
+
+    <com.example.quizapp.view.customimplementations.settings.SettingsItemDropDownLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnShuffleType"
+            app:icon="@drawable/ic_shuffle_new"
+            app:title="@string/shuffleType"
+            tools:text="None"
+            app:dropDownIcon="@drawable/ic_arrow_down"
+            app:layout_constraintTop_toBottomOf="@id/btnLanguage" />
 </androidx.constraintlayout.widget.ConstraintLayout>

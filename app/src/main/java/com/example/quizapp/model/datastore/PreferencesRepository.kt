@@ -82,7 +82,7 @@ class PreferencesRepository @Inject constructor(context: Context) {
     }
 
     val shuffleTypeFlow = dataFlow.map { preferences ->
-        preferences[SHUFFLE_TYPE_KEY]?.let { QuestionnaireShuffleType.valueOf(it) } ?: QuestionnaireShuffleType.NOT_SHUFFLED
+        preferences[SHUFFLE_TYPE_KEY]?.let { QuestionnaireShuffleType.valueOf(it) } ?: QuestionnaireShuffleType.NONE
     }
 
     suspend fun getShuffleType() : QuestionnaireShuffleType = shuffleTypeFlow.first()

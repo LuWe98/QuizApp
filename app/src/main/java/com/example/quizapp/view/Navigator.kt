@@ -138,6 +138,10 @@ class Navigator @Inject constructor(
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToBsdfLanguageSelection())
     }
 
+    fun navigateToShuffleTypeSelection(){
+        navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToBsdfShuffleTypeSelection())
+    }
+
     fun navigateToFacultyTest() {
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfFacultySelectionTest())
     }

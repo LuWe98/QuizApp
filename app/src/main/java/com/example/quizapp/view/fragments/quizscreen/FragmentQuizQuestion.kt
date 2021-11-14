@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizQuestionBinding
 import com.example.quizapp.extensions.collectWhenStarted
@@ -71,7 +70,7 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
             binding.tvQuestion.text = it.question.questionText
 
             when(vmQuiz.shuffleType){
-                SHUFFLED_ANSWERS, SHUFFLED_QUESTIONS_AND_ANSWERS -> it.answers.shuffled(Random(vmQuiz.shuffleTypeSeed / it.shuffleSeedAdjusted))
+                SHUFFLED_ANSWERS, SHUFFLED_QUESTIONS_AND_ANSWERS -> it.answers.shuffled(Random(vmQuiz.shuffleSeed / it.shuffleSeedAdjusted))
                 else -> it.answers
             }.let(rvaAdapter::submitList)
         }

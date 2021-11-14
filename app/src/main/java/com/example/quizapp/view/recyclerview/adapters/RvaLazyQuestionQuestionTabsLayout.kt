@@ -1,4 +1,4 @@
-package com.example.quizapp.view.customimplementations.lazytablayout
+package com.example.quizapp.view.recyclerview.adapters
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
@@ -11,12 +11,15 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.CustomTabLayoutViewBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.utils.DiffCallbackUtil
+import com.example.quizapp.view.customimplementations.quizscreen.lazytablayout.LazyQuestionTab
+import com.example.quizapp.view.customimplementations.quizscreen.lazytablayout.LazyQuestionTabLayout
+import com.example.quizapp.view.customimplementations.quizscreen.lazytablayout.LazyQuestionTabLayoutAdapter
 
-class ImplementedLazyTabAdapter(
-    private val tabLayout: LazyTabLayout,
+class RvaLazyQuestionQuestionTabsLayout(
+    private val lazyTabLayout: LazyQuestionTabLayout,
     private val isShowSolutionScreen: Boolean,
     private val tabPredicate: ((String) -> Boolean)
-) : LazyTabLayoutAdapter<LazyQuestionTab, ImplementedLazyTabAdapter.ImplementedLazyViewHolder>(DiffCallbackUtil.createDiffUtil { t, t2 -> t == t2 }) {
+) : LazyQuestionTabLayoutAdapter<LazyQuestionTab, RvaLazyQuestionQuestionTabsLayout.ImplementedLazyViewHolder>(DiffCallbackUtil.createDiffUtil { t, t2 -> t == t2 }) {
 
     var onItemClicked: ((Int) -> Unit)? = null
 
@@ -27,7 +30,7 @@ class ImplementedLazyTabAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class ImplementedLazyViewHolder(val binding: CustomTabLayoutViewBinding) : LazyTabLayoutAdapter.LazyTabLayoutViewHolder<LazyQuestionTab>(binding.root) {
+    inner class ImplementedLazyViewHolder(val binding: CustomTabLayoutViewBinding) : LazyTabLayoutViewHolder<LazyQuestionTab>(binding.root) {
 
         init {
             binding.root.setOnClickListener {
@@ -52,7 +55,7 @@ class ImplementedLazyTabAdapter(
 
         private fun updateTabBodies(predicateCurrent: Boolean) {
             binding.apply {
-                val isPositionSelected = bindingAdapterPosition == tabLayout.selectedTabPosition
+                val isPositionSelected = bindingAdapterPosition == lazyTabLayout.currentItem
 
                 //defaultBackgroundColor
                 val tabTextColor: Int
@@ -86,7 +89,7 @@ class ImplementedLazyTabAdapter(
                         .scaleX(animFactor)
                         .scaleY(animFactor)
                         .alpha(animFactor)
-                        .setDuration(if (isPositionSelected) 400 else 300)
+                        .setDuration(if (isPositionSelected) 300 else 200)
                         .setInterpolator(if (isPositionSelected) DecelerateInterpolator() else AccelerateInterpolator())
                         .start()
                 }
@@ -95,7 +98,7 @@ class ImplementedLazyTabAdapter(
 
         private fun updateSelectedTabIndicator() {
             binding.apply {
-                if (tabLayout.selectedTabPosition == bindingAdapterPosition) {
+                if (lazyTabLayout.currentItem == bindingAdapterPosition) {
                     if (selectedView.scaleX == 1f) return
                     selectedView.clearAnimation()
                     selectedView.animate()
