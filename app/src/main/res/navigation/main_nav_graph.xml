@@ -40,9 +40,6 @@
         <action
                 android:id="@+id/action_fragmentAdmin_to_bsdfUserMoreOptions"
                 app:destination="@id/bsdfUserMoreOptions" />
-        <action
-                android:id="@+id/action_fragmentAdmin_to_bsdfChangeUserRole"
-                app:destination="@id/bsdfChangeUserRole" />
     </fragment>
 
     <fragment
@@ -168,6 +165,9 @@
         <argument
                 android:name="user"
                 app:argType="com.example.quizapp.model.databases.mongodb.documents.user.User" />
+        <action
+                android:id="@+id/action_bsdfUserMoreOptions_to_bsdfChangeUserRole"
+                app:destination="@id/bsdfChangeUserRole" />
 
     </dialog>
 

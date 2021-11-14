@@ -110,6 +110,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
                 vmQuiz.updateShuffleTypeSeed()
                 resetViewPager()
             }
+            btnQuestionType.onClick(vmContainer::onQuestionTypeInfoButtonClicked)
         }
     }
 
@@ -143,7 +144,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
             when (event) {
                 is SelectDifferentPage -> binding.viewPager.currentItem = event.newPosition
                 OnSubmitButtonClickedEvent -> navigator.navigateToQuizResultScreen()
-                ShowMoreOptionsPopUpMenu -> {
+                ShowMoreOptionsPopUpMenuEvent -> {
                     PopupMenu(requireContext(), binding.btnMoreOptions).apply {
                         inflate(R.menu.quiz_container_popup_menu)
                         setOnMenuItemClickListener(this@FragmentQuizQuestionsContainer)
@@ -165,8 +166,14 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
                     launch {
                         if (vmQuiz.shuffleType == event.shuffleType) return@launch
                         vmQuiz.onMenuItemOrderSelected(event.shuffleType)
+                        showSnackBar(R.string.shuffleTypeChanged, anchorView = binding.bottomView)
                         resetViewPager()
                     }
+                }
+                is ShowQuestionTypeInfoSnackBarEvent -> {
+                    val textRes = if (vpaAdapter.createFragment(binding.viewPager.currentItem).isMultipleChoice) R.string.multipleChoiceQuestionInfo
+                    else R.string.singleChoiceQuestionInfo
+                    showSnackBar(textRes, anchorView = binding.bottomView)
                 }
             }
         }

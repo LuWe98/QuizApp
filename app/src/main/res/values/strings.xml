@@ -168,16 +168,17 @@
     <string name="yourScore">YOUR SCORE</string>
     <string name="outOf">%1$s / %2$s</string>
     <string name="outOfAnswered">%1$s / %2$s answered</string>
+    <string name="multipleChoiceQuestionInfo">This question is multiple choice</string>
+    <string name="singleChoiceQuestionInfo">This question is single choice</string>
 
     <string name="shuffleType">Shuffle Type</string>
     <string name="shuffleTypeSelection">Shuffle type selection</string>
-    <string name="shuffledQuestions">Shuffled questions</string>
-    <string name="shuffledAnswers">Shuffled answers</string>
-    <string name="shuffledQuestionsAndAnswers">Shuffled questions and answers</string>
     <string name="shuffleTypeNone">None</string>
     <string name="shuffleTypeQuestions">Questions</string>
     <string name="shuffleTypeAnswers">Answers</string>
-    <string name="shuffleTypeQuestionsAndAnswers">Q &amp; A</string>
+    <string name="shuffleTypeQuestionsAndAnswersAbbr">Q &amp; A</string>
+    <string name="shuffleTypeQuestionsAndAnswers">Questions and answers</string>
+    <string name="shuffleTypeChanged">Shuffle type changed</string>
 
     <!-- Strings for voice Search functionality -->
     <string name="voiceSearchStartTalking">Sprechen Sie los…</string>

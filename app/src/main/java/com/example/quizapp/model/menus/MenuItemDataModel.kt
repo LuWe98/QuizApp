@@ -155,17 +155,17 @@ MenuItem(
         MenuItem(
             id = QuestionnaireShuffleType.SHUFFLED_QUESTIONS.ordinal,
             iconRes = R.drawable.ic_shuffle_new,
-            titleRes = R.string.shuffledQuestions
+            titleRes = R.string.shuffleTypeQuestions
         ),
         MenuItem(
             id = QuestionnaireShuffleType.SHUFFLED_ANSWERS.ordinal,
             iconRes = R.drawable.ic_shuffle_new,
-            titleRes = R.string.shuffledAnswers
+            titleRes = R.string.shuffleTypeAnswers
         ),
         MenuItem(
             id = QuestionnaireShuffleType.SHUFFLED_QUESTIONS_AND_ANSWERS.ordinal,
             iconRes = R.drawable.ic_shuffle_new,
-            titleRes = R.string.shuffledQuestionsAndAnswers
+            titleRes = R.string.shuffleTypeQuestionsAndAnswers
         ),
     )
 }

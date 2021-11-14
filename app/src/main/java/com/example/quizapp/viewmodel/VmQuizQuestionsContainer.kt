@@ -37,7 +37,7 @@ class VmQuizQuestionsContainer @Inject constructor(
 
     fun onMoreOptionsClicked() {
         launch(IO) {
-            fragmentEventChannel.send(ShowMoreOptionsPopUpMenu)
+            fragmentEventChannel.send(ShowMoreOptionsPopUpMenuEvent)
         }
     }
 
@@ -50,6 +50,12 @@ class VmQuizQuestionsContainer @Inject constructor(
             launch(IO) {
                 fragmentEventChannel.send(OnSubmitButtonClickedEvent)
             }
+        }
+    }
+
+    fun onQuestionTypeInfoButtonClicked() {
+        launch(IO)  {
+            fragmentEventChannel.send(ShowQuestionTypeInfoSnackBarEvent)
         }
     }
 
@@ -74,9 +80,10 @@ class VmQuizQuestionsContainer @Inject constructor(
     sealed class FragmentQuizContainerEvent {
         data class SelectDifferentPage(val newPosition: Int) : FragmentQuizContainerEvent()
         class ShowUndoDeleteGivenAnswersSnackBack(val lastAnswerValues: List<Answer>) : FragmentQuizContainerEvent()
-        object ShowMoreOptionsPopUpMenu : FragmentQuizContainerEvent()
+        object ShowMoreOptionsPopUpMenuEvent : FragmentQuizContainerEvent()
         object OnSubmitButtonClickedEvent : FragmentQuizContainerEvent()
         class MenuItemOrderSelectedEvent(val shuffleType: QuestionnaireShuffleType) : FragmentQuizContainerEvent()
+        object ShowQuestionTypeInfoSnackBarEvent: FragmentQuizContainerEvent()
     }
 
     companion object {

@@ -15,6 +15,7 @@ import com.example.quizapp.model.databases.room.entities.questionnaire.Questionn
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaireDirections
+import com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptionsDirections
 import com.example.quizapp.view.fragments.adminscreen.FragmentAdminDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
@@ -118,8 +119,8 @@ class Navigator @Inject constructor(
     }
 
     fun navigateToChangeUserRoleDialog(user: User){
-        popBackStack()
-        navController.navigate(FragmentAdminDirections.actionFragmentAdminToBsdfChangeUserRole(user))
+        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentAdmin, false).build()
+        navController.navigate(BsdfUserMoreOptionsDirections.actionBsdfUserMoreOptionsToBsdfChangeUserRole(user), navOptions)
     }
 
     fun navigateToShareQuestionnaireDialog(questionnaireId: String) {

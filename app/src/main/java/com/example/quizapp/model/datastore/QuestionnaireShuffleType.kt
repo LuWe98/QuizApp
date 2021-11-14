@@ -7,5 +7,5 @@ enum class QuestionnaireShuffleType(@StringRes val textRes: Int ) {
     NONE(R.string.shuffleTypeNone),
     SHUFFLED_QUESTIONS(R.string.shuffleTypeQuestions),
     SHUFFLED_ANSWERS(R.string.shuffleTypeAnswers),
-    SHUFFLED_QUESTIONS_AND_ANSWERS(R.string.shuffleTypeQuestionsAndAnswers)
+    SHUFFLED_QUESTIONS_AND_ANSWERS(R.string.shuffleTypeQuestionsAndAnswersAbbr)
 }

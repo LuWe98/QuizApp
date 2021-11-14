@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -15,7 +14,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmMain
 import com.example.quizapp.viewmodel.VmMain.MainViewModelEvent.NavigateToLoginScreenEvent
@@ -29,13 +27,6 @@ import kotlin.math.min
 //TODO -> SETTINGS ÜBERARBEITEN MIT CUSTOM VIEWS STATT RECYCLERVIEW !!
 //TODO ---> CHANGE USERNAME AND PASSWORD IMPLEMENTIEREN
 //TODO -> SHARE QUESTIONNAIRE VLLT MIT LISTE IN EINEM FRAGEBOGEN ÜBERARBEITEN, in der Liste stehen alle User mit denen der geteilt wurde, man kann den dann auch bearbeiten
-//TODO -> Faculty, CourseOfStudies und Subject implementieren | Als ein embedded Document in dem Questionnaire
-//TODO ---> Verknüpfung von Faculty, courseOfStudies und Subject
-//TODO ----> Faculty hat ne liste von CourseOfStudies und das wiederrum ne liste von Subjects ?
-//TODO ----> Oder einfach über ID verknüfen, aber als eine Liste von IDS, dass ein Fach z.B. in WIB und WNB sein kann
-//TODO -> Kennzeichnung bei eigenen Fragebögen ob der public ist oder private
-//TODO -> Schauen wie Faculty, COS und Subject modellieren
-//TODO -> Subjects können zu mehreren COS gehören
 //TODO -> COS können zu genau einer Faculty gehören!
 
 @AndroidEntryPoint
@@ -79,11 +70,10 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             }
 
             addCard.onClick {
-//                navigator.navigateToBackdropFragment()
-//                navigator.navigateToAddQuestionnaireScreen()
+                //navigator.navigateToBackdropFragment()
+                navigator.navigateToAddQuestionnaireScreen()
 //                navigator.navigateToFacultyTest()
-
-                navigator.navigateToQuizOverviewNew()
+//                navigator.navigateToQuizOverviewNew()
             }
         }
     }
@@ -165,12 +155,6 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             }
         })
     }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        //TODO -> When Destination is Quiz Result, dann zu Overview zurück navigieren
-    }
-
 
     private fun registerObservers() {
         vmMain.userFlow.collectWhenStarted(this) {
