@@ -14,14 +14,14 @@ class RvaAnswerQuiz(
     private val isShowSolutionScreen: Boolean
 ) : BindingListAdapter<Answer, RviAnswerQuizBinding>(Answer.DIFF_CALLBACK) {
 
-    var onItemClick: ((String, List<Answer>) -> (Unit))? = null
+    var onItemClick: ((String) -> (Unit))? = null
 
     override fun initListeners(binding: RviAnswerQuizBinding, vh: BindingListAdapterViewHolder) {
         if(isShowSolutionScreen) return
 
         binding.root.setOnClickListener {
             getItem(vh).let { answer ->
-                onItemClick?.invoke(answer.id, currentList)
+                onItemClick?.invoke(answer.id)
             }
         }
     }
@@ -36,13 +36,10 @@ class RvaAnswerQuiz(
             }
 
             if (vmQuiz.shouldDisplaySolution || isShowSolutionScreen) {
-                //tvAnswerText.isEnabled = item.isAnswerCorrect
-                //tvAnswerText.setTextColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
                 tvAnswerText.setTextColor(if (item.isAnswerCorrect) getColor(R.color.green) else getThemeColor(R.attr.colorControlNormal))
                 ivSelectedIcon.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
                 ivRing.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
             } else {
-                tvAnswerText.isEnabled = true
                 tvAnswerText.setTextColor(getThemeColor(R.attr.colorControlNormal))
                 ivSelectedIcon.setDrawableTint(getThemeColor(R.attr.colorAccent))
                 ivRing.setDrawableTint(if (item.isAnswerSelected) getThemeColor(R.attr.colorAccent) else getColor(R.color.unselectedColor))

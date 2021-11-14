@@ -1,10 +1,8 @@
 package com.example.quizapp.utils
 
 import com.example.quizapp.model.databases.DataMapper
-import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.sync.LocallyAnsweredQuestionnaire
-import com.example.quizapp.model.databases.room.entities.sync.LocallyClearedQuestionnaire
+import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedUser
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
@@ -86,7 +84,7 @@ class BackendSyncer @Inject constructor(
         }
     }
 
-    //TODO -> Subject Einträge kommen von der online Datenbank und werden hier eingetragen
+    //TODO -> Subjects sind nur Strings, also irrelevant hier
     private suspend fun syncSubject() = withContext(IO) {
 
     }
@@ -95,15 +93,6 @@ class BackendSyncer @Inject constructor(
     //TODO -> Die müssen auch ignoriert werden beim runterladen von den Antworten
     //TODO -> IGNORE bei finden von den MongoFilledQuestionnaires
     //val locallyDeletedFilledQuestionnaireIds = localRepository.getLocallyDeletedFilledQuestionnaireIds()
-
-    //TODO -> Upload von unsynced Questionnaires erst nachdem die online abgecheckt wurden um zu schauen, welche es online nicht mehr gibt
-
-    //    val uploadUnsyncedQuestionnairesAsync = async {
-    //      uploadUnsyncedQuestionnaires {
-    //          unsyncedQuestionnaireIdsAsync.await()
-    //      }
-    //    }
-    //    uploadUnsyncedQuestionnairesAsync.await()
     suspend fun synAllQuestionnaireData() = withContext(IO) {
         localRepository.unsyncAllSyncingQuestionnaires()
 
@@ -128,10 +117,6 @@ class BackendSyncer @Inject constructor(
             }
         }
 
-        val locallyDeletedFilledAsync = async {
-            syncLocallyClearedQuestionnaires()
-        }
-
         val locallyAnsweredAsync = async {
             syncLocallyAnsweredQuestionnaires {
                 unsyncedQuestionnaireIdsAsync.await()
@@ -140,7 +125,6 @@ class BackendSyncer @Inject constructor(
 
         syncQuestionnairesAsync.await()
         locallyDeletedAsync.await()
-        locallyDeletedFilledAsync.await()
         locallyAnsweredAsync.await()
     }
 
@@ -209,6 +193,31 @@ class BackendSyncer @Inject constructor(
         .onEach { it.syncStatus = SyncStatus.UNSYNCED }
 
 
+    //TODO -> BULK INSERT/UPDATE OF ALL LOCALLY UNSYNCED QUESTIONNAIRES ONLINE
+    //TODO -> Should only upload own Questionnaires
+    private suspend fun uploadUnsyncedQuestionnaires(
+        unsyncedQuestionnaireIdsProvider: suspend (() -> List<String>) = { localRepository.findAllNonSyncedQuestionnaireIds() }
+    ) = withContext(IO) {
+        unsyncedQuestionnaireIdsProvider().let { unsyncedQuestionnaireIds ->
+            if (unsyncedQuestionnaireIds.isEmpty()) return@withContext
+
+            val userId = preferencesRepository.getUserId()
+
+            runCatching {
+                localRepository.findCompleteQuestionnairesWith(unsyncedQuestionnaireIds, userId).map(DataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
+                    backendRepository.insertQuestionnaires(it)
+                }
+            }.onSuccess { response ->
+                if (response.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) {
+                    localRepository.setStatusToSynced(unsyncedQuestionnaireIds)
+                }
+            }
+        }
+    }
+
+
+
+
     /**
      * Sync of locally deleted Questionnaires, so that they will be deleted online
      */
@@ -225,45 +234,26 @@ class BackendSyncer @Inject constructor(
         }
     }
 
-    private suspend fun deleteCreatedQuestionnaires(created: List<LocallyDeletedQuestionnaire>) {
-        if (created.isEmpty()) return
+    private suspend fun deleteCreatedQuestionnaires(createdQuestionnaires: List<LocallyDeletedQuestionnaire>) {
+        if (createdQuestionnaires.isEmpty()) return
 
         runCatching {
-            backendRepository.deleteQuestionnaire(created.map(LocallyDeletedQuestionnaire::questionnaireId))
+            backendRepository.deleteQuestionnaire(createdQuestionnaires.map(LocallyDeletedQuestionnaire::questionnaireId))
         }.onSuccess { response ->
             if (response.responseType == DeleteQuestionnaireResponseType.SUCCESSFUL) {
-                localRepository.delete(created)
+                localRepository.delete(createdQuestionnaires)
             }
         }
     }
 
-    private suspend fun deleteCachedQuestionnaires(cached: List<LocallyDeletedQuestionnaire>) {
-        if (cached.isEmpty()) return
+    private suspend fun deleteCachedQuestionnaires(cachedQuestionnaires: List<LocallyDeletedQuestionnaire>) {
+        if (cachedQuestionnaires.isEmpty()) return
 
         runCatching {
-            backendRepository.deleteFilledQuestionnaire(cached.map(LocallyDeletedQuestionnaire::questionnaireId))
+            backendRepository.deleteFilledQuestionnaire(cachedQuestionnaires.map(LocallyDeletedQuestionnaire::questionnaireId))
         }.onSuccess { response ->
             if (response.responseType == SUCCESSFUL) {
-                localRepository.delete(cached)
-            }
-        }
-    }
-
-
-    /**
-     * Sync of locally deleted Answers of Questionnaires, so that they will be deleted online
-     * The Questionnaire itself is still there but the given answers list should be emptied
-     */
-    private suspend fun syncLocallyClearedQuestionnaires() = withContext(IO) {
-        localRepository.getAllLocallyClearedQuestionnaires().let { emptyFilledQuestionnaires ->
-            if (emptyFilledQuestionnaires.isEmpty()) return@withContext
-
-            runCatching {
-                backendRepository.insertFilledQuestionnaires(emptyFilledQuestionnaires)
-            }.onSuccess { response ->
-                if (response.responseType == InsertFilledQuestionnairesResponseType.SUCCESSFUL) {
-                    localRepository.delete(emptyFilledQuestionnaires.map { LocallyClearedQuestionnaire(it.questionnaireId) })
-                }
+                localRepository.delete(cachedQuestionnaires)
             }
         }
     }
@@ -285,33 +275,11 @@ class BackendSyncer @Inject constructor(
                 backendRepository.insertFilledQuestionnaires(filledQuestionnaires)
             }.onSuccess { response ->
                 if (response.responseType == InsertFilledQuestionnairesResponseType.SUCCESSFUL) {
-
+                    localRepository.delete(filledQuestionnaires.map { LocallyFilledQuestionnaireToUpload(it.questionnaireId) })
                     //TODO -> Noch nicht sicher ob das so gemacht werden muss oder nicht
-                    (filledQuestionnaires.map(MongoFilledQuestionnaire::questionnaireId) - response.notInsertedQuestionnaireIds).map { LocallyAnsweredQuestionnaire(it) }.let {
-                        localRepository.delete(it)
-                    }
-                }
-            }
-        }
-    }
-
-    //TODO -> BULK INSERT/UPDATE OF ALL LOCALLY UNSYNCED QUESTIONNAIRES ONLINE
-    //TODO -> Should only upload own Questionnaires
-    private suspend fun uploadUnsyncedQuestionnaires(
-        unsyncedQuestionnaireIdsProvider: suspend (() -> List<String>) = { localRepository.findAllNonSyncedQuestionnaireIds() }
-    ) = withContext(IO) {
-        unsyncedQuestionnaireIdsProvider().let { unsyncedQuestionnaireIds ->
-            if (unsyncedQuestionnaireIds.isEmpty()) return@withContext
-
-            val userId = preferencesRepository.getUserId()
-
-            runCatching {
-                localRepository.findCompleteQuestionnairesWith(unsyncedQuestionnaireIds, userId).map(DataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
-                    backendRepository.insertQuestionnaires(it)
-                }
-            }.onSuccess { response ->
-                if (response.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) {
-                    localRepository.setStatusToSynced(unsyncedQuestionnaireIds)
+                    //(filledQuestionnaires.map(MongoFilledQuestionnaire::questionnaireId) - response.notInsertedQuestionnaireIds).map { LocallyFilledQuestionnaireToUpload(it) }.let {
+                    //  localRepository.delete(it)
+                    //}
                 }
             }
         }

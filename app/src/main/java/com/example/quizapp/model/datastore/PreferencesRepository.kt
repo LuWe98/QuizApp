@@ -29,6 +29,7 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
         private val JWT_TOKEN_KEY = stringPreferencesKey("jwtTokenKey")
         private val THEME_KEY = intPreferencesKey("themeKey")
+        private val SHUFFLE_TYPE_KEY = stringPreferencesKey("shuffleTypePreference")
         private val USER_ID_KEY = stringPreferencesKey("userIdKey")
         private val USER_NAME_KEY = stringPreferencesKey("userNameKey")
         private val USER_PASSWORD_KEY = stringPreferencesKey("userPasswordKey")
@@ -55,7 +56,7 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
 
     val themeFlow = dataFlow.map { preferences ->
-        preferences[THEME_KEY] ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        preferences[THEME_KEY] ?: AppCompatDelegate.MODE_NIGHT_NO
     }
 
     suspend fun getTheme(): Int = themeFlow.first()
@@ -79,6 +80,20 @@ class PreferencesRepository @Inject constructor(context: Context) {
             preferences[LANGUAGE_KEY] = quizAppLanguage.name
         }
     }
+
+    val shuffleTypeFlow = dataFlow.map { preferences ->
+        preferences[SHUFFLE_TYPE_KEY]?.let { QuestionnaireShuffleType.valueOf(it) } ?: QuestionnaireShuffleType.NOT_SHUFFLED
+    }
+
+    suspend fun getShuffleType() : QuestionnaireShuffleType = shuffleTypeFlow.first()
+
+    suspend fun updateShuffleType(shuffleType: QuestionnaireShuffleType) {
+        dataStore.edit { preferences ->
+            preferences[SHUFFLE_TYPE_KEY] = shuffleType.name
+        }
+    }
+
+
 
 
     private val jwtTokenFlow = dataFlow.map { preferences ->

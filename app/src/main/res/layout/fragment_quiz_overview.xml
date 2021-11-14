@@ -137,9 +137,9 @@
                         android:id="@+id/tvQuestionsAnswered"
                         tools:text="90"
                         android:gravity="center"
-                        android:fontFamily="@font/work_sans_bold"
+                        android:fontFamily="@font/work_sans_medium"
+                        android:letterSpacing="0.025"
                         android:textSize="30sp"
-                        android:textColor="@color/black"
                         app:layout_constraintTop_toTopOf="@+id/progress"
                         app:layout_constraintStart_toStartOf="@id/progress"
                         app:layout_constraintEnd_toEndOf="@id/progress"
@@ -154,7 +154,6 @@
                         android:maxLines="1"
                         android:fontFamily="@font/work_sans_bold"
                         android:textSize="13sp"
-                        android:textColor="@color/black"
                         app:layout_constraintTop_toTopOf="@+id/tvQuestionsAnswered"
                         app:layout_constraintStart_toEndOf="@+id/tvQuestionsAnswered" />
 

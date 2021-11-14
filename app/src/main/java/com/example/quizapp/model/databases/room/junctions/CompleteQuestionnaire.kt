@@ -47,7 +47,7 @@ data class CompleteQuestionnaire(
 
     fun isQuestionAnswered(questionId: String): Boolean = getQuestionWithAnswers(questionId).isAnswered
 
-    fun isQuestionAnsweredCorrectly(questionId: String) : Boolean = getQuestionWithAnswers(questionId).isAnsweredCorrectly
+    fun isQuestionAnsweredCorrectly(questionId: String): Boolean = getQuestionWithAnswers(questionId).isAnsweredCorrectly
 
     fun getAnswersForQuestion(questionId: String): List<Answer> = getQuestionWithAnswers(questionId).answers
 
@@ -80,13 +80,12 @@ data class CompleteQuestionnaire(
         val correctQuestionsAmount: Int
     ) {
         val incorrectQuestionsAmount = answeredQuestionsAmount - correctQuestionsAmount
-
-        val answeredQuestionsPercentage = (answeredQuestionsAmount * 100f / questionsAmount).toInt()
-        val correctQuestionsPercentage = (correctQuestionsAmount * 100f / questionsAmount).toInt()
-        val incorrectQuestionsPercentage = (incorrectQuestionsAmount * 100f / questionsAmount).toInt()
         val areAllQuestionsCorrectlyAnswered = questionsAmount == correctQuestionsAmount
         val areAllQuestionsAnswered = questionsAmount == answeredQuestionsAmount
 
+        val answeredQuestionsPercentage = (answeredQuestionsAmount * 100f / questionsAmount).toInt()
+        val correctQuestionsPercentage = (correctQuestionsAmount * 100f / questionsAmount).toInt()
+        val incorrectQuestionsPercentage = if (answeredQuestionsPercentage == 100) 100 - correctQuestionsPercentage else (incorrectQuestionsAmount * 100f / questionsAmount).toInt()
         val incorrectQuestionsPercentageDiff get() = 100 - correctQuestionsPercentage
     }
 }

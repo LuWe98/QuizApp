@@ -1,6 +1,5 @@
 package com.example.quizapp.view.fragments.quizscreen
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -15,6 +14,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizOverviewBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
+import com.example.quizapp.model.datastore.QuestionnaireShuffleType.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionQuiz
 import com.example.quizapp.viewmodel.VmQuiz
@@ -25,7 +25,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import kotlin.math.pow
 
-@SuppressLint("SetTextI18n")
 @AndroidEntryPoint
 class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), PopupMenu.OnMenuItemClickListener {
 
@@ -33,6 +32,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
     private lateinit var rvAdapter: RvaQuestionQuiz
     private lateinit var bottomSheetBehaviour: BottomSheetBehavior<FrameLayout>
+    private lateinit var bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,12 +69,10 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             state = BottomSheetBehavior.STATE_COLLAPSED
             peekHeight = 70.dp
             skipCollapsed = true
-            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {}
                 override fun onSlide(sheet: View, slideOffset: Float) {
                     binding.bottomSheet.apply {
-//                        root.setPadding(0, (4.dp * (1 - slideOffset)).toInt(), 0, 0)
-
                         coordRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                             height = (((resources.displayMetrics.heightPixels - bottomSheetHeaderHeight) * slideOffset) + bottomSheetHeaderHeight).toInt()
                         }
@@ -86,11 +84,10 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                             btnStart.elevation = newElevation
                         }
 
-                        btnStart.updateLayoutParams<ViewGroup.MarginLayoutParams>{
-                            bottomMargin = btnStartDefaultMarginBottom + (btnMargin * slideOffset).toInt()
-                        }
-
                         btnStart.apply {
+                            updateLayoutParams<ViewGroup.MarginLayoutParams>{
+                                bottomMargin = btnStartDefaultMarginBottom + (btnMargin * slideOffset).toInt()
+                            }
                             scaleX = 1 + slideOffset / 3.5f
                             scaleY = 1 + slideOffset / 3.5f
                         }
@@ -98,7 +95,9 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                         btnCollapse.rotation = 180 + slideOffset * 180
                     }
                 }
-            })
+            }
+
+            addBottomSheetCallback(bottomSheetCallback)
         }
     }
 
@@ -113,7 +112,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
     private fun initClickListener() {
         binding.apply {
             btnBack.onClick(navigator::popBackStack)
-            bottomSheet.btnStart.onClick(vmQuiz::onFabClicked)
+            bottomSheet.btnStart.onClick(vmQuiz::onStartButtonClicked)
             btnMoreOptions.onClick(vmQuiz::onMoreOptionsItemClicked)
             bottomSheet.sheetHeader.onClick(this@FragmentQuizOverview::toggleBottomSheet)
             bottomSheet.btnCollapse.onClick(this@FragmentQuizOverview::toggleBottomSheet)
@@ -199,7 +198,12 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                     PopupMenu(requireContext(), binding.btnMoreOptions).apply {
                         inflate(R.menu.quiz_popup_menu)
                         setOnMenuItemClickListener(this@FragmentQuizOverview)
-                        //menu.findItem(R.id.menu_item_show_solutions).isChecked = vmQuiz.shouldDisplaySolution
+                        menu.apply {
+                            findItem(R.id.menu_item_quiz_order_regular).isChecked = vmQuiz.shuffleType == NOT_SHUFFLED
+                            findItem(R.id.menu_item_quiz_order_shuffle_questions).isChecked = vmQuiz.shuffleType == SHUFFLED_QUESTIONS
+                            findItem(R.id.menu_item_quiz_order_shuffle_answers).isChecked = vmQuiz.shuffleType == SHUFFLED_ANSWERS
+                            findItem(R.id.menu_item_quiz_order_shuffle_questions_and_answers).isChecked = vmQuiz.shuffleType == SHUFFLED_QUESTIONS_AND_ANSWERS
+                        }
                         show()
                     }
                 }
@@ -232,12 +236,34 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
     override fun onMenuItemClick(item: MenuItem?) = item?.let {
         when (item.itemId) {
-            R.id.menu_item_delete_given_answers -> vmQuiz.onMenuItemClearGivenAnswersClicked()
-            R.id.menu_item_show_solutions -> vmQuiz.onMenuItemShowSolutionClicked()
-            R.id.menu_item_shuffle_questions -> vmQuiz.onMenuItemShuffleClicked()
-            else -> return@let false
+            R.id.menu_item_quiz_delete_given_answers -> vmQuiz.onMenuItemClearGivenAnswersClicked()
+            R.id.menu_item_quiz_show_solutions -> vmQuiz.onMenuItemShowSolutionClicked()
+            R.id.menu_item_quiz_order_regular -> {
+                launch {
+                    vmQuiz.onMenuItemOrderSelected(NOT_SHUFFLED)
+                }
+            }
+            R.id.menu_item_quiz_order_shuffle_questions -> {
+                launch {
+                    vmQuiz.onMenuItemOrderSelected(SHUFFLED_QUESTIONS)
+                }
+            }
+            R.id.menu_item_quiz_order_shuffle_answers -> {
+                launch {
+                    vmQuiz.onMenuItemOrderSelected(SHUFFLED_ANSWERS)
+                }
+            }
+            R.id.menu_item_quiz_order_shuffle_questions_and_answers -> {
+                launch {
+                    vmQuiz.onMenuItemOrderSelected(SHUFFLED_QUESTIONS_AND_ANSWERS)
+                }
+            }
         }
         true
     } ?: false
 
+    override fun onDestroyView() {
+        bottomSheetBehaviour.removeBottomSheetCallback(bottomSheetCallback)
+        super.onDestroyView()
+    }
 }

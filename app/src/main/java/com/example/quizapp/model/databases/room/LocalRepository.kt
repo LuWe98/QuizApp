@@ -31,8 +31,7 @@ class LocalRepository @Inject constructor(
     private val subjectDao: SubjectDao,
     private val facultyCourseOfStudiesRelationDao: FacultyCourseOfStudiesRelationDao,
     private val locallyDeletedQuestionnaireDao: LocallyDeletedQuestionnaireDao,
-    private val locallyClearedQuestionnaireDao: LocallyClearedQuestionnaireDao,
-    private val locallyAnsweredQuestionnaireDao: LocallyAnsweredQuestionnaireDao,
+    private val locallyFilledQuestionnaireToUploadDao: LocallyFilledQuestionnaireToUploadDao,
     private val locallyDeletedUserDao: LocallyDeletedUserDao
 ) {
 
@@ -59,8 +58,7 @@ class LocalRepository @Inject constructor(
         Subject::class -> subjectDao
         FacultyCourseOfStudiesRelation::class -> facultyCourseOfStudiesRelationDao
         LocallyDeletedQuestionnaire::class -> locallyDeletedQuestionnaireDao
-        LocallyClearedQuestionnaire::class -> locallyClearedQuestionnaireDao
-        LocallyAnsweredQuestionnaire::class -> locallyAnsweredQuestionnaireDao
+        LocallyFilledQuestionnaireToUpload::class -> locallyFilledQuestionnaireToUploadDao
         LocallyDeletedUser::class -> locallyDeletedUserDao
         else -> throw IllegalArgumentException("Entity DAO could not be found! Did you add it to the 'getBaseDaoWith' - Method?")
     } as BaseDao<T>)
@@ -68,8 +66,7 @@ class LocalRepository @Inject constructor(
 
     suspend fun deleteAllUserData() {
         questionnaireDao.deleteAll()
-        locallyAnsweredQuestionnaireDao.deleteAll()
-        locallyClearedQuestionnaireDao.deleteAll()
+        locallyFilledQuestionnaireToUploadDao.deleteAll()
         locallyDeletedQuestionnaireDao.deleteAll()
         locallyDeletedUserDao.deleteAll()
     }
@@ -158,44 +155,26 @@ class LocalRepository @Inject constructor(
     suspend fun deleteLocallyDeletedQuestionnaireWith(questionnaireId: String) =
         locallyDeletedQuestionnaireDao.deleteLocallyDeletedQuestionnaireWith(questionnaireId)
 
-    //LOCALLY DELETED FILLED QUESTIONNAIRE
-
-    suspend fun getAllLocallyClearedQuestionnaires(): List<MongoFilledQuestionnaire> {
-        val locallyClearedQuestionnaireIds = locallyClearedQuestionnaireDao.getLocallyDeletedFilledQuestionnaireIds()
-
-        locallyClearedQuestionnaireIds.map(LocallyClearedQuestionnaire::questionnaireId).let { locallyDeleted ->
-            if (locallyDeleted.isEmpty()) return emptyList()
-
-            val foundCompleteQuestionnaires = findCompleteQuestionnairesWith(locallyDeleted)
-            val deletedQuestionnaireIds = locallyDeleted - foundCompleteQuestionnaires.map { it.questionnaire.id }
-            if (deletedQuestionnaireIds.isNotEmpty()) {
-                locallyClearedQuestionnaireDao.deleteLocallyDeletedFilledQuestionnairesWith(deletedQuestionnaireIds)
-            }
-
-            return foundCompleteQuestionnaires.map(DataMapper::mapRoomQuestionnaireToEmptyMongoFilledMongoEntity)
-        }
-    }
-
     //LOCALLY ANSWERED QUESTIONNAIRES
     suspend fun getAllLocallyAnsweredFilledQuestionnaires(): List<MongoFilledQuestionnaire> {
-        val locallyAnsweredQuestionnaireIds = locallyAnsweredQuestionnaireDao.getLocallyAnsweredQuestionnaireIds()
+        val locallyAnsweredQuestionnaireIds = locallyFilledQuestionnaireToUploadDao.getLocallyAnsweredQuestionnaireIds()
 
-        locallyAnsweredQuestionnaireIds.map(LocallyAnsweredQuestionnaire::questionnaireId).let { locallyAnswered ->
+        locallyAnsweredQuestionnaireIds.map(LocallyFilledQuestionnaireToUpload::questionnaireId).let { locallyAnswered ->
             if (locallyAnswered.isEmpty()) return emptyList()
 
             val foundCompleteQuestionnaires = findCompleteQuestionnairesWith(locallyAnswered)
             val deletedQuestionnaireIds = locallyAnswered - foundCompleteQuestionnaires.map { it.questionnaire.id }
             if (deletedQuestionnaireIds.isNotEmpty()) {
-                locallyAnsweredQuestionnaireDao.deleteLocallyAnsweredQuestionnaireWith(deletedQuestionnaireIds)
+                locallyFilledQuestionnaireToUploadDao.deleteLocallyAnsweredQuestionnaireWith(deletedQuestionnaireIds)
             }
 
             return foundCompleteQuestionnaires.map(DataMapper::mapRoomQuestionnaireToMongoFilledQuestionnaire)
         }
     }
 
-    suspend fun isAnsweredQuestionnairePresent(questionnaireId: String) = locallyAnsweredQuestionnaireDao.isAnsweredQuestionnairePresent(questionnaireId) == 1
+    suspend fun isAnsweredQuestionnairePresent(questionnaireId: String) = locallyFilledQuestionnaireToUploadDao.isAnsweredQuestionnairePresent(questionnaireId) == 1
 
-    suspend fun getLocallyAnsweredQuestionnaire(questionnaireId: String) = locallyAnsweredQuestionnaireDao.getLocallyAnsweredQuestionnaire(questionnaireId)
+    suspend fun getLocallyAnsweredQuestionnaire(questionnaireId: String) = locallyFilledQuestionnaireToUploadDao.getLocallyAnsweredQuestionnaire(questionnaireId)
 
     //LOCALLY DELETED USERS
     suspend fun getAllLocallyDeletedUserIds() = locallyDeletedUserDao.getAllLocallyDeletedUserIds()

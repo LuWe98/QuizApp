@@ -4,10 +4,29 @@
     <item
             android:id="@+id/menu_item_quiz_container_delete_given_answers"
             android:title="@string/deleteGivenAnswers"
-            android:icon="@drawable/ic_delete"/>
+            android:icon="@drawable/ic_delete" />
     <item
-            android:id="@+id/menu_item_quiz_container_shuffle_questions"
-            android:title="@string/shuffleQuestions"
-            android:icon="@drawable/ic_shuffle"/>
+            android:id="@+id/menu_item_quiz_container_order_by"
+            android:title="@string/questionsAnsAnswersOrdering"
+            android:icon="@drawable/ic_shuffle">
+        <menu>
+            <item
+                    android:id="@+id/menu_item_quiz_container_order_regular"
+                    android:title="@string/regularOrder"
+                    android:checkable="true"/>
+            <item
+                    android:id="@+id/menu_item_quiz_container_order_shuffle_questions"
+                    android:title="@string/shuffledQuestions"
+                    android:checkable="true"/>
+            <item
+                    android:id="@+id/menu_item_quiz_container_order_shuffle_answers"
+                    android:title="@string/shuffledAnswers"
+                    android:checkable="true"/>
+            <item
+                    android:id="@+id/menu_item_quiz_container_order_shuffle_questions_and_answers"
+                    android:title="@string/shuffledQuestionsAndAnswers"
+                    android:checkable="true"/>
+        </menu>
+    </item>
 
 </menu>

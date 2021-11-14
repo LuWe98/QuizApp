@@ -42,7 +42,7 @@
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:id="@+id/ivQuestionType"
+                android:id="@+id/btnQuestionType"
                 app:srcCompat="@drawable/ic_radio_button"
                 android:layout_marginEnd="@dimen/grid_2"
                 android:background="@drawable/shape_circle"
@@ -55,6 +55,24 @@
                 app:layout_constraintTop_toTopOf="@+id/btnMoreOptions"
                 app:layout_constraintEnd_toStartOf="@+id/btnMoreOptions"
                 app:layout_constraintBottom_toBottomOf="@+id/btnMoreOptions" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/btnShuffle"
+                app:srcCompat="@drawable/ic_shuffle_new"
+                android:background="@drawable/shape_circle"
+                android:backgroundTint="?android:colorBackground"
+                android:padding="@dimen/grid_2"
+                android:layout_marginEnd="@dimen/grid_2"
+                android:scaleX="0"
+                android:scaleY="0"
+                tools:scaleX="1"
+                tools:scaleY="1"
+                app:layout_constraintTop_toTopOf="@+id/btnMoreOptions"
+                app:layout_constraintEnd_toStartOf="@+id/btnQuestionType"
+                app:layout_constraintBottom_toBottomOf="@+id/btnMoreOptions" />
+
 
         <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
@@ -85,6 +103,16 @@
                     app:tabPaddingStart="0dp"
                     app:tabUnboundedRipple="false" />
         </com.google.android.material.card.MaterialCardView>
+
+        <com.example.quizapp.view.customimplementations.lazytablayout.LazyTabLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:id="@+id/lazyTabLayout"
+                android:elevation="10dp"
+                android:layout_marginTop="@dimen/grid_4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnBack" />
 
         <View
                 android:layout_width="0dp"

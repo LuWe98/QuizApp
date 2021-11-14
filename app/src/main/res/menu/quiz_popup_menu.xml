@@ -2,15 +2,36 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-            android:id="@+id/menu_item_delete_given_answers"
+            android:id="@+id/menu_item_quiz_delete_given_answers"
             android:title="@string/deleteGivenAnswers"
             android:icon="@drawable/ic_delete"/>
+
     <item
-            android:id="@+id/menu_item_shuffle_questions"
-            android:title="@string/shuffleQuestions"
-            android:icon="@drawable/ic_shuffle"/>
+            android:id="@+id/menu_item_quiz_order_by"
+            android:title="@string/questionsAnsAnswersOrdering"
+            android:icon="@drawable/ic_shuffle">
+        <menu>
+            <item
+                    android:id="@+id/menu_item_quiz_order_regular"
+                    android:title="@string/regularOrder"
+                    android:checkable="true"/>
+            <item
+                    android:id="@+id/menu_item_quiz_order_shuffle_questions"
+                    android:title="@string/shuffledQuestions"
+                    android:checkable="true"/>
+            <item
+                    android:id="@+id/menu_item_quiz_order_shuffle_answers"
+                    android:title="@string/shuffledAnswers"
+                    android:checkable="true"/>
+            <item
+                    android:id="@+id/menu_item_quiz_order_shuffle_questions_and_answers"
+                    android:title="@string/shuffledQuestionsAndAnswers"
+                    android:checkable="true"/>
+        </menu>
+    </item>
+
     <item
-            android:id="@+id/menu_item_show_solutions"
+            android:id="@+id/menu_item_quiz_show_solutions"
             android:title="@string/showSolutions"
             android:icon="@drawable/ic_question_mark"/>
 

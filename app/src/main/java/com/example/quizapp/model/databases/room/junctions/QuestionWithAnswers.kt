@@ -29,6 +29,8 @@ data class QuestionWithAnswers(
 
     val selectedAnswerIds get() = answers.filter(Answer::isAnswerSelected).map(Answer::id)
 
+    val shuffleSeedAdjusted get() = question.questionPosition + answers.size
+
     companion object {
         val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<QuestionWithAnswers> { old, new -> old.question.id == new.question.id }
 

@@ -19,8 +19,7 @@ import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.QuestionnaireVisibility.PRIVATE
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.sync.LocallyAnsweredQuestionnaire
-import com.example.quizapp.model.databases.room.entities.sync.LocallyClearedQuestionnaire
+import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.utils.BackendSyncer
@@ -187,46 +186,33 @@ class VmHome @Inject constructor(
 
 
     // DELETE ANSWERS OF QUESTIONNAIRE
-    //TODO -> ONLINE LÖSCHEN MACHEN!
-    // WENN MAN OFFLINE IST UND ES ONLINE NICHT GELÖSCHT WERDEN KONNTE, WIRD ES in LocallyDeletedFilledQuestionnaire gespeichert
-    // UND DANN GELÖSCHT WENN MAN SYNCT
-    // WENN MAN WIEDER INET HAT UND VERUSUCHT DIE ANTWORTEN HOCHZULADEN, WIRD DAS LÖSCHEN IGNOERIERT und die LocallyDeletedFilledQuestionnaire GELÖSCHT
-    // ES WIRD SOMIT IM BACKEND INSERTED ABER NICHT GELÖSCHT!
-
-    //TODO -> WANN SOLLEN ANTWORTEN HOCHGELADEN WERDEN?
-    //TODO -> 1) WENN MAN IN DEM QUIZ SCREEN IST WIRD, sobald man eine Anwtort auswählt, die QuestionnaireId gespeichert.
-    //TODO -> Wenn man dann wieder in den HomeScreen kommt, werden die Antworten für diese Id Hochgeladen
-    //TODO -> Dafür wird eine eigene Entität genötigt, namens "LocallyGivenAnswersForQuestionnaire" oder so
-    //TODO -> Wenn man den Fragebogen löscht, wird auch die LocallyGivenAnswersForQuestionnaire ID Gelöscht und die LocallayDeletedFilledQuestionnaire
     fun deleteFilledQuestionnaire(questionnaireId: String) = launch(IO) {
         localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let { completeQuestionnaire ->
 
             //TODO -> Inserted, dass man den hier reingeldaden hat -> Man muss noch schauen ob die Id in LocallyAnsweredQuestionnaireIds is und wenn ja rauslöschen!
-            localRepository.insert(LocallyClearedQuestionnaire(completeQuestionnaire.questionnaire.id))
-            val locallyAnswered = localRepository.getLocallyAnsweredQuestionnaire(completeQuestionnaire.questionnaire.id)
-            locallyAnswered?.let { localRepository.delete(it) }
+            localRepository.insert(LocallyFilledQuestionnaireToUpload(completeQuestionnaire.questionnaire.id))
+//            val locallyAnswered = localRepository.getLocallyAnsweredQuestionnaire(completeQuestionnaire.questionnaire.id)
+//            locallyAnswered?.let { localRepository.delete(it) }
 
-            fragmentHomeEventChannel.send(ShowUndoDeleteAnswersOfQuestionnaireSnackBar(completeQuestionnaire, locallyAnswered))
-            completeQuestionnaire.allAnswers.map { it.copy(isAnswerSelected = false) }.also { localRepository.update(it) }
+            fragmentHomeEventChannel.send(ShowUndoDeleteAnswersOfQuestionnaireSnackBar(completeQuestionnaire))
+            completeQuestionnaire.allAnswers.map { it.copy(isAnswerSelected = false) }.let {
+                localRepository.update(it)
+            }
         }
     }
     //TODO -> Das ist der einzige kritische Punkt, da hier nur die antworten gelöscht werden, deswegen wird später der Fragebogen nicht automatisch rausgefiltert
-
     fun onDeleteFilledQuestionnaireConfirmed(event: ShowUndoDeleteAnswersOfQuestionnaireSnackBar) = launch(IO) {
         runCatching {
             backendRepository.insertFilledQuestionnaire(DataMapper.mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(event.completeQuestionnaire))
         }.onSuccess { response ->
             if (response.responseType != InsertFilledQuestionnaireResponseType.ERROR) {
-                localRepository.delete(LocallyClearedQuestionnaire(event.completeQuestionnaire.questionnaire.id))
+                localRepository.delete(LocallyFilledQuestionnaireToUpload(event.completeQuestionnaire.questionnaire.id))
             }
         }
     }
 
     fun onUndoDeleteFilledQuestionnaireClicked(event: ShowUndoDeleteAnswersOfQuestionnaireSnackBar) = launch(IO) {
-        localRepository.delete(LocallyClearedQuestionnaire(event.completeQuestionnaire.questionnaire.id))
         localRepository.update(event.completeQuestionnaire.allAnswers)
-        //TODO -> Wenn vorhanden, dann wird es wieder hier eingefügt, dass es neue antworten des Users gibt
-        event.locallyAnswered?.let { localRepository.insert(it) }
     }
 
 
@@ -258,11 +244,7 @@ class VmHome @Inject constructor(
         class ShowSnackBarMessageBar(val messageRes: Int) : FragmentHomeEvent()
         class ShowUndoDeleteCreatedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
         class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
-        class ShowUndoDeleteAnswersOfQuestionnaireSnackBar(
-            val completeQuestionnaire: CompleteQuestionnaire,
-            val locallyAnswered: LocallyAnsweredQuestionnaire?
-        ) : FragmentHomeEvent()
-
+        class ShowUndoDeleteAnswersOfQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
         class ChangeProgressVisibility(val visible: Boolean) : FragmentHomeEvent()
     }
 

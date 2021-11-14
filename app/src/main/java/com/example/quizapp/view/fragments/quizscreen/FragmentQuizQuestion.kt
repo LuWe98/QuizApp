@@ -4,15 +4,21 @@ import android.os.Bundle
 import android.view.View
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizQuestionBinding
-import com.example.quizapp.extensions.*
+import com.example.quizapp.extensions.collectWhenStarted
+import com.example.quizapp.extensions.disableChangeAnimation
+import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
-import com.example.quizapp.view.recyclerview.adapters.RvaAnswerQuiz
+import com.example.quizapp.model.datastore.QuestionnaireShuffleType.SHUFFLED_ANSWERS
+import com.example.quizapp.model.datastore.QuestionnaireShuffleType.SHUFFLED_QUESTIONS_AND_ANSWERS
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.recyclerview.adapters.RvaAnswerQuiz
 import com.example.quizapp.viewmodel.VmQuiz
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
 class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
@@ -29,9 +35,9 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
         }
     }
 
-    val questionId : String by lazy { arguments!!.getString(QUESTION_ID_KEY)!! }
+    val questionId : String by lazy { arguments?.getString(QUESTION_ID_KEY)!! }
 
-    val isMultipleChoice : Boolean by lazy { arguments!!.getBoolean(QUESTION_TYPE_KEY) }
+    val isMultipleChoice : Boolean by lazy { arguments?.getBoolean(QUESTION_TYPE_KEY)!! }
 
     private val vmQuiz : VmQuiz by hiltNavGraphViewModels(R.id.quiz_nav_graph)
 
@@ -47,8 +53,8 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
 
     private fun initRecyclerView(){
         rvaAdapter = RvaAnswerQuiz(vmQuiz, isMultipleChoice, vmContainer.isShowSolutionScreen).apply {
-            onItemClick = { selectedAnswerId, currentList ->
-                vmQuiz.onAnswerItemClicked(selectedAnswerId, currentList, isMultipleChoice)
+            onItemClick = { selectedAnswerId ->
+                vmQuiz.onAnswerItemClicked(selectedAnswerId, questionId)
             }
         }
 
@@ -63,7 +69,11 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
     private fun initObservers(){
         vmQuiz.getQuestionWithAnswersFlow(questionId).collectWhenStarted(viewLifecycleOwner) {
             binding.tvQuestion.text = it.question.questionText
-            rvaAdapter.submitList(it.answers)
+
+            when(vmQuiz.shuffleType){
+                SHUFFLED_ANSWERS, SHUFFLED_QUESTIONS_AND_ANSWERS -> it.answers.shuffled(Random(vmQuiz.shuffleTypeSeed / it.shuffleSeedAdjusted))
+                else -> it.answers
+            }.let(rvaAdapter::submitList)
         }
     }
 }

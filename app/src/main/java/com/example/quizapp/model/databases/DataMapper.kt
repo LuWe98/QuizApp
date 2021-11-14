@@ -129,7 +129,7 @@ object DataMapper {
         questionnaireId = questionnaire.id,
         userId = questionnaire.authorInfo.userId
     ).apply {
-        questions = questionsWithAnswers.filter { it.isAnswered }.map { qwa ->
+        questions = questionsWithAnswers.filter(QuestionWithAnswers::isAnswered).map { qwa ->
             qwa.question.let { question ->
                 MongoFilledQuestion(
                     questionId = question.questionnaireId
@@ -142,7 +142,7 @@ object DataMapper {
 
     fun mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(
         completeCompleteQuestionnaire: CompleteQuestionnaire
-    ) = completeCompleteQuestionnaire.run { mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(questionnaire) }
+    ) = mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(completeCompleteQuestionnaire.questionnaire)
 
     fun mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(
         questionnaire: Questionnaire

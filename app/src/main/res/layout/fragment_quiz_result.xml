@@ -12,89 +12,101 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/topLayout"
+                app:layout_constraintHeight_percent="0.4"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textview.MaterialTextView
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvResultHeader"
+                    android:text="@string/quizResult"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textSize="26sp"
+                    android:letterSpacing="0.2"
+                    android:fontFamily="@font/work_sans_medium"
+                    app:layout_constraintBottom_toTopOf="@+id/progressCorrect" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:layout_width="175dp"
+                    android:layout_height="175dp"
+                    android:id="@+id/progressCorrect"
+                    tools:progress="80"
+                    app:indicatorSize="175dp"
+                    app:indicatorColor="@color/green"
+                    app:trackColor="?android:colorBackground"
+                    app:trackThickness="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:layout_width="175dp"
+                    android:layout_height="175dp"
+                    android:id="@+id/progressIncorrect"
+                    tools:progress="20"
+                    app:indicatorSize="175dp"
+                    app:indicatorColor="@color/red"
+                    app:trackColor="@android:color/transparent"
+                    app:trackThickness="10dp"
+                    android:scaleX="-1"
+                    app:layout_constraintTop_toTopOf="@id/progressCorrect"
+                    app:layout_constraintStart_toStartOf="@id/progressCorrect"
+                    app:layout_constraintEnd_toEndOf="@id/progressCorrect"
+                    app:layout_constraintBottom_toBottomOf="@id/progressCorrect" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:id="@+id/ivResultIcon"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toTopOf="@id/progressCorrect"
+                    app:layout_constraintStart_toStartOf="@id/progressCorrect"
+                    app:layout_constraintEnd_toEndOf="@id/progressCorrect"
+                    app:layout_constraintBottom_toBottomOf="@id/progressCorrect"
+                    app:srcCompat="@drawable/ic_check"
+                    app:tint="@color/green" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvResultHeader"
-                android:text="@string/quizResult"
-                app:layout_constraintTop_toTopOf="parent"
-                android:gravity="center"
-                android:layout_marginTop="@dimen/grid_16"
-                android:textStyle="bold"
-                android:textSize="26sp"
-                android:letterSpacing="0.2"
-                android:fontFamily="@font/work_sans_medium" />
+                app:layout_constraintTop_toBottomOf="@id/topLayout"
+                android:paddingVertical="@dimen/grid_8"
+                android:id="@+id/middleLayout">
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvScoreHeader"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="@string/yourScore"
+                    android:fontFamily="@font/work_sans_regular"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.2"/>
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:layout_width="175dp"
-                android:layout_height="175dp"
-                android:id="@+id/progressCorrect"
-                tools:progress="80"
-                app:indicatorSize="175dp"
-                app:indicatorColor="@color/green"
-                app:trackColor="?android:colorBackground"
-                app:trackThickness="10dp"
-                android:layout_marginTop="@dimen/grid_16"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvResultHeader" />
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvScoreText"
+                    tools:text="21 / 23"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/work_sans_medium"
+                    android:textSize="30sp"
+                    android:letterSpacing="0.05"
+                    app:layout_constraintTop_toBottomOf="@id/tvScoreHeader"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:layout_width="175dp"
-                android:layout_height="175dp"
-                android:id="@+id/progressIncorrect"
-                tools:progress="20"
-                app:indicatorSize="175dp"
-                app:indicatorColor="@color/red"
-                app:trackColor="@android:color/transparent"
-                app:trackThickness="10dp"
-                android:scaleX="-1"
-                app:layout_constraintTop_toTopOf="@id/progressCorrect"
-                app:layout_constraintStart_toStartOf="@id/progressCorrect"
-                app:layout_constraintEnd_toEndOf="@id/progressCorrect"
-                app:layout_constraintBottom_toBottomOf="@id/progressCorrect" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/ivResultIcon"
-                android:visibility="visible"
-                app:layout_constraintTop_toTopOf="@id/progressCorrect"
-                app:layout_constraintStart_toStartOf="@id/progressCorrect"
-                app:layout_constraintEnd_toEndOf="@id/progressCorrect"
-                app:layout_constraintBottom_toBottomOf="@id/progressCorrect"
-                app:srcCompat="@drawable/ic_check"
-                app:tint="@color/green" />
-
-
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvScoreHeader"
-                app:layout_constraintTop_toBottomOf="@id/progressCorrect"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:text="@string/yourScore"
-                android:fontFamily="@font/work_sans_regular"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.2"
-                android:layout_marginTop="@dimen/grid_12" />
-
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvScoreText"
-                tools:text="21 / 23"
-                android:textStyle="bold"
-                android:fontFamily="@font/work_sans_medium"
-                android:textSize="30sp"
-                android:letterSpacing="0.05"
-                android:layout_marginTop="@dimen/grid_6"
-                app:layout_constraintTop_toBottomOf="@id/tvScoreHeader"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -107,7 +119,7 @@
                 android:layout_marginHorizontal="@dimen/grid_12"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvScoreText">
+                app:layout_constraintTop_toBottomOf="@+id/middleLayout">
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">

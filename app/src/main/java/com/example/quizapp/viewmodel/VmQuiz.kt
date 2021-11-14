@@ -11,19 +11,26 @@ import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireRespons
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
-import com.example.quizapp.model.databases.room.entities.sync.LocallyAnsweredQuestionnaire
+import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
+import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.QuestionnaireShuffleType
+import com.example.quizapp.model.datastore.QuestionnaireShuffleType.*
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class VmQuiz @Inject constructor(
     private val applicationScope: CoroutineScope,
+    private val preferencesRepository: PreferencesRepository,
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
     private val state: SavedStateHandle
@@ -39,6 +46,11 @@ class VmQuiz @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     val completeQuestionnaire get() = completeQuestionnaireStateFlow.value
+
+    val questionList get() = when (shuffleType) {
+        SHUFFLED_QUESTIONS, SHUFFLED_QUESTIONS_AND_ANSWERS -> completeQuestionnaire?.allQuestions?.shuffled(Random(shuffleTypeSeed))
+        else -> completeQuestionnaire?.allQuestions
+    } ?: emptyList()
 
     fun getQuestionWithAnswersFlow(questionId: String) = completeQuestionnaireStateFlow
         .mapNotNull { it?.getQuestionWithAnswers(questionId) }
@@ -58,6 +70,30 @@ class VmQuiz @Inject constructor(
         get() = completeQuestionnaireStateFlow
             .mapNotNull { it?.toQuizStatisticNumbers }
             .distinctUntilChanged()
+
+    private var _shuffleTypeSeed= state.get<Long>(SEQUENCE_SEED_KEY) ?: getTimeMillis()
+        set(value) {
+            state.set(SEQUENCE_SEED_KEY, value)
+            field = value
+        }
+
+    val shuffleTypeSeed get() = _shuffleTypeSeed
+
+    val shuffleTypeStateFlow = preferencesRepository.shuffleTypeFlow
+        .stateIn(viewModelScope, SharingStarted.Lazily, runBlocking { preferencesRepository.getShuffleType() })
+
+    val shuffleType get() = shuffleTypeStateFlow.value
+
+    suspend fun onMenuItemOrderSelected(shuffleType: QuestionnaireShuffleType) {
+        preferencesRepository.updateShuffleType(shuffleType)
+        updateShuffleTypeSeed()
+    }
+
+    fun updateShuffleTypeSeed(newSeed: Long = getTimeMillis()) {
+        _shuffleTypeSeed = newSeed
+    }
+
+
 
     val shouldDisplaySolutionStateFlow = state.getMutableStateFlow(SHOULD_DISPLAY_SOLUTION, false)
 
@@ -81,34 +117,27 @@ class VmQuiz @Inject constructor(
         }
     }
 
-    fun onMenuItemShuffleClicked() {
-
-    }
 
     fun onMoreOptionsItemClicked() = launch(IO) {
         fragmentEventChannel.send(ShowPopupMenu)
+    }
+
+
+    fun onMenuItemClearGivenAnswersClicked() = launch(IO, applicationScope) {
+        completeQuestionnaire?.apply {
+            localRepository.insert(LocallyFilledQuestionnaireToUpload(questionnaire.id))
+            fragmentEventChannel.send(ShowUndoDeleteGivenAnswersSnackBack(allAnswers))
+            allAnswers.map { it.copy(isAnswerSelected = false) }.let {
+                localRepository.update(it)
+            }
+        }
     }
 
     fun onUndoDeleteGivenAnswersClick(event: ShowUndoDeleteGivenAnswersSnackBack) = launch(IO) {
         localRepository.update(event.lastAnswerValues)
     }
 
-
-    fun onMenuItemClearGivenAnswersClicked() = launch(IO) {
-        completeQuestionnaire?.apply {
-            mutableListOf<Answer>().let { list ->
-                list.addAll(allAnswers)
-                fragmentEventChannel.send(ShowUndoDeleteGivenAnswersSnackBack(list))
-                list.map {
-                    it.copy(isAnswerSelected = false)
-                }.also {
-                    localRepository.update(it)
-                }
-            }
-        }
-    }
-
-    fun onFabClicked() {
+    fun onStartButtonClicked() {
         if (shouldDisplaySolution) {
             setShouldDisplaySolution(false)
         }
@@ -118,40 +147,38 @@ class VmQuiz @Inject constructor(
         }
     }
 
-
-    fun onAnswerItemClicked(selectedAnswerId: String, allAnswers: List<Answer>, isQuestionMultipleChoice: Boolean) = launch(IO) {
-        if (isQuestionMultipleChoice) {
-            allAnswers.firstOrNull { it.id == selectedAnswerId }?.let { answer ->
-                localRepository.update(answer.copy(isAnswerSelected = !answer.isAnswerSelected))
-            }
-        } else {
-            localRepository.update(allAnswers.map { it.copy(isAnswerSelected = it.id == selectedAnswerId) })
-        }
-
+    fun onAnswerItemClicked(selectedAnswerId: String, questionId: String) = launch(IO) {
         completeQuestionnaire?.let {
-            localRepository.insert(LocallyAnsweredQuestionnaire(it.questionnaire.id))
+            val question = it.getQuestionWithAnswers(questionId)
+
+            if (question.question.isMultipleChoice) {
+                question.answers.firstOrNull { answer -> answer.id == selectedAnswerId }?.let { answer ->
+                    localRepository.update(answer.copy(isAnswerSelected = !answer.isAnswerSelected))
+                }
+            } else {
+                localRepository.update(question.answers.map { answer -> answer.copy(isAnswerSelected = answer.id == selectedAnswerId) })
+            }
+
+            localRepository.insert(LocallyFilledQuestionnaireToUpload(it.questionnaire.id))
         }
     }
 
 
     override fun onCleared() {
         super.onCleared()
-        uploadGivenAnswers()
+        uploadFilledQuestionnaire()
     }
 
-    private fun uploadGivenAnswers() = applicationScope.launch(IO) {
+    private fun uploadFilledQuestionnaire() = launch(IO, applicationScope) {
         completeQuestionnaire?.let {
             if (it.questionnaire.syncStatus != SyncStatus.SYNCED) return@launch
+            if (!localRepository.isAnsweredQuestionnairePresent(it.questionnaire.id)) return@launch
 
-            val filledQuestionnaire = DataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(it)
-
-            if (localRepository.isAnsweredQuestionnairePresent(filledQuestionnaire.questionnaireId)) {
-                runCatching {
-                    backendRepository.insertFilledQuestionnaire(filledQuestionnaire)
-                }.onSuccess { response ->
-                    if (response.responseType != InsertFilledQuestionnaireResponseType.ERROR) {
-                        localRepository.delete(LocallyAnsweredQuestionnaire(filledQuestionnaire.questionnaireId))
-                    }
+            runCatching {
+                backendRepository.insertFilledQuestionnaire(DataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(it))
+            }.onSuccess { response ->
+                if (response.responseType != InsertFilledQuestionnaireResponseType.ERROR) {
+                    localRepository.delete(LocallyFilledQuestionnaireToUpload(it.questionnaire.id))
                 }
             }
         }
@@ -167,5 +194,7 @@ class VmQuiz @Inject constructor(
 
     companion object {
         const val SHOULD_DISPLAY_SOLUTION = "shouldDisplaySolutionKey"
+        const val SEQUENCE_SEED_KEY = "sequenceSeedKey"
+        const val SEQUENCE_TYPE_KEY = "sequenceTypeKey"
     }
 }

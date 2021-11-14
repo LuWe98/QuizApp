@@ -152,7 +152,12 @@
     <!-- Quiz Screen-->
     <string name="showSolutions">Show solutions</string>
     <string name="showSolution">Show solution</string>
-    <string name="shuffleQuestions">Shuffle questions</string>
+    <string name="shuffling">Shuffling</string>
+    <string name="questionsAnsAnswersOrdering">Order questions and answers</string>
+    <string name="regularOrder">Regular order</string>
+    <string name="shuffledQuestions">Shuffled questions</string>
+    <string name="shuffledAnswers">Shuffled answers</string>
+    <string name="shuffledQuestionsAndAnswers">Shuffled questions and answers</string>
     <string name="lastUpdated">Last updated</string>
     <string name="correctlyAnswered">Correctly answered</string>
     <string name="incorrectlyAnswered">Incorrectly answered</string>
