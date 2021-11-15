@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.menus.MenuItem
+import com.example.quizapp.model.menus.MenuIntIdItem
 import com.example.quizapp.model.menus.MenuItemDataModel
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.room.LocalRepository
@@ -52,7 +52,7 @@ class VmQuestionnaireMoreOptions @Inject constructor(
         }
     }
 
-    fun getQuestionnaireMoreOptionsMenu() : List<MenuItem> = MenuItemDataModel.getQuestionnaireMoreOptionsMenu(args, user)
+    fun getQuestionnaireMoreOptionsMenu() : List<MenuIntIdItem> = MenuItemDataModel.getQuestionnaireMoreOptionsMenu(args, user)
 
     private fun onEditQuestionnaireSelected() = launch(IO) {
         localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let {

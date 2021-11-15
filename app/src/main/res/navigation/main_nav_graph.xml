@@ -14,35 +14,6 @@
 
 
     <fragment
-            android:id="@+id/fragmentSettings"
-            android:name="com.example.quizapp.view.fragments.settingsscreen.FragmentSettings"
-            android:label="FragmentSettings"
-            tools:layout="@layout/fragment_settings">
-        <action
-                android:id="@+id/action_fragmentSettings_to_fragmentAdmin"
-                app:destination="@id/fragmentAdmin" />
-        <action
-                android:id="@+id/action_fragmentSettings_to_bsdfThemeSelection"
-                app:destination="@id/bsdfThemeSelection" />
-        <action
-                android:id="@+id/action_fragmentSettings_to_bsdfLanguageSelection"
-                app:destination="@id/bsdfLanguageSelection" />
-        <action
-                android:id="@+id/action_fragmentSettings_to_bsdfShuffleTypeSelection"
-                app:destination="@id/bsdfShuffleTypeSelection" />
-    </fragment>
-
-    <fragment
-            android:id="@+id/fragmentAdmin"
-            android:name="com.example.quizapp.view.fragments.adminscreen.FragmentAdmin"
-            android:label="FragmentAdmin"
-            tools:layout="@layout/fragment_admin">
-        <action
-                android:id="@+id/action_fragmentAdmin_to_bsdfUserMoreOptions"
-                app:destination="@id/bsdfUserMoreOptions" />
-    </fragment>
-
-    <fragment
             android:id="@+id/fragmentSearch"
             android:name="com.example.quizapp.view.fragments.searchscreen.FragmentSearch"
             android:label="FragmentSearch"
@@ -87,7 +58,7 @@
                     app:argType="integer" />
             <argument
                     android:name="isShowSolutionScreen"
-                    app:argType="boolean"/>
+                    app:argType="boolean" />
             <action
                     android:id="@+id/action_fragmentQuizContainer_to_fragmentQuizResult"
                     app:destination="@id/fragmentQuizResult" />
@@ -143,6 +114,80 @@
     </navigation>
 
 
+    <!-- SETTINGS NAV GRAPH -->
+    <navigation
+            android:id="@+id/settings_nav_graph"
+            app:startDestination="@id/fragmentSettings">
+        <fragment
+                android:id="@+id/fragmentSettings"
+                android:name="com.example.quizapp.view.fragments.settingsscreen.FragmentSettings"
+                android:label="FragmentSettings"
+                tools:layout="@layout/fragment_settings">
+            <action
+                    android:id="@+id/action_fragmentSettings_to_fragmentAdmin"
+                    app:destination="@id/fragmentAdmin" />
+            <action
+                    android:id="@+id/action_fragmentSettings_to_bsdfThemeSelection"
+                    app:destination="@id/bsdfThemeSelection" />
+            <action
+                    android:id="@+id/action_fragmentSettings_to_bsdfLanguageSelection"
+                    app:destination="@id/bsdfLanguageSelection" />
+            <action
+                    android:id="@+id/action_fragmentSettings_to_bsdfShuffleTypeSelection"
+                    app:destination="@id/bsdfShuffleTypeSelection" />
+        </fragment>
+
+        <fragment
+                android:id="@+id/fragmentAdmin"
+                android:name="com.example.quizapp.view.fragments.adminscreen.FragmentAdmin"
+                android:label="FragmentAdmin"
+                tools:layout="@layout/fragment_admin">
+            <action
+                    android:id="@+id/action_fragmentAdmin_to_bsdfUserMoreOptions"
+                    app:destination="@id/bsdfUserMoreOptions" />
+        </fragment>
+
+        <dialog
+                android:id="@+id/bsdfLanguageSelection"
+                android:name="com.example.quizapp.view.fragments.settingsscreen.BsdfLanguageSelection"
+                android:label="BsdfLanguageSelection"
+                tools:layout="@layout/bsdf_language_selection" />
+        <dialog
+                android:id="@+id/bsdfThemeSelection"
+                android:name="com.example.quizapp.view.fragments.settingsscreen.BsdfThemeSelection"
+                android:label="BsdfThemeSelection"
+                tools:layout="@layout/bsdf_theme_selection" />
+        <dialog
+                android:id="@+id/bsdfChangeUserRole"
+                android:name="com.example.quizapp.view.fragments.adminscreen.BsdfUserRoleSelection"
+                android:label="BsdfChangeUserRole"
+                tools:layout="@layout/bsdf_user_role_selection">
+            <argument
+                    android:name="user"
+                    app:argType="com.example.quizapp.model.databases.mongodb.documents.user.User" />
+        </dialog>
+
+        <dialog
+                android:id="@+id/bsdfUserMoreOptions"
+                android:name="com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptions"
+                android:label="BsdfUserMoreOptions"
+                tools:layout="@layout/bsdf_user_more_options">
+            <argument
+                    android:name="user"
+                    app:argType="com.example.quizapp.model.databases.mongodb.documents.user.User" />
+            <action
+                    android:id="@+id/action_bsdfUserMoreOptions_to_bsdfChangeUserRole"
+                    app:destination="@id/bsdfChangeUserRole" />
+
+        </dialog>
+        <dialog
+                android:id="@+id/bsdfShuffleTypeSelection"
+                android:name="com.example.quizapp.view.fragments.settingsscreen.BsdfShuffleTypeSelection"
+                android:label="BsdfShuffleTypeSelection"
+                tools:layout="@layout/bsdf_shuffle_type_selection" />
+    </navigation>
+
+
     <!--DIALOGS-->
     <dialog
             android:id="@+id/bsdfQuestionnaireMoreOptions"
@@ -158,30 +203,6 @@
 
 
     <dialog
-            android:id="@+id/bsdfUserMoreOptions"
-            android:name="com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptions"
-            android:label="BsdfUserMoreOptions"
-            tools:layout="@layout/bsdf_user_more_options">
-        <argument
-                android:name="user"
-                app:argType="com.example.quizapp.model.databases.mongodb.documents.user.User" />
-        <action
-                android:id="@+id/action_bsdfUserMoreOptions_to_bsdfChangeUserRole"
-                app:destination="@id/bsdfChangeUserRole" />
-
-    </dialog>
-
-    <dialog
-            android:id="@+id/bsdfChangeUserRole"
-            android:name="com.example.quizapp.view.fragments.adminscreen.BsdfUserRoleSelection"
-            android:label="BsdfChangeUserRole"
-            tools:layout="@layout/bsdf_user_role_selection">
-        <argument
-                android:name="user"
-                app:argType="com.example.quizapp.model.databases.mongodb.documents.user.User" />
-    </dialog>
-
-    <dialog
             android:id="@+id/dfShareQuestionnaire"
             android:name="com.example.quizapp.view.fragments.dialogs.DfShareQuestionnaire"
             android:label="DfShareQuestionnaire"
@@ -191,25 +212,6 @@
                 app:argType="string" />
     </dialog>
 
-
-    <dialog
-            android:id="@+id/bsdfThemeSelection"
-            android:name="com.example.quizapp.view.fragments.settingsscreen.BsdfThemeSelection"
-            android:label="BsdfThemeSelection"
-            tools:layout="@layout/bsdf_theme_selection"/>
-
-
-    <dialog
-            android:id="@+id/bsdfLanguageSelection"
-            android:name="com.example.quizapp.view.fragments.settingsscreen.BsdfLanguageSelection"
-            android:label="BsdfLanguageSelection"
-            tools:layout="@layout/bsdf_language_selection"/>
-
-    <dialog
-            android:id="@+id/bsdfShuffleTypeSelection"
-            android:name="com.example.quizapp.view.fragments.settingsscreen.BsdfShuffleTypeSelection"
-            android:label="BsdfShuffleTypeSelection"
-            tools:layout="@layout/bsdf_shuffle_type_selection"/>
 
     <!--GLOBAL ACTIONS-->
     <action
@@ -236,6 +238,10 @@
             android:id="@+id/action_global_dfShareQuestionnaire"
             app:destination="@id/dfShareQuestionnaire" />
 
+    <action
+            android:id="@+id/action_global_settings_nav_graph"
+            app:destination="@id/settings_nav_graph" />
+
 
     <!-- BACKDROP TEST -->
     <fragment
@@ -250,34 +256,39 @@
 
 
     <!-- FACULTY TEST -->
-
-    <dialog
-            android:id="@+id/bsdfFacultySelectionTest"
-            android:name="com.example.quizapp.view.fragments.test.BsdfFacultySelectionTest"
-            android:label="BsdfFacultySelectionTest" >
-        <action
-                android:id="@+id/action_bsdfFacultySelectionTest_to_bsdfCourseOfStudiesSelectionTest"
-                app:destination="@id/bsdfCourseOfStudiesSelectionTest" />
-    </dialog>
-
-    <action android:id="@+id/action_global_bsdfFacultySelectionTest"
-            app:destination="@id/bsdfFacultySelectionTest"/>
-
-    <dialog
-            android:id="@+id/bsdfCourseOfStudiesSelectionTest"
-            android:name="com.example.quizapp.view.fragments.test.BsdfCourseOfStudiesSelectionTest"
-            android:label="BsdfCourseOfStudiesSelectionTest" >
-        <argument app:argType="string"
-                android:name="facultyId"/>
-    </dialog>
-
-
     <fragment
             android:id="@+id/fragmentQuizOverviewNewVersion"
             android:name="com.example.quizapp.view.fragments.test.FragmentQuizOverviewNewVersion"
             android:label="FragmentQuizOverviewNewVersion" />
 
-    <action android:id="@+id/action_global_fragmentQuizOverviewNewVersion"
-            app:destination="@id/fragmentQuizOverviewNewVersion"/>
+    <action
+            android:id="@+id/action_global_fragmentQuizOverviewNewVersion"
+            app:destination="@id/fragmentQuizOverviewNewVersion" />
+
+
+    <!-- SELECTION TEST -->
+    <dialog
+            android:id="@+id/bsdfCourseOfStudiesSelection"
+            android:name="com.example.quizapp.view.fragments.addquestionnairescreen.BsdfCourseOfStudiesSelection"
+            android:label="BsdfCourseOfStudiesSelection"
+            tools:layout="@layout/bsdf_course_of_studies_selection">
+        <argument
+                android:name="selectedCourseOfStudiesIds"
+                app:argType="string[]" />
+    </dialog>
+
+    <dialog
+            android:id="@+id/bsdfFacultySelection"
+            android:name="com.example.quizapp.view.fragments.addquestionnairescreen.BsdfFacultySelection"
+            android:label="BsdfFacultySelection"
+            tools:layout="@layout/bsdf_faculty_selection" />
+
+    <action
+            android:id="@+id/action_global_bsdfCourseOfStudiesSelection"
+            app:destination="@id/bsdfCourseOfStudiesSelection" />
+
+    <action
+            android:id="@+id/action_global_bsdfFacultySelection"
+            app:destination="@id/bsdfFacultySelection" />
 
 </navigation>

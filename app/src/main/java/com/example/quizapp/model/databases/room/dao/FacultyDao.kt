@@ -19,6 +19,9 @@ abstract class FacultyDao : BaseDao<Faculty>(Faculty.TABLE_NAME) {
 
     @Transaction
     @Query("SELECT * FROM facultyTable WHERE facultyId = :facultyId")
-    abstract fun getCoursesOfStudiesForFacultyAlt(facultyId: String) : FacultyWithCoursesOfStudies
+    abstract suspend fun getFacultyWithCourseOfStudies(facultyId: String): FacultyWithCoursesOfStudies
+
+    @Query("SELECT * FROM facultyTable WHERE facultyId = :facultyId")
+    abstract suspend fun getFacultyWithId(facultyId: String): Faculty
 
 }

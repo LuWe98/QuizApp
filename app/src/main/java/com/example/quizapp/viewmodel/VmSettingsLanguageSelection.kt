@@ -25,8 +25,8 @@ class VmSettingsLanguageSelection @Inject constructor(
 
     val currentLanguage = runBlocking { preferencesRepository.getLanguage() }
 
-    fun onItemSelected(itemId: Int) = launch(IO, applicationScope){
-        val selectedLanguage = QuizAppLanguage.values()[itemId]
+    fun onItemSelected(itemId: String) = launch(IO, applicationScope){
+        val selectedLanguage = QuizAppLanguage.valueOf(itemId)
         languageSelectionEventChannel.send(OnLanguageSelectedEvent(selectedLanguage != currentLanguage))
         preferencesRepository.updateLanguage(selectedLanguage)
     }

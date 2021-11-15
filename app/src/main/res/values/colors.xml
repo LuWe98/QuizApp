@@ -34,6 +34,8 @@
     <color name="violet">#443b8a</color>
 
 
+    <color name="multipleChoiceColor">#443b8a</color>
+    <color name="singleChoiceColor">#e6d8cf</color>
 
 
     <!-- Light Theme Colors -->

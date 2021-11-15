@@ -24,8 +24,8 @@ class VmSettingsQuestionShufflingSelection @Inject constructor(
 
     val currentQuestionShuffleType = runBlocking { preferencesRepository.getShuffleType() }
 
-    fun onItemSelected(itemId: Int) = launch(IO, applicationScope){
-        val selectedShuffleType = QuestionnaireShuffleType.values()[itemId]
+    fun onItemSelected(itemId: String) = launch(IO, applicationScope){
+        val selectedShuffleType = QuestionnaireShuffleType.valueOf(itemId)
         questionShufflingSelectionEventChannel.send(QuestionOrderingSelectionEvent.OnQuestionOrderingSelectedEvent)
         preferencesRepository.updateShuffleType(selectedShuffleType)
     }

@@ -11,7 +11,8 @@ import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.getThemeColor
 import com.example.quizapp.model.menus.MenuItemDataModel
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaBsdfMenu
+import com.example.quizapp.view.recyclerview.adapters.RvaIntIdMenu
+import com.example.quizapp.view.recyclerview.adapters.RvaStringIdMenu
 import com.example.quizapp.viewmodel.VmSettingsLanguageSelection
 import com.example.quizapp.viewmodel.VmSettingsLanguageSelection.LanguageSelectionEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,7 +22,7 @@ class BsdfLanguageSelection : BindingBottomSheetDialogFragment<BsdfLanguageSelec
 
     private val vmLanguage: VmSettingsLanguageSelection by viewModels()
 
-    private lateinit var rvAdapter: RvaBsdfMenu
+    private lateinit var rvAdapter: RvaStringIdMenu
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,9 +31,9 @@ class BsdfLanguageSelection : BindingBottomSheetDialogFragment<BsdfLanguageSelec
     }
 
     private fun initRecyclerView(){
-        rvAdapter = RvaBsdfMenu().apply {
+        rvAdapter = RvaStringIdMenu().apply {
             onItemClicked = vmLanguage::onItemSelected
-            selectionPredicate = { it.id == vmLanguage.currentLanguage.ordinal }
+            selectionPredicate = { it.id == vmLanguage.currentLanguage.name }
             selectionColor = getThemeColor(R.attr.colorOnBackground)
         }
 

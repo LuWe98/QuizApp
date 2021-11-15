@@ -60,7 +60,7 @@ class LocalRepository @Inject constructor(
         LocallyDeletedQuestionnaire::class -> locallyDeletedQuestionnaireDao
         LocallyFilledQuestionnaireToUpload::class -> locallyFilledQuestionnaireToUploadDao
         LocallyDeletedUser::class -> locallyDeletedUserDao
-        else -> throw IllegalArgumentException("Entity DAO could not be found! Did you add it to the 'getBaseDaoWith' - Method?")
+        else -> throw IllegalArgumentException("Entity DAO for entity could not be found! Did you add it to the 'getBaseDaoWith' Method?")
     } as BaseDao<T>)
 
 
@@ -155,6 +155,7 @@ class LocalRepository @Inject constructor(
     suspend fun deleteLocallyDeletedQuestionnaireWith(questionnaireId: String) =
         locallyDeletedQuestionnaireDao.deleteLocallyDeletedQuestionnaireWith(questionnaireId)
 
+
     //LOCALLY ANSWERED QUESTIONNAIRES
     suspend fun getAllLocallyAnsweredFilledQuestionnaires(): List<MongoFilledQuestionnaire> {
         val locallyAnsweredQuestionnaireIds = locallyFilledQuestionnaireToUploadDao.getLocallyAnsweredQuestionnaireIds()
@@ -176,6 +177,7 @@ class LocalRepository @Inject constructor(
 
     suspend fun getLocallyAnsweredQuestionnaire(questionnaireId: String) = locallyFilledQuestionnaireToUploadDao.getLocallyAnsweredQuestionnaire(questionnaireId)
 
+
     //LOCALLY DELETED USERS
     suspend fun getAllLocallyDeletedUserIds() = locallyDeletedUserDao.getAllLocallyDeletedUserIds()
 
@@ -185,18 +187,20 @@ class LocalRepository @Inject constructor(
 
     val allFacultiesFlow = facultyDao.allFacultiesFlow
 
-    fun getCoursesOfStudiesForFacultyAlt(facultyId: String) = facultyDao.getCoursesOfStudiesForFacultyAlt(facultyId)
+    suspend fun getFacultyWithCourseOfStudies(facultyId: String) = facultyDao.getFacultyWithCourseOfStudies(facultyId)
 
-//    fun getCoursesOfStudiesForFaculty(facultyId: String) = facultyDao.getCoursesOfStudiesForFaculty(facultyId)
+    suspend fun getFacultyWithId(facultyId: String) = facultyDao.getFacultyWithId(facultyId)
 
 
     //COURSE OF STUDIES
     suspend fun getCourseOfStudiesIdsWithTimestamp() = courseOfStudiesDao.getCourseOfStudiesIdsWithTimestamp()
 
-    val allCoursesOfStudiesFlow = courseOfStudiesDao.allCoursesOfStudiesFlow
+    val allCoursesOfStudiesFlow = courseOfStudiesDao.getAllCourseOfStudiesFlow()
 
     suspend fun deleteWhereAbbreviation(abb: String) = courseOfStudiesDao.deleteWhereAbbreviation(abb)
 
     suspend fun getCourseOfStudiesNameWithId(courseOfStudiesId: String) = courseOfStudiesDao.getCourseOfStudiesNameWithId(courseOfStudiesId)
+
+    suspend fun getCourseOfStudiesWithId(courseOfStudiesId: String) = courseOfStudiesDao.getCourseOfStudiesWithId(courseOfStudiesId)
 
 }

@@ -12,7 +12,7 @@ import com.example.quizapp.model.datastore.QuizAppLanguage
 object MenuItemDataModel {
 
     const val EDIT_QUESTIONNAIRE_ITEM_ID = 0
-    const val SHARE_QUESTIONNAIRE_ITEM_ID = 1
+    const val SHARE_QUESTIONNAIRE_ITEM_ID = 2
     const val PUBLISH_QUESTIONNAIRE_ITEM_ID = 3
     const val DELETE_ANSWERS_QUESTIONNAIRE_ITEM_ID = 4
     const val DELETE_CREATED_QUESTIONNAIRE_ITEM_ID = 5
@@ -21,7 +21,7 @@ object MenuItemDataModel {
     const val DELETE_USER_ITEM_ID = 8
     const val CHANGE_USER_ROLE_ITEM_ID = 9
 
-    fun getQuestionnaireMoreOptionsMenu(args: BsdfQuestionnaireMoreOptionsArgs, user: User) : List<MenuItem> {
+    fun getQuestionnaireMoreOptionsMenu(args: BsdfQuestionnaireMoreOptionsArgs, user: User) : List<MenuIntIdItem> {
         return if(args.questionnaire.authorInfo.userId == user.id) {
             createdQuestionnaireMoreOptionsMenu.apply {
                 if(user.role == Role.USER){
@@ -40,32 +40,32 @@ object MenuItemDataModel {
     }
 
     private val createdQuestionnaireMoreOptionsMenu get() = mutableListOf(
-        MenuItem(
+        MenuIntIdItem(
             id = EDIT_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_edit,
             titleRes = R.string.edit
         ),
-        MenuItem(
+        MenuIntIdItem(
             id = SHARE_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_share,
             titleRes = R.string.shareQuestionnaireWithUser
         ),
-        MenuItem(
+        MenuIntIdItem(
             id = COPY_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_copy,
             titleRes = R.string.copy
         ),
-        MenuItem(
+        MenuIntIdItem(
             id = PUBLISH_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_publish,
             titleRes = R.string.setQuestionnaireToPublic
         ),
-        MenuItem(
+        MenuIntIdItem(
             id = DELETE_ANSWERS_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_delete_answers,
             titleRes = R.string.deleteGivenAnswers
         ),
-        MenuItem(
+        MenuIntIdItem(
             id = DELETE_CREATED_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_delete,
             titleRes = R.string.deleteQuestionnaire
@@ -74,17 +74,17 @@ object MenuItemDataModel {
 
 
     private val cachedQuestionnaireMoreOptionsMenu get() = listOf(
-        MenuItem(
+        MenuIntIdItem(
             id = COPY_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_copy,
             titleRes = R.string.copy
         ),
-        MenuItem(
+        MenuIntIdItem(
             id = DELETE_ANSWERS_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_delete_answers,
             titleRes = R.string.deleteGivenAnswers
         ),
-        MenuItem(
+        MenuIntIdItem(
             id = DELETE_CACHED_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_delete,
             titleRes = R.string.deleteQuestionnaire
@@ -93,12 +93,12 @@ object MenuItemDataModel {
 
 
     val userMoreOptionsMenu get() = listOf(
-        MenuItem(
+        MenuIntIdItem(
           id = CHANGE_USER_ROLE_ITEM_ID,
           iconRes = R.drawable.ic_role_badge,
           titleRes = R.string.changeUserRole
         ),
-        MenuItem(
+        MenuIntIdItem(
             id = DELETE_USER_ITEM_ID,
             iconRes = R.drawable.ic_delete,
             titleRes = R.string.deleteUser
@@ -114,17 +114,17 @@ MenuItem(
 
 
     val themeOptionsMenu get() = listOf(
-        MenuItem(
+        MenuIntIdItem(
             id = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
             iconRes = R.drawable.ic_settings,
             titleRes = R.string.systemDefault
         ),
-        MenuItem(
+        MenuIntIdItem(
             id = AppCompatDelegate.MODE_NIGHT_YES,
             iconRes = R.drawable.ic_dark_mode_alt,
             titleRes = R.string.dark
         ),
-        MenuItem(
+        MenuIntIdItem(
             id = AppCompatDelegate.MODE_NIGHT_NO,
             iconRes = R.drawable.ic_light_mode,
             titleRes = R.string.light
@@ -134,36 +134,36 @@ MenuItem(
 
 
     val languageOptionsMenu get() = listOf(
-        MenuItem(
-            id = QuizAppLanguage.ENGLISH.ordinal,
+        MenuStringIdItem(
+            id = QuizAppLanguage.ENGLISH.name,
             iconRes = R.drawable.ic_language,
             titleRes = R.string.english
         ),
-        MenuItem(
-            id = QuizAppLanguage.GERMAN.ordinal,
+        MenuStringIdItem(
+            id = QuizAppLanguage.GERMAN.name,
             iconRes = R.drawable.ic_language,
             titleRes = R.string.german
         ),
     )
 
     val shuffleQuestionsOptionsMenu get() = listOf(
-        MenuItem(
-            id = QuestionnaireShuffleType.NONE.ordinal,
+        MenuStringIdItem(
+            id = QuestionnaireShuffleType.NONE.name,
             iconRes = R.drawable.ic_cross,
             titleRes = R.string.shuffleTypeNone
         ),
-        MenuItem(
-            id = QuestionnaireShuffleType.SHUFFLED_QUESTIONS.ordinal,
+        MenuStringIdItem(
+            id = QuestionnaireShuffleType.SHUFFLED_QUESTIONS.name,
             iconRes = R.drawable.ic_shuffle_new,
             titleRes = R.string.shuffleTypeQuestions
         ),
-        MenuItem(
-            id = QuestionnaireShuffleType.SHUFFLED_ANSWERS.ordinal,
+        MenuStringIdItem(
+            id = QuestionnaireShuffleType.SHUFFLED_ANSWERS.name,
             iconRes = R.drawable.ic_shuffle_new,
             titleRes = R.string.shuffleTypeAnswers
         ),
-        MenuItem(
-            id = QuestionnaireShuffleType.SHUFFLED_QUESTIONS_AND_ANSWERS.ordinal,
+        MenuStringIdItem(
+            id = QuestionnaireShuffleType.SHUFFLED_QUESTIONS_AND_ANSWERS.name,
             iconRes = R.drawable.ic_shuffle_new,
             titleRes = R.string.shuffleTypeQuestionsAndAnswers
         ),

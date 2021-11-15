@@ -8,7 +8,7 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import androidx.core.view.isVisible
 import com.example.quizapp.R
-import com.example.quizapp.databinding.CustomTabLayoutViewBinding
+import com.example.quizapp.databinding.TabLayoutViewQuestionBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.utils.DiffCallbackUtil
 import com.example.quizapp.view.customimplementations.quizscreen.lazytablayout.LazyQuestionTab
@@ -24,13 +24,13 @@ class RvaLazyQuestionQuestionTabsLayout(
     var onItemClicked: ((Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ImplementedLazyViewHolder(CustomTabLayoutViewBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ImplementedLazyViewHolder(TabLayoutViewQuestionBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: ImplementedLazyViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class ImplementedLazyViewHolder(val binding: CustomTabLayoutViewBinding) : LazyTabLayoutViewHolder<LazyQuestionTab>(binding.root) {
+    inner class ImplementedLazyViewHolder(val binding: TabLayoutViewQuestionBinding) : LazyTabLayoutViewHolder<LazyQuestionTab>(binding.root) {
 
         init {
             binding.root.setOnClickListener {

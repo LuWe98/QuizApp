@@ -34,6 +34,9 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
             btnTheme.onClick(navigator::navigateToThemeSelection)
             btnLanguage.onClick(navigator::navigateToLanguageSelection)
             btnShuffleType.onClick(navigator::navigateToShuffleTypeSelection)
+            btnPreferredCos.onClick {
+
+            }
         }
 
         binding.userLayout.apply {
@@ -58,25 +61,30 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
     private fun initObservers() {
         vmSettings.userNameFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.userLayout.btnUserName.text = it ?: ""
+            binding.userLayout.btnUserName.text = it ?: "-"
         }
 
         vmSettings.userRoleFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.userLayout.btnRole.text = it?.name ?: ""
+            binding.userLayout.btnRole.text = it?.name ?: "-"
             binding.adminLayout.root.isVisible = it == Role.ADMIN
         }
 
         vmSettings.themeNameResFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.preferencesLayout.btnTheme.text = it?.let { getString(it) } ?: ""
+            binding.preferencesLayout.btnTheme.text = it?.let { getString(it) } ?: "-"
         }
 
         vmSettings.languageFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.preferencesLayout.btnLanguage.text = it?.let { getString(it.textRes) } ?: ""
+            binding.preferencesLayout.btnLanguage.text = it?.let { getString(it.textRes) } ?: "-"
         }
 
         vmSettings.shuffleTypeFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.preferencesLayout.btnShuffleType.text = it?.let { getString(it.textRes) } ?: ""
+            binding.preferencesLayout.btnShuffleType.text = it?.let { getString(it.textRes) } ?: "-"
         }
+
+        vmSettings.preferredCourseOfStudiesFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.preferencesLayout.btnPreferredCos.text = it?.abbreviation ?: "-"
+        }
+
 
         vmSettings.fragmentSettingsEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {

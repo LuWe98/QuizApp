@@ -10,7 +10,7 @@ import com.example.quizapp.databinding.BsdfQuestionnaireMoreOptionsBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaBsdfMenu
+import com.example.quizapp.view.recyclerview.adapters.RvaIntIdMenu
 import com.example.quizapp.viewmodel.VmHome
 import com.example.quizapp.viewmodel.VmQuestionnaireMoreOptions
 import com.example.quizapp.viewmodel.VmQuestionnaireMoreOptions.QuestionnaireMoreOptionsEvent.*
@@ -25,7 +25,7 @@ class BsdfQuestionnaireMoreOptions : BindingBottomSheetDialogFragment<BsdfQuesti
 
     private val args: BsdfQuestionnaireMoreOptionsArgs by navArgs()
 
-    lateinit var rvAdapter: RvaBsdfMenu
+    lateinit var rvAdapter: RvaIntIdMenu
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,7 +36,7 @@ class BsdfQuestionnaireMoreOptions : BindingBottomSheetDialogFragment<BsdfQuesti
     private fun initRecyclerView(){
         binding.tvTitle.text = args.questionnaire.title
 
-        rvAdapter = RvaBsdfMenu().apply {
+        rvAdapter = RvaIntIdMenu().apply {
             onItemClicked = vm::onMenuItemClicked
         }
 

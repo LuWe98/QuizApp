@@ -8,7 +8,7 @@ import android.widget.FrameLayout
 import com.example.quizapp.R
 import com.example.quizapp.databinding.SettingsItemBinding
 
-class SettingsItemLayout constructor(
+class SettingsItemActionLayout constructor(
     context: Context,
     attrs: AttributeSet?,
     defStyleAttr: Int,

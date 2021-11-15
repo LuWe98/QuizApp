@@ -37,7 +37,7 @@
             tools:text="Value"
             app:layout_constraintTop_toBottomOf="@+id/btnUserName" />
 
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemLayout
+    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btnChangePassword"
@@ -45,7 +45,7 @@
             app:title="@string/changePassword"
             app:layout_constraintTop_toBottomOf="@id/btnRole" />
 
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemLayout
+    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btnLogout"

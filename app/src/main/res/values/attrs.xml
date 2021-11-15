@@ -30,4 +30,11 @@
         <attr name="dropDownIcon" format="reference"/>
     </declare-styleable>
 
+    <declare-styleable name="SettingsItemBottomTextDropDownLayout" parent="SettingsItemTextLayout">
+        <attr name="title"/>
+        <attr name="text"/>
+        <attr name="icon"/>
+        <attr name="dropDownIcon"/>
+    </declare-styleable>
+
 </resources>

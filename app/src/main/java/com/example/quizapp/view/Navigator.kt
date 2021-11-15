@@ -22,7 +22,6 @@ import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirecti
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizResultDirections
 import com.example.quizapp.view.fragments.settingsscreen.FragmentSettingsDirections
-import com.example.quizapp.view.fragments.test.BsdfFacultySelectionTestDirections
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -92,6 +91,10 @@ class Navigator @Inject constructor(
     }
 
 
+    fun navigateToSettingsScreen(){
+        navController.navigate(MainNavGraphDirections.actionGlobalSettingsNavGraph())
+    }
+
     fun navigateToLoginScreen() {
         val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentHome, true).build()
         navController.navigate(MainNavGraphDirections.actionGlobalGoToAuthScreen(), navOptions)
@@ -143,17 +146,18 @@ class Navigator @Inject constructor(
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToBsdfShuffleTypeSelection())
     }
 
-    fun navigateToFacultyTest() {
-        navController.navigate(MainNavGraphDirections.actionGlobalBsdfFacultySelectionTest())
-    }
-
-    fun navigateToCourseOfStudiesTest(facultyId: String) {
-        navController.navigate(BsdfFacultySelectionTestDirections.actionBsdfFacultySelectionTestToBsdfCourseOfStudiesSelectionTest(facultyId))
-    }
-
     fun navigateToQuizOverviewNew(){
         navController.navigate(MainNavGraphDirections.actionGlobalFragmentQuizOverviewNewVersion())
     }
+
+    fun navigateToFacultySelection(){
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfFacultySelection())
+    }
+
+    fun navigateToCourseOfStudiesSelection(selectedCourseOfStudiesIds: List<String>){
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfCourseOfStudiesSelection(selectedCourseOfStudiesIds.toTypedArray()))
+    }
+
 
     companion object {
         const val FIRST_QUESTION_POSITION = 0

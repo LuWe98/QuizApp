@@ -29,7 +29,6 @@ class BsdfFacultySelectionTest: BindingFullScreenBottomSheetDialogFragment<BsdfF
     private fun initRecyclerView(){
         rvAdapter = RvaFaculty().apply {
             onItemClicked = {
-                navigator.navigateToCourseOfStudiesTest(it.id)
             }
         }
 

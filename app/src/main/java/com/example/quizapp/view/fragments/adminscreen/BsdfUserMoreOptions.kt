@@ -12,7 +12,7 @@ import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.model.menus.MenuItemDataModel
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaBsdfMenu
+import com.example.quizapp.view.recyclerview.adapters.RvaIntIdMenu
 import com.example.quizapp.viewmodel.VmAdmin
 import com.example.quizapp.viewmodel.VmUserMoreOptions
 import com.example.quizapp.viewmodel.VmUserMoreOptions.UserMoreOptionsEvent.*
@@ -27,7 +27,7 @@ class BsdfUserMoreOptions : BindingBottomSheetDialogFragment<BsdfUserMoreOptions
 
     private val args: BsdfUserMoreOptionsArgs by navArgs()
 
-    private lateinit var rvAdapter: RvaBsdfMenu
+    private lateinit var rvAdapter: RvaIntIdMenu
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,7 +38,7 @@ class BsdfUserMoreOptions : BindingBottomSheetDialogFragment<BsdfUserMoreOptions
     private fun initRecyclerView(){
         binding.tvUserName.text = args.user.userName
 
-        rvAdapter = RvaBsdfMenu().apply {
+        rvAdapter = RvaIntIdMenu().apply {
             onItemClicked = vmOptions::onMenuItemSelected
         }
 

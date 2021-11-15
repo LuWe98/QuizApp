@@ -3,6 +3,7 @@ package com.example.quizapp.extensions
 import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.*
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.hilt.navigation.HiltViewModelFactory
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
@@ -21,6 +23,7 @@ import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
@@ -133,9 +136,10 @@ inline fun Fragment.launch(
 
 inline fun Fragment.launchWhenStarted(
     scope: LifecycleCoroutineScope = lifecycleScope,
+    dispatcher: CoroutineContext = Dispatchers.IO,
     crossinline block: suspend CoroutineScope.() -> Unit
 ) {
-    scope.launch {
+    scope.launch(context = dispatcher) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             block.invoke(this)
         }
@@ -183,7 +187,6 @@ fun Fragment.showKeyboard(view: View) {
 fun Fragment.hideKeyboard(view: View) {
     requireContext().hideKeyboard(view)
 }
-
 
 
 

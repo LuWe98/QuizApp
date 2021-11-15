@@ -12,11 +12,14 @@ abstract class CourseOfStudiesDao : BaseDao<CourseOfStudies>(CourseOfStudies.TAB
     @Query("SELECT courseOfStudiesId, lastModifiedTimestamp FROM courseOfStudiesTable")
     abstract suspend fun getCourseOfStudiesIdsWithTimestamp() : List<CourseOfStudiesIdWithTimeStamp>
 
-    @get:Query("SELECT * FROM courseOfStudiesTable")
-    abstract val allCoursesOfStudiesFlow : Flow<List<CourseOfStudies>>
+    @Query("SELECT * FROM courseOfStudiesTable")
+    abstract fun getAllCourseOfStudiesFlow() : Flow<List<CourseOfStudies>>
 
     @Query("DELETE FROM courseOfStudiesTable WHERE abbreviation = :abb")
     abstract suspend fun deleteWhereAbbreviation(abb: String)
+
+    @Query("SELECT * FROM courseOfStudiesTable WHERE courseOfStudiesId =:courseOfStudiesId LIMIT 1")
+    abstract suspend fun getCourseOfStudiesWithId(courseOfStudiesId: String) : CourseOfStudies
 
     @Query("SELECT abbreviation FROM courseOfStudiesTable WHERE courseOfStudiesId =:courseOfStudiesId LIMIT 1")
     abstract suspend fun getCourseOfStudiesNameWithId(courseOfStudiesId: String): String

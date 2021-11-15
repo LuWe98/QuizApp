@@ -148,6 +148,8 @@
     <string name="promoteUserToAdmin">Promote User to Admin</string>
     <string name="adminSettings">Go to Admin Settings</string>
 
+    <string name="preselectedCourseOfStudies">Preselect course of studies</string>
+
 
     <!-- Quiz Screen-->
     <string name="showSolutions">Show solutions</string>
@@ -179,6 +181,11 @@
     <string name="shuffleTypeQuestionsAndAnswersAbbr">Q &amp; A</string>
     <string name="shuffleTypeQuestionsAndAnswers">Questions and answers</string>
     <string name="shuffleTypeChanged">Shuffle type changed</string>
+
+
+    <string name="courseOfStudiesSelection">Course of studies selection</string>
+    <string name="facultySelection">Faculty selection</string>
+
 
     <!-- Strings for voice Search functionality -->
     <string name="voiceSearchStartTalking">Sprechen Sie los…</string>

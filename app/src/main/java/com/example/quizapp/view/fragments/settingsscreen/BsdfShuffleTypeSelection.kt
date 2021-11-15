@@ -11,7 +11,8 @@ import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.getThemeColor
 import com.example.quizapp.model.menus.MenuItemDataModel
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaBsdfMenu
+import com.example.quizapp.view.recyclerview.adapters.RvaIntIdMenu
+import com.example.quizapp.view.recyclerview.adapters.RvaStringIdMenu
 import com.example.quizapp.viewmodel.VmSettingsQuestionShufflingSelection
 import com.example.quizapp.viewmodel.VmSettingsQuestionShufflingSelection.QuestionOrderingSelectionEvent.OnQuestionOrderingSelectedEvent
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,7 +22,7 @@ class BsdfShuffleTypeSelection : BindingBottomSheetDialogFragment<BsdfShuffleTyp
 
     private val vmShuffling: VmSettingsQuestionShufflingSelection by viewModels()
 
-    private lateinit var rvAdapter: RvaBsdfMenu
+    private lateinit var rvAdapter: RvaStringIdMenu
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,9 +31,9 @@ class BsdfShuffleTypeSelection : BindingBottomSheetDialogFragment<BsdfShuffleTyp
     }
 
     private fun initRecyclerView() {
-        rvAdapter = RvaBsdfMenu().apply {
+        rvAdapter = RvaStringIdMenu().apply {
             onItemClicked = vmShuffling::onItemSelected
-            selectionPredicate = { it.id == vmShuffling.currentQuestionShuffleType.ordinal }
+            selectionPredicate = { it.id == vmShuffling.currentQuestionShuffleType.name }
             selectionColor = getThemeColor(R.attr.colorOnBackground)
         }
 

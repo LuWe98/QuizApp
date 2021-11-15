@@ -12,7 +12,7 @@ import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.getThemeColor
 import com.example.quizapp.model.menus.MenuItemDataModel
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaBsdfMenu
+import com.example.quizapp.view.recyclerview.adapters.RvaIntIdMenu
 import com.example.quizapp.viewmodel.VmSettingsThemeSelection
 import com.example.quizapp.viewmodel.VmSettingsThemeSelection.ThemeSelectionEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +22,7 @@ class BsdfThemeSelection : BindingBottomSheetDialogFragment<BsdfThemeSelectionBi
 
     private val vmTheme: VmSettingsThemeSelection by viewModels()
 
-    private lateinit var rvAdapter: RvaBsdfMenu
+    private lateinit var rvAdapter: RvaIntIdMenu
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,7 +31,7 @@ class BsdfThemeSelection : BindingBottomSheetDialogFragment<BsdfThemeSelectionBi
     }
 
     private fun initRecyclerView(){
-        rvAdapter = RvaBsdfMenu().apply {
+        rvAdapter = RvaIntIdMenu().apply {
             onItemClicked = vmTheme::onItemSelected
             selectionPredicate = { it.id == vmTheme.currentTheme }
             selectionColor = getThemeColor(R.attr.colorOnBackground)

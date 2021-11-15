@@ -2,18 +2,16 @@ package com.example.quizapp.view.recyclerview.adapters
 
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviMenuBinding
-import com.example.quizapp.extensions.context
 import com.example.quizapp.extensions.getColor
 import com.example.quizapp.extensions.onClick
-import com.example.quizapp.extensions.setImageDrawable
-import com.example.quizapp.model.menus.MenuItem
+import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
-class RvaBsdfMenu : BindingListAdapter<MenuItem, RviMenuBinding>(MenuItem.DIFF_CALLBACK) {
+class RvaFacultySelection : BindingListAdapter<Faculty, RviMenuBinding>(Faculty.DIFF_CALLBACK) {
 
-    var onItemClicked: ((Int) -> (Unit))? = null
+    var onItemClicked: ((String) -> (Unit))? = null
 
-    var selectionPredicate: ((MenuItem) -> (Boolean)) = { false }
+    var selectionPredicate: ((Faculty) -> (Boolean)) = { false }
 
     var selectionColor: Int? = null
 
@@ -23,10 +21,9 @@ class RvaBsdfMenu : BindingListAdapter<MenuItem, RviMenuBinding>(MenuItem.DIFF_C
         }
     }
 
-    override fun bindViews(binding: RviMenuBinding, item: MenuItem, position: Int) {
+    override fun bindViews(binding: RviMenuBinding, item: Faculty, position: Int) {
         binding.apply {
-            title.text = context.getString(item.titleRes)
-            icon.setImageDrawable(item.iconRes)
+            title.text = item.name
 
             if(selectionPredicate.invoke(item) && selectionColor != null){
                 root.setCardBackgroundColor(selectionColor!!)

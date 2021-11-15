@@ -26,10 +26,11 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
     companion object PreferencesKeys {
         val LANGUAGE_KEY = stringPreferencesKey("languageKey")
-
-        private val JWT_TOKEN_KEY = stringPreferencesKey("jwtTokenKey")
         private val THEME_KEY = intPreferencesKey("themeKey")
         private val SHUFFLE_TYPE_KEY = stringPreferencesKey("shuffleTypePreference")
+        private val PREFERRED_COURSE_OF_STUDIES_ID_KEY = stringPreferencesKey("preferredCosKey")
+
+        private val JWT_TOKEN_KEY = stringPreferencesKey("jwtTokenKey")
         private val USER_ID_KEY = stringPreferencesKey("userIdKey")
         private val USER_NAME_KEY = stringPreferencesKey("userNameKey")
         private val USER_PASSWORD_KEY = stringPreferencesKey("userPasswordKey")
@@ -96,6 +97,26 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
 
 
+    //TODO -> Mehr options einbauen:
+    // Use preferredCos for filtering -> Also bei der Suche von Fragebögen
+    // Use preferredCos for Questionnaire creation -> Dass das Feld prefilled wird mit der COS
+    val preferredCourseOfStudiesIdFlow = dataFlow.map { preferences ->
+        preferences[PREFERRED_COURSE_OF_STUDIES_ID_KEY] ?: ""
+    }
+
+    suspend fun getPreferredCourseOfStudiesId() = preferredCourseOfStudiesIdFlow.first()
+
+    suspend fun updatePreferredCourseOfStudiesId(courseOfStudiesId: String) {
+        dataStore.edit { preferences ->
+            preferences[PREFERRED_COURSE_OF_STUDIES_ID_KEY] = courseOfStudiesId
+        }
+    }
+
+
+
+
+
+
     private val jwtTokenFlow = dataFlow.map { preferences ->
         preferences[JWT_TOKEN_KEY]
     }
@@ -149,9 +170,7 @@ class PreferencesRepository @Inject constructor(context: Context) {
         }
     }
 
-    suspend fun getUser() = userFlow.first()
-
-    suspend fun isUserLoggedIn() = getUser().isNotEmpty
+    suspend fun isUserLoggedIn() = userFlow.first().isNotEmpty
 
     val user
         get() = run {
@@ -170,9 +189,9 @@ class PreferencesRepository @Inject constructor(context: Context) {
     suspend fun updateUserCredentials(user: User) {
         dataStore.edit { preferences ->
             cachedUser = user
-            preferences[USER_ID_KEY] = user.id.encrypt()
-            preferences[USER_NAME_KEY] = user.userName.encrypt()
-            preferences[USER_PASSWORD_KEY] = user.password.encrypt()
+            preferences[USER_ID_KEY] = if(user.id.isEmpty()) "" else user.id.encrypt()
+            preferences[USER_NAME_KEY] = if(user.userName.isEmpty()) "" else user.userName.encrypt()
+            preferences[USER_PASSWORD_KEY] = if(user.password.isEmpty()) "" else user.password.encrypt()
             preferences[USER_ROLE_KEY] = user.role.name.encrypt()
             preferences[USER_LAST_MODIFIED_TIMESTAMP_KEY] = user.lastModifiedTimestamp
         }

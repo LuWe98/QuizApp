@@ -61,7 +61,8 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             }
 
             cardSettings.onClick {
-                bottomNavView.selectedItemId = R.id.fragmentSettings
+//                bottomNavView.selectedItemId = R.id.fragmentSettings
+                navigator.navigateToSettingsScreen()
             }
 
             cardSearch.onClick {
@@ -70,10 +71,13 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             }
 
             addCard.onClick {
-                //navigator.navigateToBackdropFragment()
                 navigator.navigateToAddQuestionnaireScreen()
+            }
+
+            addCard.onLongClick {
+                navigator.navigateToQuizOverviewNew()
+                //navigator.navigateToBackdropFragment()
 //                navigator.navigateToFacultyTest()
-//                navigator.navigateToQuizOverviewNew()
             }
         }
     }

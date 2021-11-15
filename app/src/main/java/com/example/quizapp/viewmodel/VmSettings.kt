@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_CHANGED
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class VmSettings @Inject constructor(
     private val applicationScope: CoroutineScope,
     private val preferencesRepository: PreferencesRepository,
-    private val backendRepository: BackendRepository
+    private val backendRepository: BackendRepository,
+    private val localRepository: LocalRepository
 ) : ViewModel() {
 
     private val fragmentSettingsEventChannel = Channel<FragmentSettingsEvent>()
@@ -48,6 +50,10 @@ class VmSettings @Inject constructor(
     val languageFlow = preferencesRepository.languageFlow.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     val shuffleTypeFlow = preferencesRepository.shuffleTypeFlow.stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+    val preferredCourseOfStudiesFlow = preferencesRepository.preferredCourseOfStudiesIdFlow
+        .mapNotNull { localRepository.getCourseOfStudiesWithId(it) }
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
 
 

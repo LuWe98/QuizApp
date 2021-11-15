@@ -22,8 +22,6 @@ class BsdfCourseOfStudiesSelectionTest: BindingFullScreenBottomSheetDialogFragme
 
     private lateinit var rvAdapter: RvaCourseOfStudies
 
-    private val args: BsdfCourseOfStudiesSelectionTestArgs by navArgs()
-
     @Inject
     lateinit var localRepository: LocalRepository
 
@@ -36,7 +34,7 @@ class BsdfCourseOfStudiesSelectionTest: BindingFullScreenBottomSheetDialogFragme
     private fun initRecyclerView(){
         rvAdapter = RvaCourseOfStudies().apply {
             onItemClicked = {
-                log("COS: ${it.name} | ID: ${it.id} | FACULTY ID: ${args.facultyId}")
+               // log("COS: ${it.name} | ID: ${it.id} | FACULTY ID: ${args.facultyId}")
             }
         }
 
@@ -50,9 +48,9 @@ class BsdfCourseOfStudiesSelectionTest: BindingFullScreenBottomSheetDialogFragme
 
     private fun registerObservers(){
         launch(IO) {
-            val items = localRepository.getCoursesOfStudiesForFacultyAlt(args.facultyId)
+            //val items = localRepository.getCoursesOfStudiesForFacultyAlt(args.facultyId)
             withContext(Main) {
-                rvAdapter.submitList(items.coursesOfStudies)
+                //rvAdapter.submitList(items.coursesOfStudies)
             }
         }
     }
