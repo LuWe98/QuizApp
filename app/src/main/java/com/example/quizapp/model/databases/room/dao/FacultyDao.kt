@@ -24,4 +24,7 @@ abstract class FacultyDao : BaseDao<Faculty>(Faculty.TABLE_NAME) {
     @Query("SELECT * FROM facultyTable WHERE facultyId = :facultyId")
     abstract suspend fun getFacultyWithId(facultyId: String): Faculty
 
+    @Query("SELECT DISTINCT f.* FROM facultyTable as f JOIN facultyCourseOfStudiesRelationTable as r ON (f.facultyId = r.facultyId) JOIN courseOfStudiesTable as c ON(r.courseOfStudiesId = c.courseOfStudiesId) WHERE c.courseOfStudiesId IN(:courseOfStudiesIds)")
+    abstract suspend fun getFacultiesWithCourseOfStudiesIds(courseOfStudiesIds: List<String>) : List<Faculty>
+
 }

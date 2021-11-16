@@ -14,8 +14,8 @@ data class MongoQuestionnaire(
     var title : String = "",
     var authorInfo : AuthorInfo,
     var questionnaireVisibility: QuestionnaireVisibility = QuestionnaireVisibility.PRIVATE,
-    var facultyId: String? = null,
-    var courseOfStudiesId: String? = null,
+    var facultyIds: List<String> = emptyList(),
+    var courseOfStudiesIds: List<String> = emptyList(),
     var subject: String = "",
     var questions : List<MongoQuestion> = emptyList(),
     var lastModifiedTimestamp: Long = getTimeMillis()

@@ -62,6 +62,7 @@ object AppModule {
         roomDatabase.getFacultyDao(),
         roomDatabase.getCourseOfStudiesDao(),
         roomDatabase.getSubjectDao(),
+        roomDatabase.getQuestionnaireCourseOfStudiesRelationDao(),
         roomDatabase.getFacultyCourseOfStudiesRelationDao(),
         roomDatabase.getLocallyDeletedQuestionnaireDao(),
         roomDatabase.getLocallyAnsweredQuestionnairesDao(),

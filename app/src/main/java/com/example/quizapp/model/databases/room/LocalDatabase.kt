@@ -14,6 +14,7 @@ import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.entities.sync.*
 import com.example.quizapp.model.databases.room.typeconverter.LocalDatabaseTypeConverter
 import com.example.quizapp.utils.Constants
@@ -32,6 +33,7 @@ import javax.inject.Singleton
         Faculty::class,
         CourseOfStudies::class,
         Subject::class,
+        QuestionnaireCourseOfStudiesRelation::class,
         FacultyCourseOfStudiesRelation::class,
         LocallyDeletedQuestionnaire::class,
         LocallyFilledQuestionnaireToUpload::class,
@@ -49,6 +51,7 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun getFacultyDao(): FacultyDao
     abstract fun getCourseOfStudiesDao(): CourseOfStudiesDao
     abstract fun getSubjectDao(): SubjectDao
+    abstract fun getQuestionnaireCourseOfStudiesRelationDao(): QuestionnaireCourseOfStudiesRelationDao
     abstract fun getFacultyCourseOfStudiesRelationDao(): FacultyCourseOfStudiesRelationDao
     abstract fun getLocallyDeletedQuestionnaireDao(): LocallyDeletedQuestionnaireDao
     abstract fun getLocallyAnsweredQuestionnairesDao(): LocallyFilledQuestionnaireToUploadDao

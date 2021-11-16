@@ -1,4 +1,4 @@
-package com.example.quizapp.view.fragments.addquestionnairescreen
+package com.example.quizapp.view.fragments.addeditquestionnairescreen
 
 import android.os.Bundle
 import android.view.View
@@ -7,6 +7,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddQuestionnaireBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.collectWhenStarted
+import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionAddEdit
 import com.example.quizapp.viewmodel.VmAddEdit
@@ -31,7 +32,7 @@ class FragmentAddQuestionnaire : BindingFragment<FragmentAddQuestionnaireBinding
         binding.apply {
             pageTitle.setText(vmAdd.providePageTitle())
             editTextName.setText(vmAdd.qTitle)
-            editTextCourseOfStudies.setText(vmAdd.qCourseOfStudies?.abbreviation)
+            editTextCourseOfStudies.setText(vmAdd.qCoursesOfStudies.map(CourseOfStudies::abbreviation).reduce { acc, abbr -> "$acc, $abbr" })
             editTextSubject.setText(vmAdd.qSubject)
         }
 

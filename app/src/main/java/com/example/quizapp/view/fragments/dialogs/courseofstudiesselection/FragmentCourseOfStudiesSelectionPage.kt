@@ -1,4 +1,4 @@
-package com.example.quizapp.view.fragments.addquestionnairescreen
+package com.example.quizapp.view.fragments.dialogs.courseofstudiesselection
 
 import android.os.Bundle
 import android.view.View
@@ -34,6 +34,7 @@ class FragmentCourseOfStudiesSelectionPage: BindingFragment<FragmentCourseOfStud
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+        initObservers()
     }
 
     private fun initRecyclerView(){
@@ -52,6 +53,12 @@ class FragmentCourseOfStudiesSelectionPage: BindingFragment<FragmentCourseOfStud
 
         launchWhenStarted {
             rvAdapter.submitList(vmCos.getFacultyWithCourseOfStudies(facultyId).coursesOfStudies)
+        }
+    }
+
+    private fun initObservers(){
+        vmCos.selectedCoursesOfStudiesIdsStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.rv.updateAllViewHolders()
         }
     }
 }

@@ -15,11 +15,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Entity(
-    tableName = Questionnaire.TABLE_NAME,
-    indices = [
-        Index(value = [Questionnaire.FACULTY_ID_COLUMN]),
-        Index(value = [Questionnaire.COURSE_OF_STUDIES_ID_COLUMN])
-    ]
+    tableName = Questionnaire.TABLE_NAME
 )
 @Parcelize
 data class Questionnaire(
@@ -30,10 +26,6 @@ data class Questionnaire(
     var title: String,
     @Embedded
     var authorInfo: AuthorInfo,
-    @ColumnInfo(name = FACULTY_ID_COLUMN)
-    var facultyId: String?,
-    @ColumnInfo(name = COURSE_OF_STUDIES_ID_COLUMN)
-    var courseOfStudiesId: String?,
     @ColumnInfo(name = SUBJECT_COLUMN)
     var subject: String,
     @Transient
@@ -50,12 +42,10 @@ data class Questionnaire(
 
         const val TABLE_NAME = "questionnaireTable"
 
-        const val ID_COLUMN = "id"
+        const val ID_COLUMN = "questionnaireId"
         const val TITLE_COLUMN = "title"
         const val USER_ID_COLUMN = "userId"
         const val USER_NAME_COLUMN = "userName"
-        const val FACULTY_ID_COLUMN = "facultyId"
-        const val COURSE_OF_STUDIES_ID_COLUMN = "courseOfStudiesId"
         const val SUBJECT_COLUMN = "subject"
         const val SYNC_STATUS_COLUMN = "syncStatus"
         const val VISIBILITY_COLUMN = "visibility"

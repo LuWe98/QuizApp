@@ -15,6 +15,7 @@ import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
+import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.viewmodel.VmAddEdit.FragmentAddQuestionnaireEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,13 +57,13 @@ class VmAddEdit @Inject constructor(
             field = value
         }
 
-    var qFaculty = state.get<Faculty>(QUESTIONNAIRE_FACULTY)
+    var qFaculties = state.get<List<Faculty>>(QUESTIONNAIRE_FACULTY) ?: emptyList()
         set(value) {
             state.set(QUESTIONNAIRE_FACULTY, value)
             field = value
         }
 
-    var qCourseOfStudies = state.get<CourseOfStudies>(QUESTIONNAIRE_COURSE_OF_STUDIES)
+    var qCoursesOfStudies = state.get<List<CourseOfStudies>>(QUESTIONNAIRE_COURSE_OF_STUDIES) ?: emptyList()
         set(value) {
             state.set(QUESTIONNAIRE_COURSE_OF_STUDIES, value)
             field = value
@@ -86,8 +87,8 @@ class VmAddEdit @Inject constructor(
         args.completeQuestionnaire?.let {
             qId = if(args.copy) ObjectId().toString() else it.questionnaire.id
             qTitle = it.questionnaire.title
-            qFaculty = it.faculty
-            qCourseOfStudies = it.courseOfStudies
+            qFaculties = it.allFaculties
+            qCoursesOfStudies = it.allCoursesOfStudies
             qSubject = it.questionnaire.subject
             setQuestionWithAnswers(it.questionsWithAnswers.sortedBy { qwa -> qwa.question.questionPosition }.toMutableList())
         }
@@ -155,12 +156,12 @@ class VmAddEdit @Inject constructor(
         qTitle = text
     }
 
-    fun onCourseOfStudiesSelected(courseOfStudies: CourseOfStudies) {
-        qCourseOfStudies = courseOfStudies
+    fun onCourseOfStudiesSelected(coursesOfStudies: List<CourseOfStudies>) {
+        qCoursesOfStudies = coursesOfStudies
     }
 
-    fun onFacultySelected(faculty: Faculty) {
-        qFaculty = faculty
+    fun onFacultySelected(faculties: List<Faculty>) {
+        qFaculties = faculties
     }
 
     fun onQuestionnaireSubjectTextChanged(text: String) {
@@ -181,8 +182,6 @@ class VmAddEdit @Inject constructor(
                 title = qTitle,
                 authorInfo = preferencesRepository.user.asAuthorInfo,
                 lastModifiedTimestamp = getTimeMillis(),
-                facultyId = qFaculty?.id,
-                courseOfStudiesId = qCourseOfStudies?.id,
                 subject = qSubject,
                 syncStatus = SYNCING
             )
@@ -208,7 +207,14 @@ class VmAddEdit @Inject constructor(
                 }
             }
 
-            val completeQuestionnaire = CompleteQuestionnaire(questionnaire, questionsWithAnswersMapped, null, null)
+            //TODO -> Courses of Studies list mapping anschauen !
+            val coursesOfStudiesWithFaculties = mutableListOf<CourseOfStudiesWithFaculties>().apply {
+                qCoursesOfStudies.forEach {
+                    add(CourseOfStudiesWithFaculties(it, emptyList()))
+                }
+            }
+
+            val completeQuestionnaire = CompleteQuestionnaire(questionnaire, questionsWithAnswersMapped, coursesOfStudiesWithFaculties)
 
             localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
             fragmentAddQuestionnaireEventChannel.send(NavigateBackEvent)

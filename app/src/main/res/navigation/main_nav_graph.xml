@@ -7,19 +7,6 @@
 
     <!-- REGULAR FRAGMENTS -->
     <fragment
-            android:id="@+id/fragmentHome"
-            android:name="com.example.quizapp.view.fragments.homescreen.FragmentHome"
-            android:label="FragmentHome"
-            tools:layout="@layout/fragment_home" />
-
-
-    <fragment
-            android:id="@+id/fragmentSearch"
-            android:name="com.example.quizapp.view.fragments.searchscreen.FragmentSearch"
-            android:label="FragmentSearch"
-            tools:layout="@layout/fragment_search" />
-
-    <fragment
             android:id="@+id/fragmentAuth"
             android:name="com.example.quizapp.view.fragments.authscreen.FragmentAuth"
             android:label="FragmentAuth"
@@ -28,6 +15,47 @@
                 android:id="@+id/action_fragmentAuth_to_fragmentHome"
                 app:destination="@id/fragmentHome" />
     </fragment>
+
+    <fragment
+            android:id="@+id/fragmentHome"
+            android:name="com.example.quizapp.view.fragments.homescreen.FragmentHome"
+            android:label="FragmentHome"
+            tools:layout="@layout/fragment_home" />
+
+    <fragment
+            android:id="@+id/fragmentSearch"
+            android:name="com.example.quizapp.view.fragments.searchscreen.FragmentSearch"
+            android:label="FragmentSearch"
+            tools:layout="@layout/fragment_search" />
+
+
+    <!--DIALOGS-->
+    <dialog
+            android:id="@+id/bsdfQuestionnaireMoreOptions"
+            android:name="com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptions"
+            android:label="BsdfQuestionnaireMoreOptions"
+            tools:layout="@layout/bsdf_questionnaire_more_options">
+
+        <argument
+                android:name="questionnaire"
+                app:argType="com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire" />
+
+    </dialog>
+
+
+    <dialog
+            android:id="@+id/dfShareQuestionnaire"
+            android:name="com.example.quizapp.view.fragments.dialogs.DfShareQuestionnaire"
+            android:label="DfShareQuestionnaire"
+            tools:layout="@layout/df_share_questionnaire">
+        <argument
+                android:name="questionnaireId"
+                app:argType="string" />
+    </dialog>
+
+
+
+
 
 
     <!--TAKE QUIZ FUNCTIONALITY NAV GRAPH-->
@@ -76,6 +104,8 @@
     </navigation>
 
 
+
+
     <!--ADD QUESTIONNAIRE FUNCTIONALITY NAV GRAPH-->
     <navigation
             android:id="@+id/add_nav_graph"
@@ -91,7 +121,7 @@
 
         <fragment
                 android:id="@+id/fragmentAddQuestionnaire"
-                android:name="com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaire"
+                android:name="com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddQuestionnaire"
                 android:label="FragmentAddQuestionnaire"
                 tools:layout="@layout/fragment_add_questionnaire">
             <action
@@ -101,7 +131,7 @@
 
         <fragment
                 android:id="@+id/fragmentAddQuestion"
-                android:name="com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestion"
+                android:name="com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddQuestion"
                 android:label="FragmentAddQuestion"
                 tools:layout="@layout/fragment_add_question">
             <argument
@@ -112,6 +142,8 @@
                     app:argType="com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers" />
         </fragment>
     </navigation>
+
+
 
 
     <!-- SETTINGS NAV GRAPH -->
@@ -188,29 +220,6 @@
     </navigation>
 
 
-    <!--DIALOGS-->
-    <dialog
-            android:id="@+id/bsdfQuestionnaireMoreOptions"
-            android:name="com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptions"
-            android:label="BsdfQuestionnaireMoreOptions"
-            tools:layout="@layout/bsdf_questionnaire_more_options">
-
-        <argument
-                android:name="questionnaire"
-                app:argType="com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire" />
-
-    </dialog>
-
-
-    <dialog
-            android:id="@+id/dfShareQuestionnaire"
-            android:name="com.example.quizapp.view.fragments.dialogs.DfShareQuestionnaire"
-            android:label="DfShareQuestionnaire"
-            tools:layout="@layout/df_share_questionnaire">
-        <argument
-                android:name="questionnaireId"
-                app:argType="string" />
-    </dialog>
 
 
     <!--GLOBAL ACTIONS-->
@@ -243,6 +252,19 @@
             app:destination="@id/settings_nav_graph" />
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     <!-- BACKDROP TEST -->
     <fragment
             android:id="@+id/backdropFragment"
@@ -255,21 +277,21 @@
             app:destination="@id/backdropFragment" />
 
 
-    <!-- FACULTY TEST -->
+    <!-- TEST -->
     <fragment
-            android:id="@+id/fragmentQuizOverviewNewVersion"
-            android:name="com.example.quizapp.view.fragments.test.FragmentQuizOverviewNewVersion"
+            android:id="@+id/fragmentTesting"
+            android:name="com.example.quizapp.view.fragments.test.FragmentTesting"
             android:label="FragmentQuizOverviewNewVersion" />
 
     <action
             android:id="@+id/action_global_fragmentQuizOverviewNewVersion"
-            app:destination="@id/fragmentQuizOverviewNewVersion" />
+            app:destination="@id/fragmentTesting" />
 
 
     <!-- SELECTION TEST -->
     <dialog
             android:id="@+id/bsdfCourseOfStudiesSelection"
-            android:name="com.example.quizapp.view.fragments.addquestionnairescreen.BsdfCourseOfStudiesSelection"
+            android:name="com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection"
             android:label="BsdfCourseOfStudiesSelection"
             tools:layout="@layout/bsdf_course_of_studies_selection">
         <argument
@@ -277,18 +299,8 @@
                 app:argType="string[]" />
     </dialog>
 
-    <dialog
-            android:id="@+id/bsdfFacultySelection"
-            android:name="com.example.quizapp.view.fragments.addquestionnairescreen.BsdfFacultySelection"
-            android:label="BsdfFacultySelection"
-            tools:layout="@layout/bsdf_faculty_selection" />
 
     <action
             android:id="@+id/action_global_bsdfCourseOfStudiesSelection"
             app:destination="@id/bsdfCourseOfStudiesSelection" />
-
-    <action
-            android:id="@+id/action_global_bsdfFacultySelection"
-            app:destination="@id/bsdfFacultySelection" />
-
 </navigation>

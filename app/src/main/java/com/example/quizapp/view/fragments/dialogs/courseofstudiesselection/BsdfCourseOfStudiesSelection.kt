@@ -1,29 +1,30 @@
-package com.example.quizapp.view.fragments.addquestionnairescreen
+package com.example.quizapp.view.fragments.dialogs.courseofstudiesselection
 
 import android.os.Bundle
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
-import androidx.viewpager2.widget.ViewPager2
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfCourseOfStudiesSelectionBinding
 import com.example.quizapp.databinding.TabLayoutViewFacultyBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingFullScreenBottomSheetDialogFragment
-import com.example.quizapp.view.fragments.test.FragmentQuizOverviewNewVersion
 import com.example.quizapp.view.viewpager.adapter.VpaCourseOfStudiesSelection
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection
-import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.*
-import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesSelectionEvent.*
+import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesSelectionEvent.ConfirmationEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import kotlin.random.Random
 
 @AndroidEntryPoint
 class BsdfCourseOfStudiesSelection : BindingFullScreenBottomSheetDialogFragment<BsdfCourseOfStudiesSelectionBinding>() {
+
+    companion object {
+        const val COURSE_OF_STUDIES_RESULT_KEY = "courseOfStudiesResultKey"
+        const val SELECTED_COURSE_OF_STUDIES_KEY = "selectedCourseOfStudiesKey"
+    }
 
     private val vmCos: VmCourseOfStudiesSelection by hiltNavDestinationViewModels(R.id.bsdfCourseOfStudiesSelection)
 
@@ -43,13 +44,10 @@ class BsdfCourseOfStudiesSelection : BindingFullScreenBottomSheetDialogFragment<
         binding.viewPager.apply {
             adapter = vpAdapter
             setPageTransformer(FadeOutPageTransformer())
-
-            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    updateTabs(position)
-                }
-            })
+            onPageSelected { position ->
+                updateTabs(position)
+                changeTitleWithAnimation(facultyList[position])
+            }
         }
 
         binding.tabLayout.attachToViewPager(binding.viewPager) { tab, index ->
@@ -63,10 +61,26 @@ class BsdfCourseOfStudiesSelection : BindingFullScreenBottomSheetDialogFragment<
         }
     }
 
+    private fun changeTitleWithAnimation(faculty: Faculty){
+        binding.apply {
+            val duration = if(tvTitle.text.isEmpty()) 0L else 150L
+            tvTitle.animate()
+                .alpha(0f)
+                .setDuration(duration)
+                .withEndAction {
+                    tvTitle.text = faculty.name
+                    tvTitle.animate()
+                        .alpha(1f)
+                        .setDuration(duration)
+                        .start()
+                }.start()
+        }
+    }
+
     private fun updateTabs(newPosition: Int){
         binding.tabLayout.forEachTab { tab, i ->
             val factors = if (i == newPosition) 1f else 0f
-            val duration = if (i == newPosition) 350L else 150L
+            val duration = if (i == newPosition) 300L else 150L
 
             TabLayoutViewFacultyBinding.bind(tab.customView!!).let { tabBinding ->
                 val textColor = if(i == newPosition) getColor(R.color.white) else getThemeColor(R.attr.colorControlNormal)
@@ -93,14 +107,10 @@ class BsdfCourseOfStudiesSelection : BindingFullScreenBottomSheetDialogFragment<
         vmCos.courseOfStudiesSelectionEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
                 is ConfirmationEvent -> {
-                    setFragmentResult(FragmentQuizOverviewNewVersion.FRAGMENT_QUIZ_RESULT_KEY, Bundle().apply {
-                        putString(FragmentQuizOverviewNewVersion.SELECTED_FACULTY_KEY, "Faculty Test 2")
-                        putStringArray(FragmentQuizOverviewNewVersion.SELECTED_COURSE_OF_STUDIES_KEY, event.selectedCoursesOfStudiesIds.toTypedArray())
+                    setFragmentResult(COURSE_OF_STUDIES_RESULT_KEY, Bundle().apply {
+                        putStringArray(SELECTED_COURSE_OF_STUDIES_KEY, event.courseOfStudiesIds)
                     })
                     navigator.popBackStack()
-                }
-                ItemClickedEvent -> {
-                    log("CLICKED!")
                 }
             }
         }

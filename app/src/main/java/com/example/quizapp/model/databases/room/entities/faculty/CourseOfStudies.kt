@@ -14,7 +14,8 @@ import org.bson.types.ObjectId
 @Entity(
     tableName = CourseOfStudies.TABLE_NAME,
     indices = [
-        Index(value = [CourseOfStudies.ABBREVIATION_COLUMN], unique = true)
+        Index(value = [CourseOfStudies.ABBREVIATION_COLUMN], unique = true),
+        Index(value = [CourseOfStudies.NAME_COLUMN]),
     ]
 )
 @Parcelize

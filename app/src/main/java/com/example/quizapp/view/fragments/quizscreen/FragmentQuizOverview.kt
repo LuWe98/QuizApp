@@ -124,8 +124,8 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             if (completeQuestionnaire == null) return@collectWhenStarted
 
             binding.generalInfoCard.apply {
-                tvCourseOfStudies.text = completeQuestionnaire.courseOfStudies?.name
-                tvFaculty.text = completeQuestionnaire.faculty?.name
+                tvCourseOfStudies.text = completeQuestionnaire.courseOfStudiesAbbreviations
+                tvFaculty.text = completeQuestionnaire.facultiesAbbreviations
             }
 
             onShouldDisplaySolutionChanged(vmQuiz.shouldDisplaySolution, completeQuestionnaire)

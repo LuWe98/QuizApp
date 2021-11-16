@@ -14,7 +14,7 @@ import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
-import com.example.quizapp.view.fragments.addquestionnairescreen.FragmentAddQuestionnaireDirections
+import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddQuestionnaireDirections
 import com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptionsDirections
 import com.example.quizapp.view.fragments.adminscreen.FragmentAdminDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
@@ -148,10 +148,6 @@ class Navigator @Inject constructor(
 
     fun navigateToQuizOverviewNew(){
         navController.navigate(MainNavGraphDirections.actionGlobalFragmentQuizOverviewNewVersion())
-    }
-
-    fun navigateToFacultySelection(){
-        navController.navigate(MainNavGraphDirections.actionGlobalBsdfFacultySelection())
     }
 
     fun navigateToCourseOfStudiesSelection(selectedCourseOfStudiesIds: List<String>){

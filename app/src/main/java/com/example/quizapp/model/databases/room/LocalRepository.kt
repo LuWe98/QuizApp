@@ -1,6 +1,6 @@
 package com.example.quizapp.model.databases.room
 
-import androidx.room.Transaction
+import androidx.room.withTransaction
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.room.dao.*
@@ -13,6 +13,7 @@ import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.entities.sync.*
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.ktor.status.SyncStatus
@@ -29,6 +30,7 @@ class LocalRepository @Inject constructor(
     private val facultyDao: FacultyDao,
     private val courseOfStudiesDao: CourseOfStudiesDao,
     private val subjectDao: SubjectDao,
+    private val questionnaireCourseOfStudiesRelationDao: QuestionnaireCourseOfStudiesRelationDao,
     private val facultyCourseOfStudiesRelationDao: FacultyCourseOfStudiesRelationDao,
     private val locallyDeletedQuestionnaireDao: LocallyDeletedQuestionnaireDao,
     private val locallyFilledQuestionnaireToUploadDao: LocallyFilledQuestionnaireToUploadDao,
@@ -56,6 +58,7 @@ class LocalRepository @Inject constructor(
         Faculty::class -> facultyDao
         CourseOfStudies::class -> courseOfStudiesDao
         Subject::class -> subjectDao
+        QuestionnaireCourseOfStudiesRelation::class -> questionnaireCourseOfStudiesRelationDao
         FacultyCourseOfStudiesRelation::class -> facultyCourseOfStudiesRelationDao
         LocallyDeletedQuestionnaire::class -> locallyDeletedQuestionnaireDao
         LocallyFilledQuestionnaireToUpload::class -> locallyFilledQuestionnaireToUploadDao
@@ -63,30 +66,34 @@ class LocalRepository @Inject constructor(
         else -> throw IllegalArgumentException("Entity DAO for entity could not be found! Did you add it to the 'getBaseDaoWith' Method?")
     } as BaseDao<T>)
 
-
     suspend fun deleteAllUserData() {
-        questionnaireDao.deleteAll()
-        locallyFilledQuestionnaireToUploadDao.deleteAll()
-        locallyDeletedQuestionnaireDao.deleteAll()
-        locallyDeletedUserDao.deleteAll()
+        localDatabase.withTransaction {
+            questionnaireDao.deleteAll()
+            locallyFilledQuestionnaireToUploadDao.deleteAll()
+            locallyDeletedQuestionnaireDao.deleteAll()
+            locallyDeletedUserDao.deleteAll()
+        }
     }
-
 
     //QUESTIONNAIRE
-    @Transaction
     suspend fun insertCompleteQuestionnaire(completeQuestionnaire: CompleteQuestionnaire) {
-        deleteQuestionnaireWith(completeQuestionnaire.questionnaire.id)
-        insert(completeQuestionnaire.questionnaire)
-        insert(completeQuestionnaire.allQuestions)
-        insert(completeQuestionnaire.allAnswers)
+        localDatabase.withTransaction {
+            deleteQuestionnaireWith(completeQuestionnaire.questionnaire.id)
+            insert(completeQuestionnaire.questionnaire)
+            insert(completeQuestionnaire.allQuestions)
+            insert(completeQuestionnaire.allAnswers)
+            insert(completeQuestionnaire.asQuestionnaireCourseOfStudiesRelations)
+        }
     }
 
-    @Transaction
     suspend fun insertCompleteQuestionnaires(completeQuestionnaire: List<CompleteQuestionnaire>) {
-        deleteQuestionnairesWith(completeQuestionnaire.map { it.questionnaire.id })
-        insert(completeQuestionnaire.map { it.questionnaire })
-        insert(completeQuestionnaire.flatMap { it.allQuestions })
-        insert(completeQuestionnaire.flatMap { it.allAnswers })
+        localDatabase.withTransaction {
+            deleteQuestionnairesWith(completeQuestionnaire.map{ it.questionnaire.id })
+            insert(completeQuestionnaire.map(CompleteQuestionnaire::questionnaire))
+            insert(completeQuestionnaire.flatMap(CompleteQuestionnaire::allQuestions))
+            insert(completeQuestionnaire.flatMap(CompleteQuestionnaire::allAnswers))
+            insert(completeQuestionnaire.flatMap(CompleteQuestionnaire::asQuestionnaireCourseOfStudiesRelations))
+        }
     }
 
     private suspend fun deleteQuestionnairesWith(questionnaireIds: List<String>) {
@@ -98,12 +105,7 @@ class LocalRepository @Inject constructor(
 
     fun findAllCompleteQuestionnairesNotForUserFlow(userId: String) = questionnaireDao.findAllCompleteQuestionnairesNotForUserFlow(userId)
 
-    fun findAllCompleteQuestionnairesNotForUserPagingSource(userId: String) = questionnaireDao.findAllCompleteQuestionnairesNotForUserPagingSource(userId)
-
     fun findAllCompleteQuestionnairesForUserFlow(userId: String) = questionnaireDao.findAllCompleteQuestionnairesForUserFlow(userId)
-
-    fun findAllCompleteQuestionnairesForUserPagingSource(userId: String) = questionnaireDao.findAllCompleteQuestionnairesForUserPagingSource(userId)
-
 
     suspend fun findCompleteQuestionnaireWith(questionnaireId: String) = questionnaireDao.findCompleteQuestionnaireWith(questionnaireId)
 
@@ -191,16 +193,28 @@ class LocalRepository @Inject constructor(
 
     suspend fun getFacultyWithId(facultyId: String) = facultyDao.getFacultyWithId(facultyId)
 
+    suspend fun getFacultiesWithCourseOfStudiesIds(courseOfStudiesIds: List<String>) = facultyDao.getFacultiesWithCourseOfStudiesIds(courseOfStudiesIds)
+
+
 
     //COURSE OF STUDIES
     suspend fun getCourseOfStudiesIdsWithTimestamp() = courseOfStudiesDao.getCourseOfStudiesIdsWithTimestamp()
 
     val allCoursesOfStudiesFlow = courseOfStudiesDao.getAllCourseOfStudiesFlow()
 
+    fun getCoursesOfStudiesFlowWithIds(courseOfStudiesIds: List<String>) = courseOfStudiesDao.getCoursesOfStudiesFlowWithIds(courseOfStudiesIds)
+
     suspend fun deleteWhereAbbreviation(abb: String) = courseOfStudiesDao.deleteWhereAbbreviation(abb)
 
     suspend fun getCourseOfStudiesNameWithId(courseOfStudiesId: String) = courseOfStudiesDao.getCourseOfStudiesNameWithId(courseOfStudiesId)
 
+    suspend fun getCoursesOfStudiesNameWithIds(courseOfStudiesIds: List<String>) = courseOfStudiesDao.getCoursesOfStudiesNameWithIds(courseOfStudiesIds)
+
     suspend fun getCourseOfStudiesWithId(courseOfStudiesId: String) = courseOfStudiesDao.getCourseOfStudiesWithId(courseOfStudiesId)
+
+
+    //QUESTIONNAIRE COURSE OF STUDIES RELATION
+    suspend fun getQuestionnaireCourseOfStudiesRelationWith(questionnaireId: String) =
+        questionnaireCourseOfStudiesRelationDao.getQuestionnaireCourseOfStudiesRelationWith(questionnaireId)
 
 }

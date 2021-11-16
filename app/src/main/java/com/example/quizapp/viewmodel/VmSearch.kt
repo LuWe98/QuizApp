@@ -49,7 +49,7 @@ class VmSearch @Inject constructor(
             }).flow.cachedIn(viewModelScope)
     }
 
-    suspend fun getCourseOfStudiesNameWithId(courseOfStudiesId: String) = localRepository.getCourseOfStudiesNameWithId(courseOfStudiesId)
+    suspend fun getCourseOfStudiesNameWithIds(courseOfStudiesIds: List<String>) = localRepository.getCoursesOfStudiesNameWithIds(courseOfStudiesIds)
 
     fun onSearchQueryChanged(query: String) {
         searchQuery.value = query
@@ -72,9 +72,14 @@ class VmSearch @Inject constructor(
         }.onSuccess { response ->
             when(response.responseType){
                 GetQuestionnaireResponseType.SUCCESSFUL -> {
-                    DataMapper.mapMongoQuestionnaireToRoomCompleteQuestionnaire(response.mongoQuestionnaire!!).let {
-                        localRepository.insertCompleteQuestionnaire(it)
-                        localRepository.deleteLocallyDeletedQuestionnaireWith(it.questionnaire.id)
+                    DataMapper.mapMongoQuestionnaireToRoomCompleteQuestionnaire(response.mongoQuestionnaire!!).let { completeQuestionnaire ->
+                        localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
+                        localRepository.deleteLocallyDeletedQuestionnaireWith(completeQuestionnaire.questionnaire.id)
+
+                        DataMapper.mapMongoQuestionnaireToRoomQuestionnaireCourseOfStudiesRelation(response.mongoQuestionnaire).let {
+                            localRepository.insert(it)
+                        }
+
                         fragmentSearchEventChannel.send(ShowMessageSnackBar(R.string.questionnaireDownloaded))
                         fragmentSearchEventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, DownloadStatus.DOWNLOADED))
                     }

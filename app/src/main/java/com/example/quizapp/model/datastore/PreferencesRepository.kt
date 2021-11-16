@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -28,7 +29,7 @@ class PreferencesRepository @Inject constructor(context: Context) {
         val LANGUAGE_KEY = stringPreferencesKey("languageKey")
         private val THEME_KEY = intPreferencesKey("themeKey")
         private val SHUFFLE_TYPE_KEY = stringPreferencesKey("shuffleTypePreference")
-        private val PREFERRED_COURSE_OF_STUDIES_ID_KEY = stringPreferencesKey("preferredCosKey")
+        private val PREFERRED_COURSE_OF_STUDIES_ID_KEY = stringSetPreferencesKey("preferredCosKey")
 
         private val JWT_TOKEN_KEY = stringPreferencesKey("jwtTokenKey")
         private val USER_ID_KEY = stringPreferencesKey("userIdKey")
@@ -101,14 +102,14 @@ class PreferencesRepository @Inject constructor(context: Context) {
     // Use preferredCos for filtering -> Also bei der Suche von Fragebögen
     // Use preferredCos for Questionnaire creation -> Dass das Feld prefilled wird mit der COS
     val preferredCourseOfStudiesIdFlow = dataFlow.map { preferences ->
-        preferences[PREFERRED_COURSE_OF_STUDIES_ID_KEY] ?: ""
+        preferences[PREFERRED_COURSE_OF_STUDIES_ID_KEY] ?: emptySet()
     }
 
     suspend fun getPreferredCourseOfStudiesId() = preferredCourseOfStudiesIdFlow.first()
 
-    suspend fun updatePreferredCourseOfStudiesId(courseOfStudiesId: String) {
+    suspend fun updatePreferredCourseOfStudiesIds(courseOfStudiesIds: List<String>) {
         dataStore.edit { preferences ->
-            preferences[PREFERRED_COURSE_OF_STUDIES_ID_KEY] = courseOfStudiesId
+            preferences[PREFERRED_COURSE_OF_STUDIES_ID_KEY] = courseOfStudiesIds.toSet()
         }
     }
 

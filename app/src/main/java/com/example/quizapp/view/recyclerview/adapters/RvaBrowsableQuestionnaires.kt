@@ -49,9 +49,10 @@ class RvaBrowsableQuestionnaires(
             tvTitle.text = item.title
 
             vmSearch.viewModelScope.launch(IO) {
-                val courseOfStudiesText = vmSearch.getCourseOfStudiesNameWithId(item.courseOfStudiesId)
+                val courseOfStudiesAbbreviations = vmSearch.getCourseOfStudiesNameWithIds(item.courseOfStudiesIds).reduce { acc, s -> "$acc, $s" }
+
                 withContext(Main){
-                    tvInfo.text = context.getString(R.string.test, item.authorInfo.userName, courseOfStudiesText, item.subject, item.questionCount.toString())
+                    tvInfo.text = context.getString(R.string.test, item.authorInfo.userName, courseOfStudiesAbbreviations, item.subject, item.questionCount.toString())
                 }
             }
 

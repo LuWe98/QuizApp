@@ -8,6 +8,8 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.QuestionnaireShuffleType
+import com.example.quizapp.model.datastore.QuizAppLanguage
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_CHANGED
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_UP_TO_DATE
@@ -34,9 +36,9 @@ class VmSettings @Inject constructor(
 
     private val userFlow = preferencesRepository.userFlow.flowOn(IO).distinctUntilChanged()
 
-    val userRoleFlow = userFlow.map { it.role }.stateIn(viewModelScope, SharingStarted.Lazily, null)
+    val userRoleFlow = userFlow.map(User::role::get).stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val userNameFlow = userFlow.map { it.userName }.stateIn(viewModelScope, SharingStarted.Lazily, null)
+    val userNameFlow = userFlow.map(User::userName::get).stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     val themeNameResFlow = preferencesRepository.themeFlow.map {
         when (it) {
@@ -47,14 +49,17 @@ class VmSettings @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val languageFlow = preferencesRepository.languageFlow.stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-    val shuffleTypeFlow = preferencesRepository.shuffleTypeFlow.stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-    val preferredCourseOfStudiesFlow = preferencesRepository.preferredCourseOfStudiesIdFlow
-        .mapNotNull { localRepository.getCourseOfStudiesWithId(it) }
+    val languageNameResFlow = preferencesRepository.languageFlow
+        .map(QuizAppLanguage::textRes::get)
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
+    val shuffleTypeNameResFlow = preferencesRepository.shuffleTypeFlow
+        .map(QuestionnaireShuffleType::textRes::get)
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+    val preferredCoursesOfStudiesFlow = preferencesRepository.preferredCourseOfStudiesIdFlow
+        .mapNotNull { localRepository.getCoursesOfStudiesNameWithIds(it.toList()) }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
 
     fun onLogoutClicked() = launch(IO) {
@@ -63,6 +68,19 @@ class VmSettings @Inject constructor(
 
     fun onGoToAdminPageClicked() = launch(IO) {
         fragmentSettingsEventChannel.send(NavigateToAdminScreen)
+    }
+
+    fun onPreferredCourseOfStudiesButtonClicked(){
+        launch(IO) {
+            val courseOfStudiesIds = preferencesRepository.getPreferredCourseOfStudiesId().toList()
+            fragmentSettingsEventChannel.send(NavigateToCourseOfStudiesSelectionScreen(courseOfStudiesIds))
+        }
+    }
+
+    fun onCourseOfStudiesUpdateTriggered(coursesOfStudiesIds: List<String>){
+        launch(IO) {
+            preferencesRepository.updatePreferredCourseOfStudiesIds(coursesOfStudiesIds)
+        }
     }
 
     fun onRefreshListenerTriggered() = applicationScope.launch(IO) {
@@ -102,6 +120,7 @@ class VmSettings @Inject constructor(
         object OnLogoutClickedEvent : FragmentSettingsEvent()
         object NavigateToLoginScreen : FragmentSettingsEvent()
         object NavigateToAdminScreen : FragmentSettingsEvent()
+        class NavigateToCourseOfStudiesSelectionScreen(val courseOfStudiesIds: List<String>): FragmentSettingsEvent()
         class ShowMessageSnackBarEvent(val messageRes: Int) : FragmentSettingsEvent()
     }
 }

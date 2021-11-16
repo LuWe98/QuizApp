@@ -221,28 +221,13 @@
                     android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <com.example.quizapp.view.customimplementations.settings.SettingsItemBottomTextDropDownLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/facultyDropDown"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/inputLayoutName"
-                app:icon="@drawable/ic_faculty"
-                app:title="@string/faculty"
-                app:dropDownIcon="@drawable/ic_arrow_down"
-                app:text="WI"
-                android:layout_marginHorizontal="@dimen/grid_8"
-                android:layout_marginTop="@dimen/grid_2" />
-
         <com.example.quizapp.view.customimplementations.settings.SettingsItemBottomTextDropDownLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/cosDropDown"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/facultyDropDown"
+                app:layout_constraintTop_toBottomOf="@id/inputLayoutName"
                 app:icon="@drawable/ic_course_of_studies"
                 app:title="@string/courseOfStudies"
                 app:dropDownIcon="@drawable/ic_arrow_down"
@@ -272,8 +257,6 @@
                     android:text="Promod"
                     android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

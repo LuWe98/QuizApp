@@ -2,12 +2,14 @@ package com.example.quizapp.model.databases.room.junctions
 
 import android.os.Parcelable
 import androidx.room.Embedded
+import androidx.room.Junction
 import androidx.room.Relation
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
+import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
 import com.example.quizapp.utils.DiffCallbackUtil
 import kotlinx.parcelize.Parcelize
 
@@ -22,17 +24,12 @@ data class CompleteQuestionnaire(
     )
     var questionsWithAnswers: MutableList<QuestionWithAnswers>,
     @Relation(
-        entity = Faculty::class,
-        entityColumn = Faculty.ID_COLUMN,
-        parentColumn = Questionnaire.FACULTY_ID_COLUMN
-    )
-    var faculty: Faculty?,
-    @Relation(
         entity = CourseOfStudies::class,
         entityColumn = CourseOfStudies.ID_COLUMN,
-        parentColumn = Questionnaire.COURSE_OF_STUDIES_ID_COLUMN
+        parentColumn = Questionnaire.ID_COLUMN,
+        associateBy = Junction(QuestionnaireCourseOfStudiesRelation::class)
     )
-    var courseOfStudies: CourseOfStudies?,
+    var coursesOfStudiesWithFaculties: List<CourseOfStudiesWithFaculties>,
 ) : Parcelable {
 
     val allQuestions: List<Question> get() = questionsWithAnswers.map(QuestionWithAnswers::question)
@@ -49,17 +46,15 @@ data class CompleteQuestionnaire(
 
     fun isQuestionAnsweredCorrectly(questionId: String): Boolean = getQuestionWithAnswers(questionId).isAnsweredCorrectly
 
-    fun getAnswersForQuestion(questionId: String): List<Answer> = getQuestionWithAnswers(questionId).answers
-
     val questionsAmount get() = questionsWithAnswers.size
 
-    val answeredQuestionsAmount get() = questionsWithAnswers.filter(QuestionWithAnswers::isAnswered).size
+    private val answeredQuestionsAmount get() = questionsWithAnswers.filter(QuestionWithAnswers::isAnswered).size
 
     val answeredQuestionsPercentage get() = (answeredQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
 
     val areAllQuestionsAnswered get() = questionsAmount == answeredQuestionsAmount
 
-    val correctQuestionsAmount get() = questionsWithAnswers.filter(QuestionWithAnswers::isAnsweredCorrectly).size
+    private val correctQuestionsAmount get() = questionsWithAnswers.filter(QuestionWithAnswers::isAnsweredCorrectly).size
 
     val correctQuestionsPercentage get() = (correctQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
 
@@ -69,10 +64,40 @@ data class CompleteQuestionnaire(
 
     val toQuizStatisticNumbers get() = QuizStatisticNumbers(questionsAmount, answeredQuestionsAmount, correctQuestionsAmount)
 
+
+
+
+    //COS AND FACULTY STUFF
+    val asQuestionnaireCourseOfStudiesRelations get() = run {
+        coursesOfStudiesWithFaculties.map {
+            QuestionnaireCourseOfStudiesRelation(questionnaire.id, it.courseOfStudies.id)
+        }
+    }
+
+    val allCoursesOfStudies get() = coursesOfStudiesWithFaculties
+        .map(CourseOfStudiesWithFaculties::courseOfStudies)
+        .distinctBy(CourseOfStudies::id)
+
+    val allFaculties get() = coursesOfStudiesWithFaculties
+        .flatMap(CourseOfStudiesWithFaculties::faculties)
+        .distinctBy(Faculty::id)
+
+    val courseOfStudiesAbbreviations get() = run {
+        allCoursesOfStudies.map(CourseOfStudies::abbreviation).reduceOrNull { acc, s -> "$acc, $s" } ?: ""
+    }
+
+    val facultiesAbbreviations get() = run {
+        allFaculties.map(Faculty::abbreviation).reduceOrNull { acc, s -> "$acc, $s" } ?: ""
+    }
+
+
+
+
+
+
     companion object {
         val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<CompleteQuestionnaire> { old, new -> old.questionnaire.id == new.questionnaire.id }
     }
-
 
     data class QuizStatisticNumbers(
         val questionsAmount: Int,

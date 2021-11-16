@@ -24,4 +24,10 @@ abstract class CourseOfStudiesDao : BaseDao<CourseOfStudies>(CourseOfStudies.TAB
     @Query("SELECT abbreviation FROM courseOfStudiesTable WHERE courseOfStudiesId =:courseOfStudiesId LIMIT 1")
     abstract suspend fun getCourseOfStudiesNameWithId(courseOfStudiesId: String): String
 
+    @Query("SELECT abbreviation FROM courseOfStudiesTable WHERE courseOfStudiesId IN(:courseOfStudiesIds)")
+    abstract suspend fun getCoursesOfStudiesNameWithIds(courseOfStudiesIds: List<String>): List<String>
+
+    @Query("SELECT * FROM courseOfStudiesTable WHERE courseOfStudiesId IN(:courseOfStudiesIds)")
+    abstract fun getCoursesOfStudiesFlowWithIds(courseOfStudiesIds: List<String>): Flow<List<CourseOfStudies>>
+
 }

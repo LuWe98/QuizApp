@@ -14,8 +14,10 @@ import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
+import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 
 /**
  * DataMapper for ROOM and MONGO Entities/Documents
@@ -30,8 +32,6 @@ object DataMapper {
             id = mongoQuestionnaire.id,
             title = mongoQuestionnaire.title,
             authorInfo = mongoQuestionnaire.authorInfo,
-            facultyId = mongoQuestionnaire.facultyId,
-            courseOfStudiesId = mongoQuestionnaire.courseOfStudiesId,
             subject = mongoQuestionnaire.subject,
             syncStatus = SyncStatus.SYNCED,
             visibility = mongoQuestionnaire.questionnaireVisibility,
@@ -58,36 +58,24 @@ object DataMapper {
                 })
         }.toMutableList()
 
-        return CompleteQuestionnaire(questionnaire, questionsWithAnswers, null, null)
+        return CompleteQuestionnaire(questionnaire, questionsWithAnswers, emptyList())
     }
 
 
     fun mapRoomQuestionnaireToMongoQuestionnaire(
-        completeCompleteQuestionnaire: CompleteQuestionnaire
-    ) = completeCompleteQuestionnaire.run { mapRoomQuestionnaireToMongoQuestionnaire(questionnaire, questionsWithAnswers) }
-
-    fun mapRoomQuestionnaireToMongoQuestionnaire(
-        questionnaire: Questionnaire,
-        questions: List<Question>, answers: List<Answer>
-    ) = mapRoomQuestionnaireToMongoQuestionnaire(questionnaire, questions.map { question ->
-        QuestionWithAnswers(question = question, answers = answers.filter { answer -> answer.questionId == question.id })
-    })
-
-    fun mapRoomQuestionnaireToMongoQuestionnaire(
-        questionnaire: Questionnaire,
-        questionsWithAnswers: List<QuestionWithAnswers>
+        completeQuestionnaire: CompleteQuestionnaire
     ): MongoQuestionnaire {
         return MongoQuestionnaire(
-            id = questionnaire.id,
-            title = questionnaire.title,
-            authorInfo = questionnaire.authorInfo,
-            facultyId = questionnaire.facultyId,
-            courseOfStudiesId = questionnaire.courseOfStudiesId,
-            subject = questionnaire.subject,
-            questionnaireVisibility = questionnaire.visibility,
-            lastModifiedTimestamp = questionnaire.lastModifiedTimestamp
+            id = completeQuestionnaire.questionnaire.id,
+            title = completeQuestionnaire.questionnaire.title,
+            authorInfo = completeQuestionnaire.questionnaire.authorInfo,
+            facultyIds = completeQuestionnaire.allFaculties.map(Faculty::id),
+            courseOfStudiesIds = completeQuestionnaire.allCoursesOfStudies.map(CourseOfStudies::id),
+            subject = completeQuestionnaire.questionnaire.subject,
+            questionnaireVisibility = completeQuestionnaire.questionnaire.visibility,
+            lastModifiedTimestamp = completeQuestionnaire.questionnaire.lastModifiedTimestamp
         ).apply {
-            questions = questionsWithAnswers.map { qwa ->
+            questions = completeQuestionnaire.questionsWithAnswers.map { qwa ->
                 qwa.question.let { question ->
                     MongoQuestion(
                         id = question.id,
@@ -108,6 +96,11 @@ object DataMapper {
             }
         }
     }
+
+    fun mapMongoQuestionnaireToRoomQuestionnaireCourseOfStudiesRelation(mongoQuestionnaire: MongoQuestionnaire) =
+        mongoQuestionnaire.courseOfStudiesIds.distinct().map { courseOfStudiesId ->
+            QuestionnaireCourseOfStudiesRelation(mongoQuestionnaire.id, courseOfStudiesId)
+        }
 
 
     fun mapRoomQuestionnaireToMongoFilledQuestionnaire(
@@ -159,7 +152,7 @@ object DataMapper {
         lastModifiedTimestamp = mongoFaculty.lastModifiedTimestamp
     )
 
-    fun mapMongoCourseOfStudiesToRoomCourseOfStudies(mongoCourseOfStudies: MongoCourseOfStudies) : Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>> {
+    fun mapMongoCourseOfStudiesToRoomCourseOfStudies(mongoCourseOfStudies: MongoCourseOfStudies): Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>> {
         val courseOfStudies = CourseOfStudies(
             id = mongoCourseOfStudies.id,
             abbreviation = mongoCourseOfStudies.abbreviation,

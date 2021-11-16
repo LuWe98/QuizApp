@@ -8,11 +8,12 @@
         app:cardBackgroundColor="@color/white"
         app:cardElevation="0dp"
         app:cardCornerRadius="7.5dp"
-        android:layout_margin="@dimen/grid_2">
+        android:layout_marginHorizontal="@dimen/grid_4"
+        android:layout_marginVertical="@dimen/grid_2">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="50dp">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="1dp"

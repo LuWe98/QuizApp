@@ -3,6 +3,7 @@ package com.example.quizapp.view.fragments.settingsscreen
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentSettingsBinding
@@ -10,6 +11,7 @@ import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
 import com.example.quizapp.viewmodel.VmSettings
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,9 +36,7 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
             btnTheme.onClick(navigator::navigateToThemeSelection)
             btnLanguage.onClick(navigator::navigateToLanguageSelection)
             btnShuffleType.onClick(navigator::navigateToShuffleTypeSelection)
-            btnPreferredCos.onClick {
-
-            }
+            btnPreferredCos.onClick(vmSettings::onPreferredCourseOfStudiesButtonClicked)
         }
 
         binding.userLayout.apply {
@@ -60,6 +60,12 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
 
     private fun initObservers() {
+        setFragmentResultListener(BsdfCourseOfStudiesSelection.COURSE_OF_STUDIES_RESULT_KEY) { _, bundle ->
+            bundle.getStringArray(BsdfCourseOfStudiesSelection.SELECTED_COURSE_OF_STUDIES_KEY)?.let { courseOfStudiesIds ->
+                vmSettings.onCourseOfStudiesUpdateTriggered(courseOfStudiesIds.toList())
+            }
+        }
+
         vmSettings.userNameFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.userLayout.btnUserName.text = it ?: "-"
         }
@@ -69,22 +75,22 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
             binding.adminLayout.root.isVisible = it == Role.ADMIN
         }
 
-        vmSettings.themeNameResFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.preferencesLayout.btnTheme.text = it?.let { getString(it) } ?: "-"
+        vmSettings.themeNameResFlow.collectWhenStarted(viewLifecycleOwner) { stringRes ->
+            binding.preferencesLayout.btnTheme.text = stringRes?.let(::getString) ?: "-"
         }
 
-        vmSettings.languageFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.preferencesLayout.btnLanguage.text = it?.let { getString(it.textRes) } ?: "-"
+        vmSettings.languageNameResFlow.collectWhenStarted(viewLifecycleOwner) { stringRes ->
+            binding.preferencesLayout.btnLanguage.text = stringRes?.let(::getString) ?: "-"
         }
 
-        vmSettings.shuffleTypeFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.preferencesLayout.btnShuffleType.text = it?.let { getString(it.textRes) } ?: "-"
+        vmSettings.shuffleTypeNameResFlow.collectWhenStarted(viewLifecycleOwner) { stringRes ->
+            binding.preferencesLayout.btnShuffleType.text = stringRes?.let(::getString) ?: "-"
         }
 
-        vmSettings.preferredCourseOfStudiesFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.preferencesLayout.btnPreferredCos.text = it?.abbreviation ?: "-"
+        vmSettings.preferredCoursesOfStudiesFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.preferencesLayout.btnPreferredCos.text = if(it.size > 2) it.size.toString()
+                else it.reduceOrNull { acc, s -> "$acc, $s"  } ?: "-"
         }
-
 
         vmSettings.fragmentSettingsEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
@@ -107,6 +113,7 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
                         anchorView = bindingActivity.binding.root.findViewById(R.id.bottomAppBar)
                     )
                 }
+                is NavigateToCourseOfStudiesSelectionScreen -> navigator.navigateToCourseOfStudiesSelection(event.courseOfStudiesIds)
             }
         }
     }

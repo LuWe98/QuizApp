@@ -1,4 +1,4 @@
-package com.example.quizapp.view.fragments.addquestionnairescreen
+package com.example.quizapp.view.fragments.addeditquestionnairescreen
 
 import android.os.Bundle
 import android.view.View

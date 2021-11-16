@@ -19,6 +19,7 @@ import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.QuestionnaireVisibility.PRIVATE
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
@@ -29,6 +30,7 @@ import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -49,12 +51,12 @@ class VmHome @Inject constructor(
     private val fragmentHomeCachedEventChannel = Channel<FragmentHomeCachedEvent>()
     private val fragmentHomeCreatedEventChannel = Channel<FragmentHomeCreatedEvent>()
 
-    val fragmentHomeEventChannelFlow get() = fragmentHomeEventChannel.receiveAsFlow()
-    val fragmentHomeCachedEventChannelFlow get() = fragmentHomeCachedEventChannel.receiveAsFlow()
-    val fragmentHomeCreatedEventChannelFlow get() = fragmentHomeCreatedEventChannel.receiveAsFlow()
+    val fragmentHomeEventChannelFlow = fragmentHomeEventChannel.receiveAsFlow()
+    val fragmentHomeCachedEventChannelFlow = fragmentHomeCachedEventChannel.receiveAsFlow()
+    val fragmentHomeCreatedEventChannelFlow = fragmentHomeCreatedEventChannel.receiveAsFlow()
 
     init {
-        if(app.isConnectedToInternet) {
+        if (app.isConnectedToInternet) {
             applicationScope.launch(IO) {
                 fragmentHomeEventChannel.send(ChangeProgressVisibility(true))
 //            fragmentHomeCachedEventChannel.send(ChangeCachedSwipeRefreshLayoutVisibility(true))
@@ -78,24 +80,6 @@ class VmHome @Inject constructor(
     val allCreatedQuestionnairesFlow = userIdFlow
         .flatMapLatest(localRepository::findAllCompleteQuestionnairesForUserFlow)
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-
-//    val allCachedQuestionnairesStateFlow = userIdFlow.flatMapLatest { id ->
-//        Pager(
-//            config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
-//            pagingSourceFactory = {
-//                localRepository.findAllCompleteQuestionnairesNotForUserPagingSource(id)
-//            }).flow.cachedIn(viewModelScope)
-//    }.stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-//    val allCreatedQuestionnairesStateFlow = userIdFlow.flatMapLatest { id ->
-//        Pager(
-//            config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
-//            pagingSourceFactory = {
-//                localRepository.findAllCompleteQuestionnairesForUserPagingSource(id)
-//            }).flow.cachedIn(viewModelScope)
-//    }.stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-
 
 
     fun onSwipeRefreshCachedQuestionnairesList() = launch(IO) {
@@ -188,18 +172,14 @@ class VmHome @Inject constructor(
     // DELETE ANSWERS OF QUESTIONNAIRE
     fun deleteFilledQuestionnaire(questionnaireId: String) = launch(IO) {
         localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let { completeQuestionnaire ->
-
-            //TODO -> Inserted, dass man den hier reingeldaden hat -> Man muss noch schauen ob die Id in LocallyAnsweredQuestionnaireIds is und wenn ja rauslöschen!
             localRepository.insert(LocallyFilledQuestionnaireToUpload(completeQuestionnaire.questionnaire.id))
-//            val locallyAnswered = localRepository.getLocallyAnsweredQuestionnaire(completeQuestionnaire.questionnaire.id)
-//            locallyAnswered?.let { localRepository.delete(it) }
-
             fragmentHomeEventChannel.send(ShowUndoDeleteAnswersOfQuestionnaireSnackBar(completeQuestionnaire))
             completeQuestionnaire.allAnswers.map { it.copy(isAnswerSelected = false) }.let {
                 localRepository.update(it)
             }
         }
     }
+
     //TODO -> Das ist der einzige kritische Punkt, da hier nur die antworten gelöscht werden, deswegen wird später der Fragebogen nicht automatisch rausgefiltert
     fun onDeleteFilledQuestionnaireConfirmed(event: ShowUndoDeleteAnswersOfQuestionnaireSnackBar) = launch(IO) {
         runCatching {
@@ -214,8 +194,6 @@ class VmHome @Inject constructor(
     fun onUndoDeleteFilledQuestionnaireClicked(event: ShowUndoDeleteAnswersOfQuestionnaireSnackBar) = launch(IO) {
         localRepository.update(event.completeQuestionnaire.allAnswers)
     }
-
-
 
 
     fun onChangeQuestionnaireVisibilitySelected(questionnaireId: String, newVisibility: QuestionnaireVisibility) = launch(IO) {
@@ -238,12 +216,10 @@ class VmHome @Inject constructor(
     }
 
 
-
-
     sealed class FragmentHomeEvent {
         class ShowSnackBarMessageBar(val messageRes: Int) : FragmentHomeEvent()
         class ShowUndoDeleteCreatedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
-        class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
+        class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire, ) : FragmentHomeEvent()
         class ShowUndoDeleteAnswersOfQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
         class ChangeProgressVisibility(val visible: Boolean) : FragmentHomeEvent()
     }

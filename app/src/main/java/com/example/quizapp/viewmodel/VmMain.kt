@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,10 +31,8 @@ class VmMain @Inject constructor(
 
     val mainViewModelEventChannelFlow = mainViewModelEventChannel.receiveAsFlow()
 
-    val userFlow = preferencesRepository.userFlow.flowOn(IO).stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-    val currentLanguage = runBlocking(IO) { preferencesRepository.getLanguage() }
-
+    val userFlow = preferencesRepository.userFlow.flowOn(IO)
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     fun onUserDataChanged(user: User?, currentDestinationId: Int?) = launch(IO) {
         user?.let {

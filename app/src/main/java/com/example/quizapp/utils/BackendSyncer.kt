@@ -2,6 +2,9 @@ package com.example.quizapp.utils
 
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedUser
@@ -53,8 +56,8 @@ class BackendSyncer @Inject constructor(
         localRepository.insert(facultiesAsync.await())
 
         coursesOfStudiesAsync.await().let { result ->
-            localRepository.insert(result.map { it.first })
-            localRepository.insert(result.flatMap { it.second })
+            localRepository.insert(result.map(Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>>::first))
+            localRepository.insert(result.flatMap(Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>>::second))
         }
     }
 
@@ -142,14 +145,18 @@ class BackendSyncer @Inject constructor(
             )
         }.onSuccess { response ->
             val insertAsync = async {
-                mapToCompleteQuestionnaire(syncedQuestionnaires, response).let {
-                    localRepository.insertCompleteQuestionnaires(it)
+                mapToCompleteQuestionnaire(syncedQuestionnaires, response).let { questionnairesToInsert ->
+                    localRepository.insertCompleteQuestionnaires(questionnairesToInsert)
+                }
+
+                response.mongoQuestionnaires.flatMap(DataMapper::mapMongoQuestionnaireToRoomQuestionnaireCourseOfStudiesRelation).let {
+                    localRepository.insert(it)
                 }
             }
 
             val updateAsync = async {
-                unsyncNonExistentQuestionnaires(syncedQuestionnaires, response).let {
-                    localRepository.update(it)
+                unsyncNonExistentQuestionnaires(syncedQuestionnaires, response).let { questionnairesToUnsync ->
+                    localRepository.update(questionnairesToUnsync)
                 }
             }
 
