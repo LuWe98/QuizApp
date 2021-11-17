@@ -3,9 +3,9 @@ package com.example.quizapp.view.fragments.quizscreen
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.widget.PopupMenu
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
@@ -31,6 +31,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
     private val vmQuiz: VmQuiz by hiltNavGraphViewModels(R.id.quiz_nav_graph)
 
     private lateinit var rvAdapter: RvaQuestionQuiz
+
     private lateinit var bottomSheetBehaviour: BottomSheetBehavior<FrameLayout>
     private lateinit var bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback
 
@@ -60,44 +61,38 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
     }
 
     private fun initBottomSheet() {
-        val btnMargin = resources.getDimension(R.dimen.grid_8)
-        val baseElevation = 2.dp
-        val bottomSheetHeaderHeight = 70.dp
-        val btnStartDefaultMarginBottom = 12.5.dp
-
         bottomSheetBehaviour = BottomSheetBehavior.from(binding.bottomSheet.root).apply {
-            state = BottomSheetBehavior.STATE_COLLAPSED
+            onBottomSheetSlide(if(vmQuiz.bottomSheetState == BottomSheetBehavior.STATE_COLLAPSED) 0f else 1f)
+            state = vmQuiz.bottomSheetState
             peekHeight = 70.dp
             skipCollapsed = true
             bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) {}
-                override fun onSlide(sheet: View, slideOffset: Float) {
-                    binding.bottomSheet.apply {
-                        coordRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                            height = (((resources.displayMetrics.heightPixels - bottomSheetHeaderHeight) * slideOffset) + bottomSheetHeaderHeight).toInt()
-                        }
-
-                        rv.alpha = slideOffset.pow(2)
-
-                        (baseElevation * slideOffset).let { newElevation ->
-                            sheetHeader.elevation = newElevation
-                            btnStart.elevation = newElevation
-                        }
-
-                        btnStart.apply {
-                            updateLayoutParams<ViewGroup.MarginLayoutParams>{
-                                bottomMargin = btnStartDefaultMarginBottom + (btnMargin * slideOffset).toInt()
-                            }
-                            scaleX = 1 + slideOffset / 3.5f
-                            scaleY = 1 + slideOffset / 3.5f
-                        }
-
-                        btnCollapse.rotation = 180 + slideOffset * 180
-                    }
-                }
+                override fun onStateChanged(bottomSheet: View, newState: Int) = vmQuiz.onBottomSheetStateUpdated(newState)
+                override fun onSlide(sheet: View, slideOffset: Float) = onBottomSheetSlide(slideOffset)
             }
 
             addBottomSheetCallback(bottomSheetCallback)
+        }
+    }
+
+    private fun onBottomSheetSlide(slideOffset: Float){
+        binding.bottomSheet.apply {
+            rv.alpha = slideOffset.pow(2) + 0.1f
+
+            (2.dp * slideOffset).let { newElevation ->
+                sheetHeader.elevation = newElevation
+                btnStart.elevation = newElevation
+            }
+
+            btnStart.apply {
+                updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    verticalBias = slideOffset
+                }
+                scaleX = 1 + slideOffset / 3.5f
+                scaleY = 1 + slideOffset / 3.5f
+            }
+
+            btnCollapse.rotation = 180 + slideOffset * 180
         }
     }
 
@@ -127,8 +122,6 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                 tvCourseOfStudies.text = completeQuestionnaire.courseOfStudiesAbbreviations
                 tvFaculty.text = completeQuestionnaire.facultiesAbbreviations
             }
-
-            onShouldDisplaySolutionChanged(vmQuiz.shouldDisplaySolution, completeQuestionnaire)
         }
 
 
@@ -151,39 +144,44 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
 
         vmQuiz.questionStatisticsFlow.collectWhenStarted(viewLifecycleOwner) {
-            if (it.answeredQuestionsPercentage != 100) {
-                vmQuiz.setShouldDisplaySolution(false)
-            }
-
             binding.apply {
                 tvQuestionsAnswered.text = it.answeredQuestionsPercentage.toString()
-                ivResultIcon.isVisible = it.areAllQuestionsCorrectlyAnswered
-                tvQuestionsAnswered.isVisible = !it.areAllQuestionsCorrectlyAnswered
-                tvQuestionsAnsweredLabel.isVisible = !it.areAllQuestionsCorrectlyAnswered
-                tvQuestionsAnsweredPercentage.isVisible = !it.areAllQuestionsCorrectlyAnswered
+                ivResultIcon.isVisible = it.areAllQuestionsAnswered
+                ivResultIcon.setImageDrawable(if(it.correctQuestionsPercentage > 80) R.drawable.ic_check else R.drawable.ic_cross)
+                ivResultIcon.setDrawableTintWithRes(if(it.correctQuestionsPercentage > 80) R.color.green else R.color.red)
+
+                tvQuestionsAnswered.isVisible = !it.areAllQuestionsAnswered
+                tvQuestionsAnsweredLabel.isVisible = !it.areAllQuestionsAnswered
+                tvQuestionsAnsweredPercentage.isVisible = !it.areAllQuestionsAnswered
 
                 progress.setProgressWithAnimation(it.answeredQuestionsPercentage, (it.answeredQuestionsPercentage * 3.5f).toLong())
                 progressCorrect.setProgressWithAnimation(if (it.areAllQuestionsAnswered) it.correctQuestionsPercentage else 0, 350)
                 progressIncorrect.setProgressWithAnimation(if (it.areAllQuestionsAnswered) it.incorrectQuestionsPercentage else 0, 350)
-            }
 
-            binding.statisticsCard.apply {
-                allQuestions.setProgressWithAnimation(100, 350)
-                allQuestionsNumber.text = it.questionsAmount.toString()
-                answeredQuestions.setProgressWithAnimation(it.answeredQuestionsPercentage, (it.answeredQuestionsPercentage * 3.5f).toLong())
-                answeredQuestionsAmount.text = it.answeredQuestionsAmount.toString()
-                correctQuestions.setProgressWithAnimation(it.correctQuestionsPercentage, (it.correctQuestionsPercentage * 3.5f).toLong())
-                correctQuestionsAmount.text = it.correctQuestionsAmount.toString()
-                incorrectQuestions.setProgressWithAnimation(it.incorrectQuestionsPercentage, (it.incorrectQuestionsPercentage * 3.5f).toLong())
-                wrongQuestionsAmount.text = it.incorrectQuestionsAmount.toString()
+
+                statisticsCard.apply {
+                    allQuestions.setProgressWithAnimation(100, 350)
+                    allQuestionsNumber.text = it.questionsAmount.toString()
+                    answeredQuestions.setProgressWithAnimation(it.answeredQuestionsPercentage, (it.answeredQuestionsPercentage * 3.5f).toLong())
+                    answeredQuestionsAmount.text = it.answeredQuestionsAmount.toString()
+
+                    if(it.areAllQuestionsAnswered) {
+                        correctQuestions.setProgressWithAnimation(it.correctQuestionsPercentage, (it.correctQuestionsPercentage * 3.5f).toLong())
+                        correctQuestionsAmount.text = it.correctQuestionsAmount.toString()
+                        incorrectQuestions.setProgressWithAnimation(it.incorrectQuestionsPercentage, (it.incorrectQuestionsPercentage * 3.5f).toLong())
+                        wrongQuestionsAmount.text = it.incorrectQuestionsAmount.toString()
+                    } else {
+                        correctQuestions.setProgressWithAnimation(0)
+                        correctQuestionsAmount.text = "0"
+                        incorrectQuestions.setProgressWithAnimation(0)
+                        wrongQuestionsAmount.text = "0"
+                    }
+                }
             }
         }
 
-
-        vmQuiz.shouldDisplaySolutionStateFlow.collectWhenStarted(viewLifecycleOwner) { shouldDisplay ->
-            vmQuiz.completeQuestionnaire?.let {
-                onShouldDisplaySolutionChanged(shouldDisplay, it)
-            }
+        vmQuiz.areAllQuestionsAnsweredFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.bottomSheet.rv.updateAllViewHolders()
         }
 
 
@@ -210,27 +208,6 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                 is NavigateToQuizScreen -> navigator.navigateToQuizContainerScreen(isShowSolutionScreen = event.isShowSolutionScreen)
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes, anchorView = binding.bottomSheet.root)
             }
-        }
-    }
-
-
-    private fun onShouldDisplaySolutionChanged(shouldDisplay: Boolean, completeQuestionnaire: CompleteQuestionnaire) {
-        return
-        val cqp = completeQuestionnaire.correctQuestionsPercentage
-        binding.apply {
-            progressCorrect.setProgressWithAnimation(if (shouldDisplay) cqp else 0)
-            progressIncorrect.setProgressWithAnimation(if (shouldDisplay) 100 - cqp else 0)
-
-            tvQuestionsAnswered.isVisible = !shouldDisplay
-            ivResultIcon.isVisible = shouldDisplay
-
-            if (shouldDisplay) {
-                val isEverythingCorrect = cqp == 100
-                ivResultIcon.setImageDrawable(if (isEverythingCorrect) R.drawable.ic_check else R.drawable.ic_cross)
-                ivResultIcon.setDrawableTintWithRes(if (isEverythingCorrect) R.color.green else R.color.red)
-            }
-
-            bottomSheet.rv.updateAllViewHolders()
         }
     }
 

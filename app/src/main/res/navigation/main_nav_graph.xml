@@ -281,7 +281,16 @@
     <fragment
             android:id="@+id/fragmentTesting"
             android:name="com.example.quizapp.view.fragments.test.FragmentTesting"
-            android:label="FragmentQuizOverviewNewVersion" />
+            android:label="FragmentQuizOverviewNewVersion">
+        <argument
+                android:name="completeQuestionnaire"
+                app:argType="com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire"
+                app:nullable="true" />
+
+        <argument
+                android:name="copy"
+                app:argType="boolean" />
+    </fragment>
 
     <action
             android:id="@+id/action_global_fragmentQuizOverviewNewVersion"

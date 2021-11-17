@@ -13,8 +13,8 @@ import com.example.quizapp.databinding.FragmentQuizQuestionsContainerBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.datastore.QuestionnaireShuffleType.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaLazyQuestionQuestionTabsLayout
-import com.example.quizapp.view.customimplementations.quizscreen.lazytablayout.LazyQuestionTab
+import com.example.quizapp.view.recyclerview.adapters.RvaLazyQuestionTabsLayout
+import com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab.LazyQuestionTab
 import com.example.quizapp.view.viewpager.adapter.VpaQuiz
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmQuiz
@@ -33,7 +33,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
     private val vmContainer: VmQuizQuestionsContainer by hiltNavDestinationViewModels(R.id.fragmentQuizContainer)
 
     private lateinit var vpaAdapter: VpaQuiz
-    private lateinit var rvaLazyQuestionTabs: RvaLazyQuestionQuestionTabsLayout
+    private lateinit var rvaLazyQuestionTabs: RvaLazyQuestionTabsLayout
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -79,7 +79,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
     }
 
     private fun initLazyQuestionTabs() {
-        rvaLazyQuestionTabs = RvaLazyQuestionQuestionTabsLayout(binding.lazyTabLayout, vmContainer.isShowSolutionScreen) { questionId ->
+        rvaLazyQuestionTabs = RvaLazyQuestionTabsLayout(binding.lazyTabLayout, vmContainer.isShowSolutionScreen) { questionId ->
             if (vmContainer.isShowSolutionScreen) {
                 vmQuiz.completeQuestionnaire?.isQuestionAnsweredCorrectly(questionId) ?: false
             } else {
@@ -181,9 +181,9 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
 
     private fun changeSubmitButtonVisibility(isEverythingAnswered: Boolean) {
         binding.btnSubmit.apply {
-            if ((isEverythingAnswered && translationY == 0.dp.toFloat()) || (!isEverythingAnswered && translationY == 70.dp.toFloat())) return
+            if ((isEverythingAnswered && translationY == 0.dp.toFloat()) || (!isEverythingAnswered && translationY == 65.dp.toFloat())) return
             clearAnimation()
-            animate().translationY((if (isEverythingAnswered) 0.dp else 70.dp).toFloat())
+            animate().translationY((if (isEverythingAnswered) 0.dp else 65.dp).toFloat())
                 .setInterpolator(DecelerateInterpolator())
                 .setDuration(350)
                 .start()

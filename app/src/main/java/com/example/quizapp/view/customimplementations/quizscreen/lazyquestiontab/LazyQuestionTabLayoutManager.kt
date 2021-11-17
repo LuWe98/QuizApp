@@ -1,4 +1,4 @@
-package com.example.quizapp.view.customimplementations.quizscreen.lazytablayout
+package com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab
 
 import android.content.Context
 import android.view.ViewGroup

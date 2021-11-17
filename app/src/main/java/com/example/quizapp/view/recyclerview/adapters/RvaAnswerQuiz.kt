@@ -6,10 +6,8 @@ import com.example.quizapp.databinding.RviAnswerQuizBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
-import com.example.quizapp.viewmodel.VmQuiz
 
 class RvaAnswerQuiz(
-    private val vmQuiz: VmQuiz,
     private val isMultipleChoice: Boolean,
     private val isShowSolutionScreen: Boolean
 ) : BindingListAdapter<Answer, RviAnswerQuizBinding>(Answer.DIFF_CALLBACK) {
@@ -35,7 +33,7 @@ class RvaAnswerQuiz(
                 setImageDrawable(if (isMultipleChoice) R.drawable.ic_check else R.drawable.ic_circle)
             }
 
-            if (vmQuiz.shouldDisplaySolution || isShowSolutionScreen) {
+            if (isShowSolutionScreen) {
                 tvAnswerText.setTextColor(if (item.isAnswerCorrect) getColor(R.color.green) else getThemeColor(R.attr.colorControlNormal))
                 ivSelectedIcon.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
                 ivRing.setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)

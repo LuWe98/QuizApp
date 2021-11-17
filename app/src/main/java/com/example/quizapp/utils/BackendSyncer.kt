@@ -4,7 +4,6 @@ import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
-import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedUser
@@ -275,7 +274,7 @@ class BackendSyncer @Inject constructor(
 
         val unsyncedQuestionnaireIds = unsyncedQuestionnaireIdsProvider()
 
-        localRepository.getAllLocallyAnsweredFilledQuestionnaires().filter { it.questionnaireId !in unsyncedQuestionnaireIds }.let { filledQuestionnaires ->
+        localRepository.getAllLocallyFilledQuestionnairesToUpload().filter { it.questionnaireId !in unsyncedQuestionnaireIds }.let { filledQuestionnaires ->
             if (filledQuestionnaires.isEmpty()) return@withContext
 
             runCatching {

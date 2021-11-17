@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        app:cardBackgroundColor="@color/white"
-        app:cardElevation="0dp"
-        app:cardCornerRadius="@dimen/defaultBackgroundCardCornerRadius"
+        android:background="@drawable/background_round_corners_top_15dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="35dp"
@@ -23,6 +22,19 @@
                 android:padding="6dp"
                 android:layout_marginTop="@dimen/grid_3"
                 android:layout_marginStart="@dimen/grid_1_5" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/btnMoreOptions"
+                android:src="@drawable/ic_more"
+                app:backgroundTint="?colorControlActivated"
+                android:padding="6dp"
+                android:elevation="10dp"
+                android:layout_marginEnd="@dimen/grid_1_5"
+                android:layout_marginTop="@dimen/grid_3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
@@ -106,16 +118,17 @@
                 app:layout_constraintTop_toBottomOf="@+id/progress"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:padding="5dp"
-                app:srcCompat="@drawable/ic_check_circle"
-                android:id="@+id/ivMultipleChoice"
-                app:tint="@color/multipleChoiceColor"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/ic_check_circle"
+                    android:id="@+id/ivMultipleChoice"
+                    app:tint="@color/multipleChoiceColor"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             <com.google.android.material.textview.MaterialTextView
                     android:layout_width="0dp"
@@ -204,7 +217,7 @@
                 android:id="@+id/inputLayoutName"
                 style="@style/Style.QuizApp.TextInputLayout"
                 android:hint="@string/title"
-                android:layout_marginHorizontal="@dimen/grid_8"
+                android:layout_marginHorizontal="@dimen/grid_6"
                 android:layout_marginTop="@dimen/grid_12"
                 app:startIconDrawable="@drawable/ic_title"
                 android:elevation="0dp"
@@ -216,7 +229,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:id="@+id/editTextName"
-                    android:text="Test"
+                    tools:text="Questionnaire Title"
                     style="@style/Style.QuizApp.TextInputEditText"
                     android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -232,7 +245,7 @@
                 app:title="@string/courseOfStudies"
                 app:dropDownIcon="@drawable/ic_arrow_down"
                 app:text="WIB, WNB"
-                android:layout_marginHorizontal="@dimen/grid_8"
+                android:layout_marginHorizontal="@dimen/grid_6"
                 android:layout_marginTop="@dimen/grid_2" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -243,7 +256,7 @@
                 android:hint="@string/subject"
                 android:elevation="0dp"
                 android:layout_marginTop="@dimen/grid_2"
-                android:layout_marginHorizontal="@dimen/grid_8"
+                android:layout_marginHorizontal="@dimen/grid_6"
                 app:startIconDrawable="@drawable/ic_subject"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -254,9 +267,34 @@
                     android:layout_height="60dp"
                     android:id="@+id/editTextSubject"
                     style="@style/Style.QuizApp.TextInputEditText"
-                    android:text="Promod"
+                    tools:text="Promod 1"
                     android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+
+
+    <include
+            layout="@layout/fragment_add_edit_questionnaire_bottom_sheet"
+            android:id="@+id/bottomSheet"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            tools:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:elevation="10dp"
+            android:id="@+id/btnSave"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="?colorPrimary"
+            android:layout_gravity="bottom"
+            android:text="Save"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:fontFamily="@font/work_sans_medium"
+            android:textColor="@color/white" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

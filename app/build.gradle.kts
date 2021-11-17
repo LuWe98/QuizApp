@@ -6,7 +6,7 @@ plugins {
     id("androidx.navigation.safeargs")
     id("kotlin-parcelize")
 
-    val kotlinVersion = "1.5.31"
+    val kotlinVersion = "1.6.0"
     kotlin("plugin.serialization") version kotlinVersion
 }
 

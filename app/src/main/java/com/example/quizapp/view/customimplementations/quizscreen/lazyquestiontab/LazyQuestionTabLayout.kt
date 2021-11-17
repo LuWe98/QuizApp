@@ -1,4 +1,4 @@
-package com.example.quizapp.view.customimplementations.quizscreen.lazytablayout
+package com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab
 
 import android.content.Context
 import android.util.AttributeSet
@@ -19,7 +19,7 @@ class LazyQuestionTabLayout(
     constructor(context: Context, attributeSet: AttributeSet) : this(context, attributeSet, 0)
     constructor(context: Context) : this(context, null, 0)
 
-    private var attachedViewPagerRef : WeakReference<ViewPager2>? = null
+    private var attachedViewPagerRef: WeakReference<ViewPager2>? = null
 
     private val attachedViewPager: ViewPager2? get() = attachedViewPagerRef?.get()
 
@@ -53,7 +53,7 @@ class LazyQuestionTabLayout(
     }
 
     private fun clearTabList() {
-        if(lazyTabAdapter.currentList.isEmpty()) return
+        if (lazyTabAdapter.currentList.isEmpty()) return
         setTabList(emptyList())
     }
 
@@ -73,7 +73,7 @@ class LazyQuestionTabLayout(
         getChildAt(childPosition)?.let { child -> getChildViewHolder(child)?.bindingAdapterPosition } ?: 0
 
 
-    fun <T: Any> attachToViewPager(viewPager: ViewPager2, provideTabAction: ((Int) -> T)){
+    fun <T : Any> attachToViewPager(viewPager: ViewPager2, provideTabAction: ((Int) -> T)) {
         attachedViewPagerRef = WeakReference(viewPager)
 
         populateTabsFromPagerAdapter(provideTabAction)
@@ -83,7 +83,7 @@ class LazyQuestionTabLayout(
         }
     }
 
-    fun detachFromViewPager(){
+    fun detachFromViewPager() {
         clearTabList()
         onPageChangedCallback?.let { callback ->
             attachedViewPager?.unregisterOnPageChangeCallback(callback)
@@ -91,8 +91,19 @@ class LazyQuestionTabLayout(
         attachedViewPagerRef = null
     }
 
+// TODO -> Lazy TabLayout nochmal anschauen
+//    private var lazyTabLayoutMediator : LazyTabLayoutMediator<*>? = null
+//
+//    fun <T: Any> getLazyTabLayoutMediator() = lazyTabLayoutMediator as T
+//
+//    inner class LazyTabLayoutMediator<T : Any>(
+//
+//    ) {
+//
+//    }
 
-    private fun <T: Any> populateTabsFromPagerAdapter(provideTabAction: ((Int) -> T)) {
+
+    private fun <T : Any> populateTabsFromPagerAdapter(provideTabAction: ((Int) -> T)) {
         clearTabList()
         setTabList(MutableList(attachedViewPagerItemCount, provideTabAction::invoke))
     }

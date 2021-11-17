@@ -28,6 +28,6 @@ abstract class CourseOfStudiesDao : BaseDao<CourseOfStudies>(CourseOfStudies.TAB
     abstract suspend fun getCoursesOfStudiesNameWithIds(courseOfStudiesIds: List<String>): List<String>
 
     @Query("SELECT * FROM courseOfStudiesTable WHERE courseOfStudiesId IN(:courseOfStudiesIds)")
-    abstract fun getCoursesOfStudiesFlowWithIds(courseOfStudiesIds: List<String>): Flow<List<CourseOfStudies>>
+    abstract fun getCoursesOfStudiesFlowWithIds(courseOfStudiesIds: Set<String>): Flow<List<CourseOfStudies>>
 
 }

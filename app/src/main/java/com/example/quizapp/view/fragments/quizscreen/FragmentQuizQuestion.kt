@@ -51,7 +51,7 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
     }
 
     private fun initRecyclerView(){
-        rvaAdapter = RvaAnswerQuiz(vmQuiz, isMultipleChoice, vmContainer.isShowSolutionScreen).apply {
+        rvaAdapter = RvaAnswerQuiz(isMultipleChoice, vmContainer.isShowSolutionScreen).apply {
             onItemClick = { selectedAnswerId ->
                 vmQuiz.onAnswerItemClicked(selectedAnswerId, questionId)
             }

@@ -1,6 +1,7 @@
 package com.example.quizapp.model.databases.room
 
 import androidx.room.withTransaction
+import com.example.quizapp.extensions.div
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.room.dao.*
@@ -88,7 +89,7 @@ class LocalRepository @Inject constructor(
 
     suspend fun insertCompleteQuestionnaires(completeQuestionnaire: List<CompleteQuestionnaire>) {
         localDatabase.withTransaction {
-            deleteQuestionnairesWith(completeQuestionnaire.map{ it.questionnaire.id })
+            deleteQuestionnairesWith(completeQuestionnaire.map(CompleteQuestionnaire::questionnaire / Questionnaire::id))
             insert(completeQuestionnaire.map(CompleteQuestionnaire::questionnaire))
             insert(completeQuestionnaire.flatMap(CompleteQuestionnaire::allQuestions))
             insert(completeQuestionnaire.flatMap(CompleteQuestionnaire::allAnswers))
@@ -141,14 +142,17 @@ class LocalRepository @Inject constructor(
     }
 
 
+
     //QUESTION
     fun findQuestionsAsFlowWith(questionnaireId: String) = questionDao.findQuestionsAsFlowWith(questionnaireId)
+
 
 
     //ANSWER
     fun findAnswersByIdFlow(questionId: String) = answerDao.findAnswersByIdFlow(questionId)
 
     fun findAllSelectedAnswersWithQuestionId() = answerDao.findAllSelectedAnswersWithQuestionId()
+
 
 
     //LOCALLY DELETED QUESTIONNAIRE
@@ -158,30 +162,35 @@ class LocalRepository @Inject constructor(
         locallyDeletedQuestionnaireDao.deleteLocallyDeletedQuestionnaireWith(questionnaireId)
 
 
+
     //LOCALLY ANSWERED QUESTIONNAIRES
-    suspend fun getAllLocallyAnsweredFilledQuestionnaires(): List<MongoFilledQuestionnaire> {
-        val locallyAnsweredQuestionnaireIds = locallyFilledQuestionnaireToUploadDao.getLocallyAnsweredQuestionnaireIds()
+    suspend fun getAllLocallyFilledQuestionnairesToUpload(): List<MongoFilledQuestionnaire> {
+        val locallyAnsweredQuestionnaireIds = locallyFilledQuestionnaireToUploadDao.getAllLocallyFilledQuestionnairesToUploadIds()
 
         locallyAnsweredQuestionnaireIds.map(LocallyFilledQuestionnaireToUpload::questionnaireId).let { locallyAnswered ->
             if (locallyAnswered.isEmpty()) return emptyList()
 
             val foundCompleteQuestionnaires = findCompleteQuestionnairesWith(locallyAnswered)
-            val deletedQuestionnaireIds = locallyAnswered - foundCompleteQuestionnaires.map { it.questionnaire.id }
-            if (deletedQuestionnaireIds.isNotEmpty()) {
-                locallyFilledQuestionnaireToUploadDao.deleteLocallyAnsweredQuestionnaireWith(deletedQuestionnaireIds)
+
+            (locallyAnswered - foundCompleteQuestionnaires.map(CompleteQuestionnaire::questionnaire / Questionnaire::id)).let { deletedQuestionnaireIds ->
+                if (deletedQuestionnaireIds.isNotEmpty()) {
+                    locallyFilledQuestionnaireToUploadDao.deleteLocallyFilledQuestionnaireToUploadWith(deletedQuestionnaireIds)
+                }
             }
 
             return foundCompleteQuestionnaires.map(DataMapper::mapRoomQuestionnaireToMongoFilledQuestionnaire)
         }
     }
 
-    suspend fun isAnsweredQuestionnairePresent(questionnaireId: String) = locallyFilledQuestionnaireToUploadDao.isAnsweredQuestionnairePresent(questionnaireId) == 1
+    suspend fun isLocallyFilledQuestionnaireToUploadPresent(questionnaireId: String) = locallyFilledQuestionnaireToUploadDao.isLocallyFilledQuestionnaireToUploadPresent(questionnaireId) == 1
 
-    suspend fun getLocallyAnsweredQuestionnaire(questionnaireId: String) = locallyFilledQuestionnaireToUploadDao.getLocallyAnsweredQuestionnaire(questionnaireId)
+    suspend fun getLocallyAnsweredQuestionnaire(questionnaireId: String) = locallyFilledQuestionnaireToUploadDao.getLocallyFilledQuestionnaireToUploadId(questionnaireId)
+
 
 
     //LOCALLY DELETED USERS
     suspend fun getAllLocallyDeletedUserIds() = locallyDeletedUserDao.getAllLocallyDeletedUserIds()
+
 
 
     //FACULTY
@@ -202,7 +211,7 @@ class LocalRepository @Inject constructor(
 
     val allCoursesOfStudiesFlow = courseOfStudiesDao.getAllCourseOfStudiesFlow()
 
-    fun getCoursesOfStudiesFlowWithIds(courseOfStudiesIds: List<String>) = courseOfStudiesDao.getCoursesOfStudiesFlowWithIds(courseOfStudiesIds)
+    fun getCoursesOfStudiesFlowWithIds(courseOfStudiesIds: Set<String>) = courseOfStudiesDao.getCoursesOfStudiesFlowWithIds(courseOfStudiesIds)
 
     suspend fun deleteWhereAbbreviation(abb: String) = courseOfStudiesDao.deleteWhereAbbreviation(abb)
 
@@ -211,6 +220,7 @@ class LocalRepository @Inject constructor(
     suspend fun getCoursesOfStudiesNameWithIds(courseOfStudiesIds: List<String>) = courseOfStudiesDao.getCoursesOfStudiesNameWithIds(courseOfStudiesIds)
 
     suspend fun getCourseOfStudiesWithId(courseOfStudiesId: String) = courseOfStudiesDao.getCourseOfStudiesWithId(courseOfStudiesId)
+
 
 
     //QUESTIONNAIRE COURSE OF STUDIES RELATION

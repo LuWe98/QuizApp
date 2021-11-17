@@ -25,7 +25,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 //TODO -> SETTINGS ÜBERARBEITEN MIT CUSTOM VIEWS STATT RECYCLERVIEW !!
-//TODO ---> CHANGE USERNAME AND PASSWORD IMPLEMENTIEREN
+//TODO -> CHANGE USERNAME AND PASSWORD IMPLEMENTIEREN
 //TODO -> SHARE QUESTIONNAIRE VLLT MIT LISTE IN EINEM FRAGEBOGEN ÜBERARBEITEN, in der Liste stehen alle User mit denen der geteilt wurde, man kann den dann auch bearbeiten
 
 @AndroidEntryPoint

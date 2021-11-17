@@ -146,11 +146,11 @@ class Navigator @Inject constructor(
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToBsdfShuffleTypeSelection())
     }
 
-    fun navigateToQuizOverviewNew(){
-        navController.navigate(MainNavGraphDirections.actionGlobalFragmentQuizOverviewNewVersion())
+    fun navigateToQuizOverviewNew(completeQuestionnaire: CompleteQuestionnaire? = null, copy: Boolean = false){
+        navController.navigate(MainNavGraphDirections.actionGlobalFragmentQuizOverviewNewVersion(completeQuestionnaire, copy))
     }
 
-    fun navigateToCourseOfStudiesSelection(selectedCourseOfStudiesIds: List<String>){
+    fun navigateToCourseOfStudiesSelection(selectedCourseOfStudiesIds: Set<String>){
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfCourseOfStudiesSelection(selectedCourseOfStudiesIds.toTypedArray()))
     }
 

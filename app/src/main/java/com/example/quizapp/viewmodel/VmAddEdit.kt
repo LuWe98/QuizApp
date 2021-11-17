@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.bson.types.ObjectId
 import javax.inject.Inject
 
@@ -85,7 +86,7 @@ class VmAddEdit @Inject constructor(
 
     init {
         args.completeQuestionnaire?.let {
-            qId = if(args.copy) ObjectId().toString() else it.questionnaire.id
+            qId = if (args.copy) ObjectId().toString() else it.questionnaire.id
             qTitle = it.questionnaire.title
             qFaculties = it.allFaculties
             qCoursesOfStudies = it.allCoursesOfStudies
@@ -94,8 +95,8 @@ class VmAddEdit @Inject constructor(
         }
     }
 
-    fun providePageTitle() : Int {
-        return if(args.completeQuestionnaire == null) R.string.addQuestionnaire else if(args.copy) R.string.copyQuestionnaire else R.string.editQuestionnaire
+    fun providePageTitle(): Int {
+        return if (args.completeQuestionnaire == null) R.string.addQuestionnaire else if (args.copy) R.string.copyQuestionnaire else R.string.editQuestionnaire
     }
 
 
@@ -187,7 +188,7 @@ class VmAddEdit @Inject constructor(
             )
 
             val questionsWithAnswersMapped = questionsWithAnswersLiveDataValue.onEachIndexed { questionIndex, qwa ->
-                val questionId = if(args.copy) ObjectId().toString() else qwa.question.id
+                val questionId = if (args.copy) ObjectId().toString() else qwa.question.id
 
                 qwa.question.apply {
                     id = questionId
@@ -200,10 +201,11 @@ class VmAddEdit @Inject constructor(
 
                 qwa.answers = qwa.answers.mapIndexed { answerIndex, answer ->
                     answer.copy(
-                        id = if(args.copy) ObjectId().toString() else answer.id,
+                        id = if (args.copy) ObjectId().toString() else answer.id,
                         questionId = questionId,
-                        isAnswerSelected = if(setIsSelectedToFalse) false else answer.isAnswerSelected,
-                        answerPosition = answerIndex)
+                        isAnswerSelected = if (setIsSelectedToFalse) false else answer.isAnswerSelected,
+                        answerPosition = answerIndex
+                    )
                 }
             }
 

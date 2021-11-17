@@ -73,7 +73,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/btnQuestionType"
                 app:layout_constraintBottom_toBottomOf="@+id/btnMoreOptions" />
 
-        <com.example.quizapp.view.customimplementations.quizscreen.lazytablayout.LazyQuestionTabLayout
+        <com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab.LazyQuestionTabLayout
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:id="@+id/lazyTabLayout"
@@ -105,7 +105,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
-                android:layout_height="70dp"
+                android:layout_height="65dp"
                 android:id="@+id/bottomView"
                 android:background="?colorOnPrimary"
                 app:layout_constraintStart_toStartOf="parent"
@@ -144,13 +144,13 @@
 
             <com.google.android.material.textview.MaterialTextView
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
+                    android:layout_height="65dp"
                     android:id="@+id/btnSubmit"
                     android:text="@string/submit"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:translationY="70dp"
+                    android:translationY="65dp"
                     android:fontFamily="@font/work_sans_medium"
                     android:gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"

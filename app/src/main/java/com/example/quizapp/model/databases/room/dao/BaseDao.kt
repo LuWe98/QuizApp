@@ -5,6 +5,7 @@ import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 
 @Dao
+@Suppress("UNCHECKED_CAST")
 abstract class BaseDao<T>(private val tableName: String) {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -28,7 +29,6 @@ abstract class BaseDao<T>(private val tableName: String) {
     @RawQuery
     abstract suspend fun executeQuery(query: SupportSQLiteQuery) : Any
 
-    suspend fun deleteAll(){
-        executeQuery(SimpleSQLiteQuery("DELETE FROM $tableName"))
-    }
+    suspend fun deleteAll() = executeQuery(SimpleSQLiteQuery("DELETE FROM $tableName"))
+
 }

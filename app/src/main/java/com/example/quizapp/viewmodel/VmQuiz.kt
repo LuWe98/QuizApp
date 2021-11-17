@@ -3,7 +3,6 @@ package com.example.quizapp.viewmodel
 import androidx.lifecycle.*
 import com.example.quizapp.QuizNavGraphArgs
 import com.example.quizapp.R
-import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.ktor.BackendRepository
@@ -16,6 +15,7 @@ import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.QuestionnaireShuffleType
 import com.example.quizapp.model.datastore.QuestionnaireShuffleType.*
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
@@ -46,37 +46,49 @@ class VmQuiz @Inject constructor(
 
     val completeQuestionnaire get() = completeQuestionnaireStateFlow.value
 
-    val questionList get() = when (shuffleType) {
-        SHUFFLED_QUESTIONS, SHUFFLED_QUESTIONS_AND_ANSWERS -> completeQuestionnaire?.allQuestions?.shuffled(Random(shuffleSeed))
-        else -> completeQuestionnaire?.allQuestions
-    } ?: emptyList()
+    val questionList
+        get() = when (shuffleType) {
+            SHUFFLED_QUESTIONS, SHUFFLED_QUESTIONS_AND_ANSWERS -> completeQuestionnaire?.allQuestions?.shuffled(Random(shuffleSeed))
+            else -> completeQuestionnaire?.allQuestions
+        } ?: emptyList()
 
     fun getQuestionWithAnswersFlow(questionId: String) = completeQuestionnaireStateFlow
         .mapNotNull { it?.getQuestionWithAnswers(questionId) }
         .distinctUntilChanged()
 
-    val questionnaireFlow
-        get() = completeQuestionnaireStateFlow
-            .mapNotNull { it?.questionnaire }
-            .distinctUntilChanged()
+    val questionnaireFlow = completeQuestionnaireStateFlow
+        .mapNotNull { it?.questionnaire }
+        .distinctUntilChanged()
 
-    val questionsWithAnswersFlow
-        get() = completeQuestionnaireStateFlow
-            .mapNotNull { it?.questionsWithAnswers }
-            .distinctUntilChanged()
+    val questionsWithAnswersFlow = completeQuestionnaireStateFlow
+        .mapNotNull { it?.questionsWithAnswers }
+        .distinctUntilChanged()
 
-    val questionStatisticsFlow
-        get() = completeQuestionnaireStateFlow
-            .mapNotNull { it?.toQuizStatisticNumbers }
-            .distinctUntilChanged()
+    val questionStatisticsFlow = completeQuestionnaireStateFlow
+        .mapNotNull { it?.toQuizStatisticNumbers }
+        .distinctUntilChanged()
 
-    private var _shuffleSeed= state.get<Long>(SHUFFLE_SEED_KEY) ?: getTimeMillis()
+    val areAllQuestionsAnsweredFlow = questionStatisticsFlow
+        .map { it.areAllQuestionsAnswered }
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
+    val areAllQuestionsAnswered get() = areAllQuestionsAnsweredFlow.value
+
+    private var _shuffleSeed = state.get<Long>(SHUFFLE_SEED_KEY) ?: getTimeMillis()
         set(value) {
             state.set(SHUFFLE_SEED_KEY, value)
             field = value
         }
 
+    private var _bottomSheetState = state.get<Int>(BOTTOMSHEET_STATE_KEY) ?: BottomSheetBehavior.STATE_COLLAPSED
+        set(value) {
+            state.set(BOTTOMSHEET_STATE_KEY, value)
+            field = value
+        }
+
     val shuffleSeed get() = _shuffleSeed
+
+    val bottomSheetState get() = _bottomSheetState
 
     val shuffleTypeStateFlow = preferencesRepository.shuffleTypeFlow
         .stateIn(viewModelScope, SharingStarted.Lazily, runBlocking { preferencesRepository.getShuffleType() })
@@ -92,22 +104,17 @@ class VmQuiz @Inject constructor(
         _shuffleSeed = newSeed
     }
 
-
-
-    val shouldDisplaySolutionStateFlow = state.getMutableStateFlow(SHOULD_DISPLAY_SOLUTION, false)
-
-    val shouldDisplaySolution get() = shouldDisplaySolutionStateFlow.value
-
-    fun setShouldDisplaySolution(shouldDisplaySolution: Boolean) {
-        state.set(SHOULD_DISPLAY_SOLUTION, shouldDisplaySolution)
-        shouldDisplaySolutionStateFlow.value = shouldDisplaySolution
+    fun onBottomSheetStateUpdated(newState: Int) {
+        if (newState == BottomSheetBehavior.STATE_COLLAPSED || newState == BottomSheetBehavior.STATE_EXPANDED) {
+            _bottomSheetState = newState
+        }
     }
+
 
     fun onMenuItemShowSolutionClicked() {
         completeQuestionnaire?.let {
             launch(IO) {
                 if (it.areAllQuestionsAnswered) {
-//                setShouldDisplaySolution(!shouldDisplaySolution)
                     fragmentEventChannel.send(NavigateToQuizScreen(true))
                 } else {
                     fragmentEventChannel.send(ShowMessageSnackBar(R.string.pleaseAnswerAllQuestionsText))
@@ -137,10 +144,6 @@ class VmQuiz @Inject constructor(
     }
 
     fun onStartButtonClicked() {
-        if (shouldDisplaySolution) {
-            setShouldDisplaySolution(false)
-        }
-
         launch(IO) {
             fragmentEventChannel.send(NavigateToQuizScreen(false))
         }
@@ -171,7 +174,7 @@ class VmQuiz @Inject constructor(
     private fun uploadFilledQuestionnaire() = launch(IO, applicationScope) {
         completeQuestionnaire?.let {
             if (it.questionnaire.syncStatus != SyncStatus.SYNCED) return@launch
-            if (!localRepository.isAnsweredQuestionnairePresent(it.questionnaire.id)) return@launch
+            if (!localRepository.isLocallyFilledQuestionnaireToUploadPresent(it.questionnaire.id)) return@launch
 
             runCatching {
                 backendRepository.insertFilledQuestionnaire(DataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(it))
@@ -192,7 +195,7 @@ class VmQuiz @Inject constructor(
     }
 
     companion object {
-        const val SHOULD_DISPLAY_SOLUTION = "shouldDisplaySolutionKey"
         const val SHUFFLE_SEED_KEY = "shuffleSeedKey"
+        const val BOTTOMSHEET_STATE_KEY = "bottomSheetStateKey"
     }
 }

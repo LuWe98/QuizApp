@@ -72,8 +72,9 @@ class VmSettings @Inject constructor(
 
     fun onPreferredCourseOfStudiesButtonClicked(){
         launch(IO) {
-            val courseOfStudiesIds = preferencesRepository.getPreferredCourseOfStudiesId().toList()
-            fragmentSettingsEventChannel.send(NavigateToCourseOfStudiesSelectionScreen(courseOfStudiesIds))
+            preferencesRepository.getPreferredCourseOfStudiesId().let {
+                fragmentSettingsEventChannel.send(NavigateToCourseOfStudiesSelectionScreen(it))
+            }
         }
     }
 
@@ -120,7 +121,7 @@ class VmSettings @Inject constructor(
         object OnLogoutClickedEvent : FragmentSettingsEvent()
         object NavigateToLoginScreen : FragmentSettingsEvent()
         object NavigateToAdminScreen : FragmentSettingsEvent()
-        class NavigateToCourseOfStudiesSelectionScreen(val courseOfStudiesIds: List<String>): FragmentSettingsEvent()
+        class NavigateToCourseOfStudiesSelectionScreen(val courseOfStudiesIds: Set<String>): FragmentSettingsEvent()
         class ShowMessageSnackBarEvent(val messageRes: Int) : FragmentSettingsEvent()
     }
 }

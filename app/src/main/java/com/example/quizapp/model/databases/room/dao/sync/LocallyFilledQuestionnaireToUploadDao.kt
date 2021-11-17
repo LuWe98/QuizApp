@@ -9,18 +9,18 @@ import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuest
 abstract class LocallyFilledQuestionnaireToUploadDao: BaseDao<LocallyFilledQuestionnaireToUpload>(LocallyFilledQuestionnaireToUpload.TABLE_NAME) {
 
     @Query("SELECT * FROM locallyFilledQuestionnaireToUploadTable")
-    abstract suspend fun getLocallyAnsweredQuestionnaireIds() : List<LocallyFilledQuestionnaireToUpload>
+    abstract suspend fun getAllLocallyFilledQuestionnairesToUploadIds() : List<LocallyFilledQuestionnaireToUpload>
 
     @Query("DELETE FROM locallyFilledQuestionnaireToUploadTable WHERE questionnaireId = :questionnaireId")
-    abstract suspend fun deleteLocallyAnsweredQuestionnaireWith(questionnaireId: String)
+    abstract suspend fun deleteLocallyFilledQuestionnaireToUploadWith(questionnaireId: String)
 
     @Query("DELETE FROM locallyFilledQuestionnaireToUploadTable WHERE questionnaireId IN(:questionnaireIds)")
-    abstract suspend fun deleteLocallyAnsweredQuestionnaireWith(questionnaireIds: List<String>)
+    abstract suspend fun deleteLocallyFilledQuestionnaireToUploadWith(questionnaireIds: List<String>)
 
     @Query("SELECT COUNT(*) FROM locallyFilledQuestionnaireToUploadTable WHERE questionnaireId = :questionnaireId LIMIT 1")
-    abstract suspend fun isAnsweredQuestionnairePresent(questionnaireId: String) : Int
+    abstract suspend fun isLocallyFilledQuestionnaireToUploadPresent(questionnaireId: String) : Int
 
     @Query("SELECT * FROM locallyFilledQuestionnaireToUploadTable WHERE questionnaireId = :questionnaireId LIMIT 1")
-    abstract suspend fun getLocallyAnsweredQuestionnaire(questionnaireId: String) : LocallyFilledQuestionnaireToUpload?
+    abstract suspend fun getLocallyFilledQuestionnaireToUploadId(questionnaireId: String) : LocallyFilledQuestionnaireToUpload?
 
 }

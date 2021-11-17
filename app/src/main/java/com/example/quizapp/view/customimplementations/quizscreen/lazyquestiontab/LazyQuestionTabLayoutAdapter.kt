@@ -1,4 +1,4 @@
-package com.example.quizapp.view.customimplementations.quizscreen.lazytablayout
+package com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab
 
 import android.view.View
 import androidx.recyclerview.widget.DiffUtil
