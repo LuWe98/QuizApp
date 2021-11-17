@@ -32,8 +32,6 @@ class VmQuestionnaireMoreOptions @Inject constructor(
 
     private val questionnaireId get() = args.questionnaire.id
 
-
-
     private val user = preferencesRepository.user
 
     private val questionnaireMoreOptionsEventChannel = Channel<QuestionnaireMoreOptionsEvent>()

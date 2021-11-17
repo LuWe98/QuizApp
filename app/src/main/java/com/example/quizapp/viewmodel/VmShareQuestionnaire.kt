@@ -34,11 +34,13 @@ class VmShareQuestionnaire @Inject constructor(
 
     val dfShareQuestionnaireEventChannelFlow = dfShareQuestionnaireEventChannel.receiveAsFlow()
 
-    var userName = state.get<String>(USER_NAME_KEY) ?: ""
+    private var _userName = state.get<String>(USER_NAME_KEY) ?: ""
         set(value) {
             state.set(USER_NAME_KEY, value)
             field = value
         }
+
+    val userName get() = _userName
 
 
     fun onShareButtonClicked() = applicationScope.launch(IO) {
@@ -60,17 +62,18 @@ class VmShareQuestionnaire @Inject constructor(
                 ERROR -> {
                     dfShareQuestionnaireEventChannel.send(ShowMessageSnackBar( app.getString(R.string.errorCouldNotShare)))
                 }
+                ALREADY_SHARED_WITH_USER -> {
+
+                }
+                QUESTIONNAIRE_DOES_NOT_EXIST -> {
+
+                }
             }
         }
     }
 
     fun onUserNameEditTextChanged(newText: String){
-        userName = newText.trim()
-    }
-
-
-    companion object {
-        private const val USER_NAME_KEY = "userNameKey"
+        _userName = newText.trim()
     }
 
     sealed class DfShareQuestionnaireEvent {
@@ -78,4 +81,7 @@ class VmShareQuestionnaire @Inject constructor(
         class ShowMessageSnackBar(val message: String): DfShareQuestionnaireEvent()
     }
 
+    companion object {
+        private const val USER_NAME_KEY = "userNameKey"
+    }
 }

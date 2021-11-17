@@ -38,18 +38,22 @@ class VmAuth @Inject constructor(
         }
     }
 
-    //LOGIN STUFF
-    var currentLoginUserName = state.get<String>(LOGIN_USERNAME) ?: ""
+    //LOGIN
+    private var _currentLoginUserName = state.get<String>(LOGIN_USERNAME) ?: ""
         set(value) {
             state.set(LOGIN_USERNAME, value)
             field = value
         }
 
-    var currentLoginPassword = state.get<String>(LOGIN_PASSWORD) ?: ""
+    val currentLoginUserName get() = _currentLoginUserName
+
+    private var _currentLoginPassword = state.get<String>(LOGIN_PASSWORD) ?: ""
         set(value) {
             state.set(LOGIN_PASSWORD, value)
             field = value
         }
+
+    val currentLoginPassword get() = _currentLoginPassword
 
     fun onGoToRegisterButtonClicked() {
         launch(IO) {
@@ -93,32 +97,38 @@ class VmAuth @Inject constructor(
     }
 
     fun onLoginEmailEditTextChanged(newValue: String) {
-        currentLoginUserName = newValue.trim()
+        _currentLoginUserName = newValue.trim()
     }
 
     fun onLoginPasswordEditTextChanged(newValue: String) {
-        currentLoginPassword = newValue.trim()
+        _currentLoginPassword = newValue.trim()
     }
 
 
-    //REGISTER STUFF
-    var currentRegisterUserName = state.get<String>(REGISTER_USERNAME) ?: ""
+    //REGISTER
+    private var _currentRegisterUserName = state.get<String>(REGISTER_USERNAME) ?: ""
         set(value) {
             state.set(REGISTER_USERNAME, value)
             field = value
         }
 
-    var currentRegisterPassword = state.get<String>(REGISTER_PASSWORD) ?: ""
+    val currentRegisterUserName get() = _currentRegisterUserName
+
+    private var _currentRegisterPassword = state.get<String>(REGISTER_PASSWORD) ?: ""
         set(value) {
             state.set(REGISTER_PASSWORD, value)
             field = value
         }
 
-    var currentRegisterPasswordConfirm = state.get<String>(REGISTER_PASSWORD_CONFIRM) ?: ""
+    val currentRegisterPassword get() = _currentRegisterPassword
+
+    private var _currentRegisterPasswordConfirm = state.get<String>(REGISTER_PASSWORD_CONFIRM) ?: ""
         set(value) {
             state.set(REGISTER_PASSWORD_CONFIRM, value)
             field = value
         }
+
+    val currentRegisterPasswordConfirm get() = _currentRegisterPasswordConfirm
 
     fun onGoToLoginButtonClicked() {
         launch(IO) {
@@ -156,15 +166,15 @@ class VmAuth @Inject constructor(
     }
 
     fun onRegisterEmailEditTextChanged(newValue: String) {
-        currentRegisterUserName = newValue.trim()
+        _currentRegisterUserName = newValue.trim()
     }
 
     fun onRegisterPasswordEditTextChanged(newValue: String) {
-        currentRegisterPassword = newValue.trim()
+        _currentRegisterPassword = newValue.trim()
     }
 
     fun onRegisterPasswordConfirmEditTextChanged(newValue: String) {
-        currentRegisterPasswordConfirm = newValue.trim()
+        _currentRegisterPasswordConfirm = newValue.trim()
     }
 
 
@@ -181,7 +191,6 @@ class VmAuth @Inject constructor(
         private const val LOGIN_USERNAME = "loginUserEmail"
         private const val LOGIN_PASSWORD = "loginUserPassword"
         private const val REGISTER_USERNAME = "registerUserEmail"
-        private const val REGISTER_COURSE_OF_STUDIES = "registerUserCourseOfStudies"
         private const val REGISTER_PASSWORD = "registerUserPassword"
         private const val REGISTER_PASSWORD_CONFIRM = "registerUserPasswordConfirm"
     }

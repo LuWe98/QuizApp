@@ -29,11 +29,13 @@ class VmQuizQuestionsContainer @Inject constructor(
 
     val fragmentEventChannelFlow get() = fragmentEventChannel.receiveAsFlow()
 
-    var lastAdapterPosition = state.get<Int>(LAST_ADAPTER_POSITION_KEY) ?: args.questionPosition
+    private var _lastAdapterPosition = state.get<Int>(LAST_ADAPTER_POSITION_KEY) ?: args.questionPosition
         set(value) {
             state.set(LAST_ADAPTER_POSITION_KEY, value)
             field = value
         }
+
+    val lastAdapterPosition get() = _lastAdapterPosition
 
     fun onMoreOptionsClicked() {
         launch(IO) {
@@ -42,7 +44,7 @@ class VmQuizQuestionsContainer @Inject constructor(
     }
 
     fun onViewPagerPageSelected(position: Int) {
-        lastAdapterPosition = position
+        _lastAdapterPosition = position
     }
 
     fun onSubmitButtonClicked(areAllQuestionsAnswered: Boolean?) {
@@ -87,6 +89,6 @@ class VmQuizQuestionsContainer @Inject constructor(
     }
 
     companion object {
-        const val LAST_ADAPTER_POSITION_KEY = "currentVpaPosition"
+        private const val LAST_ADAPTER_POSITION_KEY = "currentVpaPosition"
     }
 }

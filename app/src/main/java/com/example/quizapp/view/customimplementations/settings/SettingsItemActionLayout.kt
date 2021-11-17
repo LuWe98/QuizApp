@@ -6,7 +6,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.example.quizapp.R
-import com.example.quizapp.databinding.SettingsItemBinding
+import com.example.quizapp.databinding.CustomViewSettingsItemBinding
+import com.example.quizapp.extensions.dp
+import com.example.quizapp.extensions.getThemeColor
 
 class SettingsItemActionLayout constructor(
     context: Context,
@@ -19,12 +21,18 @@ class SettingsItemActionLayout constructor(
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0, 0)
     constructor(context: Context) : this(context, null, 0, 0)
 
-    val binding: SettingsItemBinding = SettingsItemBinding.inflate(LayoutInflater.from(context), this, true)
+    val binding = CustomViewSettingsItemBinding.inflate(LayoutInflater.from(context), this, true)
 
     init {
-        context.obtainStyledAttributes(attrs, R.styleable.SettingsItemLayout, defStyleAttr, defStyleRes).let { typedArray ->
-            title = typedArray.getString(R.styleable.SettingsItemLayout_title) ?: ""
-            icon = typedArray.getDrawable(R.styleable.SettingsItemLayout_icon)
+        context.obtainStyledAttributes(attrs, R.styleable.SettingsItemActionLayout, defStyleAttr, defStyleRes).let { typedArray ->
+            title = typedArray.getString(R.styleable.SettingsItemActionLayout_title) ?: ""
+            icon = typedArray.getDrawable(R.styleable.SettingsItemActionLayout_icon)
+            typedArray.getDimension(R.styleable.SettingsItemActionLayout_iconPadding, 10.dp.toFloat()).toInt().let { padding ->
+                binding.icon.setPadding(padding, padding, padding, padding)
+            }
+            typedArray.getColor(R.styleable.SettingsItemActionLayout_titleColor, getThemeColor(R.attr.defaultTextColor)).let { textColor ->
+                binding.title.setTextColor(textColor)
+            }
             typedArray.recycle()
         }
     }

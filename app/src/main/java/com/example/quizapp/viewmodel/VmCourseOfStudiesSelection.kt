@@ -68,6 +68,6 @@ class VmCourseOfStudiesSelection @Inject constructor(
     }
 
     companion object {
-        const val SELECTED_COURSES_OF_STUDIES_KEYS = "selectedCoursesOfStudiesKeys"
+        private const val SELECTED_COURSES_OF_STUDIES_KEYS = "selectedCoursesOfStudiesKeys"
     }
 }

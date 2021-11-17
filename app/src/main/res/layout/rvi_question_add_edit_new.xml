@@ -5,16 +5,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardBackgroundColor="?colorOnPrimary"
-        android:layout_marginBottom="@dimen/grid_0_5"
+        android:layout_marginVertical="@dimen/grid_1"
         android:layout_marginHorizontal="@dimen/grid_1"
-        app:cardElevation="0dp"
-        app:cardCornerRadius="0dp">
+        app:cardElevation="2dp"
+        app:cardCornerRadius="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="@dimen/grid_4"
-            android:paddingHorizontal="@dimen/grid_4">
+            android:paddingHorizontal="@dimen/grid_2">
 
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="32.5dp"

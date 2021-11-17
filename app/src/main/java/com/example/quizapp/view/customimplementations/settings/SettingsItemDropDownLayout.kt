@@ -6,9 +6,11 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
 import com.example.quizapp.R
-import com.example.quizapp.databinding.SettingsItemDropdownBinding
+import com.example.quizapp.databinding.CustomViewSettingsItemDropdownBinding
+import com.example.quizapp.extensions.dp
+import com.example.quizapp.extensions.findColor
+import com.example.quizapp.extensions.getThemeColor
 
 class SettingsItemDropDownLayout constructor(
     context: Context,
@@ -21,7 +23,7 @@ class SettingsItemDropDownLayout constructor(
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0, 0)
     constructor(context: Context) : this(context, null, 0, 0)
 
-    val binding: SettingsItemDropdownBinding = SettingsItemDropdownBinding.inflate(LayoutInflater.from(context), this, true)
+    val binding = CustomViewSettingsItemDropdownBinding.inflate(LayoutInflater.from(context), this, true)
 
     init {
         context.obtainStyledAttributes(attrs, R.styleable.SettingsItemDropDownLayout, defStyleAttr, defStyleRes).let { typedArray ->
@@ -29,6 +31,20 @@ class SettingsItemDropDownLayout constructor(
             text = typedArray.getString(R.styleable.SettingsItemDropDownLayout_text) ?: ""
             icon = typedArray.getDrawable(R.styleable.SettingsItemDropDownLayout_icon)
             dropDownIcon = typedArray.getDrawable(R.styleable.SettingsItemDropDownLayout_dropDownIcon)
+
+            typedArray.getDimension(R.styleable.SettingsItemDropDownLayout_iconPadding, 10.dp.toFloat()).toInt().let { padding ->
+                binding.icon.setPadding(padding, padding, padding, padding)
+            }
+            typedArray.getColor(R.styleable.SettingsItemDropDownLayout_titleColor, getThemeColor(R.attr.defaultTextColor)).let { textColor ->
+                binding.title.setTextColor(textColor)
+            }
+            typedArray.getColor(R.styleable.SettingsItemDropDownLayout_textColor, getThemeColor(R.attr.defaultTextColor)).let { textColor ->
+                binding.dropDownText.setTextColor(textColor)
+            }
+            typedArray.getDimension(R.styleable.SettingsItemDropDownLayout_dropDownIconPadding, 5.dp.toFloat()).toInt().let { padding ->
+                binding.dropDownIcon.setPadding(padding, padding, padding, padding)
+            }
+
             typedArray.recycle()
         }
     }
@@ -64,5 +80,4 @@ class SettingsItemDropDownLayout constructor(
     fun setTextWithRes(@StringRes textRes: Int){
         text = context.getString(textRes)
     }
-
 }

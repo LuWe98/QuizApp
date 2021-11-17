@@ -31,12 +31,7 @@ class RvaQuestionAddEdit : BindingListAdapter<QuestionWithAnswers, RviQuestionAd
     override fun bindViews(binding: RviQuestionAddEditNewBinding, item: QuestionWithAnswers, position: Int) {
         binding.apply {
             tvNumber.text = "${position + 1}"
-            var test = ""
-            repeat(Random.nextInt(12) +1){
-                test += item.question.questionText + " "
-            }
-            tvTitle.text = test
-
+            tvTitle.text = item.question.questionText
             ivQuestionType.setImageDrawable(if(item.question.isMultipleChoice) R.drawable.ic_check_circle else R.drawable.ic_radio_button)
         }
     }

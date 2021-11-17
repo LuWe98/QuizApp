@@ -54,10 +54,6 @@
     </dialog>
 
 
-
-
-
-
     <!--TAKE QUIZ FUNCTIONALITY NAV GRAPH-->
     <navigation
             android:id="@+id/quiz_nav_graph"
@@ -104,8 +100,6 @@
     </navigation>
 
 
-
-
     <!--ADD QUESTIONNAIRE FUNCTIONALITY NAV GRAPH-->
     <navigation
             android:id="@+id/add_nav_graph"
@@ -142,8 +136,6 @@
                     app:argType="com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers" />
         </fragment>
     </navigation>
-
-
 
 
     <!-- SETTINGS NAV GRAPH -->
@@ -220,8 +212,6 @@
     </navigation>
 
 
-
-
     <!--GLOBAL ACTIONS-->
     <action
             android:id="@+id/actionGlobalGoToAddQuestionnaireScreen"
@@ -250,19 +240,6 @@
     <action
             android:id="@+id/action_global_settings_nav_graph"
             app:destination="@id/settings_nav_graph" />
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     <!-- BACKDROP TEST -->
@@ -312,4 +289,20 @@
     <action
             android:id="@+id/action_global_bsdfCourseOfStudiesSelection"
             app:destination="@id/bsdfCourseOfStudiesSelection" />
+    <dialog
+            android:id="@+id/dfUpdateStringValue"
+            android:name="com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValue"
+            android:label="BsdfUpdateStringValue"
+            tools:layout="@layout/df_update_string_value">
+        <argument
+                android:name="updateType"
+                app:argType="com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType" />
+        <argument
+                android:name="initialValue"
+                app:argType="string" />
+    </dialog>
+
+    <action
+            android:id="@+id/action_global_dfUpdateStringValue"
+            app:destination="@id/dfUpdateStringValue" />
 </navigation>

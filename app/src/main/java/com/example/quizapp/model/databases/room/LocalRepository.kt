@@ -22,6 +22,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.reflect.KClass
 
+//TODO -> Schauen ob Set vllt sinnvoller ist als List zu, zurückgeben, da anscheinden performance besser ist!
 @Singleton
 class LocalRepository @Inject constructor(
     private val localDatabase: LocalDatabase,
@@ -42,13 +43,19 @@ class LocalRepository @Inject constructor(
 
     suspend inline fun <reified T : EntityMarker> insert(entity: List<T>) = getBaseDaoWith(T::class).insert(entity)
 
+    suspend inline fun <reified T : EntityMarker> insert(entity: Set<T>) = getBaseDaoWith(T::class).insert(entity)
+
     suspend inline fun <reified T : EntityMarker> update(entity: T) = getBaseDaoWith(T::class).update(entity)
 
     suspend inline fun <reified T : EntityMarker> update(entity: List<T>) = getBaseDaoWith(T::class).update(entity)
 
+    suspend inline fun <reified T : EntityMarker> update(entity: Set<T>) = getBaseDaoWith(T::class).update(entity)
+
     suspend inline fun <reified T : EntityMarker> delete(entity: T) = getBaseDaoWith(T::class).delete(entity)
 
     suspend inline fun <reified T : EntityMarker> delete(entity: List<T>) = getBaseDaoWith(T::class).delete(entity)
+
+    suspend inline fun <reified T : EntityMarker> delete(entity: Set<T>) = getBaseDaoWith(T::class).delete(entity)
 
 
     @Suppress("UNCHECKED_CAST")
@@ -172,7 +179,7 @@ class LocalRepository @Inject constructor(
 
             val foundCompleteQuestionnaires = findCompleteQuestionnairesWith(locallyAnswered)
 
-            (locallyAnswered - foundCompleteQuestionnaires.map(CompleteQuestionnaire::questionnaire / Questionnaire::id)).let { deletedQuestionnaireIds ->
+            (locallyAnswered - foundCompleteQuestionnaires.map(CompleteQuestionnaire::questionnaire / Questionnaire::id).toSet()).let { deletedQuestionnaireIds ->
                 if (deletedQuestionnaireIds.isNotEmpty()) {
                     locallyFilledQuestionnaireToUploadDao.deleteLocallyFilledQuestionnaireToUploadWith(deletedQuestionnaireIds)
                 }

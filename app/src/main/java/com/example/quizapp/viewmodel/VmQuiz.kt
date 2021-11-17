@@ -11,6 +11,7 @@ import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.QuestionnaireShuffleType
 import com.example.quizapp.model.datastore.QuestionnaireShuffleType.*
@@ -41,35 +42,33 @@ class VmQuiz @Inject constructor(
 
     val fragmentEventChannelFlow get() = fragmentEventChannel.receiveAsFlow()
 
-    val completeQuestionnaireStateFlow = localRepository.findCompleteQuestionnaireAsFlowWith(args.questionnaireId)
+    private val completeQuestionnaireNullableStateFlow = localRepository.findCompleteQuestionnaireAsFlowWith(args.questionnaireId)
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val completeQuestionnaire get() = completeQuestionnaireStateFlow.value
-
-    val questionList
-        get() = when (shuffleType) {
-            SHUFFLED_QUESTIONS, SHUFFLED_QUESTIONS_AND_ANSWERS -> completeQuestionnaire?.allQuestions?.shuffled(Random(shuffleSeed))
-            else -> completeQuestionnaire?.allQuestions
-        } ?: emptyList()
-
-    fun getQuestionWithAnswersFlow(questionId: String) = completeQuestionnaireStateFlow
-        .mapNotNull { it?.getQuestionWithAnswers(questionId) }
+    val completeQuestionnaireFlow = completeQuestionnaireNullableStateFlow
+        .mapNotNull { it }
         .distinctUntilChanged()
 
-    val questionnaireFlow = completeQuestionnaireStateFlow
-        .mapNotNull { it?.questionnaire }
+    val completeQuestionnaire get() = completeQuestionnaireNullableStateFlow.value
+
+    fun getQuestionWithAnswersFlow(questionId: String) = completeQuestionnaireFlow
+        .map { it.getQuestionWithAnswers(questionId) }
         .distinctUntilChanged()
 
-    val questionsWithAnswersFlow = completeQuestionnaireStateFlow
-        .mapNotNull { it?.questionsWithAnswers }
+    val questionnaireFlow = completeQuestionnaireFlow
+        .map(CompleteQuestionnaire::questionnaire::get)
         .distinctUntilChanged()
 
-    val questionStatisticsFlow = completeQuestionnaireStateFlow
-        .mapNotNull { it?.toQuizStatisticNumbers }
+    val questionsWithAnswersFlow = completeQuestionnaireFlow
+        .map(CompleteQuestionnaire::questionsWithAnswers::get)
+        .distinctUntilChanged()
+
+    val questionStatisticsFlow = completeQuestionnaireFlow
+        .map(CompleteQuestionnaire::toQuizStatisticNumbers::get)
         .distinctUntilChanged()
 
     val areAllQuestionsAnsweredFlow = questionStatisticsFlow
-        .map { it.areAllQuestionsAnswered }
+        .map(CompleteQuestionnaire.QuizStatisticNumbers::areAllQuestionsAnswered::get)
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     val areAllQuestionsAnswered get() = areAllQuestionsAnsweredFlow.value
@@ -80,13 +79,13 @@ class VmQuiz @Inject constructor(
             field = value
         }
 
+    val shuffleSeed get() = _shuffleSeed
+
     private var _bottomSheetState = state.get<Int>(BOTTOMSHEET_STATE_KEY) ?: BottomSheetBehavior.STATE_COLLAPSED
         set(value) {
             state.set(BOTTOMSHEET_STATE_KEY, value)
             field = value
         }
-
-    val shuffleSeed get() = _shuffleSeed
 
     val bottomSheetState get() = _bottomSheetState
 
@@ -94,6 +93,12 @@ class VmQuiz @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Lazily, runBlocking { preferencesRepository.getShuffleType() })
 
     val shuffleType get() = shuffleTypeStateFlow.value
+
+    val questionList
+        get() = when (shuffleType) {
+            SHUFFLED_QUESTIONS, SHUFFLED_QUESTIONS_AND_ANSWERS -> completeQuestionnaire?.allQuestions?.shuffled(Random(shuffleSeed))
+            else -> completeQuestionnaire?.allQuestions
+        } ?: emptyList()
 
     suspend fun onMenuItemOrderSelected(shuffleType: QuestionnaireShuffleType) {
         preferencesRepository.updateShuffleType(shuffleType)
@@ -195,7 +200,7 @@ class VmQuiz @Inject constructor(
     }
 
     companion object {
-        const val SHUFFLE_SEED_KEY = "shuffleSeedKey"
-        const val BOTTOMSHEET_STATE_KEY = "bottomSheetStateKey"
+        private const val SHUFFLE_SEED_KEY = "shuffleSeedKey"
+        private const val BOTTOMSHEET_STATE_KEY = "bottomSheetStateKey"
     }
 }

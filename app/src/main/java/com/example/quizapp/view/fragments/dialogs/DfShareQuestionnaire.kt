@@ -2,12 +2,10 @@ package com.example.quizapp.view.fragments.dialogs
 
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.fragment.app.viewModels
-import com.example.quizapp.databinding.DfShareQuestionnaireBinding
-import com.example.quizapp.extensions.collectWhenStarted
-import com.example.quizapp.extensions.onClick
-import com.example.quizapp.extensions.onTextChanged
-import com.example.quizapp.extensions.showSnackBar
+import com.example.quizapp.databinding.DfShareQuestionnaireNewBinding
+import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingDialogFragment
 import com.example.quizapp.viewmodel.VmShareQuestionnaire
 import com.example.quizapp.viewmodel.VmShareQuestionnaire.DfShareQuestionnaireEvent.NavigateBackEvent
@@ -15,7 +13,7 @@ import com.example.quizapp.viewmodel.VmShareQuestionnaire.DfShareQuestionnaireEv
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DfShareQuestionnaire : BindingDialogFragment<DfShareQuestionnaireBinding>() {
+class DfShareQuestionnaire : BindingDialogFragment<DfShareQuestionnaireNewBinding>() {
 
     private val vmShare: VmShareQuestionnaire by viewModels()
 
@@ -27,15 +25,19 @@ class DfShareQuestionnaire : BindingDialogFragment<DfShareQuestionnaireBinding>(
     }
 
     private fun initViews(){
+        dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+
         binding.apply {
             etUserName.setText(vmShare.userName)
+
+            showKeyboard(etUserName)
+            etUserName.requestFocus()
         }
     }
 
     private fun initListeners() {
         binding.apply {
             etUserName.onTextChanged(vmShare::onUserNameEditTextChanged)
-            btnCancel.onClick(navigator::popBackStack)
             btnShare.onClick(vmShare::onShareButtonClicked)
         }
     }

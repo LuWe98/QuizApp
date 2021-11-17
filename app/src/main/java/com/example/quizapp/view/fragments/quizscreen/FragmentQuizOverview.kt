@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizOverviewBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.QuestionnaireShuffleType.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionQuiz
@@ -115,12 +114,10 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
     }
 
     private fun initObservers() {
-        vmQuiz.completeQuestionnaireStateFlow.collectWhenStarted(viewLifecycleOwner) { completeQuestionnaire ->
-            if (completeQuestionnaire == null) return@collectWhenStarted
-
+        vmQuiz.completeQuestionnaireFlow.collectWhenStarted(viewLifecycleOwner) { completeQuestionnaire ->
             binding.generalInfoCard.apply {
-                tvCourseOfStudies.text = completeQuestionnaire.courseOfStudiesAbbreviations
-                tvFaculty.text = completeQuestionnaire.facultiesAbbreviations
+                cosCard.text = completeQuestionnaire.courseOfStudiesAbbreviations
+                facultyCard.text = completeQuestionnaire.facultiesAbbreviations
             }
         }
 
@@ -135,9 +132,9 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             binding.apply {
                 tvTitle.text = questionnaire.title
                 generalInfoCard.apply {
-                    tvAuthor.text = questionnaire.authorInfo.userName
-                    tvSubject.text = questionnaire.subject
-                    tvLastUpdated.text = questionnaire.timeStampAsDate
+                    authorCard.text = questionnaire.authorInfo.userName
+                    subjectCard.text = questionnaire.subject
+                    lastUpdatedCard.text = questionnaire.timeStampAsDate
                 }
             }
         }

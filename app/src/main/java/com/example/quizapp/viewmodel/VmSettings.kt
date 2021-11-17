@@ -58,7 +58,8 @@ class VmSettings @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     val preferredCoursesOfStudiesFlow = preferencesRepository.preferredCourseOfStudiesIdFlow
-        .mapNotNull { localRepository.getCoursesOfStudiesNameWithIds(it.toList()) }
+        .map(Set<String>::toList)
+        .map(localRepository::getCoursesOfStudiesNameWithIds)
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
 

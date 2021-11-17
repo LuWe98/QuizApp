@@ -52,7 +52,8 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
 
             vpaAdapter = VpaQuiz(this, vmQuiz.questionList).apply {
                 binding.viewPager.adapter = this
-                vmContainer.lastAdapterPosition = indexToSelect
+                vmContainer
+                vmContainer.onViewPagerPageSelected(indexToSelect)
             }
         } else {
             vpaAdapter = VpaQuiz(this, vmQuiz.questionList)
@@ -181,9 +182,9 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
 
     private fun changeSubmitButtonVisibility(isEverythingAnswered: Boolean) {
         binding.btnSubmit.apply {
-            if ((isEverythingAnswered && translationY == 0.dp.toFloat()) || (!isEverythingAnswered && translationY == 65.dp.toFloat())) return
+            if ((isEverythingAnswered && translationY == 0.dp.toFloat()) || (!isEverythingAnswered && translationY == 60.dp.toFloat())) return
             clearAnimation()
-            animate().translationY((if (isEverythingAnswered) 0.dp else 65.dp).toFloat())
+            animate().translationY((if (isEverythingAnswered) 0.dp else 60.dp).toFloat())
                 .setInterpolator(DecelerateInterpolator())
                 .setDuration(350)
                 .start()

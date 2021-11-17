@@ -4,6 +4,8 @@
     <style name="Theme.QuizApp" parent="Theme.QuizApp.Dark"/>
     <!-- Base BottomSheetDialogTheme -->
     <style name="Theme.QuizApp.BottomSheetDialog" parent="Theme.QuizApp.BottomSheetDialog.Dark"/>
+    <!-- Base BottomSheetDialogTheme For Input -->
+    <style name="Theme.QuizApp.BottomSheetDialog.Resize" parent="Theme.QuizApp.BottomSheetDialog.Dark.Resize"/>
     <!-- Base DialogFragmentTheme -->
     <style name="Theme.QuizApp.DialogFragment" parent="Theme.QuizApp.DialogFragment.Dark"/>
 
@@ -34,6 +36,11 @@
         <item name="colorControlActivated">@color/darkColorControlActivated</item>
         <item name="colorControlNormal">@color/darkColorControlNormal</item>
 
+
+        <!-- Text Colors -->
+        <item name="defaultTextColor">@color/darkDefaultTextColor</item>
+        <item name="dominantTextColor">@color/darkDominantTextColor</item>
+
     </style>
 
 
@@ -59,6 +66,17 @@
 
         <item name="colorControlActivated">@color/darkColorControlActivated</item>
         <item name="colorControlNormal">@color/darkColorControlNormal</item>
+
+
+        <!-- Text Colors -->
+        <item name="defaultTextColor">@color/darkDefaultTextColor</item>
+        <item name="dominantTextColor">@color/darkDominantTextColor</item>
+
+    </style>
+
+
+    <style name= "Theme.QuizApp.BottomSheetDialog.Dark.Resize"  parent="@style/Theme.QuizApp.BottomSheetDialog.Dark">
+        <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 
 
@@ -84,5 +102,11 @@
 
         <item name="colorControlActivated">@color/darkColorControlActivated</item>
         <item name="colorControlNormal">@color/darkColorControlNormal</item>
+
+
+        <!-- Text Colors -->
+        <item name="defaultTextColor">@color/darkDefaultTextColor</item>
+        <item name="dominantTextColor">@color/darkDominantTextColor</item>
+
     </style>
 </resources>

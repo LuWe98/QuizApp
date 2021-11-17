@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
+import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
@@ -97,6 +98,8 @@ data class CompleteQuestionnaire(
 
     companion object {
         val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<CompleteQuestionnaire> { old, new -> old.questionnaire.id == new.questionnaire.id }
+
+        val EMPTY_COMPLETE_QUESTIONNAIRE = CompleteQuestionnaire(Questionnaire("", "", AuthorInfo("", ""), ""), mutableListOf(), listOf())
     }
 
     data class QuizStatisticNumbers(

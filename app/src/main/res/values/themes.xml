@@ -4,6 +4,8 @@
     <style name="Theme.QuizApp" parent="Theme.QuizApp.Light"/>
     <!-- Base BottomSheetDialogTheme -->
     <style name="Theme.QuizApp.BottomSheetDialog" parent="Theme.QuizApp.BottomSheetDialog.Light"/>
+    <!-- Base BottomSheetDialogTheme For Input -->
+    <style name="Theme.QuizApp.BottomSheetDialog.Resize" parent="Theme.QuizApp.BottomSheetDialog.Light.Resize"/>
     <!-- Base DialogFragmentTheme -->
     <style name="Theme.QuizApp.DialogFragment" parent="Theme.QuizApp.DialogFragment.Light"/>
 
@@ -31,6 +33,11 @@
 
         <item name="colorControlActivated">@color/lightColorControlActivated</item>
         <item name="colorControlNormal">@color/lightColorControlNormal</item>
+
+        <!-- Text Colors -->
+        <item name="defaultTextColor">@color/lightDefaultTextColor</item>
+        <item name="dominantTextColor">@color/lightDominantTextColor</item>
+
 
         <!-- Customization -->
         <item name="windowActionBar">false</item>
@@ -64,6 +71,12 @@
         <item name="colorControlActivated">@color/lightColorControlActivated</item>
         <item name="colorControlNormal">@color/lightColorControlNormal</item>
 
+
+        <!-- Text Colors -->
+        <item name="defaultTextColor">@color/lightDefaultTextColor</item>
+        <item name="dominantTextColor">@color/lightDominantTextColor</item>
+
+
         <!-- Customization -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -72,6 +85,14 @@
 <!--        <item name="android:navigationBarColor">@color/white</item>-->
 
     </style>
+
+
+    <style name= "Theme.QuizApp.BottomSheetDialog.Light.Resize"  parent="@style/Theme.QuizApp.BottomSheetDialog.Light">
+        <item name="android:windowSoftInputMode">stateVisible|adjustResize</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
+
 
 
     <!-- Light DialogFragmentTheme. -->
@@ -95,11 +116,20 @@
         <item name="colorControlActivated">@color/lightColorControlActivated</item>
         <item name="colorControlNormal">@color/lightColorControlNormal</item>
 
+
+        <!-- Text Colors -->
+        <item name="defaultTextColor">@color/lightDefaultTextColor</item>
+        <item name="dominantTextColor">@color/lightDominantTextColor</item>
+
+
         <!-- Customization -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
-<!--        <item name="android:windowMinWidthMinor">90%</item>-->
-<!--        <item name="android:windowMinWidthMajor">90%</item>-->
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="android:windowMinWidthMajor">90%</item>
     </style>
 </resources>

@@ -156,8 +156,8 @@ class VmAddEditQuestion @Inject constructor(private val state: SavedStateHandle)
     }
 
     companion object {
-        const val QUESTION_TITLE = "questionTitleKey"
-        const val QUESTION_MULTIPLE_CHOICE = "questionMultipleChoiceKey"
-        const val ANSWERS = "answersKey"
+        private const val QUESTION_TITLE = "questionTitleKey"
+        private const val QUESTION_MULTIPLE_CHOICE = "questionMultipleChoiceKey"
+        private const val ANSWERS = "answersKey"
     }
 }

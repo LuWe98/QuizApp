@@ -51,7 +51,10 @@
 
     <color name="lightColorControlActivated">#89000000</color>
     <color name="lightColorControlNormal"> #89000000</color>
-<!--    #42000000-->
+    <color name="lightDominantTextColor">#000000</color>
+    <color name="lightDefaultTextColor">@color/lightColorControlNormal</color>
+
+    <!--    #42000000-->
 <!--    Not enabled-->
 <!--    #89000000-->
 <!--    Default-->
@@ -69,4 +72,7 @@
 
     <color name="darkColorControlActivated">#89000000</color>
     <color name="darkColorControlNormal">#bebebe</color>
+    <color name="darkDominantTextColor">#ffffff</color>
+    <color name="darkDefaultTextColor">@color/darkColorControlNormal</color>
+
 </resources>

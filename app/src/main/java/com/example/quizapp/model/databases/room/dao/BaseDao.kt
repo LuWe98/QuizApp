@@ -12,16 +12,25 @@ abstract class BaseDao<T>(private val tableName: String) {
     abstract suspend fun insert(entities: List<T>): LongArray?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insert(entities: Set<T>): LongArray?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(entity: T): Long?
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun update(entities: List<T>): Int?
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun update(entities: Set<T>): Int?
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun update(entity: T): Int?
 
     @Delete
     abstract suspend fun delete(entities: List<T>?)
+
+    @Delete
+    abstract suspend fun delete(entities: Set<T>?)
 
     @Delete
     abstract suspend fun delete(entity: T)

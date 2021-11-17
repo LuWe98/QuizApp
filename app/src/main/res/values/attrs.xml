@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="mainTransparencyColor" format="color"/>
+    <attr name="dominantTextColor" format="color"/>
+    <attr name="defaultTextColor" format="color"/>
+
 
     <declare-styleable name="BackdropLayout">
         <attr name="frontLayerTopMargin" format="dimension"/>
@@ -11,30 +14,52 @@
         <attr name="frontLayerAnimationDuration" format="integer"/>
     </declare-styleable>
 
-    <declare-styleable name="SettingsItemLayout">
+    <declare-styleable name="SettingsItemActionLayout">
         <attr name="title" format="string"/>
+        <attr name="titleColor" format="color"/>
         <attr name="icon" format="reference"/>
+        <attr name="iconPadding" format="dimension"/>
     </declare-styleable>
 
     <declare-styleable name="SettingsItemTextLayout" parent="SettingsItemLayout">
         <attr name="title"/>
+        <attr name="titleColor"/>
         <attr name="text" format="string"/>
+        <attr name="textColor" format="color"/>
         <attr name="icon"/>
+        <attr name="iconPadding"/>
     </declare-styleable>
-
 
     <declare-styleable name="SettingsItemDropDownLayout" parent="SettingsItemTextLayout">
         <attr name="title"/>
+        <attr name="titleColor"/>
         <attr name="text"/>
+        <attr name="textColor"/>
         <attr name="icon"/>
+        <attr name="iconPadding"/>
         <attr name="dropDownIcon" format="reference"/>
+        <attr name="dropDownIconPadding" format="dimension"/>
     </declare-styleable>
 
     <declare-styleable name="SettingsItemBottomTextDropDownLayout" parent="SettingsItemTextLayout">
         <attr name="title"/>
+        <attr name="titleColor"/>
         <attr name="text"/>
+        <attr name="textColor"/>
         <attr name="icon"/>
+        <attr name="iconPadding"/>
         <attr name="dropDownIcon"/>
+        <attr name="dropDownIconPadding"/>
     </declare-styleable>
 
+    <declare-styleable name="ItemBottomTextDropDownLayout" parent="SettingsItemBottomTextDropDownLayout">
+        <attr name="title"/>
+        <attr name="titleColor"/>
+        <attr name="text"/>
+        <attr name="textColor"/>
+        <attr name="icon"/>
+        <attr name="iconPadding"/>
+        <attr name="dropDownIcon"/>
+        <attr name="dropDownIconPadding"/>
+    </declare-styleable>
 </resources>

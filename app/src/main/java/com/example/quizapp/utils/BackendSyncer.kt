@@ -233,7 +233,7 @@ class BackendSyncer @Inject constructor(
         locallyDeletedQuestionnairesProvider().let { locallyDeletedQuestionnaires ->
             locallyDeletedQuestionnaires.filter(LocallyDeletedQuestionnaire::isUserOwner).let { questionnaireToDelete ->
                 val deleteCreated = async { deleteCreatedQuestionnaires(questionnaireToDelete) }
-                val deleteCached = async { deleteCachedQuestionnaires(locallyDeletedQuestionnaires - questionnaireToDelete) }
+                val deleteCached = async { deleteCachedQuestionnaires(locallyDeletedQuestionnaires - questionnaireToDelete.toSet()) }
                 deleteCreated.await()
                 deleteCached.await()
             }

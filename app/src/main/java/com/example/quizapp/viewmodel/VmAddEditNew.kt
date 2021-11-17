@@ -3,22 +3,24 @@ package com.example.quizapp.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.quizapp.extensions.div
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType
 import com.example.quizapp.view.fragments.test.FragmentTestingArgs
-import com.example.quizapp.viewmodel.VmAddEditNew.FragmentAddEditEvent.NavigateToCourseOfStudiesSelector
+import com.example.quizapp.viewmodel.VmAddEditNew.FragmentAddEditEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
-import org.bson.types.ObjectId
 import javax.inject.Inject
 
 
@@ -38,21 +40,17 @@ class VmAddEditNew @Inject constructor(
 
     val fragmentAddEditEventChannelFlow = fragmentAddEditEventChannel.receiveAsFlow()
 
-    private var qTitle = state.get<String>(QUESTIONNAIRE_TITLE_KEY) ?: ""
-        set(value) {
-            state.set(QUESTIONNAIRE_TITLE_KEY, value)
-            field = value
-        }
+    private var questionnaireTitleMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_TITLE_KEY, "-")
 
-    val questionnaireTitle get() = qTitle
+    val questionnaireTitleStateFlow get() = questionnaireTitleMutableStateFlow.asStateFlow()
 
-    private var qSubject = state.get<String>(QUESTIONNAIRE_SUBJECT_KEY) ?: ""
-        set(value) {
-            state.set(QUESTIONNAIRE_SUBJECT_KEY, value)
-            field = value
-        }
+    val questionnaireTitle get() = questionnaireTitleStateFlow.value
 
-    val questionnaireSubject get() = qSubject
+    private var questionnaireSubjectMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_SUBJECT_KEY, "-")
+
+    val questionnaireSubjectStateFlow get() = questionnaireSubjectMutableStateFlow.asStateFlow()
+
+    val questionnaireSubject get() = questionnaireSubjectStateFlow.value
 
 
     //TODO -> Faculty kommt im CompleteQuestionnaire wenn man den reinladed, nachem man speichern gedrückt hat!
@@ -62,13 +60,12 @@ class VmAddEditNew @Inject constructor(
     private val questionsWithAnswersMutableStateFlow = state.getMutableStateFlow<MutableList<QuestionWithAnswers>>(QUESTIONNAIRE_QUESTIONS_KEY, mutableListOf())
 
     init {
-
         runBlocking {
             localRepository.findCompleteQuestionnaireWith("6192426746a8092ef8dcf0e8")?.let {
-                qTitle = it.questionnaire.title
-                qSubject = it.questionnaire.subject
+                questionnaireTitleMutableStateFlow.value = it.questionnaire.title
+                questionnaireSubjectMutableStateFlow.value = it.questionnaire.subject
                 setCoursesOfStudiesIds(it.allCoursesOfStudies.map(CourseOfStudies::id))
-                setQuestionWithAnswers(it.questionsWithAnswers.sortedBy { qwa -> qwa.question.questionPosition }.toMutableList())
+                setQuestionWithAnswers(it.questionsWithAnswers.sortedBy(QuestionWithAnswers::question / Question::questionPosition).toMutableList())
             }
         }
 
@@ -108,9 +105,7 @@ class VmAddEditNew @Inject constructor(
     }
 
 
-
-
-    fun onFragmentResultReceived(courseOfStudiesIds: Array<String>){
+    fun onFragmentResultReceived(courseOfStudiesIds: Array<String>) {
         setCoursesOfStudiesIds(courseOfStudiesIds.toList())
     }
 
@@ -120,24 +115,46 @@ class VmAddEditNew @Inject constructor(
         }
     }
 
-    fun onTitleTextChanged(newTitle: String) {
-        qTitle = newTitle
+    fun onTitleCardClicked() {
+        launch {
+            fragmentAddEditEventChannel.send(
+                NavigateToUpdateStringDialog(
+                    questionnaireTitle,
+                    DfUpdateStringValueType.QUESTIONNAIRE_TITLE
+                )
+            )
+        }
     }
 
-    fun onSubjectTextChanged(newSubject: String) {
-        qSubject = newSubject
+    fun onSubjectCardClicked() {
+        launch {
+            fragmentAddEditEventChannel.send(
+                NavigateToUpdateStringDialog(
+                    questionnaireSubject,
+                    DfUpdateStringValueType.QUESTIONNAIRE_SUBJECT
+                )
+            )
+        }
     }
 
+    fun onTitleUpdated(newTitle: String) {
+        questionnaireTitleMutableStateFlow.value = newTitle
+    }
+
+    fun onSubjectUpdated(newSubject: String) {
+        questionnaireSubjectMutableStateFlow.value = newSubject
+    }
 
 
     sealed class FragmentAddEditEvent {
         class NavigateToCourseOfStudiesSelector(val courseOfStudiesIds: Set<String>) : FragmentAddEditEvent()
+        class NavigateToUpdateStringDialog(val initialValue: String, val updateType: DfUpdateStringValueType) : FragmentAddEditEvent()
     }
 
     companion object {
-        const val QUESTIONNAIRE_TITLE_KEY = "questionnaireTitleKey"
-        const val QUESTIONNAIRE_SUBJECT_KEY = "questionnaireSubjectKey"
-        const val QUESTIONNAIRE_QUESTIONS_KEY = "questionsWithAnswersKey"
-        const val COURSES_OF_STUDIES_IDS_KEY = "coursesOfStudiesIdsKey"
+        private const val QUESTIONNAIRE_TITLE_KEY = "questionnaireTitleKey"
+        private const val QUESTIONNAIRE_SUBJECT_KEY = "questionnaireSubjectKey"
+        private const val QUESTIONNAIRE_QUESTIONS_KEY = "questionsWithAnswersKey"
+        private const val COURSES_OF_STUDIES_IDS_KEY = "coursesOfStudiesIdsKey"
     }
 }

@@ -39,9 +39,9 @@ class VmSearch @Inject constructor(
 
     val fragmentSearchEventChannelFlow get() = fragmentSearchEventChannel.receiveAsFlow()
 
-    private val searchQuery = MutableStateFlow("")
+    private val searchQueryMutableStateFlow = MutableStateFlow("")
 
-    val filteredPagedData = searchQuery.flatMapLatest { query ->
+    val filteredPagedData = searchQueryMutableStateFlow.flatMapLatest { query ->
         Pager(
             config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
             pagingSourceFactory = {
@@ -52,7 +52,7 @@ class VmSearch @Inject constructor(
     suspend fun getCourseOfStudiesNameWithIds(courseOfStudiesIds: List<String>) = localRepository.getCoursesOfStudiesNameWithIds(courseOfStudiesIds)
 
     fun onSearchQueryChanged(query: String) {
-        searchQuery.value = query
+        searchQueryMutableStateFlow.value = query
     }
 
     fun onBackButtonClicked() = launch {

@@ -8,19 +8,20 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddEditQuestionnaireNewBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.questionnaire.Question
+import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
+import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionAddEdit
 import com.example.quizapp.viewmodel.VmAddEditNew
 import com.example.quizapp.viewmodel.VmAddEditNew.FragmentAddEditEvent.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.pow
-import kotlin.math.sqrt
 
 @AndroidEntryPoint
 class FragmentTesting : BindingFragment<FragmentAddEditQuestionnaireNewBinding>() {
@@ -41,11 +42,6 @@ class FragmentTesting : BindingFragment<FragmentAddEditQuestionnaireNewBinding>(
     }
 
     private fun initViews(){
-        binding.apply {
-            editTextName.setText(vmAddEdit.questionnaireTitle)
-            editTextSubject.setText(vmAddEdit.questionnaireSubject)
-        }
-
         rvAdapter = RvaQuestionAddEdit().apply {
             onItemClick = { pos, item ->
 
@@ -63,7 +59,7 @@ class FragmentTesting : BindingFragment<FragmentAddEditQuestionnaireNewBinding>(
     private fun initBottomSheet() {
         bottomSheetBehaviour = BottomSheetBehavior.from(binding.bottomSheet.root).apply {
             state = BottomSheetBehavior.STATE_COLLAPSED
-            peekHeight = 130.dp
+            peekHeight = 125.dp
             skipCollapsed = true
             bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {}
@@ -108,8 +104,8 @@ class FragmentTesting : BindingFragment<FragmentAddEditQuestionnaireNewBinding>(
     private fun initListeners() {
         binding.apply {
             cosDropDown.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
-            editTextName.onTextChanged(vmAddEdit::onTitleTextChanged)
-            editTextSubject.onTextChanged(vmAddEdit::onSubjectTextChanged)
+            titleCard.onClick(vmAddEdit::onTitleCardClicked)
+            subjectCard.onClick(vmAddEdit::onSubjectCardClicked)
         }
     }
 
@@ -118,18 +114,50 @@ class FragmentTesting : BindingFragment<FragmentAddEditQuestionnaireNewBinding>(
             bundle.getStringArray(BsdfCourseOfStudiesSelection.SELECTED_COURSE_OF_STUDIES_KEY)?.let(vmAddEdit::onFragmentResultReceived)
         }
 
+        setFragmentResultListener(DfUpdateStringValueType.UPDATE_QUESTIONNAIRE_TITLE_RESULT_KEY) { key, bundle ->
+            bundle.getString(key)?.let(vmAddEdit::onTitleUpdated)
+        }
+
+        setFragmentResultListener(DfUpdateStringValueType.UPDATE_QUESTIONNAIRE_SUBJECT_RESULT_KEY) { key, bundle ->
+            bundle.getString(key)?.let(vmAddEdit::onSubjectUpdated)
+        }
+
         vmAddEdit.coursesOfStudiesStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.cosDropDown.text = it.map(CourseOfStudies::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: ""
         }
 
+        vmAddEdit.questionnaireTitleStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.titleCard.text = it
+        }
+
+        vmAddEdit.questionnaireSubjectStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.subjectCard.text = it
+        }
+
         vmAddEdit.questionsWithAnswersStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.bottomSheet.tvQuestionsAmount.text = it.size.toString()
             rvAdapter.submitList(it)
+
+            binding.apply {
+                bottomSheet.tvQuestionsAmount.text = it.size.toString()
+                allQuestions.setProgressWithAnimation(100)
+                allQuestionsNumber.text = it.size.toString()
+
+                val multipleChoice = it.count(QuestionWithAnswers::question / Question::isMultipleChoice)
+                progressMultipleChoice.setProgressWithAnimation((multipleChoice * 100f / it.size).toInt())
+                tvMultipleChoiceAmount.text = multipleChoice.toString()
+
+                val singleChoice = it.size - multipleChoice
+                progressSingleChoice.setProgressWithAnimation((singleChoice * 100f / it.size).toInt())
+                tvSingleChoiceAmount.text = singleChoice.toString()
+            }
         }
 
         vmAddEdit.fragmentAddEditEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
                 is NavigateToCourseOfStudiesSelector -> navigator.navigateToCourseOfStudiesSelection(event.courseOfStudiesIds)
+                is NavigateToUpdateStringDialog -> {
+                    navigator.navigateToUpdateStringValueDialog(event.initialValue, event.updateType)
+                }
             }
         }
     }

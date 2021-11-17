@@ -18,6 +18,7 @@ import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAdd
 import com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptionsDirections
 import com.example.quizapp.view.fragments.adminscreen.FragmentAdminDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
+import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizResultDirections
@@ -135,14 +136,17 @@ class Navigator @Inject constructor(
     }
 
     fun navigateToThemeSelection(){
+        if(currentDestinationId == R.id.bsdfThemeSelection) return
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToBsdfThemeSelection())
     }
 
     fun navigateToLanguageSelection(){
+        if(currentDestinationId == R.id.bsdfLanguageSelection) return
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToBsdfLanguageSelection())
     }
 
     fun navigateToShuffleTypeSelection(){
+        if(currentDestinationId == R.id.bsdfShuffleTypeSelection) return
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToBsdfShuffleTypeSelection())
     }
 
@@ -151,7 +155,13 @@ class Navigator @Inject constructor(
     }
 
     fun navigateToCourseOfStudiesSelection(selectedCourseOfStudiesIds: Set<String>){
+        if(currentDestinationId == R.id.bsdfCourseOfStudiesSelection) return
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfCourseOfStudiesSelection(selectedCourseOfStudiesIds.toTypedArray()))
+    }
+
+    fun navigateToUpdateStringValueDialog(initialValue: String, updateStringValueType: DfUpdateStringValueType) {
+        if(currentDestinationId == R.id.dfUpdateStringValue) return
+        navController.navigate(MainNavGraphDirections.actionGlobalDfUpdateStringValue(updateStringValueType, initialValue))
     }
 
 
