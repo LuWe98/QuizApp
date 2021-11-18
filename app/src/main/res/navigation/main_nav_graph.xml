@@ -101,9 +101,9 @@
 
 
     <!--ADD QUESTIONNAIRE FUNCTIONALITY NAV GRAPH-->
-    <navigation
-            android:id="@+id/add_nav_graph"
-            app:startDestination="@id/fragmentAddQuestionnaire">
+    <navigation android:id="@+id/add_edit_nav_graph"
+            app:startDestination="@id/fragmentAddEditQuestionnaire">
+
         <argument
                 android:name="completeQuestionnaire"
                 app:argType="com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire"
@@ -112,30 +112,32 @@
         <argument
                 android:name="copy"
                 app:argType="boolean" />
-
         <fragment
-                android:id="@+id/fragmentAddQuestionnaire"
-                android:name="com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddQuestionnaire"
-                android:label="FragmentAddQuestionnaire"
-                tools:layout="@layout/fragment_add_questionnaire">
+                android:id="@+id/fragmentAddEditQuestionnaire"
+                android:name="com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestionnaire"
+                android:label="FragmentAddEditQuestionnaireNew"
+                tools:layout="@layout/fragment_add_edit_questionnaire">
             <action
-                    android:id="@+id/action_fragmentAddQuestionnaire_to_fragmentAddQuestion"
-                    app:destination="@id/fragmentAddQuestion" />
+                    android:id="@+id/action_fragmentAddEditQuestionnaire_to_fragmentAddEditQuestion"
+                    app:destination="@id/fragmentAddEditQuestion" />
         </fragment>
 
+
         <fragment
-                android:id="@+id/fragmentAddQuestion"
-                android:name="com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddQuestion"
-                android:label="FragmentAddQuestion"
-                tools:layout="@layout/fragment_add_question">
+                android:id="@+id/fragmentAddEditQuestion"
+                android:name="com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestion"
+                android:label="FragmentAddEditQuestionNew"
+                tools:layout="@layout/fragment_add_edit_question">
             <argument
                     android:name="questionPosition"
                     app:argType="integer" />
             <argument
                     android:name="questionWithAnswers"
-                    app:argType="com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers" />
+                    app:argType="com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers"
+                    app:nullable="true" />
         </fragment>
     </navigation>
+
 
 
     <!-- SETTINGS NAV GRAPH -->
@@ -214,10 +216,6 @@
 
     <!--GLOBAL ACTIONS-->
     <action
-            android:id="@+id/actionGlobalGoToAddQuestionnaireScreen"
-            app:destination="@id/add_nav_graph" />
-
-    <action
             android:id="@+id/actionGlobalGoToAuthScreen"
             app:destination="@id/fragmentAuth" />
 
@@ -241,6 +239,11 @@
             android:id="@+id/action_global_settings_nav_graph"
             app:destination="@id/settings_nav_graph" />
 
+    <action
+            android:id="@+id/action_global_add_edit_questionnaire_nav_graph"
+            app:destination="@id/add_edit_nav_graph" />
+
+
 
     <!-- BACKDROP TEST -->
     <fragment
@@ -253,25 +256,6 @@
             android:id="@+id/action_global_backdropFragment"
             app:destination="@id/backdropFragment" />
 
-
-    <!-- TEST -->
-    <fragment
-            android:id="@+id/fragmentTesting"
-            android:name="com.example.quizapp.view.fragments.test.FragmentTesting"
-            android:label="FragmentQuizOverviewNewVersion">
-        <argument
-                android:name="completeQuestionnaire"
-                app:argType="com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire"
-                app:nullable="true" />
-
-        <argument
-                android:name="copy"
-                app:argType="boolean" />
-    </fragment>
-
-    <action
-            android:id="@+id/action_global_fragmentQuizOverviewNewVersion"
-            app:destination="@id/fragmentTesting" />
 
 
     <!-- SELECTION TEST -->
@@ -305,4 +289,5 @@
     <action
             android:id="@+id/action_global_dfUpdateStringValue"
             app:destination="@id/dfUpdateStringValue" />
+
 </navigation>

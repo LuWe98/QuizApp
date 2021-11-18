@@ -70,13 +70,8 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             }
 
             addCard.onClick {
-                navigator.navigateToAddQuestionnaireScreen()
-            }
-
-            addCard.onLongClick {
-                navigator.navigateToQuizOverviewNew()
-                //navigator.navigateToBackdropFragment()
-//                navigator.navigateToFacultyTest()
+//                navigator.navigateToAddQuestionnaireScreen()
+                navigator.navigateToAddEditQuestionnaireScreen()
             }
         }
     }
@@ -89,7 +84,7 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
         }
 
         when (destination.id) {
-            R.id.fragmentQuizOverview, R.id.fragmentQuizContainer, R.id.fragmentAddQuestionnaire, R.id.fragmentAddQuestion, R.id.fragmentAuth, R.id.fragmentSearch -> {
+            R.id.fragmentQuizOverview, R.id.fragmentQuizContainer, R.id.fragmentAddEditQuestionnaire, R.id.fragmentAddEditQuestion, R.id.fragmentAuth, R.id.fragmentSearch -> {
                 changeBottomAppBarVisibility(false)
             }
             R.id.fragmentHome -> {

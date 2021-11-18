@@ -14,7 +14,7 @@ import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
-import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddQuestionnaireDirections
+import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestionnaireDirections
 import com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptionsDirections
 import com.example.quizapp.view.fragments.adminscreen.FragmentAdminDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
@@ -54,14 +54,6 @@ class Navigator @Inject constructor(
 
     fun popBackStack() {
         navController.popBackStack()
-    }
-
-    fun navigateToAddQuestionnaireScreen(completeQuestionnaire: CompleteQuestionnaire? = null, copy: Boolean = false) {
-        navController.navigate(MainNavGraphDirections.actionGlobalGoToAddQuestionnaireScreen(completeQuestionnaire, copy))
-    }
-
-    fun navigateToEditQuestionScreen(questionPosition: Int, questionWithAnswers: QuestionWithAnswers) {
-        navController.navigate(FragmentAddQuestionnaireDirections.actionFragmentAddQuestionnaireToFragmentAddQuestion(questionPosition, questionWithAnswers))
     }
 
     fun navigateToQuizScreen(questionnaireId: String) {
@@ -150,9 +142,14 @@ class Navigator @Inject constructor(
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToBsdfShuffleTypeSelection())
     }
 
-    fun navigateToQuizOverviewNew(completeQuestionnaire: CompleteQuestionnaire? = null, copy: Boolean = false){
-        navController.navigate(MainNavGraphDirections.actionGlobalFragmentQuizOverviewNewVersion(completeQuestionnaire, copy))
+    fun navigateToAddEditQuestionnaireScreen(completeQuestionnaire: CompleteQuestionnaire? = null, copy: Boolean = false) {
+        navController.navigate(MainNavGraphDirections.actionGlobalAddEditQuestionnaireNavGraph(completeQuestionnaire, copy))
     }
+
+    fun navigateToAddEditQuestionScreen(questionPosition: Int, questionWithAnswers: QuestionWithAnswers? = null) {
+        navController.navigate(FragmentAddEditQuestionnaireDirections.actionFragmentAddEditQuestionnaireToFragmentAddEditQuestion(questionPosition, questionWithAnswers))
+    }
+
 
     fun navigateToCourseOfStudiesSelection(selectedCourseOfStudiesIds: Set<String>){
         if(currentDestinationId == R.id.bsdfCourseOfStudiesSelection) return

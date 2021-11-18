@@ -18,15 +18,23 @@ enum class DfUpdateStringValueType constructor(
         R.drawable.ic_subject,
         R.string.subject,
         R.string.updateQuestionnaireSubject
+    ),
+    ADD_EDIT_ANSWER_TEXT(
+        R.drawable.ic_title,
+        R.string.answerText,
+        R.string.updateAnswerText
     );
 
-    val resultKey get() = when(this) {
-        QUESTIONNAIRE_TITLE -> UPDATE_QUESTIONNAIRE_TITLE_RESULT_KEY
-        QUESTIONNAIRE_SUBJECT -> UPDATE_QUESTIONNAIRE_SUBJECT_RESULT_KEY
-    }
+    val resultKey
+        get() = when (this) {
+            QUESTIONNAIRE_TITLE -> UPDATE_QUESTIONNAIRE_TITLE_RESULT_KEY
+            QUESTIONNAIRE_SUBJECT -> UPDATE_QUESTIONNAIRE_SUBJECT_RESULT_KEY
+            ADD_EDIT_ANSWER_TEXT -> UPDATE_ADD_EDIT_ANSWER_TEXT
+        }
 
     companion object {
         const val UPDATE_QUESTIONNAIRE_TITLE_RESULT_KEY = "questionnaireTitleResultKey"
         const val UPDATE_QUESTIONNAIRE_SUBJECT_RESULT_KEY = "questionnaireSubjectResultKey"
+        const val UPDATE_ADD_EDIT_ANSWER_TEXT = "updateAddEditAnswerTextResultKey"
     }
 }

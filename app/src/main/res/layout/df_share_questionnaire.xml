@@ -3,7 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="?colorOnPrimary"
         app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,26 +13,32 @@
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:id="@+id/title"
-                android:gravity="center_vertical"
-                android:layout_marginTop="@dimen/grid_2"
-                android:layout_marginHorizontal="@dimen/grid_6"
+                android:id="@+id/tvTitle"
                 android:text="@string/shareQuestionnaire"
-                android:textSize="18sp"
-                android:textColor="@color/black"
+                android:background="@drawable/background_round_corners_10dp"
+                android:backgroundTint="@color/transparent"
+                android:gravity="center_vertical"
+                app:autoSizeMaxTextSize="20sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeTextType="uniform"
+                app:autoSizeStepGranularity="0.25sp"
+                android:layout_marginTop="@dimen/grid_2"
+                android:lines="1"
+                android:textStyle="bold"
                 android:fontFamily="@font/work_sans_medium"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginHorizontal="@dimen/grid_6" />
 
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/text"
+                android:id="@+id/tvText"
                 android:layout_marginTop="@dimen/grid_2"
                 android:layout_marginHorizontal="@dimen/grid_6"
                 android:text="@string/shareQuestionnaireText"
-                app:layout_constraintTop_toBottomOf="@id/title"
+                app:layout_constraintTop_toBottomOf="@id/tvTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -40,51 +46,68 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/tilUserName"
-                style="@style/Style.QuizApp.TextInputLayout"
                 android:hint="@string/userName"
-                android:elevation="2.5dp"
+                android:layout_marginTop="@dimen/grid_6"
                 android:layout_marginHorizontal="@dimen/grid_6"
-                android:layout_marginTop="@dimen/grid_4"
                 app:startIconDrawable="@drawable/ic_person"
-                app:layout_constraintVertical_bias="0.375"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:boxCornerRadiusBottomEnd="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxBackgroundColor="@color/transparent"
+                android:textColorHint="?colorControlNormal"
+                android:textColor="?android:editTextColor"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text">
+                app:layout_constraintTop_toBottomOf="@+id/tvText"
+                app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/etUserName"
-                    style="@style/Style.QuizApp.TextInputEditText"
-                    android:inputType="textPersonName" />
+                    android:inputType="textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.button.MaterialButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="?colorPrimary"
                 android:text="@string/share"
-                android:textAllCaps="false"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:id="@+id/btnShare"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tilUserName"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginVertical="@dimen/grid_4"
-                android:layout_marginEnd="@dimen/grid_6" />
+                android:gravity="center"
+                android:textSize="17sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintVertical_bias="1"
+                android:layout_marginTop="@dimen/grid_8"
+                android:fontFamily="@font/work_sans_medium"
+                app:layout_constraintTop_toBottomOf="@+id/tilUserName" />
 
-        <com.google.android.material.button.MaterialButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/cancel"
-                android:textAllCaps="false"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:id="@+id/btnCancel"
-                android:layout_marginEnd="@dimen/grid_1"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tilUserName"
-                android:layout_marginVertical="@dimen/grid_4"
-                app:layout_constraintEnd_toStartOf="@+id/btnShare" />
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/share"-->
+<!--                android:textAllCaps="false"-->
+<!--                android:id="@+id/btnShare"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/tilUserName"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                android:layout_marginVertical="@dimen/grid_4"-->
+<!--                android:layout_marginEnd="@dimen/grid_6" />-->
 
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/cancel"-->
+<!--                android:textAllCaps="false"-->
+<!--                android:visibility="gone"-->
+<!--                style="@style/Widget.MaterialComponents.Button.TextButton"-->
+<!--                android:id="@+id/btnCancel"-->
+<!--                android:layout_marginEnd="@dimen/grid_1"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/tilUserName"-->
+<!--                android:layout_marginVertical="@dimen/grid_4"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/btnShare" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

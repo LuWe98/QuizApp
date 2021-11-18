@@ -46,7 +46,11 @@
     <string name="singleChoiceQuestions">Single choice questions</string>
     <string name="updateQuestionnaireTitle">Update questionnaire title</string>
     <string name="updateQuestionnaireSubject">Update questionnaire subject</string>
+    <string name="updateAnswerText">Update answer text</string>
+    <string name="answerText">Answer text</string>
     <string name="update">Update</string>
+    <string name="add">Add</string>
+    <string name="clickToWriteYourQuestion">Click to write your question!</string>
 
 
     <string name="password">Password</string>
@@ -78,6 +82,9 @@
     <string name="downloaded">Downloaded</string>
 
     <string name="save">Save</string>
+    <string name="saveQuestionnaire">Save questionnaire</string>
+    <string name="saveQuestion">Save question</string>
+
     <string name="questionnaireDownloaded">Questionnaire downloaded</string>
 
     <!-- BSDF - Questionnaire More Options -->
@@ -122,14 +129,15 @@
     <!-- Auth Messages -->
     <string name="errorSomeFieldsAreEmpty">Some fields are empty</string>
     <string name="errorPasswordsDoNotMatch">Passwords do not match</string>
-    <string name="errorEnterValidEmail">Please enter valid Email!</string>
     <string name="errorOccurredWhileRegisteringUser">Error occurred while registering User!</string>
     <string name="errorOccurredWhileLoggingInUser">Error occurred while logging in User!</string>
     <string name="errorFieldsContainWhitespaces">Some fields contain whitespaces!</string>
     <string name="errorCouldNotDeleteUser">Could not delete User \'%1$s\'</string>
-    <string name="errorCouldNotDownloadQuestionnaire">Could not download Questionnaire!</string>
-    <string name="errorSelectOneCorrectAnswer">Select at least one correct Answer!</string>
-    <string name="errorAnswersDoNotHaveText">Some Answers don\'t have a Text yet!</string>
+    <string name="errorCouldNotDownloadQuestionnaire">Could not download questionnaire!</string>
+    <string name="errorSelectOneCorrectAnswer">No correct answer selected!</string>
+    <string name="errorQuestionHasNoAnswers">Question don\'t have answers!</string>
+    <string name="errorAnswersDoNotHaveText">Some answers don\'t have a text yet!</string>
+    <string name="errorQuestionHasNoText">Question has no text yet!</string>
     <string name="errorQuestionDoesNotHaveTitle">Question %1$s) does not have a title!</string>
     <string name="errorQuestionsHasNoAnswers">"Question %1$s) doesn't have any answers!"</string>
     <string name="errorQuestionnaireCouldNotBeFound">Questionnaire not found!</string>

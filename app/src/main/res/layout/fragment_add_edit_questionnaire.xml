@@ -17,7 +17,7 @@
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:id="@+id/buttonBack"
+                    android:id="@+id/btnBack"
                     android:background="?attr/actionBarItemBackground"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -49,9 +49,9 @@
                     android:maxLines="3"
                     android:textStyle="bold"
                     android:paddingTop="@dimen/grid_1"
-                    app:layout_constraintTop_toTopOf="@+id/buttonBack"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintTop_toTopOf="@+id/btnBack"
+                    app:layout_constraintStart_toEndOf="@+id/btnBack"
+                    app:layout_constraintEnd_toStartOf="@+id/btnMoreOptions" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
@@ -428,7 +428,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:background="?colorPrimary"
             android:layout_gravity="bottom"
-            android:text="Save"
+            android:text="@string/saveQuestionnaire"
             android:gravity="center"
             android:textStyle="bold"
             android:textSize="16sp"

@@ -1,4 +1,4 @@
-package com.example.quizapp.view.fragments.test
+package com.example.quizapp.view.fragments.addeditquestionnairescreen
 
 import android.os.Bundle
 import android.view.View
@@ -6,9 +6,9 @@ import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.quizapp.databinding.FragmentAddEditQuestionnaireNewBinding
+import com.example.quizapp.R
+import com.example.quizapp.databinding.FragmentAddEditQuestionnaireBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
@@ -16,19 +16,19 @@ import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType
-import com.example.quizapp.view.recyclerview.adapters.RvaQuestionAddEdit
-import com.example.quizapp.viewmodel.VmAddEditNew
-import com.example.quizapp.viewmodel.VmAddEditNew.FragmentAddEditEvent.*
+import com.example.quizapp.view.recyclerview.adapters.RvaAddEditQuestion
+import com.example.quizapp.viewmodel.VmAddEditQuestionnaire
+import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.FragmentAddEditEvent.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.pow
 
 @AndroidEntryPoint
-class FragmentTesting : BindingFragment<FragmentAddEditQuestionnaireNewBinding>() {
+class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnaireBinding>() {
 
-    private val vmAddEdit: VmAddEditNew by viewModels()
+    private val vmAddEdit: VmAddEditQuestionnaire by hiltNavDestinationViewModels(R.id.fragmentAddEditQuestionnaire)
 
-    private lateinit var rvAdapter: RvaQuestionAddEdit
+    private lateinit var rvAdapter: RvaAddEditQuestion
 
     private lateinit var bottomSheetBehaviour: BottomSheetBehavior<FrameLayout>
     private lateinit var bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback
@@ -42,10 +42,8 @@ class FragmentTesting : BindingFragment<FragmentAddEditQuestionnaireNewBinding>(
     }
 
     private fun initViews(){
-        rvAdapter = RvaQuestionAddEdit().apply {
-            onItemClick = { pos, item ->
-
-            }
+        rvAdapter = RvaAddEditQuestion().apply {
+            onItemClick = vmAddEdit::onQuestionItemClicked
         }
 
         binding.bottomSheet.rv.apply {
@@ -103,9 +101,16 @@ class FragmentTesting : BindingFragment<FragmentAddEditQuestionnaireNewBinding>(
 
     private fun initListeners() {
         binding.apply {
+            btnSave.onClick {
+                navigator.popBackStack()
+            }
             cosDropDown.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
             titleCard.onClick(vmAddEdit::onTitleCardClicked)
             subjectCard.onClick(vmAddEdit::onSubjectCardClicked)
+            bottomSheet.btnAdd.onClick(vmAddEdit::onAddQuestionButtonClicked)
+            btnBack.onClick(navigator::popBackStack)
+            bottomSheet.btnCollapse.onClick(this@FragmentAddEditQuestionnaire::toggleBottomSheet)
+            bottomSheet.sheetHeader.onClick(this@FragmentAddEditQuestionnaire::toggleBottomSheet)
         }
     }
 
@@ -139,7 +144,7 @@ class FragmentTesting : BindingFragment<FragmentAddEditQuestionnaireNewBinding>(
 
             binding.apply {
                 bottomSheet.tvQuestionsAmount.text = it.size.toString()
-                allQuestions.setProgressWithAnimation(100)
+                allQuestions.setProgressWithAnimation(if(it.isEmpty()) 0 else 100)
                 allQuestionsNumber.text = it.size.toString()
 
                 val multipleChoice = it.count(QuestionWithAnswers::question / Question::isMultipleChoice)
@@ -155,9 +160,8 @@ class FragmentTesting : BindingFragment<FragmentAddEditQuestionnaireNewBinding>(
         vmAddEdit.fragmentAddEditEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
                 is NavigateToCourseOfStudiesSelector -> navigator.navigateToCourseOfStudiesSelection(event.courseOfStudiesIds)
-                is NavigateToUpdateStringDialog -> {
-                    navigator.navigateToUpdateStringValueDialog(event.initialValue, event.updateType)
-                }
+                is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringValueDialog(event.initialValue, event.updateType)
+                is NavigateToAddEditQuestionScreenEvent -> navigator.navigateToAddEditQuestionScreen(event.position, event.questionWithAnswers)
             }
         }
     }

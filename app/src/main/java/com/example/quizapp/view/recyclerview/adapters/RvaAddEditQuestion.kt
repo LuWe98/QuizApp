@@ -15,7 +15,7 @@ import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 import kotlin.random.Random
 
-class RvaQuestionAddEdit : BindingListAdapter<QuestionWithAnswers, RviQuestionAddEditNewBinding>(QuestionWithAnswers.DIFF_CALLBACK){
+class RvaAddEditQuestion : BindingListAdapter<QuestionWithAnswers, RviQuestionAddEditNewBinding>(QuestionWithAnswers.DIFF_CALLBACK){
 
     var onItemClick : ((Int, QuestionWithAnswers) -> (Unit))? = null
 

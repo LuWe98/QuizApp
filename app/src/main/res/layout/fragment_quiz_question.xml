@@ -9,17 +9,15 @@
     <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="135dp"
-            android:paddingBottom="30dp"
+            android:paddingTop="125dp"
+            android:paddingBottom="10dp"
             android:id="@+id/appBarLayout"
             android:background="?colorOnPrimary"
             app:liftOnScroll="true"
             app:liftOnScrollTargetViewId="@id/rv">
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxHeight="230dp"
-                android:minHeight="150dp"
+                android:layout_height="200dp"
                 android:background="@drawable/background_round_corners_15dp"
                 android:backgroundTint="?android:colorBackground"
                 android:layout_marginHorizontal="@dimen/grid_4"

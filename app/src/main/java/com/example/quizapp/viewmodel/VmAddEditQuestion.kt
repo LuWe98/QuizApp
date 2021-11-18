@@ -1,163 +1,201 @@
 package com.example.quizapp.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
+import com.example.quizapp.R
+import com.example.quizapp.extensions.div
+import com.example.quizapp.extensions.getMutableStateFlow
+import com.example.quizapp.extensions.indexOfFirstOrNull
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
+import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
-import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddQuestionArgs
-import com.example.quizapp.viewmodel.VmAddEditQuestion.FragmentEditQuestionEvent.*
+import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestionArgs
+import com.example.quizapp.viewmodel.VmAddEditQuestion.FragmentAddEditQuestionEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
+import org.bson.types.ObjectId
 import javax.inject.Inject
 
 @HiltViewModel
-class VmAddEditQuestion @Inject constructor(private val state: SavedStateHandle) : ViewModel() {
+class VmAddEditQuestion @Inject constructor(
+    private val state: SavedStateHandle
+) : ViewModel() {
 
-    private val args = FragmentAddQuestionArgs.fromSavedStateHandle(state)
-    private val questionWithAnswers get() = args.questionWithAnswers
-    private val question get() = questionWithAnswers.question
-    private val answers get() = questionWithAnswers.answersSortedByPosition
+    private val args = FragmentAddEditQuestionArgs.fromSavedStateHandle(state)
+
+    private val parsedQuestion
+        get() = args.questionWithAnswers?.question
+            ?: Question(
+                id= ObjectId().toString(),
+                questionnaireId = "",
+                questionText = "",
+                isMultipleChoice = true,
+                questionPosition = 0
+            )
+
+    private val parsedAnswers get() = args.questionWithAnswers?.answers?.sortedBy(Answer::answerPosition) ?: listOf()
 
 
-    private val fragmentEditQuestionEventChannel = Channel<FragmentEditQuestionEvent>()
+    private val fragmentAddEditQuestionEventChannel = Channel<FragmentAddEditQuestionEvent>()
 
-    val fragmentEditQuestionEventChannelFlow get() = fragmentEditQuestionEventChannel.receiveAsFlow()
+    val fragmentAddEditQuestionEventChannelFlow = fragmentAddEditQuestionEventChannel.receiveAsFlow()
 
-    var isMultipleChoice = state.get<Boolean>(QUESTION_MULTIPLE_CHOICE) ?: question.isMultipleChoice
+    private var _questionText = state.get<String>(QUESTION_TEXT_KEY) ?: parsedQuestion.questionText
         set(value) {
-            state.set(QUESTION_MULTIPLE_CHOICE, value)
+            state.set(QUESTION_TEXT_KEY, value)
             field = value
         }
 
-    var questionTitle = state.get<String>(QUESTION_TITLE) ?: question.questionText
+    val questionText get() = _questionText
+
+
+    private var isQuestionMultipleChoiceMutableStateFlow = state.getMutableStateFlow(QUESTION_TYPE_KEY, parsedQuestion.isMultipleChoice)
+
+    val isQuestionMultipleChoiceStateFlow get() = isQuestionMultipleChoiceMutableStateFlow.asStateFlow()
+
+    val isQuestionMultipleChoice get() = isQuestionMultipleChoiceStateFlow.value
+
+    private var answersMutableStateFlow = state.getMutableStateFlow(ANSWERS_KEY, parsedAnswers)
+
+    val answersStateFlow = answersMutableStateFlow.map { it.sortedBy(Answer::answerPosition) }
+
+    val answers get() = answersMutableStateFlow.value
+
+    private var answerIdToUpdateTextFor = state.get<String>(ANSWER_ID_TO_UPDATE_TEXT_KEY)
         set(value) {
-            state.set(QUESTION_TITLE, value)
+            state.set(ANSWER_ID_TO_UPDATE_TEXT_KEY, value)
             field = value
         }
 
-    private val answersMutableLiveData = state.getLiveData(ANSWERS, answers.sortedBy { it.answerPosition }.toMutableList())
-
-    private val answersMutableLiveDataValue get() = answersMutableLiveData.value!!
-
-    val answersLiveData: LiveData<MutableList<Answer>> = answersMutableLiveData.map {
-        mutableListOf<Answer>().apply {
-            addAll(it.sortedBy {
-                it.answerPosition
-            })
-        }
-    }
+    private fun findAnswerIndex(answerId: String) = answers.indexOfFirstOrNull { it.id == answerId }
 
     private fun setAnswerList(answers: List<Answer>) {
-        answersMutableLiveData.value = answers.toMutableList()
-        state.set(ANSWERS, answers)
+        answers.mapIndexed { index, answer -> answer.copy(answerPosition = index) }.let { updatedAnswers ->
+            state.set(ANSWERS_KEY, updatedAnswers)
+            answersMutableStateFlow.value = updatedAnswers
+        }
     }
 
-    private fun removeAnswerFromList(answer: Answer) {
-        mutableListOf<Answer>().let { lastList ->
-            answersMutableLiveDataValue.apply {
-                lastList.addAll(this)
-                remove(answer)
-            }.also {
-                setAnswerList(it)
-            }
 
+    fun onQuestionTextChanged(newText: String) {
+        _questionText = newText
+    }
+
+    fun onAnswerTextUpdateResultReceived(newText: String) {
+        findAnswerIndex(answerIdToUpdateTextFor ?: "")?.let { index ->
+            answers.toMutableList().apply {
+                set(index, get(index).copy(answerText = newText))
+                setAnswerList(this)
+            }
+        }
+        answerIdToUpdateTextFor = null
+    }
+
+    fun onAnswerClicked(answer: Answer) {
+        launch {
+            answerIdToUpdateTextFor = answer.id
+            fragmentAddEditQuestionEventChannel.send(NavigateToStringSelectDialog(answer.answerText))
+        }
+    }
+
+    fun onAnswerCheckClicked(answer: Answer) {
+        answers.toMutableList().apply {
+            if (!isQuestionMultipleChoice) {
+                onEachIndexed { index, answer ->
+                    set(index, answer.copy(isAnswerCorrect = false))
+                }
+            }
+            set(indexOf(answer), answer.copy(isAnswerCorrect = !answer.isAnswerCorrect))
+            setAnswerList(this)
+        }
+    }
+
+
+    fun onAnswerDeleteClicked(answer: Answer) {
+        answers.toMutableList().apply {
+            val answerIndex = indexOf(answer)
+            removeAt(answerIndex)
+            setAnswerList(this)
             launch {
-                fragmentEditQuestionEventChannel.send(ShowAnswerDeletedSuccessFullySnackBar(lastList))
+                fragmentAddEditQuestionEventChannel.send(ShowAnswerDeletedSnackBar(answer, answerIndex))
             }
         }
     }
 
-    fun onAnswerItemClicked(answers: List<Answer>) {
-        setAnswerList(answers)
-    }
-
-    fun onAnswerItemTextChanged(position: Int, newText: String) {
-        answersMutableLiveDataValue.apply {
-            set(position, answersMutableLiveDataValue[position].copy(answerText = newText))
-        }.also {
-            setAnswerList(it)
-        }
-    }
-
-    fun onAnswerItemDeleteButtonClicked(answer: Answer) {
-        removeAnswerFromList(answer)
-    }
-
-    fun onAnswerItemSwiped(position: Int) {
-        removeAnswerFromList(answersMutableLiveDataValue[position])
-    }
-
-    fun onAnswerItemDragReleased(answers: List<Answer>) {
-        answers.mapIndexed { index, answer ->
-            answer.copy(answerPosition = index)
-        }.also {
-            setAnswerList(it)
+    fun onUndoDeleteAnswerClicked(event: ShowAnswerDeletedSnackBar) {
+        answers.toMutableList().apply {
+            if (!isQuestionMultipleChoice && event.answer.isAnswerCorrect) {
+                onEachIndexed { index, answer ->
+                    set(index, answer.copy(isAnswerCorrect = false))
+                }
+            }
+            add(event.answerIndex, event.answer)
+            setAnswerList(this)
         }
     }
 
     fun onAddAnswerButtonClicked() {
-        answersMutableLiveDataValue.apply {
-            add(Answer(answerPosition = (maxOfOrNull { it.answerPosition } ?: -1) + 1))
-        }.also {
-            setAnswerList(it)
+        answers.toMutableList().apply {
+            add(Answer())
+            setAnswerList(this)
         }
     }
 
-    fun onQuestionEditTextChanged(newText: CharSequence?) {
-        questionTitle = newText.toString()
+    fun onChangeQuestionTypeClicked() {
+        state.set(QUESTION_TYPE_KEY, !isQuestionMultipleChoice)
+        isQuestionMultipleChoiceMutableStateFlow.value = !isQuestionMultipleChoice
+        setAnswerList(answers.map { it.copy(isAnswerCorrect = false) })
     }
 
-    fun onFabConfirmClicked() {
-        if (answersMutableLiveDataValue.none { it.isAnswerCorrect }) {
-            launch {
-                fragmentEditQuestionEventChannel.send(ShowSelectAtLeastOneCorrectAnswerToast)
-            }
-            return
-        }
 
-        if (answersMutableLiveDataValue.any { it.answerText.isEmpty() }) {
-            launch {
-                fragmentEditQuestionEventChannel.send(ShowSomeAnswersAreEmptyToast)
-            }
-            return
-        }
-
-        val updatedQuestion = question.copy(questionText = questionTitle, isMultipleChoice = isMultipleChoice)
-        val updatedAnswers = answersMutableLiveDataValue.apply { mapIndexed { index, answer -> answer.copy(answerPosition = index) } }
-        val updatedQuestionWithAnswers = questionWithAnswers.copy(question = updatedQuestion, answers = updatedAnswers)
+    fun onSaveButtonClicked() {
         launch {
-            fragmentEditQuestionEventChannel.send(SendUpdateRequestToVmAdd(args.questionPosition, updatedQuestionWithAnswers))
+            if (questionText.isEmpty()) {
+                fragmentAddEditQuestionEventChannel.send(ShowMessageSnackBar(R.string.errorQuestionHasNoText))
+                return@launch
+            }
+
+            if(answers.isEmpty()){
+                fragmentAddEditQuestionEventChannel.send(ShowMessageSnackBar(R.string.errorQuestionHasNoAnswers))
+                return@launch
+            }
+
+            if (answers.none(Answer::isAnswerCorrect)) {
+                fragmentAddEditQuestionEventChannel.send(ShowMessageSnackBar(R.string.errorSelectOneCorrectAnswer))
+                return@launch
+            }
+
+            if (answers.any(Answer::answerText / String::isEmpty)) {
+                fragmentAddEditQuestionEventChannel.send(ShowMessageSnackBar(R.string.errorAnswersDoNotHaveText))
+                return@launch
+            }
+
+            val updatedQuestionWithAnswers = QuestionWithAnswers(
+                parsedQuestion.copy(
+                    questionText = questionText,
+                    isMultipleChoice = isQuestionMultipleChoice,
+                    questionPosition = args.questionPosition
+                ),
+                answers
+            )
+
+            fragmentAddEditQuestionEventChannel.send(SaveQuestionWithAnswersEvent(args.questionPosition, updatedQuestionWithAnswers))
         }
     }
 
-    fun onUndoDeleteAnswerClicked(event: ShowAnswerDeletedSuccessFullySnackBar) {
-        setAnswerList(event.lastAnswerValues)
-    }
-
-    fun onSwitchChanged(checked : Boolean){
-        if(isMultipleChoice == checked) return
-        isMultipleChoice = checked
-        answersMutableLiveDataValue.map {
-            it.copy(isAnswerCorrect = false)
-        }.also {
-            setAnswerList(it)
-        }
-    }
-
-    sealed class FragmentEditQuestionEvent {
-        object ShowSelectAtLeastOneCorrectAnswerToast : FragmentEditQuestionEvent()
-        object ShowSomeAnswersAreEmptyToast : FragmentEditQuestionEvent()
-        data class ShowAnswerDeletedSuccessFullySnackBar(val lastAnswerValues: List<Answer>) : FragmentEditQuestionEvent()
-        data class SendUpdateRequestToVmAdd(val position: Int, val newQuestionWithAnswers: QuestionWithAnswers) : FragmentEditQuestionEvent()
+    sealed class FragmentAddEditQuestionEvent {
+        class NavigateToStringSelectDialog(val initialValue: String) : FragmentAddEditQuestionEvent()
+        class ShowAnswerDeletedSnackBar(val answer: Answer, val answerIndex: Int) : FragmentAddEditQuestionEvent()
+        class ShowMessageSnackBar(val messageRes: Int) : FragmentAddEditQuestionEvent()
+        class SaveQuestionWithAnswersEvent(val questionPosition: Int, val questionWithAnswers: QuestionWithAnswers) : FragmentAddEditQuestionEvent()
     }
 
     companion object {
-        private const val QUESTION_TITLE = "questionTitleKey"
-        private const val QUESTION_MULTIPLE_CHOICE = "questionMultipleChoiceKey"
-        private const val ANSWERS = "answersKey"
+        private const val ANSWERS_KEY = "answersKey"
+        private const val QUESTION_TEXT_KEY = "questionTextKey"
+        private const val QUESTION_TYPE_KEY = "questionTypeKey"
+        private const val ANSWER_ID_TO_UPDATE_TEXT_KEY = "answerToUpdateTextKey"
     }
 }

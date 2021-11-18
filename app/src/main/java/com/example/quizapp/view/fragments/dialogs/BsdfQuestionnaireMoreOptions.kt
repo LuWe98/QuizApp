@@ -53,8 +53,8 @@ class BsdfQuestionnaireMoreOptions : BindingBottomSheetDialogFragment<BsdfQuesti
     private fun initObservers(){
         vm.questionnaireMoreOptionsEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event){
-                is NavigateToEditQuestionnaireScreen -> navigator.navigateToAddQuestionnaireScreen(event.completeQuestionnaire)
-                is NavigateToCopyQuestionnaireScreen -> navigator.navigateToAddQuestionnaireScreen(event.completeQuestionnaire, true)
+                is NavigateToEditQuestionnaireScreen -> navigator.navigateToAddEditQuestionnaireScreen(event.completeQuestionnaire)
+                is NavigateToCopyQuestionnaireScreen -> navigator.navigateToAddEditQuestionnaireScreen(event.completeQuestionnaire, true)
                 is DeleteCreatedQuestionnaireEvent -> vmHome.deleteCreatedQuestionnaire(event.questionnaireId)
                 is DeleteCachedQuestionnaireEvent -> vmHome.deleteCachedQuestionnaire(event.questionnaireId)
                 is DeleteGivenAnswersOfQuestionnaire -> vmHome.deleteFilledQuestionnaire(event.questionnaireId)
