@@ -22,7 +22,7 @@ import org.bson.types.ObjectId
 data class CourseOfStudies(
     @PrimaryKey
     @ColumnInfo(name = ID_COLUMN)
-    var id: String = ObjectId().toString(),
+    var id: String = ObjectId().toHexString(),
     @ColumnInfo(name = ABBREVIATION_COLUMN)
     var abbreviation: String,
     @ColumnInfo(name = NAME_COLUMN)

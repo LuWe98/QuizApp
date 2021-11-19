@@ -101,9 +101,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
     private fun initListeners() {
         binding.apply {
-            btnSave.onClick {
-                navigator.popBackStack()
-            }
+            btnSave.onClick(vmAddEdit::onSaveButtonClicked)
             cosDropDown.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
             titleCard.onClick(vmAddEdit::onTitleCardClicked)
             subjectCard.onClick(vmAddEdit::onSubjectCardClicked)
@@ -159,9 +157,14 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
         vmAddEdit.fragmentAddEditEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
+                NavigateBackEvent -> navigator.popBackStack()
                 is NavigateToCourseOfStudiesSelector -> navigator.navigateToCourseOfStudiesSelection(event.courseOfStudiesIds)
                 is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringValueDialog(event.initialValue, event.updateType)
                 is NavigateToAddEditQuestionScreenEvent -> navigator.navigateToAddEditQuestionScreen(event.position, event.questionWithAnswers)
+                is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes, anchorView = binding.btnSave)
+                is ShowQuestionDeletedSnackBarEvent -> {
+
+                }
             }
         }
     }

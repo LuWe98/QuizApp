@@ -10,7 +10,7 @@ import com.example.quizapp.model.menus.MenuItemDataModel
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
-import com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptionsArgs
+import com.example.quizapp.view.fragments.dialogs.moreoptions.BsdfQuestionnaireMoreOptionsArgs
 import com.example.quizapp.viewmodel.VmQuestionnaireMoreOptions.QuestionnaireMoreOptionsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO

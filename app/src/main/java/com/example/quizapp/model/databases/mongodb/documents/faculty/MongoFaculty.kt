@@ -7,7 +7,7 @@ import org.bson.types.ObjectId
 
 @Serializable
 data class MongoFaculty(
-    @BsonId var id: String = ObjectId().toString(),
+    @BsonId var id: String = ObjectId().toHexString(),
     var abbreviation: String,
     var name: String,
     var lastModifiedTimestamp : Long = getTimeMillis()

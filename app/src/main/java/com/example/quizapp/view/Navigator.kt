@@ -161,6 +161,10 @@ class Navigator @Inject constructor(
         navController.navigate(MainNavGraphDirections.actionGlobalDfUpdateStringValue(updateStringValueType, initialValue))
     }
 
+    fun navigateToLogoutWarningScreen() {
+        navController.navigate(MainNavGraphDirections.actionGlobalDfLogoutWarning())
+    }
+
 
     companion object {
         const val FIRST_QUESTION_POSITION = 0

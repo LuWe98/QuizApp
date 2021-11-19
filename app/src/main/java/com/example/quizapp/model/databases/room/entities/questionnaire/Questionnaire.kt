@@ -21,7 +21,7 @@ import java.util.*
 data class Questionnaire(
     @PrimaryKey
     @ColumnInfo(name = ID_COLUMN)
-    var id: String = ObjectId().toString(),
+    var id: String = ObjectId().toHexString(),
     @ColumnInfo(name = TITLE_COLUMN)
     var title: String,
     @Embedded

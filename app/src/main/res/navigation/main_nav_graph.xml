@@ -32,7 +32,7 @@
     <!--DIALOGS-->
     <dialog
             android:id="@+id/bsdfQuestionnaireMoreOptions"
-            android:name="com.example.quizapp.view.fragments.dialogs.BsdfQuestionnaireMoreOptions"
+            android:name="com.example.quizapp.view.fragments.dialogs.moreoptions.BsdfQuestionnaireMoreOptions"
             android:label="BsdfQuestionnaireMoreOptions"
             tools:layout="@layout/bsdf_questionnaire_more_options">
 
@@ -45,13 +45,19 @@
 
     <dialog
             android:id="@+id/dfShareQuestionnaire"
-            android:name="com.example.quizapp.view.fragments.dialogs.DfShareQuestionnaire"
+            android:name="com.example.quizapp.view.fragments.dialogs.sharequestionnaire.DfShareQuestionnaire"
             android:label="DfShareQuestionnaire"
             tools:layout="@layout/df_share_questionnaire">
         <argument
                 android:name="questionnaireId"
                 app:argType="string" />
     </dialog>
+
+    <dialog
+            android:id="@+id/dfLogoutWarning"
+            android:name="com.example.quizapp.view.fragments.dialogs.logoutwarning.DfLogoutWarning"
+            android:label="DfLogoutWarning"
+            tools:layout="@layout/df_logout_warning"/>
 
 
     <!--TAKE QUIZ FUNCTIONALITY NAV GRAPH-->
@@ -243,7 +249,8 @@
             android:id="@+id/action_global_add_edit_questionnaire_nav_graph"
             app:destination="@id/add_edit_nav_graph" />
 
-
+    <action android:id="@+id/action_global_dfLogoutWarning"
+            app:destination="@id/dfLogoutWarning"/>
 
     <!-- BACKDROP TEST -->
     <fragment

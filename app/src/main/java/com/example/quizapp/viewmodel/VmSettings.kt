@@ -113,11 +113,6 @@ class VmSettings @Inject constructor(
         }
     }
 
-
-    fun onLogoutConfirmed() = launch(IO) {
-        preferencesRepository.clearPreferenceData()
-    }
-
     sealed class FragmentSettingsEvent {
         object OnLogoutClickedEvent : FragmentSettingsEvent()
         object NavigateToLoginScreen : FragmentSettingsEvent()

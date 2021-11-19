@@ -10,7 +10,7 @@ import org.bson.types.ObjectId
 
 @Serializable
 data class MongoQuestionnaire(
-    @BsonId var id : String = ObjectId().toString(),
+    @BsonId var id : String = ObjectId().toHexString(),
     var title : String = "",
     var authorInfo : AuthorInfo,
     var questionnaireVisibility: QuestionnaireVisibility = QuestionnaireVisibility.PRIVATE,

@@ -95,16 +95,7 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
         vmSettings.fragmentSettingsEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 NavigateToLoginScreen -> navigator.navigateToLoginScreen()
-                OnLogoutClickedEvent -> {
-                    showAlertDialog(
-                        titleRes = R.string.logoutWarningTitle,
-                        textRes = R.string.logoutWarning,
-                        positiveButtonRes = R.string.logout,
-                        negativeButtonRes = R.string.cancel,
-                        positiveButtonClicked = {
-                            vmSettings.onLogoutConfirmed()
-                        })
-                }
+                OnLogoutClickedEvent -> navigator.navigateToLogoutWarningScreen()
                 NavigateToAdminScreen -> navigator.navigateToAdminPage()
                 is ShowMessageSnackBarEvent -> {
                     binding.swipeRefreshLayout.isRefreshing = false

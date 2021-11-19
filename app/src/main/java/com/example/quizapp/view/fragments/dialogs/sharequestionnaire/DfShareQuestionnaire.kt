@@ -1,4 +1,4 @@
-package com.example.quizapp.view.fragments.dialogs
+package com.example.quizapp.view.fragments.dialogs.sharequestionnaire
 
 import android.os.Bundle
 import android.view.View

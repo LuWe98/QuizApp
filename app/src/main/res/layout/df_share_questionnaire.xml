@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvText"
-                android:layout_marginTop="@dimen/grid_2"
+                android:layout_marginTop="@dimen/grid_3"
                 android:layout_marginHorizontal="@dimen/grid_6"
                 android:text="@string/shareQuestionnaireText"
                 app:layout_constraintTop_toBottomOf="@id/tvTitle"

@@ -6,7 +6,7 @@ import org.bson.types.ObjectId
 
 @Serializable
 data class MongoAnswer(
-    @BsonId var id : String = ObjectId().toString(),
+    @BsonId var id : String = ObjectId().toHexString(),
     var answerText : String = "",
     var answerPosition : Int = 0,
     var isAnswerCorrect : Boolean = false

@@ -135,6 +135,8 @@
     <string name="errorCouldNotDeleteUser">Could not delete User \'%1$s\'</string>
     <string name="errorCouldNotDownloadQuestionnaire">Could not download questionnaire!</string>
     <string name="errorSelectOneCorrectAnswer">No correct answer selected!</string>
+    <string name="errorQuestionnaireHasNoTitle">Questionnaire has no title!</string>
+    <string name="errorQuestionnaireHasNoSubject">Questionnaire has no subject!</string>
     <string name="errorQuestionHasNoAnswers">Question don\'t have answers!</string>
     <string name="errorAnswersDoNotHaveText">Some answers don\'t have a text yet!</string>
     <string name="errorQuestionHasNoText">Question has no text yet!</string>

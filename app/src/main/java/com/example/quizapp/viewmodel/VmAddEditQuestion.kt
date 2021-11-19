@@ -28,7 +28,7 @@ class VmAddEditQuestion @Inject constructor(
     private val parsedQuestion
         get() = args.questionWithAnswers?.question
             ?: Question(
-                id= ObjectId().toString(),
+                id= ObjectId().toHexString(),
                 questionnaireId = "",
                 questionText = "",
                 isMultipleChoice = true,

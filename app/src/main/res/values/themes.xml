@@ -131,5 +131,12 @@
 
         <item name="android:windowMinWidthMinor">90%</item>
         <item name="android:windowMinWidthMajor">90%</item>
+
+        <item name="android:windowAnimationStyle">@style/testDialog</item>
+    </style>
+
+    <style name="testDialog" parent="@android:style/Animation.Activity">
+        <item name="android:windowEnterAnimation">@anim/dialog_fragment_appear</item>
+        <item name="android:windowExitAnimation">@anim/dialog_fragment_hide</item>
     </style>
 </resources>

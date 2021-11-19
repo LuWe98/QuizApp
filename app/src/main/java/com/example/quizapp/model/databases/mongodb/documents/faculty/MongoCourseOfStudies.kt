@@ -8,7 +8,7 @@ import org.bson.types.ObjectId
 
 @Serializable
 data class MongoCourseOfStudies(
-    @BsonId var id: String = ObjectId().toString(),
+    @BsonId var id: String = ObjectId().toHexString(),
     var facultyIds: List<String> = emptyList(),
     var abbreviation: String,
     var name: String,

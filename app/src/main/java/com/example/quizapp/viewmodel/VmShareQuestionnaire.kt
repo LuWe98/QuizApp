@@ -8,7 +8,7 @@ import com.example.quizapp.R
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.ShareQuestionnaireWithUserResponse.*
 import com.example.quizapp.model.ktor.responses.ShareQuestionnaireWithUserResponse.ShareQuestionnaireWithUserResponseType.*
-import com.example.quizapp.view.fragments.dialogs.DfShareQuestionnaireArgs
+import com.example.quizapp.view.fragments.dialogs.sharequestionnaire.DfShareQuestionnaireArgs
 import com.example.quizapp.viewmodel.VmShareQuestionnaire.DfShareQuestionnaireEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope

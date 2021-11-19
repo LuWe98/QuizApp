@@ -14,7 +14,7 @@ import org.bson.types.ObjectId
 data class Subject(
     @PrimaryKey
     @ColumnInfo(name = ID_COLUMN)
-    var id: String = ObjectId().toString(),
+    var id: String = ObjectId().toHexString(),
     @ColumnInfo(name = NAME_COLUMN)
     var name: String,
     @ColumnInfo(name = LAST_MODIFIED_TIMESTAMP_COLUMN)

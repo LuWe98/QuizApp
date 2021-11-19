@@ -10,7 +10,7 @@ import org.bson.types.ObjectId
 @Serializable
 @Parcelize
 data class User(
-    @BsonId var id: String = ObjectId().toString(),
+    @BsonId var id: String = ObjectId().toHexString(),
     var userName: String,
     var password: String,
     var role: Role,

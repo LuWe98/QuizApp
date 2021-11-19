@@ -25,7 +25,7 @@ import org.bson.types.ObjectId
 data class Question(
     @PrimaryKey
     @ColumnInfo(name = ID_COLUMN)
-    var id: String = ObjectId().toString(),
+    var id: String = ObjectId().toHexString(),
     @ColumnInfo(name = QUESTIONNAIRE_ID_COLUMN)
     var questionnaireId: String,
     @ColumnInfo(name = TEXT_COLUMN)
