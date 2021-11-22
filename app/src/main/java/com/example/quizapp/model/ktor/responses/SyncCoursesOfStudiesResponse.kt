@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SyncCoursesOfStudiesResponse(
-    val coursesOfStudies: List<MongoCourseOfStudies>,
+    val coursesOfStudiesToInsert: List<MongoCourseOfStudies>,
+    val coursesOfStudiesToUpdate: List<MongoCourseOfStudies>,
     val courseOfStudiesIdsToDelete: List<String>
 )

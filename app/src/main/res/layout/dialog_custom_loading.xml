@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:tools="http://schemas.android.com/tools"
+        app:cardBackgroundColor="?colorOnPrimary"
+        app:cardCornerRadius="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/grid_8">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/progress"
+                app:trackCornerRadius="5dp"
+                app:indicatorSize="100dp"
+                android:indeterminate="true"
+                android:indeterminateOnly="true"
+                app:trackThickness="7.5dp"
+                app:trackColor="?android:colorBackground"
+                app:indicatorColor="?colorPrimary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:id="@+id/tvTitle"
+                android:text="Loading..."
+                android:background="@drawable/background_round_corners_10dp"
+                android:backgroundTint="@color/transparent"
+                android:gravity="center"
+                app:autoSizeMaxTextSize="20sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeTextType="uniform"
+                app:autoSizeStepGranularity="0.25sp"
+                android:lines="1"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/grid_4"
+                android:fontFamily="@font/work_sans_medium"
+                app:layout_constraintTop_toBottomOf="@id/progress"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginHorizontal="@dimen/grid_6" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -26,10 +26,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
-fun View.makeFullScreen() = apply {
-    layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, context.resources.displayMetrics.heightPixels)
-}
-
 fun View.setBackgroundColorWithRes(@ColorRes res: Int) = setBackgroundColor(ContextCompat.getColor(context, res))
 
 fun View.setBackgroundTint(@ColorInt colorInt: Int) {

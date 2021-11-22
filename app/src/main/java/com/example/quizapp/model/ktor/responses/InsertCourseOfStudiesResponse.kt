@@ -8,7 +8,6 @@ data class InsertCourseOfStudiesResponse(
 ) {
     enum class  InsertCourseOfStudiesResponseType {
         SUCCESSFUL,
-        NOT_ACKNOWLEDGED,
-        ERROR
+        NOT_ACKNOWLEDGED
     }
 }

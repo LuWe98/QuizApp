@@ -15,8 +15,8 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
-import com.example.quizapp.viewmodel.VmMain
-import com.example.quizapp.viewmodel.VmMain.MainViewModelEvent.NavigateToLoginScreenEvent
+import com.example.quizapp.viewmodel.VmQuizActivity
+import com.example.quizapp.viewmodel.VmQuizActivity.MainViewModelEvent.*
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -35,7 +35,7 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
     lateinit var navigatorProvider: Provider<Navigator>
     private val navigator get() = navigatorProvider.get()!!
 
-    private val vmMain: VmMain by viewModels()
+    private val vmQuizActivity: VmQuizActivity by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +73,10 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 //                navigator.navigateToAddQuestionnaireScreen()
                 navigator.navigateToAddEditQuestionnaireScreen()
             }
+
+            addCard.onLongClick {
+                navigator.navigateToFacultySelection(emptySet())
+            }
         }
     }
 
@@ -84,9 +88,6 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
         }
 
         when (destination.id) {
-            R.id.fragmentQuizOverview, R.id.fragmentQuizContainer, R.id.fragmentAddEditQuestionnaire, R.id.fragmentAddEditQuestion, R.id.fragmentAuth, R.id.fragmentSearch -> {
-                changeBottomAppBarVisibility(false)
-            }
             R.id.fragmentHome -> {
                 binding.apply {
                     changeCustomBottomNavBarVisibility(cardHome, ivHome)
@@ -102,13 +103,6 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             else -> {
                 changeBottomAppBarVisibility(false)
             }
-
-//            R.id.fragmentSearch -> {
-//                binding.apply {
-//                    changeCustomBottomNavBarVisibility(cardSearch, ivSearch)
-//                }
-//                changeBottomAppBarVisibility(true)
-//            }
         }
     }
 
@@ -155,13 +149,14 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
     }
 
     private fun registerObservers() {
-        vmMain.userFlow.collectWhenStarted(this) {
-            vmMain.onUserDataChanged(it, navigator.currentDestinationId)
+        vmQuizActivity.userFlow.collectWhenStarted(this) {
+            vmQuizActivity.onUserDataChanged(it, navigator.currentDestinationId)
         }
 
-        vmMain.mainViewModelEventChannelFlow.collectWhenStarted(this) { event ->
+        vmQuizActivity.mainViewModelEventChannelFlow.collectWhenStarted(this) { event ->
             when (event) {
                 NavigateToLoginScreenEvent -> navigator.navigateToLoginScreen()
+                is ShowMessageSnackBar -> showSnackBar(event.messageRes)
             }
         }
     }

@@ -3,6 +3,8 @@ package com.example.quizapp.extensions
 import android.content.Context
 import android.util.TypedValue
 import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.quizapp.R

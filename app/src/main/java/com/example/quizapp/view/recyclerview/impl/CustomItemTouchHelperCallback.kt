@@ -9,7 +9,7 @@ class CustomItemTouchHelperCallback(
 ) : ItemTouchHelper.Callback() {
 
     var onDrag : ((Int, Int) -> (Unit))? = null
-    var onDragReleased : (() -> (Unit))? = null
+    var onDragReleased : ((Int) -> (Unit))? = null
     var onSwiped : ((Int) -> (Unit))? = null
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) = makeMovementFlags(dragFlags, swipeFlags)
@@ -25,7 +25,7 @@ class CustomItemTouchHelperCallback(
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
-        onDragReleased?.invoke()
+        onDragReleased?.invoke(viewHolder.bindingAdapterPosition)
     }
 
     override fun isLongPressDragEnabled() = true

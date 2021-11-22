@@ -1,10 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    <androidx.viewpager2.widget.ViewPager2
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:backgroundTint="?colorOnPrimary"
+        android:background="@drawable/background_round_corners_top_15dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="QFU"
+            android:textColor="?dominantTextColor"
+            android:gravity="center"
+            android:textSize="100sp"
+            tools:visibility="visible"
             android:visibility="invisible"
-            android:id="@+id/viewPager" />
+            android:fontFamily="@font/rampart_one_regular"
+            app:layout_constraintVertical_bias="0.15"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/tvAppLogo" />
+
+    <androidx.viewpager2.widget.ViewPager2
+            android:layout_height="0dp"
+            android:layout_width="0dp"
+            tools:visibility="visible"
+            android:visibility="invisible"
+            android:id="@+id/viewPager"
+            android:layout_marginTop="@dimen/grid_4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvAppLogo" />
 </androidx.constraintlayout.widget.ConstraintLayout>

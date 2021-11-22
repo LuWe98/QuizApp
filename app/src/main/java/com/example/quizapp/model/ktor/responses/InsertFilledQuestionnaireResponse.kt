@@ -10,6 +10,6 @@ data class InsertFilledQuestionnaireResponse(
         SUCCESSFUL,
         EMPTY_INSERTION_SKIPPED,
         QUESTIONNAIRE_DOES_NOT_EXIST_ANYMORE,
-        ERROR
+        NOT_ACKNOWLEDGED
     }
 }

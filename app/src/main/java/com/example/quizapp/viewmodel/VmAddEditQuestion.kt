@@ -27,13 +27,7 @@ class VmAddEditQuestion @Inject constructor(
 
     private val parsedQuestion
         get() = args.questionWithAnswers?.question
-            ?: Question(
-                id= ObjectId().toHexString(),
-                questionnaireId = "",
-                questionText = "",
-                isMultipleChoice = true,
-                questionPosition = 0
-            )
+            ?: Question(questionnaireId = "")
 
     private val parsedAnswers get() = args.questionWithAnswers?.answers?.sortedBy(Answer::answerPosition) ?: listOf()
 
@@ -107,7 +101,11 @@ class VmAddEditQuestion @Inject constructor(
                     set(index, answer.copy(isAnswerCorrect = false))
                 }
             }
-            set(indexOf(answer), answer.copy(isAnswerCorrect = !answer.isAnswerCorrect))
+            indexOf(answer).let { index ->
+                if(index != -1) {
+                    set(index, answer.copy(isAnswerCorrect = !answer.isAnswerCorrect))
+                }
+            }
             setAnswerList(this)
         }
     }
@@ -142,6 +140,18 @@ class VmAddEditQuestion @Inject constructor(
             setAnswerList(this)
         }
     }
+
+    fun onAnswerItemDragged(from: Int, to: Int) {
+        answers.toMutableList().apply {
+            add(to, removeAt(from))
+            setAnswerList(this)
+        }
+    }
+
+    fun onAnswerItemSwiped(pos: Int) {
+        onAnswerDeleteClicked(answers[pos])
+    }
+
 
     fun onChangeQuestionTypeClicked() {
         state.set(QUESTION_TYPE_KEY, !isQuestionMultipleChoice)

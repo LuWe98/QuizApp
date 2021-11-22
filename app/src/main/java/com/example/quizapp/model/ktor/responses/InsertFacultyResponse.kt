@@ -8,7 +8,6 @@ data class InsertFacultyResponse(
 ) {
     enum class  InsertFacultyResponseType {
         SUCCESSFUL,
-        NOT_ACKNOWLEDGED,
-        ERROR
+        NOT_ACKNOWLEDGED
     }
 }

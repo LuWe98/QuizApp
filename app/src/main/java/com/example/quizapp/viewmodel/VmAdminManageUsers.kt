@@ -13,8 +13,7 @@ import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedUser
-import com.example.quizapp.viewmodel.VmAdmin.FragmentAdminEvent.*
+import com.example.quizapp.viewmodel.VmAdminManageUsers.FragmentAdminEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -24,7 +23,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class VmAdmin @Inject constructor(
+class VmAdminManageUsers @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
     private val applicationScope: CoroutineScope
@@ -56,25 +55,14 @@ class VmAdmin @Inject constructor(
         fragmentAdminEventChannel.send(UpdateUserRoleEvent(userId, newRole))
     }
 
-    fun onDeleteUserClicked(user: User) = launch(IO) {
-        localRepository.insert(LocallyDeletedUser(user.id))
-        fragmentAdminEventChannel.send(HideUserEvent(user.id))
-        fragmentAdminEventChannel.send(ShowUndoDeleteUserSnackBarEvent(user))
-    }
-
-    fun onDeleteUserConfirmed(event: ShowUndoDeleteUserSnackBarEvent) = applicationScope.launch(IO) {
+    fun onDeleteUserConfirmed(user: User) = applicationScope.launch(IO) {
         runCatching {
-            backendRepository.deleteUser(event.user.id)
+            backendRepository.deleteUser(user.id)
         }.onSuccess { response ->
             if (response.responseType == DeleteUserResponseType.SUCCESSFUL) {
-                localRepository.delete(LocallyDeletedUser(event.user.id))
+                fragmentAdminEventChannel.send(HideUserEvent(user.id))
             }
         }
-    }
-
-    fun onUndoDeleteUserClicked(event: ShowUndoDeleteUserSnackBarEvent) = applicationScope.launch(IO) {
-        localRepository.delete(LocallyDeletedUser(event.user.id))
-        fragmentAdminEventChannel.send(ShowUserEvent(event.user))
     }
 
 
@@ -82,6 +70,5 @@ class VmAdmin @Inject constructor(
         class UpdateUserRoleEvent(val userId: String, val newRole: Role): FragmentAdminEvent()
         class HideUserEvent(val userId: String): FragmentAdminEvent()
         class ShowUserEvent(val user: User): FragmentAdminEvent()
-        class ShowUndoDeleteUserSnackBarEvent(val user: User) : FragmentAdminEvent()
     }
 }

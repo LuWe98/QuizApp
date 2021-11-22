@@ -1,25 +1,26 @@
 package com.example.quizapp.view.recyclerview.adapters
 
-import androidx.core.view.*
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.R
-import com.example.quizapp.databinding.RviUserBinding
+import com.example.quizapp.databinding.RviUserNewBinding
 import com.example.quizapp.extensions.context
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.onLongClick
+import com.example.quizapp.extensions.setImageDrawable
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.view.recyclerview.impl.BindingPagingDataAdapter
 
-class RvaAdminPageUsers : BindingPagingDataAdapter<User, RviUserBinding>(User.DIFF_CALLBACK) {
+class RvaAdminUser : BindingPagingDataAdapter<User, RviUserNewBinding>(User.DIFF_CALLBACK) {
 
     var onItemClicked: ((User) -> Unit)? = null
 
     var onItemLongClicked: ((User) -> Unit)? = null
 
-    override fun initListeners(binding: RviUserBinding, vh: BindingPagingDataAdapterViewHolder) {
+    override fun initListeners(binding: RviUserNewBinding, vh: BindingPagingDataAdapterViewHolder) {
         binding.apply {
-
             root.onClick {
                 getItem(vh)?.let {
                     onItemClicked?.invoke(it)
@@ -34,29 +35,34 @@ class RvaAdminPageUsers : BindingPagingDataAdapter<User, RviUserBinding>(User.DI
         }
     }
 
-    override fun bindViews(binding: RviUserBinding, item: User, position: Int) {
+    override fun bindViews(binding: RviUserNewBinding, item: User, position: Int) {
         binding.apply {
             if(item.lastModifiedTimestamp == UNKNOWN_TIMESTAMP) hideLayout(this)
             else showLayout(this)
 
+            when(item.role) {
+                Role.ADMIN -> roleIcon.setImageDrawable(R.drawable.ic_admin_panel)
+                Role.CREATOR -> roleIcon.setImageDrawable(R.drawable.ic_edit)
+                Role.USER -> roleIcon.setImageDrawable(R.drawable.ic_person)
+            }
             tvName.text = item.userName
             tvRole.text = item.role.name
         }
     }
 
-    private fun hideLayout(binding: RviUserBinding) = binding.apply {
+    private fun hideLayout(binding: RviUserNewBinding) = binding.apply {
         root.isVisible = false
-        root.layoutParams = (root.layoutParams as RecyclerView.LayoutParams).apply {
+        root.updateLayoutParams<RecyclerView.LayoutParams> {
             height = 0
             setMargins(0, 0,0,0)
         }
     }
 
-    private fun showLayout(binding: RviUserBinding) = binding.apply {
+    private fun showLayout(binding: RviUserNewBinding) = binding.apply {
         root.isVisible = true
-        root.layoutParams = (root.layoutParams as RecyclerView.LayoutParams).apply {
+        root.updateLayoutParams<RecyclerView.LayoutParams> {
             height = RecyclerView.LayoutParams.WRAP_CONTENT
-            setMargins(0, context.resources.getDimension(R.dimen.grid_3).toInt(),0,0)
+            setMargins(0, context.resources.getDimension(R.dimen.grid_2).toInt(),0,0)
         }
     }
 

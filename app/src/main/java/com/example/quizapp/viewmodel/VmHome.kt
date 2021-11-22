@@ -185,7 +185,7 @@ class VmHome @Inject constructor(
         runCatching {
             backendRepository.insertFilledQuestionnaire(DataMapper.mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(event.completeQuestionnaire))
         }.onSuccess { response ->
-            if (response.responseType != InsertFilledQuestionnaireResponseType.ERROR) {
+            if (response.responseType != InsertFilledQuestionnaireResponseType.NOT_ACKNOWLEDGED) {
                 localRepository.delete(LocallyFilledQuestionnaireToUpload(event.completeQuestionnaire.questionnaire.id))
             }
         }

@@ -8,11 +8,5 @@ import kotlinx.serialization.Serializable
 data class SyncQuestionnairesResponse(
     val mongoQuestionnaires: List<MongoQuestionnaire>,
     val mongoFilledQuestionnaires: List<MongoFilledQuestionnaire>,
-    val questionnaireIdsToUnsync: List<String>,
-    val responseType: SyncQuestionnairesResponseType
-) {
-    enum class  SyncQuestionnairesResponseType {
-        SUCCESSFUL,
-        ERROR
-    }
-}
+    val questionnaireIdsToUnsync: List<String>
+)

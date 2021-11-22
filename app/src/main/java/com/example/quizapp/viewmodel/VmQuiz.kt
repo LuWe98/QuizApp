@@ -184,7 +184,7 @@ class VmQuiz @Inject constructor(
             runCatching {
                 backendRepository.insertFilledQuestionnaire(DataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(it))
             }.onSuccess { response ->
-                if (response.responseType != InsertFilledQuestionnaireResponseType.ERROR) {
+                if (response.responseType != InsertFilledQuestionnaireResponseType.NOT_ACKNOWLEDGED) {
                     localRepository.delete(LocallyFilledQuestionnaireToUpload(it.questionnaire.id))
                 }
             }

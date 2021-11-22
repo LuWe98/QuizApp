@@ -20,7 +20,7 @@ object EncryptionUtil {
 
     private const val TRANSFORMATION = "AES/CBC/PKCS7Padding"
     private const val ALGORITHM = "PBKDF2WithHmacSHA1"
-    private const val ITERATION_COUNT = 2_500
+    private const val ITERATION_COUNT = 1_000
     private const val KEY_LENGTH = 256
 
 

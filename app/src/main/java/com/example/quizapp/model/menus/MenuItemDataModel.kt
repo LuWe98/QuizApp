@@ -20,16 +20,21 @@ object MenuItemDataModel {
     const val COPY_QUESTIONNAIRE_ITEM_ID = 7
     const val DELETE_USER_ITEM_ID = 8
     const val CHANGE_USER_ROLE_ITEM_ID = 9
+    const val FACULTY_DELETE_ITEM_ID = 10
+    const val FACULTY_EDIT_ITEM_ID = 11
+    const val COURSE_OF_STUDIES_DELETE_ITEM_ID = 12
+    const val COURSE_OF_STUDIES_EDIT_ITEM_ID = 13
+
 
     fun getQuestionnaireMoreOptionsMenu(args: BsdfQuestionnaireMoreOptionsArgs, user: User) : List<MenuIntIdItem> {
         return if(args.questionnaire.authorInfo.userId == user.id) {
-            createdQuestionnaireMoreOptionsMenu.apply {
+            questionnaireMoreOptionsMenu.apply {
                 if(user.role == Role.USER){
-                    removeAt(createdQuestionnaireMoreOptionsMenu.indexOfFirst {
+                    removeAt(questionnaireMoreOptionsMenu.indexOfFirst {
                         it.id == PUBLISH_QUESTIONNAIRE_ITEM_ID
                     })
                 } else if(args.questionnaire.visibility == QuestionnaireVisibility.PUBLIC) {
-                    val index = createdQuestionnaireMoreOptionsMenu.indexOfFirst { it.id == PUBLISH_QUESTIONNAIRE_ITEM_ID }
+                    val index = questionnaireMoreOptionsMenu.indexOfFirst { it.id == PUBLISH_QUESTIONNAIRE_ITEM_ID }
                     val item = removeAt(index)
                     add(index, item.copy(iconRes = R.drawable.ic_un_publish, titleRes = R.string.setQuestionnaireToPrivate))
                 }
@@ -39,7 +44,8 @@ object MenuItemDataModel {
         }
     }
 
-    private val createdQuestionnaireMoreOptionsMenu get() = mutableListOf(
+
+    private val questionnaireMoreOptionsMenu get() = mutableListOf(
         MenuIntIdItem(
             id = EDIT_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_edit,
@@ -68,9 +74,10 @@ object MenuItemDataModel {
         MenuIntIdItem(
             id = DELETE_CREATED_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_delete,
-            titleRes = R.string.deleteQuestionnaire
+            titleRes = R.string.delete
         )
     )
+
 
 
     private val cachedQuestionnaireMoreOptionsMenu get() = listOf(
@@ -87,9 +94,10 @@ object MenuItemDataModel {
         MenuIntIdItem(
             id = DELETE_CACHED_QUESTIONNAIRE_ITEM_ID,
             iconRes = R.drawable.ic_delete,
-            titleRes = R.string.deleteQuestionnaire
+            titleRes = R.string.delete
         )
     )
+
 
 
     val userMoreOptionsMenu get() = listOf(
@@ -101,7 +109,7 @@ object MenuItemDataModel {
         MenuIntIdItem(
             id = DELETE_USER_ITEM_ID,
             iconRes = R.drawable.ic_delete,
-            titleRes = R.string.deleteUser
+            titleRes = R.string.delete
         )
     )
     /*
@@ -146,6 +154,8 @@ MenuItem(
         ),
     )
 
+
+
     val shuffleQuestionsOptionsMenu get() = listOf(
         MenuStringIdItem(
             id = QuestionnaireShuffleType.NONE.name,
@@ -166,6 +176,36 @@ MenuItem(
             id = QuestionnaireShuffleType.SHUFFLED_QUESTIONS_AND_ANSWERS.name,
             iconRes = R.drawable.ic_shuffle_new,
             titleRes = R.string.shuffleTypeQuestionsAndAnswers
+        )
+    )
+
+
+
+    val facultyMoreOptionsMenu get() = listOf(
+        MenuIntIdItem(
+            id = FACULTY_EDIT_ITEM_ID,
+            iconRes = R.drawable.ic_edit,
+            titleRes = R.string.edit
         ),
+        MenuIntIdItem(
+            id = FACULTY_DELETE_ITEM_ID,
+            iconRes = R.drawable.ic_delete,
+            titleRes = R.string.delete
+        )
+    )
+
+
+
+    val courseOfStudiesMoreOptionsMenu get() = listOf(
+        MenuIntIdItem(
+            id = COURSE_OF_STUDIES_EDIT_ITEM_ID,
+            iconRes = R.drawable.ic_edit,
+            titleRes = R.string.edit
+        ),
+        MenuIntIdItem(
+            id = COURSE_OF_STUDIES_DELETE_ITEM_ID,
+            iconRes = R.drawable.ic_delete,
+            titleRes = R.string.delete
+        )
     )
 }

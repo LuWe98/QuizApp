@@ -10,9 +10,7 @@ import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,7 +35,7 @@ class VmCourseOfStudiesSelection @Inject constructor(
 
     fun isCourseOfStudySelected(courseOfStudiesId: String) = selectedCoursesOfStudiesIds.contains(courseOfStudiesId)
 
-    suspend fun getFacultyWithCourseOfStudies(facultyId: String) = localRepository.getFacultyWithCourseOfStudies(facultyId)
+    fun getFacultyWithCourseOfStudiesFlow(facultyId: String) = localRepository.getFacultyWithCourseOfStudiesFlow(facultyId)
 
     fun onItemClicked(courseOfStudiesId: String) {
         val updatedSet = mutableSetOf<String>().apply {

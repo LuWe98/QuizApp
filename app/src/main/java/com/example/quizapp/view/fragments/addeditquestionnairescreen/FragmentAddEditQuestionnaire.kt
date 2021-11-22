@@ -41,7 +41,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
         initObservers()
     }
 
-    private fun initViews(){
+    private fun initViews() {
         rvAdapter = RvaAddEditQuestion().apply {
             onItemClick = vmAddEdit::onQuestionItemClicked
         }
@@ -51,6 +51,10 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
             layoutManager = LinearLayoutManager(requireContext())
             adapter = rvAdapter
             disableChangeAnimation()
+            addCustomItemTouchHelperCallBack().apply {
+                onDrag = vmAddEdit::onQuestionItemDragged
+                onSwiped = vmAddEdit::onQuestionItemSwiped
+            }
         }
     }
 
@@ -68,7 +72,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
         }
     }
 
-    private fun onBottomSheetSlide(slideOffset: Float){
+    private fun onBottomSheetSlide(slideOffset: Float) {
         binding.bottomSheet.apply {
             rv.alpha = slideOffset.pow(2) + 0.1f
 
@@ -90,7 +94,6 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
     }
 
 
-
     private fun toggleBottomSheet() {
         if (bottomSheetBehaviour.state == BottomSheetBehavior.STATE_COLLAPSED) {
             bottomSheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
@@ -102,17 +105,23 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
     private fun initListeners() {
         binding.apply {
             btnSave.onClick(vmAddEdit::onSaveButtonClicked)
-            cosDropDown.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
-            titleCard.onClick(vmAddEdit::onTitleCardClicked)
-            subjectCard.onClick(vmAddEdit::onSubjectCardClicked)
-            bottomSheet.btnAdd.onClick(vmAddEdit::onAddQuestionButtonClicked)
             btnBack.onClick(navigator::popBackStack)
-            bottomSheet.btnCollapse.onClick(this@FragmentAddEditQuestionnaire::toggleBottomSheet)
-            bottomSheet.sheetHeader.onClick(this@FragmentAddEditQuestionnaire::toggleBottomSheet)
+
+            infoCard.apply {
+                cosDropDown.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
+                titleCard.onClick(vmAddEdit::onTitleCardClicked)
+                subjectCard.onClick(vmAddEdit::onSubjectCardClicked)
+            }
+
+            bottomSheet.apply {
+                btnAdd.onClick(vmAddEdit::onAddQuestionButtonClicked)
+                btnCollapse.onClick(this@FragmentAddEditQuestionnaire::toggleBottomSheet)
+                sheetHeader.onClick(this@FragmentAddEditQuestionnaire::toggleBottomSheet)
+            }
         }
     }
 
-    private fun initObservers(){
+    private fun initObservers() {
         setFragmentResultListener(BsdfCourseOfStudiesSelection.COURSE_OF_STUDIES_RESULT_KEY) { _, bundle ->
             bundle.getStringArray(BsdfCourseOfStudiesSelection.SELECTED_COURSE_OF_STUDIES_KEY)?.let(vmAddEdit::onFragmentResultReceived)
         }
@@ -126,15 +135,15 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
         }
 
         vmAddEdit.coursesOfStudiesStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.cosDropDown.text = it.map(CourseOfStudies::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: ""
+            binding.infoCard.cosDropDown.text = it.map(CourseOfStudies::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: ""
         }
 
         vmAddEdit.questionnaireTitleStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.titleCard.text = it
+            binding.infoCard.titleCard.text = it
         }
 
         vmAddEdit.questionnaireSubjectStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.subjectCard.text = it
+            binding.infoCard.subjectCard.text = it
         }
 
         vmAddEdit.questionsWithAnswersStateFlow.collectWhenStarted(viewLifecycleOwner) {
@@ -142,29 +151,35 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
             binding.apply {
                 bottomSheet.tvQuestionsAmount.text = it.size.toString()
-                allQuestions.setProgressWithAnimation(if(it.isEmpty()) 0 else 100)
-                allQuestionsNumber.text = it.size.toString()
 
-                val multipleChoice = it.count(QuestionWithAnswers::question / Question::isMultipleChoice)
-                progressMultipleChoice.setProgressWithAnimation((multipleChoice * 100f / it.size).toInt())
-                tvMultipleChoiceAmount.text = multipleChoice.toString()
+                questionDistributionCard.apply {
+                    allQuestions.setProgressWithAnimation(if (it.isEmpty()) 0 else 100)
+                    allQuestionsNumber.text = it.size.toString()
 
-                val singleChoice = it.size - multipleChoice
-                progressSingleChoice.setProgressWithAnimation((singleChoice * 100f / it.size).toInt())
-                tvSingleChoiceAmount.text = singleChoice.toString()
+                    val multipleChoice = it.count(QuestionWithAnswers::question / Question::isMultipleChoice)
+                    progressMultipleChoice.setProgressWithAnimation((multipleChoice * 100f / it.size).toInt())
+                    tvMultipleChoiceAmount.text = multipleChoice.toString()
+
+                    val singleChoice = it.size - multipleChoice
+                    progressSingleChoice.setProgressWithAnimation((singleChoice * 100f / it.size).toInt())
+                    tvSingleChoiceAmount.text = singleChoice.toString()
+                }
             }
         }
 
         vmAddEdit.fragmentAddEditEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
-            when(event) {
+            when (event) {
                 NavigateBackEvent -> navigator.popBackStack()
                 is NavigateToCourseOfStudiesSelector -> navigator.navigateToCourseOfStudiesSelection(event.courseOfStudiesIds)
                 is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringValueDialog(event.initialValue, event.updateType)
                 is NavigateToAddEditQuestionScreenEvent -> navigator.navigateToAddEditQuestionScreen(event.position, event.questionWithAnswers)
                 is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes, anchorView = binding.btnSave)
-                is ShowQuestionDeletedSnackBarEvent -> {
-
-                }
+                is ShowQuestionDeletedSnackBarEvent -> showSnackBar(
+                    textRes = R.string.questionDeleted,
+                    anchorView = binding.btnSave,
+                    actionTextRes = R.string.undo,
+                    actionClickEvent = { vmAddEdit.onUndoDeleteQuestionClicked(event) }
+                )
             }
         }
     }

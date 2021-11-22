@@ -8,7 +8,7 @@ import com.example.quizapp.model.ktor.responses.UpdateUserResponse.*
 import com.example.quizapp.model.ktor.status.Resource
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
-import com.example.quizapp.view.fragments.adminscreen.BsdfUserRoleSelectionArgs
+import com.example.quizapp.view.fragments.adminscreens.manageusers.BsdfUserRoleSelectionArgs
 import com.example.quizapp.viewmodel.VmChangeUserRole.FragmentChangeUserRoleEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO

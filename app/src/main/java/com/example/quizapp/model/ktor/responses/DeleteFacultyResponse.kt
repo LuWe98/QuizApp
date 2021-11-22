@@ -8,7 +8,6 @@ data class DeleteFacultyResponse(
 ) {
     enum class  DeleteFacultyResponseType {
         SUCCESSFUL,
-        NOT_ACKNOWLEDGED,
-        ERROR
+        NOT_ACKNOWLEDGED
     }
 }

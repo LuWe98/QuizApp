@@ -32,7 +32,7 @@ class QuestionnaireApi @Inject constructor(
             body = SyncQuestionnairesRequest(
                 syncedQuestionnaireIdsWithTimestamp,
                 unsyncedQuestionnaireIds,
-                locallyDeletedQuestionnaire.map { it.questionnaireId }
+                locallyDeletedQuestionnaire.map(LocallyDeletedQuestionnaire::questionnaireId)
             )
         }
 

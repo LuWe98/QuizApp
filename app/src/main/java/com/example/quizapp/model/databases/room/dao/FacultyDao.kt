@@ -19,12 +19,22 @@ abstract class FacultyDao : BaseDao<Faculty>(Faculty.TABLE_NAME) {
 
     @Transaction
     @Query("SELECT * FROM facultyTable WHERE facultyId = :facultyId")
-    abstract suspend fun getFacultyWithCourseOfStudies(facultyId: String): FacultyWithCoursesOfStudies
+    abstract suspend fun getFacultyWithCourseOfStudies(facultyId: String): FacultyWithCoursesOfStudies?
+
+    @Transaction
+    @Query("SELECT * FROM facultyTable WHERE facultyId = :facultyId")
+    abstract fun getFacultyWithCourseOfStudiesFlow(facultyId: String): Flow<FacultyWithCoursesOfStudies>
 
     @Query("SELECT * FROM facultyTable WHERE facultyId = :facultyId")
     abstract suspend fun getFacultyWithId(facultyId: String): Faculty
 
     @Query("SELECT DISTINCT f.* FROM facultyTable as f JOIN facultyCourseOfStudiesRelationTable as r ON (f.facultyId = r.facultyId) JOIN courseOfStudiesTable as c ON(r.courseOfStudiesId = c.courseOfStudiesId) WHERE c.courseOfStudiesId IN(:courseOfStudiesIds)")
     abstract suspend fun getFacultiesWithCourseOfStudiesIds(courseOfStudiesIds: List<String>) : List<Faculty>
+
+    @Query("SELECT * FROM facultyTable WHERE facultyId IN(:facultyIds)")
+    abstract suspend fun getFacultiesWithIds(facultyIds: List<String>): List<Faculty>
+
+    @Query("DELETE FROM facultyTable WHERE facultyId IN(:facultyIds)")
+    abstract suspend fun deleteFacultiesWith(facultyIds: List<String>)
 
 }

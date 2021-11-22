@@ -1,4 +1,4 @@
-package com.example.quizapp.view.fragments.adminscreen
+package com.example.quizapp.view.fragments.adminscreens.manageusers
 
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -14,7 +14,7 @@ import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.model.ktor.status.Resource
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.viewmodel.VmAdmin
+import com.example.quizapp.viewmodel.VmAdminManageUsers
 import com.example.quizapp.viewmodel.VmChangeUserRole
 import com.google.android.material.radiobutton.MaterialRadioButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,7 +24,7 @@ class BsdfUserRoleSelection : BindingBottomSheetDialogFragment<BsdfUserRoleSelec
 
     private val vmRole: VmChangeUserRole by viewModels()
 
-    private val vmAdmin : VmAdmin by hiltNavDestinationViewModels(R.id.fragmentAdmin)
+    private val vmAdminManageUsers : VmAdminManageUsers by hiltNavDestinationViewModels(R.id.fragmentAdminManageUsers)
 
     private val args: BsdfUserRoleSelectionArgs by navArgs()
 
@@ -102,7 +102,7 @@ class BsdfUserRoleSelection : BindingBottomSheetDialogFragment<BsdfUserRoleSelec
                         is Resource.Success -> {
                             dialog?.setCancelable(true)
                             event.resources.data?.let { user ->
-                                vmAdmin.onUserRoleSuccessfullyChanged(user.id, user.role)
+                                vmAdminManageUsers.onUserRoleSuccessfullyChanged(user.id, user.role)
                             }
                         }
                     }

@@ -9,6 +9,6 @@ data class InsertFilledQuestionnairesResponse(
 ) {
     enum class  InsertFilledQuestionnairesResponseType {
         SUCCESSFUL,
-        ERROR
+        NOT_ACKNOWLEDGED
     }
 }

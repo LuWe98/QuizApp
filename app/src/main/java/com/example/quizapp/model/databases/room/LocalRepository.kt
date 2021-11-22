@@ -35,8 +35,7 @@ class LocalRepository @Inject constructor(
     private val questionnaireCourseOfStudiesRelationDao: QuestionnaireCourseOfStudiesRelationDao,
     private val facultyCourseOfStudiesRelationDao: FacultyCourseOfStudiesRelationDao,
     private val locallyDeletedQuestionnaireDao: LocallyDeletedQuestionnaireDao,
-    private val locallyFilledQuestionnaireToUploadDao: LocallyFilledQuestionnaireToUploadDao,
-    private val locallyDeletedUserDao: LocallyDeletedUserDao
+    private val locallyFilledQuestionnaireToUploadDao: LocallyFilledQuestionnaireToUploadDao
 ) {
 
     suspend inline fun <reified T : EntityMarker> insert(entity: T) = getBaseDaoWith(T::class).insert(entity)
@@ -70,7 +69,6 @@ class LocalRepository @Inject constructor(
         FacultyCourseOfStudiesRelation::class -> facultyCourseOfStudiesRelationDao
         LocallyDeletedQuestionnaire::class -> locallyDeletedQuestionnaireDao
         LocallyFilledQuestionnaireToUpload::class -> locallyFilledQuestionnaireToUploadDao
-        LocallyDeletedUser::class -> locallyDeletedUserDao
         else -> throw IllegalArgumentException("Entity DAO for entity could not be found! Did you add it to the 'getBaseDaoWith' Method?")
     } as BaseDao<T>)
 
@@ -79,7 +77,6 @@ class LocalRepository @Inject constructor(
             questionnaireDao.deleteAll()
             locallyFilledQuestionnaireToUploadDao.deleteAll()
             locallyDeletedQuestionnaireDao.deleteAll()
-            locallyDeletedUserDao.deleteAll()
         }
     }
 
@@ -148,19 +145,9 @@ class LocalRepository @Inject constructor(
         }
     }
 
+    //QUESTION - Not needed
 
-
-    //QUESTION
-    fun findQuestionsAsFlowWith(questionnaireId: String) = questionDao.findQuestionsAsFlowWith(questionnaireId)
-
-
-
-    //ANSWER
-    fun findAnswersByIdFlow(questionId: String) = answerDao.findAnswersByIdFlow(questionId)
-
-    fun findAllSelectedAnswersWithQuestionId() = answerDao.findAllSelectedAnswersWithQuestionId()
-
-
+    //ANSWER - Not needed
 
     //LOCALLY DELETED QUESTIONNAIRE
     suspend fun getLocallyDeletedQuestionnaireIds() = locallyDeletedQuestionnaireDao.getLocallyDeletedQuestionnaireIds()
@@ -195,11 +182,6 @@ class LocalRepository @Inject constructor(
 
 
 
-    //LOCALLY DELETED USERS
-    suspend fun getAllLocallyDeletedUserIds() = locallyDeletedUserDao.getAllLocallyDeletedUserIds()
-
-
-
     //FACULTY
     suspend fun getFacultyIdsWithTimestamp() = facultyDao.getFacultyIdsWithTimestamp()
 
@@ -207,9 +189,15 @@ class LocalRepository @Inject constructor(
 
     suspend fun getFacultyWithCourseOfStudies(facultyId: String) = facultyDao.getFacultyWithCourseOfStudies(facultyId)
 
+    fun getFacultyWithCourseOfStudiesFlow(facultyId: String) = facultyDao.getFacultyWithCourseOfStudiesFlow(facultyId)
+
     suspend fun getFacultyWithId(facultyId: String) = facultyDao.getFacultyWithId(facultyId)
 
     suspend fun getFacultiesWithCourseOfStudiesIds(courseOfStudiesIds: List<String>) = facultyDao.getFacultiesWithCourseOfStudiesIds(courseOfStudiesIds)
+
+    suspend fun getFacultiesWithIds(facultyIds: List<String>) = facultyDao.getFacultiesWithIds(facultyIds)
+
+    suspend fun deleteFacultiesWith(facultyIds: List<String>) = facultyDao.deleteFacultiesWith(facultyIds)
 
 
 
@@ -218,7 +206,7 @@ class LocalRepository @Inject constructor(
 
     val allCoursesOfStudiesFlow = courseOfStudiesDao.getAllCourseOfStudiesFlow()
 
-    fun getCoursesOfStudiesFlowWithIds(courseOfStudiesIds: Set<String>) = courseOfStudiesDao.getCoursesOfStudiesFlowWithIds(courseOfStudiesIds)
+    suspend fun getCoursesOfStudiesWithIds(courseOfStudiesIds: Set<String>) = courseOfStudiesDao.getCoursesOfStudiesWithIds(courseOfStudiesIds)
 
     suspend fun deleteWhereAbbreviation(abb: String) = courseOfStudiesDao.deleteWhereAbbreviation(abb)
 
@@ -228,10 +216,26 @@ class LocalRepository @Inject constructor(
 
     suspend fun getCourseOfStudiesWithId(courseOfStudiesId: String) = courseOfStudiesDao.getCourseOfStudiesWithId(courseOfStudiesId)
 
+    suspend fun getCourseOfStudiesWithFaculties(courseOfStudiesId: String) = courseOfStudiesDao.getCourseOfStudiesWithFaculties(courseOfStudiesId)
+
+    suspend fun deleteCoursesOfStudiesWith(courseOfStudiesIds: List<String>) = courseOfStudiesDao.deleteCoursesOfStudiesWith(courseOfStudiesIds)
+
+    fun getCoursesOfStudiesNotAssociatedWithFacultyFlow() = courseOfStudiesDao.getCoursesOfStudiesNotAssociatedWithFacultyFlow()
+
 
 
     //QUESTIONNAIRE COURSE OF STUDIES RELATION
     suspend fun getQuestionnaireCourseOfStudiesRelationWith(questionnaireId: String) =
         questionnaireCourseOfStudiesRelationDao.getQuestionnaireCourseOfStudiesRelationWith(questionnaireId)
+
+    suspend fun getQuestionnaireCourseOfStudiesRelationWithCosId(courseOfStudiesId: String) =
+        questionnaireCourseOfStudiesRelationDao.getQuestionnaireCourseOfStudiesRelationWithCosId(courseOfStudiesId)
+
+
+
+    //FACULTY COURSE OF STUDIES RELATION
+    suspend fun deleteFacultyCourseOfStudiesRelationsWith(courseOfStudiesId: String) =
+        facultyCourseOfStudiesRelationDao.deleteFacultyCourseOfStudiesRelationsWith(courseOfStudiesId)
+
 
 }

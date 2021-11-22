@@ -1,29 +1,25 @@
-package com.example.quizapp.view.fragments.adminscreen
+package com.example.quizapp.view.fragments.adminscreens.manageusers
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfUserMoreOptionsBinding
-import com.example.quizapp.extensions.disableChangeAnimation
-import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.extensions.collectWhenStarted
+import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.model.menus.MenuItemDataModel
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaIntIdMenu
-import com.example.quizapp.viewmodel.VmAdmin
 import com.example.quizapp.viewmodel.VmUserMoreOptions
-import com.example.quizapp.viewmodel.VmUserMoreOptions.UserMoreOptionsEvent.*
+import com.example.quizapp.viewmodel.VmUserMoreOptions.UserMoreOptionsEvent.DeleteUserEvent
+import com.example.quizapp.viewmodel.VmUserMoreOptions.UserMoreOptionsEvent.NavigateToChangeUserRoleDialogEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BsdfUserMoreOptions : BindingBottomSheetDialogFragment<BsdfUserMoreOptionsBinding>() {
 
     private val vmOptions: VmUserMoreOptions by viewModels()
-
-    private val vmAdmin : VmAdmin by hiltNavDestinationViewModels(R.id.fragmentAdmin)
 
     private val args: BsdfUserMoreOptionsArgs by navArgs()
 
@@ -56,8 +52,7 @@ class BsdfUserMoreOptions : BindingBottomSheetDialogFragment<BsdfUserMoreOptions
         vmOptions.userMoreOptionsEventChannelFlow.collectWhenStarted(viewLifecycleOwner){ event ->
             when(event){
                 is NavigateToChangeUserRoleDialogEvent -> navigator.navigateToChangeUserRoleDialog(event.user)
-                is DeleteUserEvent -> vmAdmin.onDeleteUserClicked(event.user)
-                NavigateBackEvent -> navigator.popBackStack()
+                is DeleteUserEvent -> navigator.navigateToAdminUserDeletionConfirmation(event.user)
             }
         }
     }

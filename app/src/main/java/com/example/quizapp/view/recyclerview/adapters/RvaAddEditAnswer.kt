@@ -23,7 +23,6 @@ class RvaAddEditAnswer(
             root.onClick { onItemClick?.invoke(getItem(vh)) }
             btnDelete.onClick { onDeleteButtonClick?.invoke(getItem(vh)) }
             btnCheck.onClick { onCheckButtonClicked?.invoke(getItem(vh)) }
-            root.onLongClick { onCheckButtonClicked?.invoke(getItem(vh)) }
         }
     }
 

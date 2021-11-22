@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:background="@drawable/background_round_corners_top_15dp"
+        android:backgroundTint="?colorOnPrimary">
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:id="@+id/btnBack"
+            android:background="?attr/actionBarItemBackground"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_arrow_back"
+            android:padding="6dp"
+            android:layout_marginTop="@dimen/grid_3"
+            android:layout_marginStart="@dimen/grid_1_5" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/tvTitle"
+            android:text="@string/manageFaculties"
+            android:gravity="center"
+            android:textSize="@dimen/maxHeaderTextSize"
+            android:maxLines="1"
+            android:textStyle="bold"
+            app:autoSizeMaxTextSize="18sp"
+            app:autoSizeMinTextSize="10sp"
+            app:autoSizeTextType="uniform"
+            app:autoSizeStepGranularity="0.25sp"
+            android:layout_marginHorizontal="50dp"
+            android:lines="1"
+            app:layout_constraintTop_toTopOf="@+id/btnBack"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/btnBack" />
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/rv"
+            android:layout_marginTop="@dimen/grid_4"
+            android:paddingHorizontal="@dimen/grid_2"
+            tools:listitem="@layout/rvi_faculty"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fabAdd"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="@dimen/grid_8"
+            android:src="@drawable/ic_add"
+            app:tint="@color/white"
+            app:backgroundTint="?colorPrimary"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

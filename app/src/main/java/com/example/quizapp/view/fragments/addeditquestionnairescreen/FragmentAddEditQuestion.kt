@@ -46,6 +46,10 @@ class FragmentAddEditQuestion: BindingFragment<FragmentAddEditQuestionBinding>()
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
             disableChangeAnimation()
+            addCustomItemTouchHelperCallBack().apply {
+                onDrag = vmAddEditQuestion::onAnswerItemDragged
+                onSwiped = vmAddEditQuestion::onAnswerItemSwiped
+            }
         }
 
         binding.apply {

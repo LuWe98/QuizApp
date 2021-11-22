@@ -2,11 +2,17 @@ package com.example.quizapp.extensions
 
 import android.app.Activity
 import android.graphics.Color
+import android.view.View
 import android.view.WindowManager
+import androidx.annotation.MainThread
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
+import com.example.quizapp.view.bindingsuperclasses.BindingActivity
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -68,4 +74,53 @@ inline fun AppCompatActivity.launchDelayed(
         delay(startDelay)
         block.invoke(this)
     }
+}
+
+
+@MainThread
+fun BindingActivity<*>.showSnackBar(
+    @StringRes textRes: Int,
+    viewToAttachTo: View = rootView,
+    anchorView: View? = null,
+    animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
+    duration: Int = Snackbar.LENGTH_LONG) =
+    showSnackBar(getString(textRes), viewToAttachTo, anchorView, animationMode, duration)
+
+@MainThread
+fun BindingActivity<*>.showSnackBar(
+    text: String,
+    viewToAttachTo: View = rootView,
+    anchorView: View? = null,
+    animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
+    duration: Int = Snackbar.LENGTH_LONG) =
+    Snackbar.make(viewToAttachTo, text, duration).apply {
+        setAnchorView(anchorView)
+        this.animationMode = animationMode
+        show()
+    }.also {
+        currentSnackBar = it
+    }
+
+@MainThread
+inline fun BindingActivity<*>.showSnackBar(
+    @StringRes textRes: Int,
+    viewToAttachTo: View = rootView,
+    anchorView: View? = null,
+    animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
+    duration: Int = Snackbar.LENGTH_LONG,
+    crossinline onDismissedAction: () -> (Unit) = {},
+    @StringRes actionTextRes: Int,
+    crossinline actionClickEvent: ((View) -> Unit)
+) = Snackbar.make(viewToAttachTo, textRes, duration).apply {
+    setAnchorView(anchorView)
+    this.animationMode = animationMode
+    addCallback(object : Snackbar.Callback() {
+        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+            if (event != DISMISS_EVENT_ACTION) { onDismissedAction.invoke() }
+        }
+    })
+    setAction(actionTextRes) { actionClickEvent(it) }
+    show()
+}.also {
+    currentSnackBar = it
 }

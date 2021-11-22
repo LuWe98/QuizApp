@@ -23,7 +23,7 @@ data class CompleteQuestionnaire(
         entityColumn = Question.QUESTIONNAIRE_ID_COLUMN,
         parentColumn = Questionnaire.ID_COLUMN
     )
-    var questionsWithAnswers: MutableList<QuestionWithAnswers>,
+    var questionsWithAnswers: List<QuestionWithAnswers>,
     @Relation(
         entity = CourseOfStudies::class,
         entityColumn = CourseOfStudies.ID_COLUMN,

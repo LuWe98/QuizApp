@@ -8,6 +8,6 @@ data class DeleteUserResponse(
 )  {
     enum class DeleteUserResponseType {
         SUCCESSFUL,
-        USER_COULD_NOT_BE_DELETED
+        NOT_ACKNOWLEDGED
     }
 }

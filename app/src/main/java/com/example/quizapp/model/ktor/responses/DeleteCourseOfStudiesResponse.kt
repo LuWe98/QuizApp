@@ -8,7 +8,6 @@ data class DeleteCourseOfStudiesResponse(
 ) {
     enum class  DeleteCourseOfStudiesResponseType {
         SUCCESSFUL,
-        NOT_ACKNOWLEDGED,
-        ERROR
+        NOT_ACKNOWLEDGED
     }
 }

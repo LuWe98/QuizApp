@@ -10,6 +10,7 @@ import com.example.quizapp.databinding.RviQuestionAddEditBinding
 import com.example.quizapp.databinding.RviQuestionAddEditNewBinding
 import com.example.quizapp.extensions.log
 import com.example.quizapp.extensions.onClick
+import com.example.quizapp.extensions.onLongClick
 import com.example.quizapp.extensions.setImageDrawable
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
@@ -17,13 +18,13 @@ import kotlin.random.Random
 
 class RvaAddEditQuestion : BindingListAdapter<QuestionWithAnswers, RviQuestionAddEditNewBinding>(QuestionWithAnswers.DIFF_CALLBACK){
 
-    var onItemClick : ((Int, QuestionWithAnswers) -> (Unit))? = null
+    var onItemClick : ((Int) -> (Unit))? = null
+
+    var onDeleteItemClicked: ((Int, QuestionWithAnswers) -> (Unit))? = null
 
     override fun initListeners(binding: RviQuestionAddEditNewBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
-            root.onClick {
-                onItemClick?.invoke(vh.bindingAdapterPosition, getItem(vh))
-            }
+            root.onClick { onItemClick?.invoke(vh.bindingAdapterPosition) }
         }
     }
 

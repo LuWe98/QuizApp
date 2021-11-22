@@ -32,7 +32,7 @@ abstract class BindingListAdapter<T : Any, B : ViewBinding>(diffCallback: DiffUt
     abstract fun bindViews(binding: B, item: T, position: Int)
 
     fun moveItem(fromPosition : Int, toPosition : Int){
-        submitList(mutableListOf<T>().apply { addAll(currentList) }.apply {
+        submitList(currentList.toMutableList().apply {
             add(toPosition, removeAt(fromPosition))
         })
     }

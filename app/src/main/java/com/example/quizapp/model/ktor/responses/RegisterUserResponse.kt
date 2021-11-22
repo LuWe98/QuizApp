@@ -10,7 +10,7 @@ data class RegisterUserResponse(
 ) {
     enum class RegisterUserResponseType(@StringRes val messageRes: Int)  {
         REGISTER_SUCCESSFUL(R.string.userRegisteredSuccessfully),
-        REGISTER_FAILED(R.string.userRegistrationFailed),
+        NOT_ACKNOWLEDGED(R.string.userRegistrationFailed),
         USER_ALREADY_EXISTS(R.string.errorUserAlreadyExists)
     }
 }

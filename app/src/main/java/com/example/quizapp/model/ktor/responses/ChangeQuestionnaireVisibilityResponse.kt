@@ -8,6 +8,6 @@ data class ChangeQuestionnaireVisibilityResponse(
 ) {
     enum class ChangeQuestionnaireVisibilityResponseType{
         SUCCESSFUL,
-        ERROR
+        NOT_ACKNOWLEDGED
     }
 }

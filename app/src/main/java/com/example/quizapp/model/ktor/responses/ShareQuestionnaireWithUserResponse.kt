@@ -11,6 +11,6 @@ data class ShareQuestionnaireWithUserResponse(
         ALREADY_SHARED_WITH_USER,
         USER_DOES_NOT_EXIST,
         QUESTIONNAIRE_DOES_NOT_EXIST,
-        ERROR
+        NOT_ACKNOWLEDGED
     }
 }

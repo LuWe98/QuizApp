@@ -10,7 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:id="@+id/adminFunctionalityHeader"
-            android:text="@string/adminFunctionality"
+            android:text="@string/adminSettings"
             android:background="@drawable/background_round_corners_10dp"
             android:backgroundTint="?android:colorBackground"
             android:gravity="center_vertical"
@@ -22,8 +22,25 @@
     <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btnAdminFunctionality"
+            android:id="@+id/btnAdminUser"
             app:icon="@drawable/ic_admin_panel"
-            app:title="@string/adminSettings"
+            app:title="@string/manageUsers"
             app:layout_constraintTop_toBottomOf="@+id/adminFunctionalityHeader" />
+
+    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnAdminFaculty"
+            app:iconPadding="11dp"
+            app:icon="@drawable/ic_faculty"
+            app:title="@string/manageFaculties"
+            app:layout_constraintTop_toBottomOf="@+id/btnAdminUser" />
+
+    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnAdminCourseOfStudies"
+            app:icon="@drawable/ic_course_of_studies"
+            app:title="@string/manageCoursesOfStudies"
+            app:layout_constraintTop_toBottomOf="@+id/btnAdminFaculty" />
 </androidx.constraintlayout.widget.ConstraintLayout>

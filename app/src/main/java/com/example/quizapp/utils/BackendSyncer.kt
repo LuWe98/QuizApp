@@ -1,12 +1,12 @@
 package com.example.quizapp.utils
 
 import com.example.quizapp.model.databases.DataMapper
+import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedUser
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.datastore.PreferencesRepository
@@ -33,57 +33,62 @@ class BackendSyncer @Inject constructor(
 ) {
 
     suspend fun syncData() = withContext(IO) {
-        val questionnaireAsync = async {
+        val facultyAndCursesOfStudiesAsync = async {
             syncFacultiesAndCoursesOfStudies()
+        }
+
+        val questionnaireAsync = async {
             synAllQuestionnaireData()
         }
 
-        //TODO -> DELETED USER ENTFERNEN UND EINFACH NUR ZULASSEN WENN MAN CONNECTION HAT
-        val deletedUserAsync = async {
-            syncLocallyDeletedUsers()
-        }
-
+        facultyAndCursesOfStudiesAsync.await()
         questionnaireAsync.await()
-        deletedUserAsync.await()
     }
 
 
+    //TODO -> Update funktioniert noch nicht richtig, anschauen!
     private suspend fun syncFacultiesAndCoursesOfStudies() = withContext(IO) {
-        val facultiesAsync = getFacultiesAsync()
-        val coursesOfStudiesAsync = getCourseOfStudiesAsync()
+        val facultiesAsync = async { getFacultiesAsync() }
+        val coursesOfStudiesAsync = async { getCourseOfStudiesAsync() }
 
-        localRepository.insert(facultiesAsync.await())
+        facultiesAsync.await()?.let { facultyResponse ->
+            localRepository.insert(facultyResponse.facultiesToInsert.map(DataMapper::mapMongoFacultyToRoomFaculty))
+            localRepository.update(facultyResponse.facultiesToUpdate.map(DataMapper::mapMongoFacultyToRoomFaculty))
+            localRepository.deleteFacultiesWith(facultyResponse.facultyIdsToDelete)
 
-        coursesOfStudiesAsync.await().let { result ->
-            localRepository.insert(result.map(Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>>::first))
-            localRepository.insert(result.flatMap(Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>>::second))
+            coursesOfStudiesAsync.await()?.let { cosResponse ->
+                val allLocalFaculties = localRepository.getFacultyIdsWithTimestamp().map(FacultyIdWithTimeStamp::facultyId)
+                val facultyCosRelations: MutableList<FacultyCourseOfStudiesRelation>
+
+                (cosResponse.coursesOfStudiesToInsert.map(DataMapper::mapMongoCourseOfStudiesToRoomCourseOfStudies)).let {
+                    localRepository.insert(it.map(Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>>::first))
+                    facultyCosRelations = it.flatMap(Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>>::second).toMutableList()
+                }
+
+                (cosResponse.coursesOfStudiesToUpdate.map(DataMapper::mapMongoCourseOfStudiesToRoomCourseOfStudies)).let {
+                    localRepository.update(it.map(Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>>::first))
+                    facultyCosRelations += it.flatMap(Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>>::second)
+                }
+
+                localRepository.deleteCoursesOfStudiesWith(cosResponse.courseOfStudiesIdsToDelete)
+
+                facultyCosRelations.filter { it.facultyId in allLocalFaculties }.let { filteredFacultyCosRelations ->
+                    localRepository.insert(filteredFacultyCosRelations)
+                }
+            }
         }
     }
 
-    private suspend fun getFacultiesAsync() = withContext(IO) {
-        async {
-            runCatching {
-                localRepository.getFacultyIdsWithTimestamp().let { facultiesWithTimestamp ->
-                    backendRepository.getFacultySynchronizationData(facultiesWithTimestamp)
-                }
-            }.onSuccess { response ->
-                return@async response.faculties.map(DataMapper::mapMongoFacultyToRoomFaculty)
-            }
-            return@async emptyList()
-        }
+    private suspend fun getFacultiesAsync() = try {
+        backendRepository.getFacultySynchronizationData(localRepository.getFacultyIdsWithTimestamp())
+    } catch (e: Exception) {
+        null
     }
 
-    private suspend fun getCourseOfStudiesAsync() = withContext(IO) {
-        async {
-            runCatching {
-                localRepository.getCourseOfStudiesIdsWithTimestamp().let { coursesOfStudiesWithTimestamp ->
-                    backendRepository.getCourseOfStudiesSynchronizationData(coursesOfStudiesWithTimestamp)
-                }
-            }.onSuccess { response ->
-                return@async response.coursesOfStudies.map(DataMapper::mapMongoCourseOfStudiesToRoomCourseOfStudies)
-            }
-            return@async emptyList()
-        }
+    private suspend fun getCourseOfStudiesAsync() = try {
+        backendRepository.getCourseOfStudiesSynchronizationData(localRepository.getCourseOfStudiesIdsWithTimestamp())
+    } catch (e: Exception) {
+        null
     }
 
     //TODO -> Subjects sind nur Strings, also irrelevant hier
@@ -222,8 +227,6 @@ class BackendSyncer @Inject constructor(
     }
 
 
-
-
     /**
      * Sync of locally deleted Questionnaires, so that they will be deleted online
      */
@@ -286,24 +289,6 @@ class BackendSyncer @Inject constructor(
                     //(filledQuestionnaires.map(MongoFilledQuestionnaire::questionnaireId) - response.notInsertedQuestionnaireIds).map { LocallyFilledQuestionnaireToUpload(it) }.let {
                     //  localRepository.delete(it)
                     //}
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Sync of locally deleted Users -> Should be removed and deletion of Users should be only allowed when it was successful online
-     */
-    private suspend fun syncLocallyDeletedUsers() = withContext(IO) {
-        localRepository.getAllLocallyDeletedUserIds().let { userIds ->
-            if (userIds.isEmpty()) return@withContext
-
-            runCatching {
-                backendRepository.deleteUsers(userIds.map(LocallyDeletedUser::userId))
-            }.onSuccess { response ->
-                if (response.responseType == DeleteUserResponseType.SUCCESSFUL) {
-                    localRepository.delete(userIds)
                 }
             }
         }

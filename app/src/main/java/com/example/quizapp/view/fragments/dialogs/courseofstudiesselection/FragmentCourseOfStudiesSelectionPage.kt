@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
-import com.example.quizapp.databinding.FragmentCourseOfStudiesSelectionPageBinding
+import com.example.quizapp.databinding.BsdfCourseOfStudiesSelectionPageBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
@@ -13,7 +13,7 @@ import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentCourseOfStudiesSelectionPage: BindingFragment<FragmentCourseOfStudiesSelectionPageBinding>() {
+class FragmentCourseOfStudiesSelectionPage: BindingFragment<BsdfCourseOfStudiesSelectionPageBinding>() {
 
     companion object {
         private const val FACULTY_ID_KEY = "facultyIdKey"
@@ -50,13 +50,13 @@ class FragmentCourseOfStudiesSelectionPage: BindingFragment<FragmentCourseOfStud
             setHasFixedSize(true)
             disableChangeAnimation()
         }
-
-        launchWhenStarted {
-            rvAdapter.submitList(vmCos.getFacultyWithCourseOfStudies(facultyId).coursesOfStudies)
-        }
     }
 
     private fun initObservers(){
+        vmCos.getFacultyWithCourseOfStudiesFlow(facultyId).collectWhenStarted(viewLifecycleOwner) {
+            rvAdapter.submitList(it.coursesOfStudies)
+        }
+
         vmCos.selectedCoursesOfStudiesIdsStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.rv.updateAllViewHolders()
         }

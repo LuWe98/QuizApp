@@ -129,14 +129,9 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="android:windowBackground">@android:color/transparent</item>
 
-        <item name="android:windowMinWidthMinor">90%</item>
-        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">87.5%</item>
+        <item name="android:windowMinWidthMajor">87.5%</item>
 
-        <item name="android:windowAnimationStyle">@style/testDialog</item>
-    </style>
-
-    <style name="testDialog" parent="@android:style/Animation.Activity">
-        <item name="android:windowEnterAnimation">@anim/dialog_fragment_appear</item>
-        <item name="android:windowExitAnimation">@anim/dialog_fragment_hide</item>
+        <item name="android:windowAnimationStyle">@style/Style.QuizApp.DialogFragment.Animation</item>
     </style>
 </resources>

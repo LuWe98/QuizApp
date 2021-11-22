@@ -152,6 +152,13 @@ object DataMapper {
         lastModifiedTimestamp = mongoFaculty.lastModifiedTimestamp
     )
 
+    fun mapRoomFacultyToMongoFaculty(roomFaculty: Faculty) = MongoFaculty(
+        id = roomFaculty.id,
+        abbreviation = roomFaculty.abbreviation,
+        name = roomFaculty.name,
+        lastModifiedTimestamp = roomFaculty.lastModifiedTimestamp
+    )
+
     fun mapMongoCourseOfStudiesToRoomCourseOfStudies(mongoCourseOfStudies: MongoCourseOfStudies): Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>> {
         val courseOfStudies = CourseOfStudies(
             id = mongoCourseOfStudies.id,
@@ -167,4 +174,13 @@ object DataMapper {
 
         return Pair(courseOfStudies, facultyCourseOfStudiesRelation)
     }
+
+    fun mapRoomCourseOfStudiesToMongoCourseOfStudies(courseOfStudies: CourseOfStudies, facultyIds: List<String>) = MongoCourseOfStudies(
+        id = courseOfStudies.id,
+        facultyIds = facultyIds,
+        abbreviation = courseOfStudies.abbreviation,
+        name = courseOfStudies.name,
+        degree = courseOfStudies.degree,
+        lastModifiedTimestamp = courseOfStudies.lastModifiedTimestamp
+    )
 }

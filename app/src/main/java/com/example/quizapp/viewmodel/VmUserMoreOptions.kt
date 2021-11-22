@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.menus.MenuItemDataModel
 import com.example.quizapp.model.databases.mongodb.documents.user.User
-import com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptionsArgs
+import com.example.quizapp.view.fragments.adminscreens.manageusers.BsdfUserMoreOptionsArgs
 import com.example.quizapp.viewmodel.VmUserMoreOptions.UserMoreOptionsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -32,7 +32,6 @@ class VmUserMoreOptions @Inject constructor(
 
     private fun onDeleteUserItemSelected() = launch {
         userMoreOptionsEventChannel.send(DeleteUserEvent(args.user))
-        userMoreOptionsEventChannel.send(NavigateBackEvent)
     }
 
     private fun onChangeUserRoleItemSelected() = launch {
@@ -42,6 +41,5 @@ class VmUserMoreOptions @Inject constructor(
     sealed class UserMoreOptionsEvent {
         class NavigateToChangeUserRoleDialogEvent(val user: User) : UserMoreOptionsEvent()
         class DeleteUserEvent(val user: User) : UserMoreOptionsEvent()
-        object NavigateBackEvent : UserMoreOptionsEvent()
     }
 }

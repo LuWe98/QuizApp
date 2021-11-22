@@ -10,7 +10,9 @@ import androidx.annotation.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.setFragmentResultListener
 import androidx.hilt.navigation.HiltViewModelFactory
 import androidx.lifecycle.*
@@ -169,15 +171,27 @@ inline fun Fragment.launchWhenResumed(
 inline fun <reified VM : ViewModel> Fragment.hiltNavDestinationViewModels(
     @IdRes destinationId: Int
 ) = lazy {
-    findNavController().getBackStackEntry(destinationId).let {
-        ViewModelProvider(it, HiltViewModelFactory(requireContext(), it))[VM::class.java]
-    }
+    getHiltNavDestinationViewModel<VM>(destinationId)
 }
 
 @MainThread
-inline fun <reified VM : ViewModel> Fragment.activityViewModels() = lazy {
-    ViewModelProvider(requireActivity())[VM::class.java]
+inline fun <reified VM : ViewModel> Fragment.getHiltNavDestinationViewModel(
+    @IdRes destinationId: Int
+) = findNavController().getBackStackEntry(destinationId).let {
+    ViewModelProvider(it, HiltViewModelFactory(requireContext(), it))[VM::class.java]
 }
+
+
+@MainThread
+inline fun <reified VM : ViewModel> Fragment.activityViewModels() = lazy {
+    getActivityViewModel<VM>()
+}
+
+@MainThread
+inline fun <reified VM : ViewModel> Fragment.getActivityViewModel() = ViewModelProvider(requireActivity())[VM::class.java]
+
+
+
 
 
 fun Fragment.showKeyboard(view: View) {
@@ -186,6 +200,17 @@ fun Fragment.showKeyboard(view: View) {
 
 fun Fragment.hideKeyboard(view: View) {
     requireContext().hideKeyboard(view)
+}
+
+
+inline fun <reified T: DialogFragment> Fragment.showDialog(tag: String? = null, fragmentManager: FragmentManager = childFragmentManager): T {
+    return T::class.java.newInstance().apply {
+        show(fragmentManager, tag)
+    }
+}
+
+inline fun <reified T: DialogFragment> Fragment.findDialog(tag: String, fragmentManager: FragmentManager = childFragmentManager): T? {
+    return fragmentManager.findFragmentByTag(tag) as T?
 }
 
 

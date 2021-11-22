@@ -28,34 +28,29 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
     }
 
     private fun initViews() {
-        binding.adminLayout.apply {
-            btnAdminFunctionality.onClick(vmSettings::onGoToAdminPageClicked)
-        }
-
-        binding.preferencesLayout.apply {
-            btnTheme.onClick(navigator::navigateToThemeSelection)
-            btnLanguage.onClick(navigator::navigateToLanguageSelection)
-            btnShuffleType.onClick(navigator::navigateToShuffleTypeSelection)
-            btnPreferredCos.onClick(vmSettings::onPreferredCourseOfStudiesButtonClicked)
-        }
-
-        binding.userLayout.apply {
-            btnLogout.onClick(vmSettings::onLogoutClicked)
-
-            btnChangePassword.onClick {
-
+        binding.apply {
+            adminLayout.apply {
+                btnAdminUser.onClick(vmSettings::onGoToManageUsersClicked)
+                btnAdminCourseOfStudies.onClick(vmSettings::onGoToManageCoursesOfStudiesClicked)
+                btnAdminFaculty.onClick(vmSettings::onGoToManageFacultiesClicked)
             }
 
-            btnRole.onClick {
-
+            preferencesLayout.apply {
+                btnTheme.onClick(navigator::navigateToThemeSelection)
+                btnLanguage.onClick(navigator::navigateToLanguageSelection)
+                btnShuffleType.onClick(navigator::navigateToShuffleTypeSelection)
+                btnPreferredCos.onClick(vmSettings::onPreferredCourseOfStudiesButtonClicked)
             }
 
-            btnUserName.onClick {
-
+            userLayout.apply {
+                btnLogout.onClick(vmSettings::onLogoutClicked)
+                btnChangePassword.onClick { }
+                btnRole.onClick { }
+                btnUserName.onClick { }
             }
+
+            swipeRefreshLayout.setOnRefreshListener(vmSettings::onRefreshListenerTriggered)
         }
-
-        binding.swipeRefreshLayout.setOnRefreshListener(vmSettings::onRefreshListenerTriggered)
     }
 
 
@@ -71,8 +66,10 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
         }
 
         vmSettings.userRoleFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.userLayout.btnRole.text = it?.name ?: "-"
-            binding.adminLayout.root.isVisible = it == Role.ADMIN
+            binding.apply {
+                userLayout.btnRole.text = it?.name ?: "-"
+                adminLayout.root.isVisible = it == Role.ADMIN
+            }
         }
 
         vmSettings.themeNameResFlow.collectWhenStarted(viewLifecycleOwner) { stringRes ->
@@ -96,7 +93,9 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
             when (event) {
                 NavigateToLoginScreen -> navigator.navigateToLoginScreen()
                 OnLogoutClickedEvent -> navigator.navigateToLogoutWarningScreen()
-                NavigateToAdminScreen -> navigator.navigateToAdminPage()
+                NavigateToAdminManageUsersScreenEvent -> navigator.navigateToAdminManageUsersScreen()
+                NavigateToAdminManageCoursesOfStudiesScreenEvent -> navigator.navigateToAdminManageCourseOfStudiesScreen()
+                NavigateToAdminManageFacultiesScreenEvent -> navigator.navigateToAdminManageFacultiesScreen()
                 is ShowMessageSnackBarEvent -> {
                     binding.swipeRefreshLayout.isRefreshing = false
                     showSnackBar(

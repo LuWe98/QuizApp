@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:paddingVertical="@dimen/grid_4"
+        android:paddingTop="@dimen/grid_4"
         android:background="@drawable/background_round_corners_top_15dp"
         android:backgroundTint="?colorOnPrimary">
 
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/roleRadioGroup"
             tools:listitem="@layout/rvi_menu"
-            android:layout_marginTop="@dimen/grid_2"
+            android:layout_marginTop="@dimen/grid_4"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginHorizontal="@dimen/grid_6"
@@ -58,14 +58,22 @@
             app:layout_constraintTop_toTopOf="@+id/roleRadioGroup"
             app:layout_constraintBottom_toTopOf="@+id/btnSave" />
 
-    <com.google.android.material.button.MaterialButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:elevation="10dp"
             android:id="@+id/btnSave"
-            app:layout_constraintTop_toBottomOf="@id/roleRadioGroup"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="@dimen/grid_4"
-            android:text="@string/save" />
+            app:layout_constraintTop_toBottomOf="@id/roleRadioGroup"
+            android:layout_marginTop="@dimen/grid_4"
+            android:background="?colorPrimary"
+            android:layout_gravity="bottom"
+            android:text="@string/updateRole"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:fontFamily="@font/work_sans_medium"
+            android:textColor="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name" translatable="false">QuizApp</string>
+    <string name="app_name" translatable="false">QFU</string>
+    <string name="app_name_abbr" translatable="false">Q</string>
 
     <string name="home">Home</string>
     <string name="search">Search</string>
@@ -47,6 +48,11 @@
     <string name="updateQuestionnaireTitle">Update questionnaire title</string>
     <string name="updateQuestionnaireSubject">Update questionnaire subject</string>
     <string name="updateAnswerText">Update answer text</string>
+    <string name="updateFacultyAbbreviation">Update faculty abbreviation</string>
+    <string name="updateFacultyName">Update faculty name</string>
+    <string name="updateCourseOfStudiesAbbreviation">Update course of studies abbreviation</string>
+    <string name="updateCourseOfStudiesName">Update course of studies name</string>
+
     <string name="answerText">Answer text</string>
     <string name="update">Update</string>
     <string name="add">Add</string>
@@ -98,9 +104,9 @@
     <string name="hideQuestionnaire">Hide</string>
     <string name="edit">Edit</string>
     <string name="deleteGivenAnswers">Delete given answers</string>
-    <string name="deleteQuestionnaire">Delete</string>
-    <string name="deleteUser">Delete</string>
+    <string name="delete">Delete</string>
     <string name="changeUserRole">Change role</string>
+    <string name="updateRole">Update role</string>
     <string name="browseUsersQuestionnaires">Browse Questionnaires</string>
 
     <string name="changedVisibilityToPublic">Changed to public</string>
@@ -108,6 +114,15 @@
     <string name="errorCouldNotChangeVisibility">Could not change visibility</string>
 
     <string name="changeRoleForUser">Change Role for:\n%1$s</string>
+
+    <string name="abbreviation">Abbreviation</string>
+    <string name="editFaculty">Edit faculty</string>
+    <string name="name">Name</string>
+    <string name="editCourseOfStudies">Edit course of studies</string>
+    <string name="addFaculty">Add faculty</string>
+    <string name="addCourseOfStudies">Add course of studies</string>
+    <string name="saveFaculty">Save faculty</string>
+    <string name="saveCourseOfStudies">Save course of studies</string>
 
 
     <string name="shareQuestionnaire">Share questionnaire</string>
@@ -143,6 +158,8 @@
     <string name="errorQuestionDoesNotHaveTitle">Question %1$s) does not have a title!</string>
     <string name="errorQuestionsHasNoAnswers">"Question %1$s) doesn't have any answers!"</string>
     <string name="errorQuestionnaireCouldNotBeFound">Questionnaire not found!</string>
+    <string name="errorLoggedOutBecauseCredentialsChanged">Logged out because credentials changed!</string>
+
 
 
     <!-- Settings-->
@@ -159,13 +176,26 @@
     <string name="correctlyGivenQuestionAmount">Correctly given Question amount</string>
     <string name="createdQuestionnaires">Created Questionnaires</string>
 
+    <string name="userInfo">User info</string>
     <string name="user">User</string>
     <string name="logout">Logout</string>
+    <string name="loggedOut">Logged out</string>
     <string name="adminFunctionality">Admin Functionality</string>
     <string name="promoteUserToAdmin">Promote User to Admin</string>
-    <string name="adminSettings">Go to Admin Settings</string>
-
+    <string name="adminSettings">Admin settings</string>
+    <string name="manageUsers">Manage users</string>
+    <string name="manageFaculties">Manage faculties</string>
+    <string name="manageCoursesOfStudies">Manage courses of studies</string>
+    
     <string name="preselectedCourseOfStudies">Preselect course of studies</string>
+
+    <string name="deletionConfirmationTile">Deletion confirmation</string>
+    <string name="warningFacultyDeletetion">Are you sure you want to delete this faculty?</string>
+    <string name="warningCourseOfStudiesDeletetion">Are you sure you want to delete this course of studies?</string>
+    <string name="warningUserDeletetion">Are you sure you want to delete this User?</string>
+    <string name="deletedFaculty">Faculty deleted</string>
+    <string name="deletedCourseOfStudies">Course of studies deleted</string>
+    <string name="coursesOfStudiesWithoutFaculty">Courses of studies without Faculty</string>
 
 
     <!-- Quiz Screen-->
@@ -178,6 +208,7 @@
     <string name="answeredQuestions">Answered questions</string>
     <string name="author">Author</string>
     <string name="faculty">Faculty</string>
+    <string name="faculties">Faculties</string>
     <string name="answered">answered</string>
     <string name="percentSign">%</string>
     <string name="performance">Performance</string>

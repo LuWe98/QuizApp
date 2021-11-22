@@ -11,12 +11,19 @@ import com.example.quizapp.MainNavGraphDirections
 import com.example.quizapp.R
 import com.example.quizapp.extensions.initMaterialElevationScale
 import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
+import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestionnaireDirections
-import com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptionsDirections
-import com.example.quizapp.view.fragments.adminscreen.FragmentAdminDirections
+import com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.BsdfManageCourseOfStudiesMoreOptionsDirections
+import com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.FragmentAdminManageCourseOfStudiesDirections
+import com.example.quizapp.view.fragments.adminscreens.managefaculties.BsdfManageFacultiesMoreOptionsDirections
+import com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminManageFacultiesDirections
+import com.example.quizapp.view.fragments.adminscreens.manageusers.BsdfUserMoreOptionsDirections
+import com.example.quizapp.view.fragments.adminscreens.manageusers.FragmentAdminManageUsersDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
@@ -102,22 +109,10 @@ class Navigator @Inject constructor(
         navController.navigate(MainNavGraphDirections.actionGlobalFragmentSearch())
     }
 
-    fun navigateToAdminPage(){
-        navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToFragmentAdmin())
-    }
-
     fun navigateToQuestionnaireMoreOptions(questionnaire: Questionnaire){
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfQuestionnaireMoreOptions(questionnaire))
     }
 
-    fun navigateToUserMoreOptions(user: User){
-        navController.navigate(FragmentAdminDirections.actionFragmentAdminToBsdfUserMoreOptions(user))
-    }
-
-    fun navigateToChangeUserRoleDialog(user: User){
-        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentAdmin, false).build()
-        navController.navigate(BsdfUserMoreOptionsDirections.actionBsdfUserMoreOptionsToBsdfChangeUserRole(user), navOptions)
-    }
 
     fun navigateToShareQuestionnaireDialog(questionnaireId: String) {
         navController.navigate(MainNavGraphDirections.actionGlobalDfShareQuestionnaire(questionnaireId))
@@ -156,14 +151,98 @@ class Navigator @Inject constructor(
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfCourseOfStudiesSelection(selectedCourseOfStudiesIds.toTypedArray()))
     }
 
+    fun navigateToFacultySelection(selectedFacultyIds: Set<String>) {
+        if(currentDestinationId == R.id.bsdfFacultySelection) return
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfFacultySelection(selectedFacultyIds.toTypedArray()))
+    }
+
     fun navigateToUpdateStringValueDialog(initialValue: String, updateStringValueType: DfUpdateStringValueType) {
         if(currentDestinationId == R.id.dfUpdateStringValue) return
         navController.navigate(MainNavGraphDirections.actionGlobalDfUpdateStringValue(updateStringValueType, initialValue))
     }
 
     fun navigateToLogoutWarningScreen() {
+        if(currentDestinationId == R.id.dfLogoutWarning) return
         navController.navigate(MainNavGraphDirections.actionGlobalDfLogoutWarning())
     }
+
+
+
+
+
+
+
+    //ADMIN SCREENS
+
+    fun navigateToAdminManageUsersScreen(){
+        navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToFragmentAdmin())
+    }
+
+    fun navigateToUserMoreOptionsDialog(user: User){
+        if(currentDestinationId == R.id.bsdfUserMoreOptions) return
+        navController.navigate(FragmentAdminManageUsersDirections.actionFragmentAdminManageUsersToBsdfUserMoreOptions(user))
+    }
+
+    fun navigateToChangeUserRoleDialog(user: User){
+        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentAdminManageUsers, false).build()
+        navController.navigate(BsdfUserMoreOptionsDirections.actionBsdfUserMoreOptionsToBsdfChangeUserRole(user), navOptions)
+    }
+
+    fun navigateToAdminUserDeletionConfirmation(user: User) {
+        if(currentDestinationId == R.id.dfAdminUserDeletionConfirmation) return
+        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentAdminManageUsers, false).build()
+        navController.navigate(BsdfUserMoreOptionsDirections.actionBsdfUserMoreOptionsToDfAdminUserDeletionConfirmation(user), navOptions)
+    }
+
+
+
+    fun navigateToAdminManageFacultiesScreen() {
+        navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToFragmentAdminManageFaculties())
+    }
+
+    fun navigateToAdminManageFacultiesMoreOptionsDialog(faculty: Faculty) {
+        if(currentDestinationId == R.id.bsdfManageFacultiesMoreOptions) return
+        navController.navigate(FragmentAdminManageFacultiesDirections.actionFragmentAdminManageFacultiesToBsdfManageFacultiesMoreOptions(faculty))
+    }
+
+    fun navigateToAdminAddEditFaculty(faculty: Faculty? = null) {
+        if(currentDestinationId == R.id.bsdfManageFacultiesMoreOptions) popBackStack()
+        navController.navigate(FragmentAdminManageFacultiesDirections.actionFragmentAdminManageFacultiesToFragmentAdminAddEditFaculties(faculty))
+    }
+
+    fun navigateToAdminFacultyDeletionConfirmation(faculty: Faculty) {
+        if(currentDestinationId == R.id.dfAdminFacultyDeletionConfirmation) return
+        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentAdminManageFaculties, false).build()
+        navController.navigate(BsdfManageFacultiesMoreOptionsDirections.actionBsdfManageFacultiesMoreOptionsToDfAdminFacultyDeletionConfirmation(faculty), navOptions)
+    }
+
+
+
+    fun navigateToAdminManageCourseOfStudiesScreen() {
+        navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToFragmentAdminManageCourseOfStudies())
+    }
+
+    fun navigateToAdminManageCoursesOfStudiesMoreOptionsDialog(courseOfStudies: CourseOfStudies) {
+        if(currentDestinationId == R.id.bsdfManageCourseOfStudiesMoreOptions) return
+        navController.navigate(FragmentAdminManageCourseOfStudiesDirections.actionFragmentAdminManageCourseOfStudiesToBsdfManageCourseOfStudiesMoreOptions(courseOfStudies))
+    }
+
+    fun navigateToAdminAddEditCourseOfStudies(courseOfStudiesWithFaculties: CourseOfStudiesWithFaculties? = null){
+        if(currentDestinationId == R.id.bsdfManageCourseOfStudiesMoreOptions) popBackStack()
+        navController.navigate(
+            FragmentAdminManageCourseOfStudiesDirections.actionFragmentAdminManageCourseOfStudiesToFragmentAdminAddEditCourseOfStudies(courseOfStudiesWithFaculties)
+        )
+    }
+
+    fun navigateToAdminCourseOfStudiesDeletionConfirmation(courseOfStudies: CourseOfStudies) {
+        if(currentDestinationId == R.id.dfAdminCourseOfStudiesDeletionConfirmation) return
+        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentAdminManageCourseOfStudies, false).build()
+        navController.navigate(
+            BsdfManageCourseOfStudiesMoreOptionsDirections.actionBsdfManageCourseOfStudiesMoreOptionsToDfAdminCourseOfStudiesDeletionConfirmation(courseOfStudies),
+            navOptions
+        )
+    }
+
 
 
     companion object {

@@ -59,7 +59,7 @@ class VmShareQuestionnaire @Inject constructor(
                 USER_DOES_NOT_EXIST -> {
                     dfShareQuestionnaireEventChannel.send(ShowMessageSnackBar(app.getString(R.string.errorUserDoesNotExist)))
                 }
-                ERROR -> {
+                NOT_ACKNOWLEDGED -> {
                     dfShareQuestionnaireEventChannel.send(ShowMessageSnackBar( app.getString(R.string.errorCouldNotShare)))
                 }
                 ALREADY_SHARED_WITH_USER -> {

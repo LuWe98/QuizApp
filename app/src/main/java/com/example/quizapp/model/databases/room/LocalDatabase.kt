@@ -36,8 +36,7 @@ import javax.inject.Singleton
         QuestionnaireCourseOfStudiesRelation::class,
         FacultyCourseOfStudiesRelation::class,
         LocallyDeletedQuestionnaire::class,
-        LocallyFilledQuestionnaireToUpload::class,
-        LocallyDeletedUser::class
+        LocallyFilledQuestionnaireToUpload::class
     ],
     version = Constants.ROOM_DATABASE_VERSION,
     exportSchema = false
@@ -55,7 +54,6 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun getFacultyCourseOfStudiesRelationDao(): FacultyCourseOfStudiesRelationDao
     abstract fun getLocallyDeletedQuestionnaireDao(): LocallyDeletedQuestionnaireDao
     abstract fun getLocallyAnsweredQuestionnairesDao(): LocallyFilledQuestionnaireToUploadDao
-    abstract fun getLocallyDeletedUsersDao(): LocallyDeletedUserDao
 
     class Callback @Inject constructor(
         private val repoProvider: Provider<LocalRepository>,

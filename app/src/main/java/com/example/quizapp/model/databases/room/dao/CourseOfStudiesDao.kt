@@ -2,8 +2,10 @@ package com.example.quizapp.model.databases.room.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import com.example.quizapp.model.databases.dto.CourseOfStudiesIdWithTimeStamp
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
+import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -28,6 +30,19 @@ abstract class CourseOfStudiesDao : BaseDao<CourseOfStudies>(CourseOfStudies.TAB
     abstract suspend fun getCoursesOfStudiesNameWithIds(courseOfStudiesIds: List<String>): List<String>
 
     @Query("SELECT * FROM courseOfStudiesTable WHERE courseOfStudiesId IN(:courseOfStudiesIds)")
-    abstract fun getCoursesOfStudiesFlowWithIds(courseOfStudiesIds: Set<String>): Flow<List<CourseOfStudies>>
+    abstract suspend fun getCoursesOfStudiesWithIds(courseOfStudiesIds: Set<String>): List<CourseOfStudies>
+
+    @Transaction
+    @Query("SELECT * FROM courseOfStudiesTable WHERE courseOfStudiesId = :courseOfStudiesId")
+    abstract suspend fun getCourseOfStudiesWithFaculties(courseOfStudiesId: String): CourseOfStudiesWithFaculties
+
+    @Query("DELETE FROM courseOfStudiesTable WHERE courseOfStudiesId = :courseOfStudiesId")
+    abstract suspend fun deleteCourseOfStudiesWith(courseOfStudiesId: String)
+
+    @Query("DELETE FROM courseOfStudiesTable WHERE courseOfStudiesId IN(:courseOfStudiesIds)")
+    abstract suspend fun deleteCoursesOfStudiesWith(courseOfStudiesIds: List<String>)
+
+    @Query("SELECT c.* FROM courseOfStudiesTable as c LEFT JOIN facultyCourseOfStudiesRelationTable as r ON(c.courseOfStudiesId = r.courseOfStudiesId) WHERE r.courseOfStudiesId IS NULL")
+    abstract fun getCoursesOfStudiesNotAssociatedWithFacultyFlow(): Flow<List<CourseOfStudies>>
 
 }

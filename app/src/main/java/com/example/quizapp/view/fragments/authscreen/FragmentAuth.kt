@@ -45,21 +45,18 @@ class FragmentAuth : BindingFragment<FragmentAuthBinding>() {
     private fun initObservers(){
         viewModel.fragmentEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                is SwitchPage -> binding.viewPager.setCurrentItem(event.pagePosition, true)
                 NavigateToHomeScreen -> navigator.navigateToHomeScreen()
-                is ShowMessageSnackBar -> {
-                    showSnackBar(event.stringRes, viewToAttachTo = binding.root)
-                }
+                is SwitchPage -> binding.viewPager.setCurrentItem(event.pagePosition, true)
+                is ShowMessageSnackBar -> showSnackBar(event.stringRes)
                 is SetLoginCredentials -> {
                     vpaAdapter.loginFragment.binding.apply {
                         etUserName.setText(event.email)
                         etPassword.setText(event.password)
                     }
                 }
-                ShowLoginScreen -> {
-                    binding.apply {
-                        viewPager.isVisible = true
-                    }
+                ShowLoginScreen -> binding.apply {
+                    viewPager.isVisible = true
+                    tvAppLogo.isVisible = true
                 }
             }
         }

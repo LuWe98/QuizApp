@@ -27,6 +27,7 @@ import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.FragmentAddEditEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.http.cio.*
 import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -62,7 +63,7 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val parsedQuestionsWithAnswers get() = args.completeQuestionnaire?.questionsWithAnswers
         ?.sortedBy(QuestionWithAnswers::question / Question::questionPosition)
         ?.toMutableList()
-        ?: mutableListOf()
+        ?: emptyList()
 
 
     private val fragmentAddEditEventChannel = Channel<FragmentAddEditEvent>()
@@ -87,7 +88,7 @@ class VmAddEditQuestionnaire @Inject constructor(
     private var coursesOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(COURSES_OF_STUDIES_IDS_KEY, parsedCourseOfStudiesIds)
 
     val coursesOfStudiesStateFlow = coursesOfStudiesIdsMutableStateFlow
-        .flatMapLatest(localRepository::getCoursesOfStudiesFlowWithIds)
+        .map(localRepository::getCoursesOfStudiesWithIds)
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     private val courseOfStudiesIds get() = coursesOfStudiesIdsMutableStateFlow.value
@@ -169,24 +170,48 @@ class VmAddEditQuestionnaire @Inject constructor(
         }
     }
 
-    fun onQuestionItemClicked(position: Int, questionWithAnswers:  QuestionWithAnswers) {
+    fun onQuestionItemClicked(position: Int) {
         launch(IO) {
-            fragmentAddEditEventChannel.send(NavigateToAddEditQuestionScreenEvent(position, questionWithAnswers))
+            fragmentAddEditEventChannel.send(NavigateToAddEditQuestionScreenEvent(position, questionsWithAnswers[position]))
+        }
+    }
+
+    fun onQuestionItemDelete(position: Int) {
+        launch(IO) {
+            questionsWithAnswers.toMutableList().apply {
+                removeAt(position).let {
+                    fragmentAddEditEventChannel.send(ShowQuestionDeletedSnackBarEvent(position, it))
+                }
+                setQuestionWithAnswers(this)
+            }
+        }
+    }
+
+    fun onQuestionItemDragged(from: Int, to: Int){
+        questionsWithAnswers.toMutableList().apply {
+            add(to, removeAt(from))
+            setQuestionWithAnswers(this)
+        }
+    }
+
+    fun onQuestionItemSwiped(position: Int){
+        onQuestionItemDelete(position)
+    }
+
+
+    fun onUndoDeleteQuestionClicked(event: ShowQuestionDeletedSnackBarEvent){
+        launch(IO) {
+            questionsWithAnswers.toMutableList().apply {
+                add(event.questionPosition, event.questionWithAnswers)
+                setQuestionWithAnswers(this)
+            }
         }
     }
 
 
     fun onSaveButtonClicked(){
         launch(IO, applicationScope) {
-            if(questionnaireTitle.isEmpty()) {
-                fragmentAddEditEventChannel.send(ShowMessageSnackBarEvent(R.string.errorQuestionnaireHasNoTitle))
-                return@launch
-            }
-
-            if(questionnaireSubject.isEmpty()) {
-                fragmentAddEditEventChannel.send(ShowMessageSnackBarEvent(R.string.errorQuestionnaireHasNoSubject))
-                return@launch
-            }
+            if(!isInputValid()) return@launch
 
             val questionnaire = Questionnaire(
                 id = parsedQuestionnaireId,
@@ -217,7 +242,7 @@ class VmAddEditQuestionnaire @Inject constructor(
                 }
             }
 
-            localRepository.insertCompleteQuestionnaire(CompleteQuestionnaire(questionnaire, questionsWithAnswersMapped, emptyList()))
+            localRepository.insertCompleteQuestionnaire(CompleteQuestionnaire(questionnaire, questionsWithAnswersMapped.toMutableList(), emptyList()))
             localRepository.insert(courseOfStudiesIds.map { cosId -> QuestionnaireCourseOfStudiesRelation(parsedQuestionnaireId, cosId) })
             fragmentAddEditEventChannel.send(NavigateBackEvent)
 
@@ -231,6 +256,20 @@ class VmAddEditQuestionnaire @Inject constructor(
                 localRepository.update(questionnaire.apply { syncStatus = if (it.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) SYNCED else UNSYNCED })
             }
         }
+    }
+
+    private suspend fun isInputValid() : Boolean {
+        if(questionnaireTitle.isEmpty()) {
+            fragmentAddEditEventChannel.send(ShowMessageSnackBarEvent(R.string.errorQuestionnaireHasNoTitle))
+            return false
+        }
+
+        if(questionnaireSubject.isEmpty()) {
+            fragmentAddEditEventChannel.send(ShowMessageSnackBarEvent(R.string.errorQuestionnaireHasNoSubject))
+            return false
+        }
+
+        return true
     }
 
 

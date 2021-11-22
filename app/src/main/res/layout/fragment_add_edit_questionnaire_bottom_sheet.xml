@@ -96,7 +96,7 @@
                     android:elevation="-1dp"
                     android:background="?android:colorBackground"
                     tools:listitem="@layout/rvi_question_quiz_new"
-                    android:paddingBottom="225dp"
+                    android:paddingBottom="200dp"
                     android:clipToPadding="false"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/sheetHeader" />

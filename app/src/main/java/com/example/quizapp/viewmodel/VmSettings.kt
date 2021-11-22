@@ -67,8 +67,16 @@ class VmSettings @Inject constructor(
         fragmentSettingsEventChannel.send(OnLogoutClickedEvent)
     }
 
-    fun onGoToAdminPageClicked() = launch(IO) {
-        fragmentSettingsEventChannel.send(NavigateToAdminScreen)
+    fun onGoToManageUsersClicked() = launch(IO) {
+        fragmentSettingsEventChannel.send(NavigateToAdminManageUsersScreenEvent)
+    }
+
+    fun onGoToManageCoursesOfStudiesClicked() = launch(IO) {
+        fragmentSettingsEventChannel.send(NavigateToAdminManageCoursesOfStudiesScreenEvent)
+    }
+
+    fun onGoToManageFacultiesClicked() = launch(IO) {
+        fragmentSettingsEventChannel.send(NavigateToAdminManageFacultiesScreenEvent)
     }
 
     fun onPreferredCourseOfStudiesButtonClicked(){
@@ -116,7 +124,9 @@ class VmSettings @Inject constructor(
     sealed class FragmentSettingsEvent {
         object OnLogoutClickedEvent : FragmentSettingsEvent()
         object NavigateToLoginScreen : FragmentSettingsEvent()
-        object NavigateToAdminScreen : FragmentSettingsEvent()
+        object NavigateToAdminManageUsersScreenEvent : FragmentSettingsEvent()
+        object NavigateToAdminManageCoursesOfStudiesScreenEvent : FragmentSettingsEvent()
+        object NavigateToAdminManageFacultiesScreenEvent : FragmentSettingsEvent()
         class NavigateToCourseOfStudiesSelectionScreen(val courseOfStudiesIds: Set<String>): FragmentSettingsEvent()
         class ShowMessageSnackBarEvent(val messageRes: Int) : FragmentSettingsEvent()
     }

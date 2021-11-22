@@ -29,11 +29,11 @@ data class Question(
     @ColumnInfo(name = QUESTIONNAIRE_ID_COLUMN)
     var questionnaireId: String,
     @ColumnInfo(name = TEXT_COLUMN)
-    var questionText: String,
+    var questionText: String = "",
     @ColumnInfo(name = IS_MULTIPLE_CHOICE_COLUMN)
     var isMultipleChoice: Boolean = true,
     @ColumnInfo(name = POSITION_COLUMN)
-    var questionPosition: Int
+    var questionPosition: Int = 0
 ) : EntityMarker {
 
     companion object {

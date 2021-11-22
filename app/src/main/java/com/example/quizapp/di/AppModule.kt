@@ -65,8 +65,7 @@ object AppModule {
         roomDatabase.getQuestionnaireCourseOfStudiesRelationDao(),
         roomDatabase.getFacultyCourseOfStudiesRelationDao(),
         roomDatabase.getLocallyDeletedQuestionnaireDao(),
-        roomDatabase.getLocallyAnsweredQuestionnairesDao(),
-        roomDatabase.getLocallyDeletedUsersDao()
+        roomDatabase.getLocallyAnsweredQuestionnairesDao()
     )
 
     @Provides
@@ -121,8 +120,8 @@ object AppModule {
         }
 
         engine {
-            connectTimeout = 100_000
-            socketTimeout = 100_000
+            connectTimeout = 10_000
+            socketTimeout = 10_000
         }
 
         HttpResponseValidator {

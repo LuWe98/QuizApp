@@ -9,7 +9,7 @@ import com.example.quizapp.databinding.BsdfCourseOfStudiesSelectionBinding
 import com.example.quizapp.databinding.TabLayoutViewFacultyBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
-import com.example.quizapp.view.bindingsuperclasses.BindingFullScreenBottomSheetDialogFragment
+import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.viewpager.adapter.VpaCourseOfStudiesSelection
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
-class BsdfCourseOfStudiesSelection : BindingFullScreenBottomSheetDialogFragment<BsdfCourseOfStudiesSelectionBinding>() {
+class BsdfCourseOfStudiesSelection : BindingBottomSheetDialogFragment<BsdfCourseOfStudiesSelectionBinding>() {
 
     companion object {
         const val COURSE_OF_STUDIES_RESULT_KEY = "courseOfStudiesResultKey"
@@ -32,6 +32,7 @@ class BsdfCourseOfStudiesSelection : BindingFullScreenBottomSheetDialogFragment<
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        enableFullscreenMode()
         initViews()
         initClickListeners()
         initObservers()

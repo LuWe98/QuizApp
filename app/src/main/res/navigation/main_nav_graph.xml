@@ -57,7 +57,7 @@
             android:id="@+id/dfLogoutWarning"
             android:name="com.example.quizapp.view.fragments.dialogs.logoutwarning.DfLogoutWarning"
             android:label="DfLogoutWarning"
-            tools:layout="@layout/df_logout_warning"/>
+            tools:layout="@layout/df_logout_warning" />
 
 
     <!--TAKE QUIZ FUNCTIONALITY NAV GRAPH-->
@@ -107,7 +107,8 @@
 
 
     <!--ADD QUESTIONNAIRE FUNCTIONALITY NAV GRAPH-->
-    <navigation android:id="@+id/add_edit_nav_graph"
+    <navigation
+            android:id="@+id/add_edit_nav_graph"
             app:startDestination="@id/fragmentAddEditQuestionnaire">
 
         <argument
@@ -145,7 +146,6 @@
     </navigation>
 
 
-
     <!-- SETTINGS NAV GRAPH -->
     <navigation
             android:id="@+id/settings_nav_graph"
@@ -157,7 +157,7 @@
                 tools:layout="@layout/fragment_settings">
             <action
                     android:id="@+id/action_fragmentSettings_to_fragmentAdmin"
-                    app:destination="@id/fragmentAdmin" />
+                    app:destination="@id/fragmentAdminManageUsers" />
             <action
                     android:id="@+id/action_fragmentSettings_to_bsdfThemeSelection"
                     app:destination="@id/bsdfThemeSelection" />
@@ -167,15 +167,21 @@
             <action
                     android:id="@+id/action_fragmentSettings_to_bsdfShuffleTypeSelection"
                     app:destination="@id/bsdfShuffleTypeSelection" />
+            <action
+                    android:id="@+id/action_fragmentSettings_to_fragmentAdminManageCourseOfStudies"
+                    app:destination="@id/fragmentAdminManageCourseOfStudies" />
+            <action
+                    android:id="@+id/action_fragmentSettings_to_fragmentAdminManageFaculties"
+                    app:destination="@id/fragmentAdminManageFaculties" />
         </fragment>
 
         <fragment
-                android:id="@+id/fragmentAdmin"
-                android:name="com.example.quizapp.view.fragments.adminscreen.FragmentAdmin"
+                android:id="@+id/fragmentAdminManageUsers"
+                android:name="com.example.quizapp.view.fragments.adminscreens.manageusers.FragmentAdminManageUsers"
                 android:label="FragmentAdmin"
-                tools:layout="@layout/fragment_admin">
+                tools:layout="@layout/fragment_admin_manage_users">
             <action
-                    android:id="@+id/action_fragmentAdmin_to_bsdfUserMoreOptions"
+                    android:id="@+id/action_fragmentAdminManageUsers_to_bsdfUserMoreOptions"
                     app:destination="@id/bsdfUserMoreOptions" />
         </fragment>
 
@@ -191,7 +197,7 @@
                 tools:layout="@layout/bsdf_theme_selection" />
         <dialog
                 android:id="@+id/bsdfChangeUserRole"
-                android:name="com.example.quizapp.view.fragments.adminscreen.BsdfUserRoleSelection"
+                android:name="com.example.quizapp.view.fragments.adminscreens.manageusers.BsdfUserRoleSelection"
                 android:label="BsdfChangeUserRole"
                 tools:layout="@layout/bsdf_user_role_selection">
             <argument
@@ -201,7 +207,7 @@
 
         <dialog
                 android:id="@+id/bsdfUserMoreOptions"
-                android:name="com.example.quizapp.view.fragments.adminscreen.BsdfUserMoreOptions"
+                android:name="com.example.quizapp.view.fragments.adminscreens.manageusers.BsdfUserMoreOptions"
                 android:label="BsdfUserMoreOptions"
                 tools:layout="@layout/bsdf_user_more_options">
             <argument
@@ -210,6 +216,9 @@
             <action
                     android:id="@+id/action_bsdfUserMoreOptions_to_bsdfChangeUserRole"
                     app:destination="@id/bsdfChangeUserRole" />
+            <action
+                    android:id="@+id/action_bsdfUserMoreOptions_to_dfAdminUserDeletionConfirmation"
+                    app:destination="@id/dfAdminUserDeletionConfirmation" />
 
         </dialog>
         <dialog
@@ -217,7 +226,142 @@
                 android:name="com.example.quizapp.view.fragments.settingsscreen.BsdfShuffleTypeSelection"
                 android:label="BsdfShuffleTypeSelection"
                 tools:layout="@layout/bsdf_shuffle_type_selection" />
+        <fragment
+                android:id="@+id/fragmentAdminManageFaculties"
+                android:name="com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminManageFaculties"
+                android:label="FragmentAdminManageFaculties"
+                tools:layout="@layout/fragment_admin_manage_course_of_studies">
+            <action
+                    android:id="@+id/action_fragmentAdminManageFaculties_to_bsdfManageFacultiesMoreOptions"
+                    app:destination="@id/bsdfManageFacultiesMoreOptions" />
+            <action
+                    android:id="@+id/action_fragmentAdminManageFaculties_to_fragmentAdminAddEditFaculties"
+                    app:destination="@id/fragmentAdminAddEditFaculties" />
+        </fragment>
+        <fragment
+                android:id="@+id/fragmentAdminManageCourseOfStudies"
+                android:name="com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.FragmentAdminManageCourseOfStudies"
+                android:label="FragmentAdminManageCourseOfStudies"
+                tools:layout="@layout/fragment_admin_manage_faculties">
+            <action
+                    android:id="@+id/action_fragmentAdminManageCourseOfStudies_to_bsdfManageCourseOfStudiesMoreOptions"
+                    app:destination="@id/bsdfManageCourseOfStudiesMoreOptions" />
+            <action
+                    android:id="@+id/action_fragmentAdminManageCourseOfStudies_to_fragmentAdminAddEditCourseOfStudies"
+                    app:destination="@id/fragmentAdminAddEditCourseOfStudies" />
+        </fragment>
+        <dialog
+                android:id="@+id/bsdfManageFacultiesMoreOptions"
+                android:name="com.example.quizapp.view.fragments.adminscreens.managefaculties.BsdfManageFacultiesMoreOptions"
+                android:label="BsdfManageFacultiesMoreOptions"
+                tools:layout="@layout/bsdf_admin_manage_faculties_more_options">
+            <argument
+                    app:argType="com.example.quizapp.model.databases.room.entities.faculty.Faculty"
+                    android:name="faculty" />
+            <action
+                    android:id="@+id/action_bsdfManageFacultiesMoreOptions_to_dfAdminFacultyDeletionConfirmation"
+                    app:destination="@id/dfAdminFacultyDeletionConfirmation" />
+
+        </dialog>
+        <dialog
+                android:id="@+id/bsdfManageCourseOfStudiesMoreOptions"
+                android:name="com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.BsdfManageCourseOfStudiesMoreOptions"
+                android:label="BsdfManageCourseOfStudiesMoreOptions"
+                tools:layout="@layout/bsdf_admin_manage_courses_of_studies_more_options">
+            <argument
+                    app:argType="com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies"
+                    android:name="courseOfStudies" />
+            <action
+                    android:id="@+id/action_bsdfManageCourseOfStudiesMoreOptions_to_dfAdminCourseOfStudiesDeletionConfirmation"
+                    app:destination="@id/dfAdminCourseOfStudiesDeletionConfirmation" />
+        </dialog>
+        <fragment
+                android:id="@+id/fragmentAdminAddEditFaculties"
+                android:name="com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminAddEditFaculties"
+                android:label="FragmentAdminAddEditFaculties"
+                tools:layout="@layout/fragment_admin_add_edit_faculty">
+            <argument
+                    app:argType="com.example.quizapp.model.databases.room.entities.faculty.Faculty"
+                    android:name="faculty"
+                    app:nullable="true"/>
+        </fragment>
+        <fragment
+                android:id="@+id/fragmentAdminAddEditCourseOfStudies"
+                android:name="com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.FragmentAdminAddEditCourseOfStudies"
+                android:label="FragmentAdminAddEditCourseOfStudies"
+                tools:layout="@layout/fragment_admin_add_edit_course_of_studies">
+            <argument
+                    app:argType="com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties"
+                    android:name="courseOfStudiesWithFaculties"
+                    app:nullable="true"/>
+        </fragment>
+        <dialog
+                android:id="@+id/dfAdminFacultyDeletionConfirmation"
+                android:name="com.example.quizapp.view.fragments.adminscreens.managefaculties.DfAdminFacultyDeletionConfirmation"
+                android:label="DfAdminFacultyDeletionConfirmation"
+                tools:layout="@layout/dialog_custom_alert">
+            <argument
+                    app:argType="com.example.quizapp.model.databases.room.entities.faculty.Faculty"
+                    android:name="faculty" />
+        </dialog>
+        <dialog
+                android:id="@+id/dfAdminCourseOfStudiesDeletionConfirmation"
+                android:name="com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.DfAdminCourseOfStudiesDeletionConfirmation"
+                android:label="DfAdminCourseOfStudiesDeletionConfirmation"
+                tools:layout="@layout/dialog_custom_alert">
+            <argument
+                    app:argType="com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies"
+                    android:name="courseOfStudies" />
+        </dialog>
+        <dialog
+                android:id="@+id/dfAdminUserDeletionConfirmation"
+                android:name="com.example.quizapp.view.fragments.adminscreens.manageusers.DfAdminUserDeletionConfirmation"
+                android:label="DfAdminUserDeletionConfirmation"
+                tools:layout="@layout/dialog_custom_alert">
+            <argument
+                    android:name="user"
+                    app:argType="com.example.quizapp.model.databases.mongodb.documents.user.User" />
+        </dialog>
     </navigation>
+
+
+    <!-- COURSE OF STUDIES SELECTION SCREEN -->
+    <dialog
+            android:id="@+id/bsdfCourseOfStudiesSelection"
+            android:name="com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection"
+            android:label="BsdfCourseOfStudiesSelection"
+            tools:layout="@layout/bsdf_course_of_studies_selection">
+        <argument
+                android:name="selectedCourseOfStudiesIds"
+                app:argType="string[]" />
+    </dialog>
+
+
+    <!-- FACULTY SELECTION SCREEN -->
+    <dialog
+            android:id="@+id/bsdfFacultySelection"
+            android:name="com.example.quizapp.view.fragments.dialogs.facultyselection.BsdfFacultySelection"
+            android:label="BsdfFacultySelection"
+            tools:layout="@layout/bsdf_faculty_selection">
+        <argument
+                android:name="selectedFacultyIds"
+                app:argType="string[]" />
+    </dialog>
+
+
+    <!-- UPDATE STRING VALUE DIALOG SCREEN -->
+    <dialog
+            android:id="@+id/dfUpdateStringValue"
+            android:name="com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValue"
+            android:label="BsdfUpdateStringValue"
+            tools:layout="@layout/df_update_string_value">
+        <argument
+                android:name="updateType"
+                app:argType="com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType" />
+        <argument
+                android:name="initialValue"
+                app:argType="string" />
+    </dialog>
 
 
     <!--GLOBAL ACTIONS-->
@@ -249,8 +393,21 @@
             android:id="@+id/action_global_add_edit_questionnaire_nav_graph"
             app:destination="@id/add_edit_nav_graph" />
 
-    <action android:id="@+id/action_global_dfLogoutWarning"
-            app:destination="@id/dfLogoutWarning"/>
+    <action
+            android:id="@+id/action_global_dfLogoutWarning"
+            app:destination="@id/dfLogoutWarning" />
+
+    <action
+            android:id="@+id/action_global_bsdfCourseOfStudiesSelection"
+            app:destination="@id/bsdfCourseOfStudiesSelection" />
+
+    <action
+            android:id="@+id/action_global_dfUpdateStringValue"
+            app:destination="@id/dfUpdateStringValue" />
+
+    <action
+            android:id="@+id/action_global_bsdfFacultySelection"
+            app:destination="@id/bsdfFacultySelection" />
 
     <!-- BACKDROP TEST -->
     <fragment
@@ -262,39 +419,5 @@
     <action
             android:id="@+id/action_global_backdropFragment"
             app:destination="@id/backdropFragment" />
-
-
-
-    <!-- SELECTION TEST -->
-    <dialog
-            android:id="@+id/bsdfCourseOfStudiesSelection"
-            android:name="com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection"
-            android:label="BsdfCourseOfStudiesSelection"
-            tools:layout="@layout/bsdf_course_of_studies_selection">
-        <argument
-                android:name="selectedCourseOfStudiesIds"
-                app:argType="string[]" />
-    </dialog>
-
-
-    <action
-            android:id="@+id/action_global_bsdfCourseOfStudiesSelection"
-            app:destination="@id/bsdfCourseOfStudiesSelection" />
-    <dialog
-            android:id="@+id/dfUpdateStringValue"
-            android:name="com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValue"
-            android:label="BsdfUpdateStringValue"
-            tools:layout="@layout/df_update_string_value">
-        <argument
-                android:name="updateType"
-                app:argType="com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType" />
-        <argument
-                android:name="initialValue"
-                app:argType="string" />
-    </dialog>
-
-    <action
-            android:id="@+id/action_global_dfUpdateStringValue"
-            app:destination="@id/dfUpdateStringValue" />
 
 </navigation>

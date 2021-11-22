@@ -4,14 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.example.quizapp.view.bindingsuperclasses.BindingActivity
-import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.bindingsuperclasses.BindingDialogFragment
-import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.bindingsuperclasses.*
 import java.lang.reflect.ParameterizedType
 
 @Suppress("UNCHECKED_CAST")
 object BindingUtils {
+
     private const val INFLATE_METHOD = "inflate"
 
     private fun findGenericTypeWith(classInstance: Any, genericClassToFind: Class<*>, relativePosition : Int): Class<*> {
@@ -43,6 +41,9 @@ object BindingUtils {
 
     fun <VB : ViewBinding> getBinding(fragment: BindingDialogFragment<VB>, relativePosition : Int = 0) =
         getBindingWith(fragment, fragment.layoutInflater, relativePosition) as VB
+
+    fun <VB : ViewBinding> getBinding(dialog: BindingDialog<VB>, relativePosition : Int = 0) =
+        getBindingWith(dialog, dialog.layoutInflater, relativePosition) as VB
 
     fun <VB : ViewBinding> getBinding(fragment: BindingBottomSheetDialogFragment<VB>, relativePosition : Int = 0) =
         getBindingWith(fragment, fragment.layoutInflater, relativePosition) as VB

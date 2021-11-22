@@ -1,0 +1,63 @@
+package com.example.quizapp.view.fragments.adminscreens.managefaculties
+
+import android.os.Bundle
+import android.view.View
+import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
+import com.example.quizapp.databinding.FragmentAdminAddEditFacultyBinding
+import com.example.quizapp.extensions.collectWhenStarted
+import com.example.quizapp.extensions.onClick
+import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType
+import com.example.quizapp.viewmodel.VmAdminAddEditFaculty
+import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.*
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacultyBinding>() {
+
+    private val vmAddEdit: VmAdminAddEditFaculty by viewModels()
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initListeners()
+        initObservers()
+    }
+
+    private fun initListeners() {
+        binding.apply {
+            btnBack.onClick(navigator::popBackStack)
+            btnSave.onClick(vmAddEdit::onSaveButtonClicked)
+            abbreviationCard.onClick(vmAddEdit::onAbbreviationCardClicked)
+            nameCard.onClick(vmAddEdit::onNameCardClicked)
+        }
+    }
+
+    private fun initObservers() {
+        setFragmentResultListener(DfUpdateStringValueType.UPDATE_FACULTY_ABBREVIATION_RESULT_KEY) { key, bundle ->
+            bundle.getString(key)?.let(vmAddEdit::onAbbreviationUpdateReceived)
+        }
+
+        setFragmentResultListener(DfUpdateStringValueType.UPDATE_FACULTY_NAME_RESULT_KEY) { key, bundle ->
+            bundle.getString(key)?.let(vmAddEdit::onNameUpdateReceived)
+        }
+
+        vmAddEdit.facultyAbbreviationStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.abbreviationCard.text = it
+        }
+
+        vmAddEdit.facultyNameStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.nameCard.text = it
+        }
+
+        vmAddEdit.addEditFacultyEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+            when (event) {
+                is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringValueDialog(event.initialValue, event.updateType)
+                is ShowMessageSnackBar -> {
+
+                }
+                NavigateBackEvent -> navigator.popBackStack()
+            }
+        }
+    }
+}

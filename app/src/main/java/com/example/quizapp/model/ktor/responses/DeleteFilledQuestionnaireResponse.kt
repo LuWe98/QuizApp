@@ -8,6 +8,6 @@ data class DeleteFilledQuestionnaireResponse(
 ) {
     enum class  DeleteFilledQuestionnaireResponseType {
         SUCCESSFUL,
-        ERROR
+        NOT_ACKNOWLEDGED
     }
 }

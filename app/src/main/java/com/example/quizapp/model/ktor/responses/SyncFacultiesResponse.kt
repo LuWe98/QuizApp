@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SyncFacultiesResponse(
-    val faculties: List<MongoFaculty>,
+    val facultiesToInsert: List<MongoFaculty>,
+    val facultiesToUpdate: List<MongoFaculty>,
     val facultyIdsToDelete: List<String>
 )

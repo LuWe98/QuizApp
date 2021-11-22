@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="7.5dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:background="@drawable/background_round_corners_15dp"
+                android:backgroundTint="?android:colorBackground"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:id="@+id/statisticsHeader">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="42.5dp"
+                    android:layout_height="42.5dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:srcCompat="@drawable/ic_bar_chart"
+                    android:background="@drawable/shape_circle"
+                    android:backgroundTint="@color/transparent"
+                    android:padding="10dp"
+                    android:layout_marginStart="@dimen/grid_3"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:id="@+id/statisticIcon" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:id="@+id/tvStatistic"
+                    android:text="@string/questionDistribution"
+                    android:layout_marginStart="@dimen/grid_3"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/work_sans_medium"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@+id/statisticIcon"
+                    app:layout_constraintBottom_toBottomOf="@+id/statisticIcon"
+                    app:layout_constraintTop_toTopOf="@+id/statisticIcon"
+                    app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/grid_6"
+                android:layout_marginTop="@dimen/grid_2"
+                android:id="@+id/statisticsContainer"
+                android:visibility="visible"
+                tools:visibility="visible"
+                app:layout_constraintStart_toStartOf="@id/statisticsHeader"
+                app:layout_constraintEnd_toEndOf="@id/statisticsHeader"
+                app:layout_constraintTop_toBottomOf="@id/statisticsHeader">
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/totalQuestions"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/work_sans_regular"
+                    android:id="@+id/allQuestionsLabel"
+                    android:layout_marginTop="@dimen/grid_4"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/allQuestions" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="20"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/work_sans_regular"
+                    android:id="@+id/allQuestionsNumber"
+                    android:layout_marginTop="@dimen/grid_4"
+                    android:layout_marginBottom="@dimen/grid_1"
+                    app:layout_constraintEnd_toEndOf="@+id/allQuestions"
+                    app:layout_constraintBottom_toTopOf="@+id/allQuestions" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:layout_width="0dp"
+                    android:layout_height="5dp"
+                    tools:progress="100"
+                    android:id="@+id/allQuestions"
+                    android:layout_marginHorizontal="@dimen/grid_4"
+                    android:layout_marginTop="@dimen/grid_1"
+                    app:indicatorColor="?colorPrimary"
+                    app:trackCornerRadius="50dp"
+                    app:trackThickness="5dp"
+                    app:trackColor="?android:colorBackground"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/allQuestionsLabel" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/multipleChoice"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/work_sans_regular"
+                    android:id="@+id/tvMultipleChoiceLabel"
+                    android:layout_marginTop="@dimen/grid_8"
+                    app:layout_constraintStart_toStartOf="@+id/allQuestions"
+                    app:layout_constraintTop_toBottomOf="@+id/allQuestions" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="15"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/work_sans_regular"
+                    android:id="@+id/tvMultipleChoiceAmount"
+                    android:layout_marginTop="@dimen/grid_6"
+                    android:layout_marginBottom="@dimen/grid_1"
+                    app:layout_constraintEnd_toEndOf="@+id/progressMultipleChoice"
+                    app:layout_constraintBottom_toTopOf="@+id/progressMultipleChoice" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:layout_width="0dp"
+                    android:layout_height="5dp"
+                    tools:progress="60"
+                    android:id="@+id/progressMultipleChoice"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginHorizontal="@dimen/grid_4"
+                    android:layout_marginTop="@dimen/grid_1"
+                    app:indicatorColor="@color/multipleChoiceColor"
+                    app:trackCornerRadius="50dp"
+                    app:trackThickness="5dp"
+                    app:trackColor="?android:colorBackground"
+                    app:layout_constraintTop_toBottomOf="@+id/tvMultipleChoiceLabel" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/singleChoice"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/work_sans_regular"
+                    android:id="@+id/tvSingleChoiceLabel"
+                    android:layout_marginTop="@dimen/grid_8"
+                    app:layout_constraintStart_toStartOf="@+id/allQuestions"
+                    app:layout_constraintTop_toBottomOf="@+id/progressMultipleChoice" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="5"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/work_sans_regular"
+                    android:id="@+id/tvSingleChoiceAmount"
+                    android:layout_marginTop="@dimen/grid_6"
+                    android:layout_marginBottom="@dimen/grid_1"
+                    app:layout_constraintEnd_toEndOf="@+id/progressSingleChoice"
+                    app:layout_constraintBottom_toTopOf="@+id/progressSingleChoice" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:layout_width="0dp"
+                    android:layout_height="5dp"
+                    tools:progress="40"
+                    android:id="@+id/progressSingleChoice"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginHorizontal="@dimen/grid_4"
+                    android:layout_marginTop="@dimen/grid_1"
+                    app:indicatorColor="@color/singleChoiceColor"
+                    app:trackCornerRadius="50dp"
+                    app:trackThickness="5dp"
+                    app:trackColor="?android:colorBackground"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSingleChoiceLabel" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
