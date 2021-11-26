@@ -7,7 +7,7 @@ import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireRespons
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnairesResponse
 import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
-import com.quizappbackend.routing.ApiPaths.*
+import com.example.quizapp.model.ktor.ApiPaths.*
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject

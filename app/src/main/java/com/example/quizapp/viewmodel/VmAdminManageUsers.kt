@@ -1,24 +1,26 @@
 package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.*
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.cachedIn
-import androidx.paging.liveData
+import androidx.paging.*
+import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.model.ktor.paging.UserPagingSource
+import com.example.quizapp.model.ktor.paging.UserAdminPagingSource
 import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.menus.UserMoreOptionsItem
+import com.example.quizapp.model.menus.UserMoreOptionsItem.*
+import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.viewmodel.VmAdminManageUsers.FragmentAdminEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,28 +28,58 @@ import javax.inject.Inject
 class VmAdminManageUsers @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
-    private val applicationScope: CoroutineScope
+    private val applicationScope: CoroutineScope,
+    private val state: SavedStateHandle
 ) : ViewModel() {
 
     private val fragmentAdminEventChannel = Channel<FragmentAdminEvent>()
 
     val fragmentAdminEventChannelFlow = fragmentAdminEventChannel.receiveAsFlow()
 
-    private val searchQuery = MutableLiveData("")
+    private val searchQueryMutableStatFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
-    val filteredPagedData = searchQuery.switchMap {
+    private val selectedRolesMutableStateFlow = state.getMutableStateFlow(SELECTED_ROLES_KEY, Role.values().toSet())
+
+
+    val filteredPagedDataStateFlow = combine(
+        searchQueryMutableStatFlow,
+        selectedRolesMutableStateFlow
+    ) { query, roles ->
         Pager(config = PagingConfig(
             pageSize = PagingConfigValues.PAGE_SIZE,
             maxSize = PagingConfigValues.MAX_SIZE
         ), pagingSourceFactory = {
-            //TODO -> Hier die LocallyDeletedUsers Löschen!
-            UserPagingSource(backendRepository, it)
-        }).liveData.cachedIn(viewModelScope)
-    }.distinctUntilChanged()
+            UserAdminPagingSource(backendRepository, query, roles)
+        })
+    }.flatMapLatest {
+        it.flow.cachedIn(viewModelScope)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
 
 
     fun onSearchQueryChanged(query: String) {
-        searchQuery.value = query
+        state.set(SEARCH_QUERY_KEY, query)
+        searchQueryMutableStatFlow.value = query
+    }
+
+    fun onRoleSelectionChanged(selectedRoles: Set<Role>) {
+        state.set(SELECTED_ROLES_KEY, selectedRoles)
+        selectedRolesMutableStateFlow.value = selectedRoles
+    }
+
+
+    fun onUserItemClicked(user: User) {
+        launch(IO) {
+            fragmentAdminEventChannel.send(NavigateToUserMoreOptionsSelection(user))
+        }
+    }
+
+    fun onMoreOptionsItemSelected(item: UserMoreOptionsItem, type: SelectionType.UserMoreOptionsSelection) {
+        launch(IO) {
+            when (item) {
+                CHANGE_ROLE -> fragmentAdminEventChannel.send(NavigateToChangeUserRoleDialogEvent(type.user))
+                DELETE -> fragmentAdminEventChannel.send(NavigateToDeletionConfirmationEvent(type.user))
+            }
+        }
     }
 
 
@@ -55,20 +87,28 @@ class VmAdminManageUsers @Inject constructor(
         fragmentAdminEventChannel.send(UpdateUserRoleEvent(userId, newRole))
     }
 
-    fun onDeleteUserConfirmed(user: User) = applicationScope.launch(IO) {
+    fun onDeleteUserConfirmed(deleteConfirmation: ConfirmationType.DeleteUserConfirmation) = applicationScope.launch(IO) {
         runCatching {
-            backendRepository.deleteUser(user.id)
+            backendRepository.deleteUser(deleteConfirmation.user.id)
         }.onSuccess { response ->
             if (response.responseType == DeleteUserResponseType.SUCCESSFUL) {
-                fragmentAdminEventChannel.send(HideUserEvent(user.id))
+                fragmentAdminEventChannel.send(HideUserEvent(deleteConfirmation.user.id))
             }
         }
     }
 
 
-    sealed class FragmentAdminEvent{
-        class UpdateUserRoleEvent(val userId: String, val newRole: Role): FragmentAdminEvent()
-        class HideUserEvent(val userId: String): FragmentAdminEvent()
-        class ShowUserEvent(val user: User): FragmentAdminEvent()
+    sealed class FragmentAdminEvent {
+        class UpdateUserRoleEvent(val userId: String, val newRole: Role) : FragmentAdminEvent()
+        class HideUserEvent(val userId: String) : FragmentAdminEvent()
+        class ShowUserEvent(val user: User) : FragmentAdminEvent()
+        class NavigateToUserMoreOptionsSelection(val user: User) : FragmentAdminEvent()
+        class NavigateToChangeUserRoleDialogEvent(val user: User) : FragmentAdminEvent()
+        class NavigateToDeletionConfirmationEvent(val user: User) : FragmentAdminEvent()
+    }
+
+    companion object {
+        private const val SEARCH_QUERY_KEY = "searchQueryKey"
+        private const val SELECTED_ROLES_KEY = "selectedRolesKey"
     }
 }

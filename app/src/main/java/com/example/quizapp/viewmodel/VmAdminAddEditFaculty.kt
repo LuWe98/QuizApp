@@ -3,6 +3,7 @@ package com.example.quizapp.viewmodel
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
@@ -11,7 +12,7 @@ import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertFacultyResponse.*
 import com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminAddEditFacultiesArgs
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType
+import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.date.*
@@ -32,6 +33,8 @@ class VmAdminAddEditFaculty @Inject constructor(
 ) : ViewModel() {
 
     private val args = FragmentAdminAddEditFacultiesArgs.fromSavedStateHandle(state)
+
+    val pageTitleRes get() = if(args.faculty == null) R.string.addFaculty else R.string.editFaculty
 
     private val parsedFacultyAbbreviation get() = args.faculty?.abbreviation ?: ""
 
@@ -65,13 +68,13 @@ class VmAdminAddEditFaculty @Inject constructor(
 
     fun onAbbreviationCardClicked() {
         launch {
-            addEditFacultyEventChannel.send(NavigateToUpdateStringDialog(facultyAbbreviation, DfUpdateStringValueType.FACULTY_ABBREVIATION))
+            addEditFacultyEventChannel.send(NavigateToUpdateStringDialog(facultyAbbreviation, UpdateStringType.FACULTY_ABBREVIATION))
         }
     }
 
     fun onNameCardClicked() {
         launch {
-            addEditFacultyEventChannel.send(NavigateToUpdateStringDialog(facultyName, DfUpdateStringValueType.FACULTY_NAME))
+            addEditFacultyEventChannel.send(NavigateToUpdateStringDialog(facultyName, UpdateStringType.FACULTY_NAME))
         }
     }
 
@@ -132,7 +135,7 @@ class VmAdminAddEditFaculty @Inject constructor(
     }
 
     sealed class AddEditFacultyEvent {
-        class NavigateToUpdateStringDialog(val initialValue: String, val updateType: DfUpdateStringValueType) : AddEditFacultyEvent()
+        class NavigateToUpdateStringDialog(val initialValue: String, val updateType: UpdateStringType) : AddEditFacultyEvent()
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : AddEditFacultyEvent()
         object NavigateBackEvent : AddEditFacultyEvent()
     }

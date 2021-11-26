@@ -8,7 +8,7 @@ import com.example.quizapp.model.ktor.requests.SyncFacultiesRequest
 import com.example.quizapp.model.ktor.responses.DeleteFacultyResponse
 import com.example.quizapp.model.ktor.responses.InsertFacultyResponse
 import com.example.quizapp.model.ktor.responses.SyncFacultiesResponse
-import com.quizappbackend.routing.ApiPaths.FacultyPaths
+import com.example.quizapp.model.ktor.ApiPaths.FacultyPaths
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject

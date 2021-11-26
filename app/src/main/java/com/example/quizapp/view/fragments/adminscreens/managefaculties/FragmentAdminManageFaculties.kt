@@ -8,6 +8,8 @@ import com.example.quizapp.databinding.FragmentAdminManageFacultiesBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.DfCustomLoading
+import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.recyclerview.adapters.RvaFaculty
 import com.example.quizapp.viewmodel.VmAdminManageFaculties
 import com.example.quizapp.viewmodel.VmAdminManageFaculties.FragmentAdminManageFacultiesEvent.*
@@ -49,6 +51,10 @@ class FragmentAdminManageFaculties: BindingFragment<FragmentAdminManageFaculties
     }
 
     private fun initObservers(){
+        setSelectionTypeWithParsedValueListener(vmAdmin::onMoreOptionsItemSelected)
+
+        setConfirmationTypeListener(vmAdmin::onDeleteFacultyConfirmed)
+
         vmAdmin.facultiesStateFlow.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitList(it)
         }
@@ -56,7 +62,9 @@ class FragmentAdminManageFaculties: BindingFragment<FragmentAdminManageFaculties
         vmAdmin.fragmentAdminManageFacultiesEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
                 NavigateBack -> navigator.popBackStack()
-                is NavigateToFacultiesMoreOptionsDialogEvent -> navigator.navigateToAdminManageFacultiesMoreOptionsDialog(event.faculty)
+                is NavigateToFacultiesMoreOptionsDialogEvent -> navigator.navigateToSelectionDialog(SelectionType.FacultyMoreOptionsSelection(event.faculty))
+                is NavigateToAddEditFacultyEvent -> navigator.navigateToAdminAddEditFaculty(event.faculty)
+                is NavigateToDeletionConfirmationEvent -> navigator.navigateToConfirmationDialog(ConfirmationType.DeleteFacultyConfirmation(event.faculty))
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
                 is ChangeProgressVisibilityEvent -> {
                     if(event.visible) {

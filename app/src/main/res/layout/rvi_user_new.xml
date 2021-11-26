@@ -6,11 +6,12 @@
         android:layout_height="wrap_content"
         app:cardBackgroundColor="@color/white"
         app:cardElevation="2dp"
+        android:layout_marginTop="@dimen/grid_2"
         app:cardCornerRadius="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="65dp">
+            android:layout_height="60dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="35dp"
@@ -23,23 +24,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
-
-            <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="25dp"
-                    android:id="@+id/tvRole"
-                    android:visibility="gone"
-                    android:gravity="center"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="User"
-                    android:textSize="14sp"
-                    android:background="@drawable/background_round_corners_45dp"
-                    android:backgroundTint="?android:colorBackground"
-                    android:fontFamily="@font/work_sans_bold"
-                    android:textStyle="bold"
-                    android:layout_marginStart="@dimen/grid_1"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/roleIcon" />
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="25dp"

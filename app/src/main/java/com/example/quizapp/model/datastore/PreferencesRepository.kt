@@ -8,8 +8,10 @@ import com.example.quizapp.extensions.dataStore
 import com.example.quizapp.extensions.dataflow
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.menus.SortBy
 import com.example.quizapp.utils.EncryptionUtil.decrypt
 import com.example.quizapp.utils.EncryptionUtil.encrypt
+import io.ktor.util.date.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
@@ -19,6 +21,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.random.Random
 
 @Singleton
 class PreferencesRepository @Inject constructor(context: Context) {
@@ -27,9 +30,14 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
     companion object PreferencesKeys {
         val LANGUAGE_KEY = stringPreferencesKey("languageKey")
-        private val THEME_KEY = intPreferencesKey("themeKey")
+        private val THEME_KEY = stringPreferencesKey("themeKey")
         private val SHUFFLE_TYPE_KEY = stringPreferencesKey("shuffleTypePreference")
+        private val SHUFFLE_SEED_KEY = longPreferencesKey("shuffleSeedKey")
+
+        private val SORT_BY_KEY = stringPreferencesKey("sortByPreferenceKey")
+
         private val PREFERRED_COURSE_OF_STUDIES_ID_KEY = stringSetPreferencesKey("preferredCosKey")
+        private val USE_PREFERRED_COS_FOR_QUESTIONNAIRE_SEARCH = booleanPreferencesKey("preferredCosFprQuestionnaireKey")
 
         private val JWT_TOKEN_KEY = stringPreferencesKey("jwtTokenKey")
         private val USER_ID_KEY = stringPreferencesKey("userIdKey")
@@ -58,14 +66,14 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
 
     val themeFlow = dataFlow.map { preferences ->
-        preferences[THEME_KEY] ?: AppCompatDelegate.MODE_NIGHT_NO
+        preferences[THEME_KEY]?.let { QuizAppTheme.valueOf(it) } ?: QuizAppTheme.LIGHT
     }
 
-    suspend fun getTheme(): Int = themeFlow.first()
+    suspend fun getTheme(): QuizAppTheme = themeFlow.first()
 
-    suspend fun updateTheme(newValue: Int) {
+    suspend fun updateTheme(newTheme: QuizAppTheme) {
         dataStore.edit { preferences ->
-            preferences[THEME_KEY] = newValue
+            preferences[THEME_KEY] = newTheme.name
         }
     }
 
@@ -83,6 +91,8 @@ class PreferencesRepository @Inject constructor(context: Context) {
         }
     }
 
+
+
     val shuffleTypeFlow = dataFlow.map { preferences ->
         preferences[SHUFFLE_TYPE_KEY]?.let { QuestionnaireShuffleType.valueOf(it) } ?: QuestionnaireShuffleType.NONE
     }
@@ -95,6 +105,32 @@ class PreferencesRepository @Inject constructor(context: Context) {
         }
     }
 
+
+
+    val shuffleSeedFlow = dataFlow.map { preferences ->
+        preferences[SHUFFLE_SEED_KEY] ?: getTimeMillis()
+    }
+
+    suspend fun getShuffleSeed() = shuffleSeedFlow.first()
+
+    suspend fun updateShuffleSeed(newSeed: Long = Random.nextLong(Long.MAX_VALUE)) {
+        dataStore.edit { preferences ->
+            preferences[SHUFFLE_SEED_KEY] = newSeed
+        }
+    }
+
+
+    val sortByFlow = dataFlow.map { preferences ->
+        preferences[SORT_BY_KEY]?.let { SortBy.valueOf(it) } ?: SortBy.TITLE
+    }
+
+    suspend fun getSortBy() = sortByFlow.first()
+
+    suspend fun updateSortBy(sortBy: SortBy) {
+        dataStore.edit { preferences ->
+            preferences[SORT_BY_KEY] = sortBy.name
+        }
+    }
 
 
 
@@ -110,6 +146,20 @@ class PreferencesRepository @Inject constructor(context: Context) {
     suspend fun updatePreferredCourseOfStudiesIds(courseOfStudiesIds: List<String>) {
         dataStore.edit { preferences ->
             preferences[PREFERRED_COURSE_OF_STUDIES_ID_KEY] = courseOfStudiesIds.toSet()
+        }
+    }
+
+
+
+    val usePreferredCourseOfStudiesForSearchFlow = dataFlow.map {  preferences ->
+        preferences[USE_PREFERRED_COS_FOR_QUESTIONNAIRE_SEARCH] ?: true
+    }
+
+    suspend fun usePreferredCourseOfStudiesForSearch() = usePreferredCourseOfStudiesForSearchFlow.first()
+
+    suspend fun updateUsePreferredCosForSearch(newValue: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[USE_PREFERRED_COS_FOR_QUESTIONNAIRE_SEARCH] = newValue
         }
     }
 

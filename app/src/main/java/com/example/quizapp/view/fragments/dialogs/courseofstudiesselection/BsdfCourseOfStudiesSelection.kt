@@ -23,7 +23,6 @@ class BsdfCourseOfStudiesSelection : BindingBottomSheetDialogFragment<BsdfCourse
 
     companion object {
         const val COURSE_OF_STUDIES_RESULT_KEY = "courseOfStudiesResultKey"
-        const val SELECTED_COURSE_OF_STUDIES_KEY = "selectedCourseOfStudiesKey"
     }
 
     private val vmCos: VmCourseOfStudiesSelection by hiltNavDestinationViewModels(R.id.bsdfCourseOfStudiesSelection)
@@ -109,7 +108,7 @@ class BsdfCourseOfStudiesSelection : BindingBottomSheetDialogFragment<BsdfCourse
             when(event) {
                 is ConfirmationEvent -> {
                     setFragmentResult(COURSE_OF_STUDIES_RESULT_KEY, Bundle().apply {
-                        putStringArray(SELECTED_COURSE_OF_STUDIES_KEY, event.courseOfStudiesIds)
+                        putStringArray(COURSE_OF_STUDIES_RESULT_KEY, event.courseOfStudiesIds)
                     })
                     navigator.popBackStack()
                 }

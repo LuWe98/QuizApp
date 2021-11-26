@@ -23,6 +23,8 @@ import com.example.quizapp.viewmodel.VmQuizQuestionsContainer
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.FragmentQuizContainerEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.util.date.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 @AndroidEntryPoint
@@ -46,17 +48,17 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
 
     private fun initVpaAdapter(reset: Boolean = false) {
         if (reset) {
-            val indexToSelect = vmQuiz.questionList.indexOfFirst {
+            val indexToSelect = vmQuiz.questionsShuffled.indexOfFirst {
                 it.id == vpaAdapter.createFragment(binding.viewPager.currentItem).questionId
             }
 
-            vpaAdapter = VpaQuiz(this, vmQuiz.questionList).apply {
+            vpaAdapter = VpaQuiz(this, vmQuiz.questionsShuffled).apply {
                 binding.viewPager.adapter = this
                 vmContainer
                 vmContainer.onViewPagerPageSelected(indexToSelect)
             }
         } else {
-            vpaAdapter = VpaQuiz(this, vmQuiz.questionList)
+            vpaAdapter = VpaQuiz(this, vmQuiz.questionsShuffled)
         }
     }
 
@@ -97,7 +99,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
             setHasFixedSize(true)
             adapter = rvaLazyQuestionTabs
             attachToViewPager(binding.viewPager) { index ->
-                LazyQuestionTab(vmQuiz.questionList[index].id)
+                LazyQuestionTab(vmQuiz.questionsShuffled[index].id)
             }
         }
     }
@@ -107,10 +109,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
             btnBack.onClick(navigator::popBackStack)
             btnMoreOptions.onClick(vmContainer::onMoreOptionsClicked)
             btnSubmit.onClick { vmContainer.onSubmitButtonClicked(vmQuiz.completeQuestionnaire?.areAllQuestionsAnswered) }
-            btnShuffle.onClick {
-                vmQuiz.updateShuffleTypeSeed()
-                resetViewPager()
-            }
+            btnShuffle.onClick(vmContainer::onShuffleButtonClicked)
             btnQuestionType.onClick(vmContainer::onQuestionTypeInfoButtonClicked)
         }
     }
@@ -163,19 +162,13 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
                         vmContainer.onUndoDeleteGivenAnswersClick(event)
                     }
                 }
-                is MenuItemOrderSelectedEvent -> {
-                    launch {
-                        if (vmQuiz.shuffleType == event.shuffleType) return@launch
-                        vmQuiz.onMenuItemOrderSelected(event.shuffleType)
-                        showSnackBar(R.string.shuffleTypeChanged, anchorView = binding.bottomView)
-                        resetViewPager()
-                    }
-                }
                 is ShowQuestionTypeInfoSnackBarEvent -> {
                     val textRes = if (vpaAdapter.createFragment(binding.viewPager.currentItem).isMultipleChoice) R.string.multipleChoiceQuestionInfo
                     else R.string.singleChoiceQuestionInfo
                     showSnackBar(textRes, anchorView = binding.bottomView)
                 }
+                is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes, anchorView = binding.bottomView)
+                ResetViewPagerEvent -> resetViewPager()
             }
         }
     }

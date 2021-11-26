@@ -7,7 +7,8 @@ import com.example.quizapp.model.databases.mongodb.documents.questionnaire.Mongo
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.ktor.requests.*
 import com.example.quizapp.model.ktor.responses.*
-import com.quizappbackend.routing.ApiPaths.QuestionnairePaths
+import com.example.quizapp.model.ktor.ApiPaths.QuestionnairePaths
+import com.example.quizapp.model.menus.SortBy
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject
@@ -42,9 +43,27 @@ class QuestionnaireApi @Inject constructor(
         }
 
     //TODO -> RÜCKGABEWERT ZU RESPONSE SEALED CLASS UMÄNDERN!
-    suspend fun getPagedQuestionnaires(limit: Int, page: Int, searchString: String, questionnaireIdsToIgnore: List<String>) : List<BrowsableQuestionnaire> =
+    suspend fun getPagedQuestionnaires(
+        limit: Int,
+        page: Int,
+        searchString: String,
+        questionnaireIdsToIgnore: List<String>,
+        facultyIds: List<String>,
+        courseOfStudiesIds: List<String>,
+        authorIds: List<String>,
+        sortBy: SortBy
+    ) : List<BrowsableQuestionnaire> =
         client.post(QuestionnairePaths.PAGED){
-            body = GetPagedQuestionnairesRequest(limit, page, searchString, questionnaireIdsToIgnore)
+            body = GetPagedQuestionnairesRequest(
+                limit = limit,
+                page = page,
+                searchString = searchString,
+                questionnaireIdsToIgnore = questionnaireIdsToIgnore,
+                facultyIds = facultyIds,
+                courseOfStudiesIds = courseOfStudiesIds,
+                authorIds = authorIds,
+                sortBy = sortBy
+            )
         }
 
     suspend fun downloadQuestionnaire(questionnaireId: String) : GetQuestionnaireResponse =

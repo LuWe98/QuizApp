@@ -3,7 +3,6 @@ package com.example.quizapp.extensions
 import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.*
@@ -19,7 +18,11 @@ import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.transition.Slide
 import com.example.quizapp.R
+import com.example.quizapp.model.menus.SelectionTypeItemMarker
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
+import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
+import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
@@ -67,7 +70,8 @@ fun Fragment.showSnackBar(
     viewToAttachTo: View = bindingActivity.rootView,
     anchorView: View? = null,
     animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
-    duration: Int = Snackbar.LENGTH_LONG) =
+    duration: Int = Snackbar.LENGTH_LONG
+) =
     Snackbar.make(viewToAttachTo, text, duration).apply {
         setAnchorView(anchorView)
         this.animationMode = animationMode
@@ -82,7 +86,8 @@ fun Fragment.showSnackBar(
     viewToAttachTo: View = bindingActivity.rootView,
     anchorView: View? = null,
     animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
-    duration: Int = Snackbar.LENGTH_LONG) =
+    duration: Int = Snackbar.LENGTH_LONG
+) =
     showSnackBar(getString(textRes), viewToAttachTo, anchorView, animationMode, duration)
 
 @MainThread
@@ -100,7 +105,9 @@ inline fun Fragment.showSnackBar(
     this.animationMode = animationMode
     addCallback(object : Snackbar.Callback() {
         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-            if (event != DISMISS_EVENT_ACTION) { onDismissedAction.invoke() }
+            if (event != DISMISS_EVENT_ACTION) {
+                onDismissedAction.invoke()
+            }
         }
     })
     setAction(actionTextRes) { actionClickEvent(it) }
@@ -108,7 +115,6 @@ inline fun Fragment.showSnackBar(
 }.also {
     bindingActivity.currentSnackBar = it
 }
-
 
 
 fun Fragment.isPermissionGranted(permission: String) = requireContext().isPermissionGranted(permission)
@@ -191,9 +197,6 @@ inline fun <reified VM : ViewModel> Fragment.activityViewModels() = lazy {
 inline fun <reified VM : ViewModel> Fragment.getActivityViewModel() = ViewModelProvider(requireActivity())[VM::class.java]
 
 
-
-
-
 fun Fragment.showKeyboard(view: View) {
     requireContext().showKeyboard(view)
 }
@@ -203,17 +206,89 @@ fun Fragment.hideKeyboard(view: View) {
 }
 
 
-inline fun <reified T: DialogFragment> Fragment.showDialog(tag: String? = null, fragmentManager: FragmentManager = childFragmentManager): T {
+inline fun <reified T : DialogFragment> Fragment.showDialog(tag: String? = null, fragmentManager: FragmentManager = childFragmentManager): T {
     return T::class.java.newInstance().apply {
         show(fragmentManager, tag)
     }
 }
 
-inline fun <reified T: DialogFragment> Fragment.findDialog(tag: String, fragmentManager: FragmentManager = childFragmentManager): T? {
+inline fun <reified T : DialogFragment> Fragment.findDialog(tag: String, fragmentManager: FragmentManager = childFragmentManager): T? {
     return fragmentManager.findFragmentByTag(tag) as T?
 }
 
 
+/**
+ * Listener for various selection types -> Acts as a wrapper for setFragmentResultListener.
+ * Possible SelectionTypes can be seen in the [SelectionType] sealed class.
+ * It supports selection that only requires the user input and listens for the selection with the according resultKey
+ */
+inline fun <reified ResultType : SelectionTypeItemMarker<ResultType>> Fragment.setSelectionTypeListener(
+    crossinline action: (ResultType) -> (Unit)
+) {
+    SelectionType.getResultKeyWithResultClass<ResultType>().let { resultKey ->
+        setFragmentResultListener(resultKey) { _, bundle ->
+            bundle.getParcelable<ResultType>(resultKey)?.let {
+                action.invoke(it)
+            }
+        }
+    }
+}
+
+/**
+ * Listener for various selection types -> Acts as a wrapper for setFragmentResultListener.
+ * Possible SelectionTypes can be seen in the [SelectionType] sealed class.
+ * It supports selection that only requires the user input and listens for the selection with the according resultKey.
+ * This version of the method also returns the used SelectionType instance
+ */
+inline fun <reified ResultType : SelectionTypeItemMarker<ResultType>, reified SelectionTypeT : SelectionType> Fragment.setSelectionTypeWithParsedValueListener(
+    crossinline action: (ResultType, SelectionTypeT) -> (Unit)
+) {
+    SelectionType.getResultKeyWithResultClass<ResultType>().let { resultKey ->
+        setFragmentResultListener(resultKey) { _, bundle ->
+            bundle.getParcelable<ResultType>(resultKey)?.let { result ->
+                bundle.getParcelable<SelectionTypeT>(resultKey.plus(SelectionType.INITIAL_VALUE_SUFFIX))?.let { parsedValue ->
+                    action.invoke(result, parsedValue)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Listener for the [com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateString] -> Acts as a wrapper for setFragmentResultListener.
+ * Possible update types can be seen in the [UpdateStringType] enum class.
+ * It supports user String input which will be returned after confirmation with the given resultKey
+ */
+inline fun Fragment.setUpdateStringTypeListener(type: UpdateStringType, crossinline  action: (String) -> (Unit)) {
+    setFragmentResultListener(type.resultKey) { key, bundle ->
+        bundle.getString(key)?.let {
+            action.invoke(it)
+        }
+    }
+}
+
+
+/**
+ * Listener for various confirmation types -> Acts as a wrapper for setFragmentResultListener.
+ * Possible SelectionTypes can be seen in the [ConfirmationType] sealed class.
+ * It supports confirmation of the user with one positive and one negative button.
+ */
+inline fun <reified ResultType: ConfirmationType> Fragment.setConfirmationTypeListener(crossinline action: (ResultType) -> (Unit)) {
+    ConfirmationType.getResultKeyWithResultType<ResultType>().let { resultKey ->
+        setFragmentResultListener(resultKey) { _, bundle ->
+            bundle.getParcelable<ResultType>(resultKey)?.let {
+                action.invoke(it)
+            }
+        }
+    }
+}
+
+
+
+
+
+
+//action.invoke(SelectionType.getBundleContent<SelectionTypeClass, ResultType>(resultKey, bundle))
 
 
 //ANIMATION EXTENSIONS

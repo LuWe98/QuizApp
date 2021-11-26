@@ -3,11 +3,14 @@ package com.example.quizapp.view.fragments.homescreen
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResultListener
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.collectWhenStarted
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.viewpager.adapter.VpaHome
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmHome
@@ -41,6 +44,12 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
                     tab.text = getStringArray(R.array.home_tab_names)[pos]
                 }
             }
+        }
+
+
+        setFragmentResultListener(SelectionType.SELECTION_ROLE_RESULT_KEY) { key, bundle ->
+            val role = bundle.getParcelable<Role>(key)
+            log("NEW ROLE SELECTED: $role")
         }
     }
 

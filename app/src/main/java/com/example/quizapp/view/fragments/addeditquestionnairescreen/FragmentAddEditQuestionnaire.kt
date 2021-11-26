@@ -15,7 +15,7 @@ import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType
+import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.view.recyclerview.adapters.RvaAddEditQuestion
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.FragmentAddEditEvent.*
@@ -42,6 +42,8 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
     }
 
     private fun initViews() {
+        binding.pageTitle.setText(vmAddEdit.pageTitleRes)
+
         rvAdapter = RvaAddEditQuestion().apply {
             onItemClick = vmAddEdit::onQuestionItemClicked
         }
@@ -122,17 +124,14 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
     }
 
     private fun initObservers() {
-        setFragmentResultListener(BsdfCourseOfStudiesSelection.COURSE_OF_STUDIES_RESULT_KEY) { _, bundle ->
-            bundle.getStringArray(BsdfCourseOfStudiesSelection.SELECTED_COURSE_OF_STUDIES_KEY)?.let(vmAddEdit::onFragmentResultReceived)
+        setFragmentResultListener(BsdfCourseOfStudiesSelection.COURSE_OF_STUDIES_RESULT_KEY) { key, bundle ->
+            bundle.getStringArray(key)?.let(vmAddEdit::onCourseOfStudiesUpdated)
         }
 
-        setFragmentResultListener(DfUpdateStringValueType.UPDATE_QUESTIONNAIRE_TITLE_RESULT_KEY) { key, bundle ->
-            bundle.getString(key)?.let(vmAddEdit::onTitleUpdated)
-        }
+        setUpdateStringTypeListener(UpdateStringType.QUESTIONNAIRE_TITLE, vmAddEdit::onTitleUpdated)
 
-        setFragmentResultListener(DfUpdateStringValueType.UPDATE_QUESTIONNAIRE_SUBJECT_RESULT_KEY) { key, bundle ->
-            bundle.getString(key)?.let(vmAddEdit::onSubjectUpdated)
-        }
+        setUpdateStringTypeListener(UpdateStringType.QUESTIONNAIRE_SUBJECT, vmAddEdit::onSubjectUpdated)
+
 
         vmAddEdit.coursesOfStudiesStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.infoCard.cosDropDown.text = it.map(CourseOfStudies::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: ""
@@ -171,7 +170,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
             when (event) {
                 NavigateBackEvent -> navigator.popBackStack()
                 is NavigateToCourseOfStudiesSelector -> navigator.navigateToCourseOfStudiesSelection(event.courseOfStudiesIds)
-                is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringValueDialog(event.initialValue, event.updateType)
+                is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringDialog(event.initialValue, event.updateType)
                 is NavigateToAddEditQuestionScreenEvent -> navigator.navigateToAddEditQuestionScreen(event.position, event.questionWithAnswers)
                 is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes, anchorView = binding.btnSave)
                 is ShowQuestionDeletedSnackBarEvent -> showSnackBar(

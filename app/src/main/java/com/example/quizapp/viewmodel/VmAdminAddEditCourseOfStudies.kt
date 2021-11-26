@@ -3,6 +3,7 @@ package com.example.quizapp.viewmodel
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
@@ -14,7 +15,7 @@ import com.example.quizapp.model.databases.room.entities.relations.FacultyCourse
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertCourseOfStudiesResponse.*
 import com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.FragmentAdminAddEditCourseOfStudiesArgs
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType
+import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.AddEditCourseOfStudiesEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.date.*
@@ -37,6 +38,8 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
 ): ViewModel() {
 
     private val args = FragmentAdminAddEditCourseOfStudiesArgs.fromSavedStateHandle(state)
+
+    val pageTitleRes get() = if(args.courseOfStudiesWithFaculties == null) R.string.addCourseOfStudies else R.string.editCourseOfStudies
 
     private val parsedCourseOfStudies get() = args.courseOfStudiesWithFaculties?.courseOfStudies
 
@@ -80,6 +83,13 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
         .distinctUntilChanged()
 
 
+    private val cosDegreeMutableStateFlow = state.getMutableStateFlow(COS_DEGREE_KEY, parsedCourseOfStudiesDegree)
+
+    val cosDegreeStateFlow = cosDegreeMutableStateFlow.asStateFlow()
+
+    private val cosDegree get() = cosDegreeMutableStateFlow.value
+
+
 
 
 
@@ -88,7 +98,7 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
             addEditCourseOfStudiesEventChannel.send(
                 NavigateToUpdateStringDialog(
                     cosAbbreviation,
-                    DfUpdateStringValueType.COURSE_OF_STUDIES_ABBREVIATION
+                    UpdateStringType.COURSE_OF_STUDIES_ABBREVIATION
                 )
             )
         }
@@ -99,7 +109,7 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
             addEditCourseOfStudiesEventChannel.send(
                 NavigateToUpdateStringDialog(
                     cosName,
-                    DfUpdateStringValueType.COURSE_OF_STUDIES_NAME
+                    UpdateStringType.COURSE_OF_STUDIES_NAME
                 )
             )
         }
@@ -107,7 +117,13 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
 
     fun onFacultyCardClicked(){
         launch(IO) {
-            addEditCourseOfStudiesEventChannel.send(NavigateToFacultySelectionScreen(cosFacultyIds))
+            addEditCourseOfStudiesEventChannel.send(NavigateToFacultySelectionScreen(cosFacultyIds.toTypedArray()))
+        }
+    }
+
+    fun onDegreeCardClicked(){
+        launch(IO) {
+            addEditCourseOfStudiesEventChannel.send(NavigateToDegreeSelectionScreen(cosDegree))
         }
     }
 
@@ -127,6 +143,11 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
             state.set(COS_FACULTY_IDS_KEY, it)
             cosFacultyIdsMutableStateFlow.value = it
         }
+    }
+
+    fun onDegreeResultReceived(newDegree: Degree) {
+        state.set(COS_DEGREE_KEY, newDegree)
+        cosDegreeMutableStateFlow.value = newDegree
     }
 
 
@@ -191,8 +212,9 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
 
 
     sealed class AddEditCourseOfStudiesEvent {
-        class NavigateToUpdateStringDialog(val initialValue: String, val updateType: DfUpdateStringValueType) : AddEditCourseOfStudiesEvent()
-        class NavigateToFacultySelectionScreen(val selectedIds: List<String>): AddEditCourseOfStudiesEvent()
+        class NavigateToUpdateStringDialog(val initialValue: String, val updateType: UpdateStringType) : AddEditCourseOfStudiesEvent()
+        class NavigateToFacultySelectionScreen(val selectedIds: Array<String>): AddEditCourseOfStudiesEvent()
+        class NavigateToDegreeSelectionScreen(val currentDegree: Degree?) : AddEditCourseOfStudiesEvent()
         class ShowMessageSnackBar(@StringRes val messageRes: Int): AddEditCourseOfStudiesEvent()
         object NavigateBackEvent: AddEditCourseOfStudiesEvent()
     }

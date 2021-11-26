@@ -1,23 +1,30 @@
 package com.example.quizapp.viewmodel
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.*
+import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.extensions.log
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
+import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.QuestionnaireShuffleType
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerArgs
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.FragmentQuizContainerEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.util.date.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
 class VmQuizQuestionsContainer @Inject constructor(
     private val localRepository: LocalRepository,
+    private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
 ) : ViewModel() {
 
@@ -61,8 +68,22 @@ class VmQuizQuestionsContainer @Inject constructor(
         }
     }
 
-    fun onMenuItemOrderSelected(shuffleType: QuestionnaireShuffleType) = launch {
-        fragmentEventChannel.send(MenuItemOrderSelectedEvent(shuffleType))
+    fun onMenuItemOrderSelected(shuffleType: QuestionnaireShuffleType) {
+        launch(IO) {
+            if (preferencesRepository.getShuffleType() != shuffleType) {
+                preferencesRepository.updateShuffleSeed()
+                preferencesRepository.updateShuffleType(shuffleType)
+                fragmentEventChannel.send(ShowMessageSnackBarEvent(R.string.shuffleTypeChanged))
+                fragmentEventChannel.send(ResetViewPagerEvent)
+            }
+        }
+    }
+
+    fun onShuffleButtonClicked(){
+        launch(IO) {
+            preferencesRepository.updateShuffleSeed()
+            fragmentEventChannel.send(ResetViewPagerEvent)
+        }
     }
 
     fun onMenuItemClearGivenAnswersClicked(completeQuestionnaire: CompleteQuestionnaire?) = launch(IO) {
@@ -80,12 +101,13 @@ class VmQuizQuestionsContainer @Inject constructor(
     }
 
     sealed class FragmentQuizContainerEvent {
-        data class SelectDifferentPage(val newPosition: Int) : FragmentQuizContainerEvent()
+        class SelectDifferentPage(val newPosition: Int) : FragmentQuizContainerEvent()
         class ShowUndoDeleteGivenAnswersSnackBack(val lastAnswerValues: List<Answer>) : FragmentQuizContainerEvent()
+        class ShowMessageSnackBarEvent(@StringRes val messageRes: Int): FragmentQuizContainerEvent()
         object ShowMoreOptionsPopUpMenuEvent : FragmentQuizContainerEvent()
         object OnSubmitButtonClickedEvent : FragmentQuizContainerEvent()
-        class MenuItemOrderSelectedEvent(val shuffleType: QuestionnaireShuffleType) : FragmentQuizContainerEvent()
         object ShowQuestionTypeInfoSnackBarEvent: FragmentQuizContainerEvent()
+        object ResetViewPagerEvent: FragmentQuizContainerEvent()
     }
 
     companion object {

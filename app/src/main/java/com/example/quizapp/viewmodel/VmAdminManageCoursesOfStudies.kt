@@ -8,11 +8,15 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 import com.example.quizapp.model.databases.room.junctions.FacultyWithCoursesOfStudies
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.DeleteCourseOfStudiesResponse.DeleteCourseOfStudiesResponseType
-import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.FragmentAdminManageCourseOfStudiesEvent.NavigateToManageCourseOfStudiesMoreOptionsEvent
-import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.FragmentAdminManageCourseOfStudiesEvent.ShowMessageSnackBar
+import com.example.quizapp.model.menus.CosMoreOptionsItem
+import com.example.quizapp.model.menus.CosMoreOptionsItem.*
+import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
+import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.FragmentAdminManageCourseOfStudiesEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
@@ -50,18 +54,18 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
     }
 
     fun onItemClicked(courseOfStudies: CourseOfStudies) {
-        launch {
+        launch(IO) {
             fragmentAdminManageCourseOfStudiesEventChannel.send(NavigateToManageCourseOfStudiesMoreOptionsEvent(courseOfStudies))
         }
     }
 
-    fun onDeleteCourseOfStudiesConfirmed(courseOfStudies: CourseOfStudies) = launch(IO) {
+    fun onDeleteCourseOfStudiesConfirmed(confirmation: ConfirmationType.DeleteCourseOfStudiesConfirmation) = launch(IO) {
         runCatching {
-            backendRepository.deleteCourseOfStudies(courseOfStudies.id)
+            backendRepository.deleteCourseOfStudies(confirmation.courseOfStudies.id)
         }.onSuccess { response ->
             when (response.responseType) {
                 DeleteCourseOfStudiesResponseType.SUCCESSFUL -> {
-                    localRepository.delete(courseOfStudies)
+                    localRepository.delete(confirmation.courseOfStudies)
                     fragmentAdminManageCourseOfStudiesEventChannel.send(ShowMessageSnackBar(R.string.deletedCourseOfStudies))
                 }
                 DeleteCourseOfStudiesResponseType.NOT_ACKNOWLEDGED -> {
@@ -73,9 +77,27 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
         }
     }
 
+
+    fun onMoreOptionsItemSelected(item: CosMoreOptionsItem, type: SelectionType.CourseOfStudiesMoreOptionsSelection) {
+        launch(IO) {
+            when(item) {
+                EDIT -> {
+                    localRepository.getCourseOfStudiesWithFaculties(type.courseOfStudies.id).let {
+                        fragmentAdminManageCourseOfStudiesEventChannel.send(NavigateToAddEditCourseOfStudiesEvent(it))
+                    }
+                }
+                DELETE -> fragmentAdminManageCourseOfStudiesEventChannel.send(NavigateToConfirmDeletionEvent(type.courseOfStudies))
+            }
+        }
+    }
+
+
+
     sealed class FragmentAdminManageCourseOfStudiesEvent {
         class NavigateToManageCourseOfStudiesMoreOptionsEvent(val courseOfStudies: CourseOfStudies) : FragmentAdminManageCourseOfStudiesEvent()
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : FragmentAdminManageCourseOfStudiesEvent()
+        class NavigateToConfirmDeletionEvent(val courseOfStudies: CourseOfStudies): FragmentAdminManageCourseOfStudiesEvent()
+        class NavigateToAddEditCourseOfStudiesEvent(val courseOfStudies: CourseOfStudiesWithFaculties): FragmentAdminManageCourseOfStudiesEvent()
     }
 
     companion object {

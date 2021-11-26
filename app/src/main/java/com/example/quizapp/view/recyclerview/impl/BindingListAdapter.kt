@@ -7,13 +7,17 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.example.quizapp.utils.BindingUtils
 
-abstract class BindingListAdapter<T : Any, B : ViewBinding>(diffCallback: DiffUtil.ItemCallback<T>) : ListAdapter<T, BindingListAdapter<T, B>.BindingListAdapterViewHolder>(diffCallback) {
+abstract class BindingListAdapter<T : Any, B : ViewBinding>(
+    diffCallback: DiffUtil.ItemCallback<T>,
+    val relativeVbPosition: Int = 0
+) : ListAdapter<T, BindingListAdapter<T, B>.BindingListAdapterViewHolder>(diffCallback) {
 
     override fun onBindViewHolder(vh: BindingListAdapterViewHolder, position: Int) {
         getItem(position)?.let { vh.bind(it) }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = BindingListAdapterViewHolder(BindingUtils.getViewHolderBindingWith(this, parent))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        BindingListAdapterViewHolder(BindingUtils.getViewHolderBindingWith(this, parent, relativeVbPosition))
 
     inner class BindingListAdapterViewHolder(private val binding: B) : BindingViewHolder<T>(binding) {
         init {

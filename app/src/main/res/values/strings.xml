@@ -1,9 +1,16 @@
 <resources>
     <string name="app_name" translatable="false">QFU</string>
     <string name="app_name_abbr" translatable="false">Q</string>
+    <string name="roleUser" translatable="false">User</string>
+    <string name="roleCreator" translatable="false">Creator</string>
+    <string name="roleAdmin" translatable="false">Admin</string>
+
+    <string name="_ph" translatable="false">%1$s</string>
+
 
     <string name="home">Home</string>
     <string name="search">Search</string>
+    <string name="searchForUsers">Search for users</string>
     <string name="settings">Settings</string>
 
     <string name="test">%1$s - %2$s - %3$s - %4$s</string>
@@ -40,18 +47,24 @@
 
 
     <string name="generalInfo">General Info</string>
+    <string name="info">Info</string>
     <string name="questionDistribution">Question distribution</string>
     <string name="multipleChoice">Multiple choice</string>
     <string name="multipleChoiceQuestions">Multiple choice questions</string>
     <string name="singleChoice">Single choice</string>
     <string name="singleChoiceQuestions">Single choice questions</string>
-    <string name="updateQuestionnaireTitle">Update questionnaire title</string>
-    <string name="updateQuestionnaireSubject">Update questionnaire subject</string>
+    <string name="updateQuestionnaireTitle">Update title</string>
+    <string name="updateQuestionnaireSubject">Update subject</string>
     <string name="updateAnswerText">Update answer text</string>
-    <string name="updateFacultyAbbreviation">Update faculty abbreviation</string>
+    <string name="updateFacultyAbbreviation">Update abbreviation</string>
     <string name="updateFacultyName">Update faculty name</string>
-    <string name="updateCourseOfStudiesAbbreviation">Update course of studies abbreviation</string>
-    <string name="updateCourseOfStudiesName">Update course of studies name</string>
+    <string name="updateCourseOfStudiesAbbreviation">Update abbreviation</string>
+    <string name="updateCourseOfStudiesName">Update name</string>
+    <string name="updateUserName">Update username</string>
+    <string name="updatePassword">Update password</string>
+    <string name="userWasCreated">User was created!</string>
+    <string name="errorCouldNotCreateUser">Could not create user!</string>
+
 
     <string name="answerText">Answer text</string>
     <string name="update">Update</string>
@@ -86,6 +99,7 @@
 
     <string name="created">Created</string>
     <string name="downloaded">Downloaded</string>
+    <string name="download">download</string>
 
     <string name="save">Save</string>
     <string name="saveQuestionnaire">Save questionnaire</string>
@@ -115,15 +129,18 @@
 
     <string name="changeRoleForUser">Change Role for:\n%1$s</string>
 
+
     <string name="abbreviation">Abbreviation</string>
-    <string name="editFaculty">Edit faculty</string>
     <string name="name">Name</string>
-    <string name="editCourseOfStudies">Edit course of studies</string>
     <string name="addFaculty">Add faculty</string>
+    <string name="editFaculty">Edit faculty</string>
     <string name="addCourseOfStudies">Add course of studies</string>
+    <string name="editCourseOfStudies">Edit course of studies</string>
+    <string name="addUser">Add user</string>
+    <string name="editUser">Edit user</string>
     <string name="saveFaculty">Save faculty</string>
     <string name="saveCourseOfStudies">Save course of studies</string>
-
+    <string name="saveUser">Save user</string>
 
     <string name="shareQuestionnaire">Share questionnaire</string>
 
@@ -207,8 +224,14 @@
     <string name="totalQuestions">Total questions</string>
     <string name="answeredQuestions">Answered questions</string>
     <string name="author">Author</string>
+    <string name="authorName">Author name</string>
     <string name="faculty">Faculty</string>
     <string name="faculties">Faculties</string>
+    <string name="roleSelection">Role selection</string>
+    <string name="degree">Degree</string>
+    <string name="degreeSelection">Degree selection</string>
+    <string name="degreeBachelor">Bachelor</string>
+    <string name="degreeMaster">Master</string>
     <string name="answered">answered</string>
     <string name="percentSign">%</string>
     <string name="performance">Performance</string>
@@ -233,6 +256,9 @@
 
     <string name="courseOfStudiesSelection">Course of studies selection</string>
     <string name="facultySelection">Faculty selection</string>
+    <string name="userCreatorSelection">User creator selection</string>
+
+    <string name="sortingTypeSelection">Sort by</string>
 
 
     <!-- Strings for voice Search functionality -->
@@ -278,6 +304,7 @@
     <!-- ALERT DIALOG -->
     <string name="logoutWarningTitle">Logout Warning</string>
     <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
     <string name="logoutWarning">This action will delete all locally cached data…\nUnsynchronized data will be lost.</string>
 
 </resources>

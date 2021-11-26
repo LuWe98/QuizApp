@@ -17,6 +17,7 @@
             android:paddingHorizontal="@dimen/grid_4"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:fontFamily="@font/work_sans_medium"
             app:layout_constraintTop_toTopOf="parent" />
 
     <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout

@@ -34,14 +34,15 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:id="@+id/pageTitle"
-                    android:text="@string/addCourseOfStudies"
+                    tools:text="@string/addCourseOfStudies"
                     android:gravity="center"
                     android:maxLines="1"
-                    app:autoSizeMaxTextSize="18sp"
+                    app:autoSizeMaxTextSize="19sp"
                     app:autoSizeMinTextSize="10sp"
                     app:autoSizeTextType="uniform"
                     app:autoSizeStepGranularity="0.25sp"
                     android:textStyle="bold"
+                    android:fontFamily="@font/work_sans_regular"
                     app:layout_constraintTop_toTopOf="@+id/btnBack"
                     app:layout_constraintStart_toEndOf="@+id/btnBack"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -97,7 +98,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
                                 android:id="@+id/tvInfo"
-                                android:text="Info"
+                                android:text="@string/info"
                                 android:layout_marginStart="@dimen/grid_3"
                                 android:textStyle="bold"
                                 android:fontFamily="@font/work_sans_medium"
@@ -172,6 +173,31 @@
                             app:title="@string/faculties"
                             app:dropDownIcon="@drawable/ic_arrow_down"
                             tools:text="WI, IN"
+                            android:layout_marginTop="@dimen/grid_2" />
+
+                    <View
+                            android:layout_width="0dp"
+                            android:layout_height="2dp"
+                            app:layout_constraintTop_toBottomOf="@id/facultiesCard"
+                            app:layout_constraintBottom_toTopOf="@id/degreeCard"
+                            android:background="?android:colorBackground"
+                            android:layout_marginHorizontal="@dimen/grid_8"
+                            app:layout_constraintStart_toStartOf="@id/nameCard"
+                            app:layout_constraintEnd_toEndOf="@id/nameCard" />
+
+                    <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/degreeCard"
+                            android:elevation="10dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/facultiesCard"
+                            app:icon="@drawable/ic_certificate"
+                            app:iconPadding="8dp"
+                            app:title="@string/degree"
+                            app:dropDownIcon="@drawable/ic_arrow_down"
+                            tools:text="Bachelor"
                             android:layout_marginTop="@dimen/grid_2" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

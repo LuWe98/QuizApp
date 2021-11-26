@@ -17,8 +17,8 @@ class RvaQuestionQuiz(
 
     override fun initListeners(binding: RviQuestionQuizNewBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
-            root.setOnClickListener {
-                onItemClick?.invoke(vh.bindingAdapterPosition, getItem(vh.bindingAdapterPosition).question.id, root)
+            root.onClick {
+                onItemClick?.invoke(vh.bindingAdapterPosition, getItem(vh).question.id, root)
             }
         }
     }
@@ -39,12 +39,12 @@ class RvaQuestionQuiz(
                 getThemeColor(R.attr.colorControlNormal)
             }
 
+            ivQuestionType.setDrawableTint(backgroundTint)
+            ivQuestionType.setImageDrawable(if(item.question.isMultipleChoice) R.drawable.ic_check_circle else R.drawable.ic_radio_button)
+
 //            view.setBackgroundTint(backgroundTint)
 //            val iconTextTint = if(item.isAnswered) getColor(R.color.white) else getThemeColor(R.attr.colorControlNormal)
 //            tvNumber.setTextColor(iconTextTint)
-
-            ivQuestionType.setDrawableTint(backgroundTint)
-            ivQuestionType.setImageDrawable(if(item.question.isMultipleChoice) R.drawable.ic_check_circle else R.drawable.ic_radio_button)
         }
     }
 }

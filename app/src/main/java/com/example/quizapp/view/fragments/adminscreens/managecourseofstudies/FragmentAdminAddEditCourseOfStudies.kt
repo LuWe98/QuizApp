@@ -7,10 +7,13 @@ import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentAdminAddEditCourseOfStudiesBinding
 import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.onClick
+import com.example.quizapp.extensions.setSelectionTypeListener
+import com.example.quizapp.extensions.setUpdateStringTypeListener
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.facultyselection.BsdfFacultySelection
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
+import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.AddEditCourseOfStudiesEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,6 +25,7 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.pageTitle.setText(vmAddEdit.pageTitleRes)
         initListeners()
         initObservers()
     }
@@ -33,21 +37,20 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
             abbreviationCard.onClick(vmAddEdit::onAbbreviationCardClicked)
             nameCard.onClick(vmAddEdit::onNameCardClicked)
             facultiesCard.onClick(vmAddEdit::onFacultyCardClicked)
+            degreeCard.onClick(vmAddEdit::onDegreeCardClicked)
         }
     }
 
     private fun initObservers(){
-        setFragmentResultListener(DfUpdateStringValueType.UPDATE_COURSE_OF_STUDIES_ABBREVIATION_RESULT_KEY) { key, bundle ->
-            bundle.getString(key)?.let(vmAddEdit::onAbbreviationUpdateReceived)
+        setUpdateStringTypeListener(UpdateStringType.COURSE_OF_STUDIES_ABBREVIATION, vmAddEdit::onAbbreviationUpdateReceived)
+
+        setUpdateStringTypeListener(UpdateStringType.COURSE_OF_STUDIES_NAME, vmAddEdit::onNameUpdateReceived)
+
+        setFragmentResultListener(BsdfFacultySelection.FACULTY_SELECTION_RESULT_KEY) { key, bundle ->
+            bundle.getStringArray(key)?.let(vmAddEdit::onFacultyIdsUpdateReceived)
         }
 
-        setFragmentResultListener(DfUpdateStringValueType.UPDATE_COURSE_OF_STUDIES_NAME_RESULT_KEY) { key, bundle ->
-            bundle.getString(key)?.let(vmAddEdit::onNameUpdateReceived)
-        }
-
-        setFragmentResultListener(BsdfFacultySelection.FACULTY_SELECTION_RESULT_KEY) { _, bundle ->
-            bundle.getStringArray(BsdfFacultySelection.SELECTED_FACULTIES_KEY)?.let(vmAddEdit::onFacultyIdsUpdateReceived)
-        }
+        setSelectionTypeListener(vmAddEdit::onDegreeResultReceived)
 
         vmAddEdit.cosAbbreviationStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.abbreviationCard.text = it
@@ -61,10 +64,15 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
             binding.facultiesCard.text = it.map(Faculty::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: ""
         }
 
+        vmAddEdit.cosDegreeStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.degreeCard.text = getString(it.textRes)
+        }
+
         vmAddEdit.addEditCourseOfStudiesEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringValueDialog(event.initialValue, event.updateType)
-                is NavigateToFacultySelectionScreen -> navigator.navigateToFacultySelection(event.selectedIds.toSet())
+                is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringDialog(event.initialValue, event.updateType)
+                is NavigateToFacultySelectionScreen -> navigator.navigateToFacultySelection(event.selectedIds)
+                is NavigateToDegreeSelectionScreen -> navigator.navigateToSelectionDialog(SelectionType.DegreeSelection(event.currentDegree))
                 is ShowMessageSnackBar -> {
 
                 }

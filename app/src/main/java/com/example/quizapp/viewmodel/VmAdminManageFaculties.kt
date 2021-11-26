@@ -9,14 +9,16 @@ import com.example.quizapp.extensions.log
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.DeleteFacultyResponse
-import com.example.quizapp.model.ktor.responses.DeleteFacultyResponse.*
-import com.example.quizapp.model.menus.MenuItemDataModel
+import com.example.quizapp.model.ktor.responses.DeleteFacultyResponse.DeleteFacultyResponseType
+import com.example.quizapp.model.menus.FacultyMoreOptionsItem
+import com.example.quizapp.model.menus.FacultyMoreOptionsItem.DELETE
+import com.example.quizapp.model.menus.FacultyMoreOptionsItem.EDIT
+import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.viewmodel.VmAdminManageFaculties.FragmentAdminManageFacultiesEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -41,14 +43,24 @@ class VmAdminManageFaculties @Inject constructor(
         }
     }
 
-    fun onDeleteFacultyConfirmed(faculty: Faculty) = launch(IO) {
+
+    fun onMoreOptionsItemSelected(item: FacultyMoreOptionsItem, type: SelectionType.FacultyMoreOptionsSelection) {
+        launch(IO) {
+            when(item) {
+                EDIT -> fragmentAdminManageFacultiesEventChannel.send(NavigateToAddEditFacultyEvent(type.faculty))
+                DELETE -> fragmentAdminManageFacultiesEventChannel.send(NavigateToDeletionConfirmationEvent(type.faculty))
+            }
+        }
+    }
+
+    fun onDeleteFacultyConfirmed(confirmation: ConfirmationType.DeleteFacultyConfirmation) = launch(IO) {
         runCatching {
             fragmentAdminManageFacultiesEventChannel.send(ChangeProgressVisibilityEvent(true))
-            backendRepository.deleteFaculty(faculty.id)
+            backendRepository.deleteFaculty(confirmation.faculty.id)
         }.onSuccess { response ->
             when(response.responseType) {
                 DeleteFacultyResponseType.SUCCESSFUL -> {
-                    localRepository.delete(faculty)
+                    localRepository.delete(confirmation.faculty)
                     fragmentAdminManageFacultiesEventChannel.send(ShowMessageSnackBar(R.string.deletedFaculty))
                 }
                 DeleteFacultyResponseType.NOT_ACKNOWLEDGED -> {
@@ -62,10 +74,13 @@ class VmAdminManageFaculties @Inject constructor(
         fragmentAdminManageFacultiesEventChannel.send(ChangeProgressVisibilityEvent(false))
     }
 
+
     sealed class FragmentAdminManageFacultiesEvent {
         object NavigateBack: FragmentAdminManageFacultiesEvent()
         class NavigateToFacultiesMoreOptionsDialogEvent(val faculty: Faculty): FragmentAdminManageFacultiesEvent()
         class ShowMessageSnackBar(@StringRes val messageRes: Int): FragmentAdminManageFacultiesEvent()
         class ChangeProgressVisibilityEvent(val visible: Boolean): FragmentAdminManageFacultiesEvent()
+        class NavigateToAddEditFacultyEvent(val faculty: Faculty): FragmentAdminManageFacultiesEvent()
+        class NavigateToDeletionConfirmationEvent(val faculty: Faculty): FragmentAdminManageFacultiesEvent()
     }
 }

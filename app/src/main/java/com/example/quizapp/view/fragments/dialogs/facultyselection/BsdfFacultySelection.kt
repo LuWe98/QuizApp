@@ -19,7 +19,6 @@ class BsdfFacultySelection: BindingBottomSheetDialogFragment<BsdfFacultySelectio
 
     companion object {
         const val FACULTY_SELECTION_RESULT_KEY = "facultySelectionResultKey"
-        const val SELECTED_FACULTIES_KEY = "selectedFacultiesKey"
     }
 
     private val vmFaculty: VmFacultySelection by viewModels()
@@ -68,7 +67,7 @@ class BsdfFacultySelection: BindingBottomSheetDialogFragment<BsdfFacultySelectio
             when(event) {
                 is ConfirmationEvent -> {
                     setFragmentResult(FACULTY_SELECTION_RESULT_KEY, Bundle().apply {
-                        putStringArray(SELECTED_FACULTIES_KEY, event.facultyIds)
+                        putStringArray(FACULTY_SELECTION_RESULT_KEY, event.facultyIds)
                     })
                     navigator.popBackStack()
                 }

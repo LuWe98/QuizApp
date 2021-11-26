@@ -50,7 +50,8 @@ class VmQuestionnaireMoreOptions @Inject constructor(
         }
     }
 
-    fun getQuestionnaireMoreOptionsMenu() : List<MenuIntIdItem> = MenuItemDataModel.getQuestionnaireMoreOptionsMenu(args, user)
+    fun getQuestionnaireMoreOptionsMenu() : List<MenuIntIdItem> =
+        MenuItemDataModel.getQuestionnaireMoreOptionsMenu(args, user)
 
     private fun onEditQuestionnaireSelected() = launch(IO) {
         localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let {

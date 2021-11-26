@@ -1,10 +1,18 @@
 package com.example.quizapp.model.datastore
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.example.quizapp.R
+import com.example.quizapp.model.menus.SelectionTypeItemMarker
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
-enum class QuizAppLanguage(@StringRes val textRes: Int) {
+@Parcelize
+enum class QuizAppLanguage(
+    @StringRes override val textRes: Int,
+    @DrawableRes override val iconRes: Int = R.drawable.ic_language
+) : SelectionTypeItemMarker<QuizAppLanguage> {
+
     ENGLISH(R.string.english),
     GERMAN(R.string.german);
 
@@ -13,4 +21,5 @@ enum class QuizAppLanguage(@StringRes val textRes: Int) {
             ENGLISH -> Locale.ENGLISH
             GERMAN -> Locale.GERMAN
         }
+
 }

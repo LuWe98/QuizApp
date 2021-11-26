@@ -7,5 +7,7 @@ class UserPagingSource (
     private val backendRepository: BackendRepository,
     private val searchQuery: String
 ) : BasicPagingSource<User>(
-    getDataAction = { page -> backendRepository.getPagedUsers(PagingConfigValues.PAGE_SIZE, page, searchQuery) }
+    getDataAction = { page ->
+        backendRepository.getPagedCreators(PagingConfigValues.PAGE_SIZE, page, searchQuery)
+    }
 )

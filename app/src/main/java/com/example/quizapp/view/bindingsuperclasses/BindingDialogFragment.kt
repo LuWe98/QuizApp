@@ -27,4 +27,5 @@ abstract class BindingDialogFragment<VB : ViewBinding> : DialogFragment() {
     }
 
     override fun getTheme() = R.style.Theme_QuizApp_DialogFragment
+
 }

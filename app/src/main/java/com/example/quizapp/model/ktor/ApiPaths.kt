@@ -1,17 +1,19 @@
-package com.quizappbackend.routing
+package com.example.quizapp.model.ktor
 
 sealed class ApiPaths {
 
     object UserPaths : ApiPaths() {
         const val LOGIN = "/user/login"
         const val REGISTER = "/user/register"
+        const val CREATE = "/admin/user/create"
         const val REFRESH_TOKEN = "/user/token"
         const val UPDATE_USERNAME = "/user/update/username"
         const val UPDATE_ROLE = "/admin/user/update/role"
         const val DELETE_SELF = "/user/delete"
         const val DELETE_USER = "/admin/users/delete"
         const val SYNC = "/user/sync"
-        const val USERS_PAGED = "/admin/users/paged"
+        const val USERS_PAGED = "/users/paged"
+        const val USERS_PAGED_ADMIN = "/admin/users/paged"
         const val GENERATE_RANDOM = "/user/random"
     }
 

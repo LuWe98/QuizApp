@@ -28,6 +28,7 @@ open class BasicPagingSource <T: Any> (
             )
 
         } catch (e: Exception) {
+            log("Exception: $e")
             LoadResult.Error(e)
         }
     }

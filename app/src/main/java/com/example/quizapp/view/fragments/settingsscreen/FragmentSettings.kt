@@ -8,10 +8,12 @@ import androidx.fragment.app.viewModels
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentSettingsBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType.*
+import com.example.quizapp.viewmodel.VmQuizActivity
 import com.example.quizapp.viewmodel.VmSettings
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,6 +22,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
     private val vmSettings: VmSettings by viewModels()
+
+    private val vmQuizActivity: VmQuizActivity by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,9 +40,10 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
             }
 
             preferencesLayout.apply {
-                btnTheme.onClick(navigator::navigateToThemeSelection)
-                btnLanguage.onClick(navigator::navigateToLanguageSelection)
-                btnShuffleType.onClick(navigator::navigateToShuffleTypeSelection)
+                btnTheme.onClick(vmSettings::onThemeButtonClicked)
+                btnLanguage.onClick(vmSettings::onLanguageButtonClicked)
+                btnShuffleType.onClick(vmSettings::onShuffleTypeButtonClicked)
+
                 btnPreferredCos.onClick(vmSettings::onPreferredCourseOfStudiesButtonClicked)
             }
 
@@ -55,11 +60,18 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
 
     private fun initObservers() {
-        setFragmentResultListener(BsdfCourseOfStudiesSelection.COURSE_OF_STUDIES_RESULT_KEY) { _, bundle ->
-            bundle.getStringArray(BsdfCourseOfStudiesSelection.SELECTED_COURSE_OF_STUDIES_KEY)?.let { courseOfStudiesIds ->
-                vmSettings.onCourseOfStudiesUpdateTriggered(courseOfStudiesIds.toList())
-            }
+        setFragmentResultListener(BsdfCourseOfStudiesSelection.COURSE_OF_STUDIES_RESULT_KEY) { key, bundle ->
+            bundle.getStringArray(key)?.let(vmSettings::onCourseOfStudiesUpdateTriggered)
         }
+
+        setSelectionTypeListener(vmSettings::onLanguageUpdateReceived)
+
+        setSelectionTypeListener(vmSettings::onThemeUpdateReceived)
+
+        setSelectionTypeListener(vmSettings::onShuffleTypeUpdateReceived)
+
+        setConfirmationTypeListener(vmSettings::onLogoutConfirmationReceived)
+
 
         vmSettings.userNameFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.userLayout.btnUserName.text = it ?: "-"
@@ -67,8 +79,8 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
         vmSettings.userRoleFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.apply {
-                userLayout.btnRole.text = it?.name ?: "-"
                 adminLayout.root.isVisible = it == Role.ADMIN
+                userLayout.btnRole.text = it?.name ?: "-"
             }
         }
 
@@ -85,17 +97,23 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
         }
 
         vmSettings.preferredCoursesOfStudiesFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.preferencesLayout.btnPreferredCos.text = if(it.size > 2) it.size.toString()
-                else it.reduceOrNull { acc, s -> "$acc, $s"  } ?: "-"
+            binding.preferencesLayout.btnPreferredCos.text =
+                if(it.size > 2) it.size.toString() else it.reduceOrNull { acc, s -> "$acc, $s" } ?: "-"
         }
 
         vmSettings.fragmentSettingsEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 NavigateToLoginScreen -> navigator.navigateToLoginScreen()
-                OnLogoutClickedEvent -> navigator.navigateToLogoutWarningScreen()
+                OnLogoutClickedEvent -> navigator.navigateToConfirmationDialog(ConfirmationType.LogoutConfirmation)
                 NavigateToAdminManageUsersScreenEvent -> navigator.navigateToAdminManageUsersScreen()
                 NavigateToAdminManageCoursesOfStudiesScreenEvent -> navigator.navigateToAdminManageCourseOfStudiesScreen()
                 NavigateToAdminManageFacultiesScreenEvent -> navigator.navigateToAdminManageFacultiesScreen()
+                RecreateActivityEvent -> requireActivity().recreate()
+                LogoutEvent -> vmQuizActivity.onLogoutConfirmed()
+                is NavigateToCourseOfStudiesSelectionScreen -> navigator.navigateToCourseOfStudiesSelection(event.courseOfStudiesIds)
+                is NavigateToLanguageSelection -> navigator.navigateToSelectionDialog(LanguageSelection(event.currentLanguage))
+                is NavigateToThemeSelection -> navigator.navigateToSelectionDialog(ThemeSelection(event.currentTheme))
+                is NavigateToShuffleTypeSelection -> navigator.navigateToSelectionDialog(ShuffleTypeSelection(event.shuffleType))
                 is ShowMessageSnackBarEvent -> {
                     binding.swipeRefreshLayout.isRefreshing = false
                     showSnackBar(
@@ -103,7 +121,6 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
                         anchorView = bindingActivity.binding.root.findViewById(R.id.bottomAppBar)
                     )
                 }
-                is NavigateToCourseOfStudiesSelectionScreen -> navigator.navigateToCourseOfStudiesSelection(event.courseOfStudiesIds)
             }
         }
     }

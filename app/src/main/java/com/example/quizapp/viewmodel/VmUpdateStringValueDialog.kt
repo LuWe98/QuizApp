@@ -2,7 +2,7 @@ package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueArgs
+import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -11,7 +11,7 @@ class VmUpdateStringValueDialog @Inject constructor(
     private val state: SavedStateHandle
 ) : ViewModel() {
 
-    private val args = DfUpdateStringValueArgs.fromSavedStateHandle(state)
+    private val args = DfUpdateStringArgs.fromSavedStateHandle(state)
 
     val updateType get() = args.updateType
 

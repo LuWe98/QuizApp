@@ -16,6 +16,6 @@ class QuizApplication : Application(){
 
     override fun onCreate() {
         super.onCreate()
-        AppCompatDelegate.setDefaultNightMode(runBlocking(IO) { preferencesRepository.getTheme() })
+        AppCompatDelegate.setDefaultNightMode(runBlocking(IO) { preferencesRepository.getTheme().appCompatId })
     }
 }

@@ -1,104 +1,214 @@
 package com.example.quizapp.viewmodel
 
-import androidx.annotation.StringRes
-import androidx.lifecycle.*
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.liveData
-import com.example.quizapp.R
+import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.DataMapper
+import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.MongoQuestionnairePagingSource
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.model.ktor.responses.GetQuestionnaireResponse.GetQuestionnaireResponseType
-import com.example.quizapp.model.ktor.status.DownloadStatus
-import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.viewmodel.VmSearch.FragmentSearchEvent.*
+import com.example.quizapp.model.menus.SortBy
+import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
 class VmSearch @Inject constructor(
-    private val applicationScope: CoroutineScope,
-    private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
-    private val preferencesRepository: PreferencesRepository
+    private val localRepository: LocalRepository,
+    private val preferencesRepository: PreferencesRepository,
+    private val state: SavedStateHandle
 ) : ViewModel() {
 
-    private val fragmentSearchEventChannel = Channel<FragmentSearchEvent>()
 
-    val fragmentSearchEventChannelFlow get() = fragmentSearchEventChannel.receiveAsFlow()
+    private val searchEventChannel = Channel<SearchEvent>()
 
-    private val searchQueryMutableStateFlow = MutableStateFlow("")
+    val searchEventChannelFlow = searchEventChannel.receiveAsFlow()
 
-    val filteredPagedData = searchQueryMutableStateFlow.flatMapLatest { query ->
+
+    private val searchQueryMutableStateFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
+
+    val searchQuery get() = searchQueryMutableStateFlow.value
+
+
+    private val selectedUserCreatorsMutableStateFlow = state.getMutableStateFlow(SELECTED_USERS_KEY, emptySet<User>())
+
+    val selectedUserCreatorsStateFlow = selectedUserCreatorsMutableStateFlow.asStateFlow()
+
+    private val selectedUserCreators get() = selectedUserCreatorsMutableStateFlow.value
+
+
+    private val selectedCourseOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_COURSE_OF_STUDIES_ID_KEY, runBlocking(IO) {
+        if (preferencesRepository.usePreferredCourseOfStudiesForSearch()) {
+            preferencesRepository.getPreferredCourseOfStudiesId()
+        } else {
+            emptySet()
+        }
+    })
+
+    private val selectedCourseOfStudiesIds get() = selectedCourseOfStudiesIdsMutableStateFlow.value
+
+    val selectedCourseOfStudiesStateFlow = selectedCourseOfStudiesIdsMutableStateFlow.map {
+        localRepository.getCoursesOfStudiesWithIds(it)
+    }.distinctUntilChanged()
+
+
+    private val selectedFacultyIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_FACULTY_ID_KEY, emptySet<String>())
+
+    private val selectedFacultyIds get() = selectedFacultyIdsMutableStateFlow.value
+
+    val selectedFacultyStateFlow = selectedFacultyIdsMutableStateFlow.map {
+        localRepository.getFacultiesWithIds(it.toList())
+    }.distinctUntilChanged()
+
+
+    val sortByFlow = preferencesRepository.sortByFlow
+
+    val filteredPagedData = combine(
+        sortByFlow,
+        searchQueryMutableStateFlow,
+        selectedUserCreatorsMutableStateFlow,
+        selectedCourseOfStudiesIdsMutableStateFlow,
+        selectedFacultyIdsMutableStateFlow
+    ) { sortBy: SortBy, searchQuery: String, users: Set<User>, cosIds: Set<String>, facultyIds: Set<String> ->
         Pager(
             config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
             pagingSourceFactory = {
-                MongoQuestionnairePagingSource(backendRepository, localRepository, query)
-            }).flow.cachedIn(viewModelScope)
-    }
+                MongoQuestionnairePagingSource(
+                    backendRepository,
+                    localRepository,
+                    searchQuery,
+                    facultyIds.toList(),
+                    cosIds.toList(),
+                    users.map(User::id),
+                    sortBy
+                )
+            })
+    }.flatMapLatest {
+        it.flow.cachedIn(viewModelScope)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
+
 
     suspend fun getCourseOfStudiesNameWithIds(courseOfStudiesIds: List<String>) = localRepository.getCoursesOfStudiesNameWithIds(courseOfStudiesIds)
 
-    fun onSearchQueryChanged(query: String) {
-        searchQueryMutableStateFlow.value = query
-    }
 
-    fun onBackButtonClicked() = launch {
-        fragmentSearchEventChannel.send(NavigateBack)
-    }
-
-    fun onFilterButtonClicked() = launch {
-        fragmentSearchEventChannel.send(NavigateToFilterScreen)
-    }
+//    val filteredPagedData = searchQueryMutableStateFlow.flatMapLatest { query ->
+//        Pager(
+//            config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
+//            pagingSourceFactory = {
+//                MongoQuestionnairePagingSource(backendRepository, localRepository, query)
+//            }).flow.cachedIn(viewModelScope)
+//    }
 
 
-    fun onItemDownLoadButtonClicked(questionnaireId: String) = launch(IO) {
-        fragmentSearchEventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, DownloadStatus.DOWNLOADING))
-
-        runCatching {
-            backendRepository.downloadQuestionnaire(questionnaireId)
-        }.onSuccess { response ->
-            when(response.responseType){
-                GetQuestionnaireResponseType.SUCCESSFUL -> {
-                    DataMapper.mapMongoQuestionnaireToRoomCompleteQuestionnaire(response.mongoQuestionnaire!!).let { completeQuestionnaire ->
-                        localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
-                        localRepository.deleteLocallyDeletedQuestionnaireWith(completeQuestionnaire.questionnaire.id)
-
-                        DataMapper.mapMongoQuestionnaireToRoomQuestionnaireCourseOfStudiesRelation(response.mongoQuestionnaire).let {
-                            localRepository.insert(it)
-                        }
-
-                        fragmentSearchEventChannel.send(ShowMessageSnackBar(R.string.questionnaireDownloaded))
-                        fragmentSearchEventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, DownloadStatus.DOWNLOADED))
-                    }
-                }
-                GetQuestionnaireResponseType.QUESTIONNAIRE_NOT_FOUND -> {
-                    fragmentSearchEventChannel.send(ShowMessageSnackBar(R.string.errorQuestionnaireCouldNotBeFound))
-                    fragmentSearchEventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, DownloadStatus.NOT_DOWNLOADED))
-                }
-            }
-        }.onFailure {
-            fragmentSearchEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDownloadQuestionnaire))
-            fragmentSearchEventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, DownloadStatus.NOT_DOWNLOADED))
+    fun removeFilteredFaculty(faculty: Faculty) {
+        selectedFacultyIds.toMutableSet().apply {
+            remove(faculty.id)
+            state.set(SELECTED_FACULTY_ID_KEY, this)
+            selectedFacultyIdsMutableStateFlow.value = this
         }
     }
 
-    sealed class FragmentSearchEvent {
-        object NavigateBack : FragmentSearchEvent()
-        object NavigateToFilterScreen : FragmentSearchEvent()
-        class ShowMessageSnackBar(@StringRes val messageRes: Int) : FragmentSearchEvent()
-        class ChangeItemDownloadStatusEvent(val questionnaireId: String, val downloadStatus: DownloadStatus): FragmentSearchEvent()
+    fun removeFilteredCourseOfStudies(courseOfStudies: CourseOfStudies) {
+        selectedCourseOfStudiesIds.toMutableSet().apply {
+            remove(courseOfStudies.id)
+            state.set(SELECTED_COURSE_OF_STUDIES_ID_KEY, this)
+            selectedCourseOfStudiesIdsMutableStateFlow.value = this
+        }
+    }
+
+    fun removeFilteredUser(user: User) {
+        selectedUserCreators.toMutableSet().apply {
+            remove(user)
+            state.set(SELECTED_USERS_KEY, this)
+            selectedUserCreatorsMutableStateFlow.value = this
+        }
+    }
+
+
+    fun onSortByCardClicked() {
+        launch(IO) {
+            searchEventChannel.send(SearchEvent.NavigateToSortBySelection(sortByFlow.first()))
+        }
+    }
+
+
+    fun onFacultyCardAddButtonClicked() {
+        launch(IO) {
+            searchEventChannel.send(SearchEvent.NavigateToFacultySelectionScreen(selectedFacultyIds.toTypedArray()))
+        }
+    }
+
+    fun onCourseOfStudiesAddButtonClicked() {
+        launch(IO) {
+            searchEventChannel.send(SearchEvent.NavigateToCourseOfStudiesSelectionScreen(selectedCourseOfStudiesIds.toTypedArray()))
+        }
+    }
+
+    fun onAuthorAddButtonClicked() {
+        launch(IO) {
+            searchEventChannel.send(SearchEvent.NavigateToUserSelectionScreen(selectedUserCreators.toTypedArray()))
+        }
+    }
+
+    fun onSearchQueryChanged(newQuery: String) {
+        state.set(SEARCH_QUERY_KEY, newQuery)
+        searchQueryMutableStateFlow.value = newQuery
+    }
+
+    fun onSortByUpdateReceived(sortBy: SortBy) {
+        launch(IO) {
+            preferencesRepository.updateSortBy(sortBy)
+        }
+    }
+
+    fun onSelectedUserUpdateReceived(selectedUsers: Array<User>) {
+        selectedUsers.toSet().let {
+            state.set(SELECTED_USERS_KEY, it)
+            selectedUserCreatorsMutableStateFlow.value = it
+        }
+    }
+
+    fun onSelectedFacultyUpdateReceived(selectedFacultyIds: Array<String>) {
+        selectedFacultyIds.toSet().let {
+            state.set(SELECTED_FACULTY_ID_KEY, it)
+            selectedFacultyIdsMutableStateFlow.value = it
+        }
+    }
+
+    fun onSelectedCourseOfStudiesUpdateReceived(selectedCourseOfStudiesIds: Array<String>) {
+        selectedCourseOfStudiesIds.toSet().let {
+            state.set(SELECTED_COURSE_OF_STUDIES_ID_KEY, it)
+            selectedCourseOfStudiesIdsMutableStateFlow.value = it
+        }
+    }
+
+
+    sealed class SearchEvent {
+        class NavigateToSortBySelection(val sortBy: SortBy) : SearchEvent()
+        class NavigateToUserSelectionScreen(val selectedUsers: Array<User>) : SearchEvent()
+        class NavigateToCourseOfStudiesSelectionScreen(val selectedCourseOfStudiesIds: Array<String>) : SearchEvent()
+        class NavigateToFacultySelectionScreen(val selectedFacultyIds: Array<String>) : SearchEvent()
+    }
+
+    companion object {
+        private const val SEARCH_QUERY_KEY = "searchQueryKey"
+        private const val SELECTED_USERS_KEY = "selectedUsersKeys"
+        private const val SELECTED_COURSE_OF_STUDIES_ID_KEY = "selectedCourseOfStudiesKey"
+        private const val SELECTED_FACULTY_ID_KEY = "selectedFacultyIdsKey"
     }
 }

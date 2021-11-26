@@ -7,8 +7,9 @@ import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentAdminAddEditFacultyBinding
 import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.onClick
+import com.example.quizapp.extensions.setUpdateStringTypeListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringValueType
+import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,6 +21,7 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.pageTitle.setText(vmAddEdit.pageTitleRes)
         initListeners()
         initObservers()
     }
@@ -34,13 +36,10 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
     }
 
     private fun initObservers() {
-        setFragmentResultListener(DfUpdateStringValueType.UPDATE_FACULTY_ABBREVIATION_RESULT_KEY) { key, bundle ->
-            bundle.getString(key)?.let(vmAddEdit::onAbbreviationUpdateReceived)
-        }
+        setUpdateStringTypeListener(UpdateStringType.FACULTY_ABBREVIATION, vmAddEdit::onAbbreviationUpdateReceived)
 
-        setFragmentResultListener(DfUpdateStringValueType.UPDATE_FACULTY_NAME_RESULT_KEY) { key, bundle ->
-            bundle.getString(key)?.let(vmAddEdit::onNameUpdateReceived)
-        }
+        setUpdateStringTypeListener(UpdateStringType.FACULTY_NAME, vmAddEdit::onNameUpdateReceived)
+
 
         vmAddEdit.facultyAbbreviationStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.abbreviationCard.text = it
@@ -52,7 +51,7 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
 
         vmAddEdit.addEditFacultyEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringValueDialog(event.initialValue, event.updateType)
+                is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringDialog(event.initialValue, event.updateType)
                 is ShowMessageSnackBar -> {
 
                 }

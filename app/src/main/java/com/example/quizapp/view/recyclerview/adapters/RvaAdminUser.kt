@@ -17,19 +17,17 @@ class RvaAdminUser : BindingPagingDataAdapter<User, RviUserNewBinding>(User.DIFF
 
     var onItemClicked: ((User) -> Unit)? = null
 
-    var onItemLongClicked: ((User) -> Unit)? = null
-
     override fun initListeners(binding: RviUserNewBinding, vh: BindingPagingDataAdapterViewHolder) {
         binding.apply {
             root.onClick {
                 getItem(vh)?.let {
-                    onItemClicked?.invoke(it)
+                    onItemClicked?.invoke(it.copy())
                 }
             }
 
             root.onLongClick {
                 getItem(vh)?.let {
-                    onItemLongClicked?.invoke(it.copy())
+                    onItemClicked?.invoke(it.copy())
                 }
             }
         }
@@ -46,7 +44,6 @@ class RvaAdminUser : BindingPagingDataAdapter<User, RviUserNewBinding>(User.DIFF
                 Role.USER -> roleIcon.setImageDrawable(R.drawable.ic_person)
             }
             tvName.text = item.userName
-            tvRole.text = item.role.name
         }
     }
 
@@ -65,7 +62,6 @@ class RvaAdminUser : BindingPagingDataAdapter<User, RviUserNewBinding>(User.DIFF
             setMargins(0, context.resources.getDimension(R.dimen.grid_2).toInt(),0,0)
         }
     }
-
 
 
     fun updateUserRole(userId: String, newRole: Role) {

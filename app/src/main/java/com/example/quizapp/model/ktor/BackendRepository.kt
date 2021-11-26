@@ -13,10 +13,7 @@ import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
-import com.example.quizapp.model.ktor.responses.DeleteCourseOfStudiesResponse
-import com.example.quizapp.model.ktor.responses.DeleteFacultyResponse
-import com.example.quizapp.model.ktor.responses.InsertCourseOfStudiesResponse
-import com.example.quizapp.model.ktor.responses.InsertFacultyResponse
+import com.example.quizapp.model.menus.SortBy
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,13 +33,15 @@ class BackendRepository @Inject constructor(
 
     suspend fun registerUser(userName: String, password: String) = userApi.registerUser(userName, password)
 
+    suspend fun getPagedCreators(limit: Int, page: Int, searchString: String) = userApi.getPagedCreators(limit, page, searchString)
+
     suspend fun updateUsername(newUserName: String) = userApi.updateUsername(newUserName)
 
     suspend fun deleteSelf() = userApi.deleteSelf()
 
     suspend fun updateUserRole(userId: String, newRole: Role) = userApi.updateUserRole(userId, newRole)
 
-    suspend fun getPagedUsers(limit: Int, page: Int, searchString: String) = userApi.getPagedUsers(limit, page, searchString)
+    suspend fun getPagedUsersAdmin(limit: Int, page: Int, searchString: String, roles: Set<Role>) = userApi.getPagedUsersAdmin(limit, page, searchString, roles)
 
     suspend fun deleteUser(userId: String) = userApi.deleteUser(userId)
 
@@ -50,9 +49,11 @@ class BackendRepository @Inject constructor(
 
     suspend fun syncUserData(userId: String) = userApi.syncUserData(userId)
 
+    suspend fun createUser(userName: String, password: String, role: Role) = userApi.createUser(userName, password, role)
 
 
-    // QUESTIONNAIRES
+
+        // QUESTIONNAIRES
     suspend fun insertQuestionnaire(completeCompleteQuestionnaire: CompleteQuestionnaire) =
         insertQuestionnaire(DataMapper.mapRoomQuestionnaireToMongoQuestionnaire(completeCompleteQuestionnaire))
 
@@ -70,8 +71,24 @@ class BackendRepository @Inject constructor(
 
     suspend fun deleteQuestionnaire(questionnaireIds: List<String>) = questionnaireApi.deleteQuestionnaire(questionnaireIds)
 
-    suspend fun getPagedQuestionnaires(limit: Int, page: Int, searchString: String, questionnaireIdsToIgnore: List<String>) =
-        questionnaireApi.getPagedQuestionnaires(limit, page, searchString, questionnaireIdsToIgnore)
+    suspend fun getPagedQuestionnaires(
+        limit: Int,
+        page: Int,
+        searchString: String,
+        questionnaireIdsToIgnore: List<String>,
+        facultyIds: List<String>,
+        courseOfStudiesIds: List<String>,
+        authorIds: List<String>,
+        sortBy: SortBy
+    ) = questionnaireApi.getPagedQuestionnaires(
+        limit = limit,
+        page = page,
+        searchString = searchString,
+        questionnaireIdsToIgnore = questionnaireIdsToIgnore,
+        facultyIds = facultyIds,
+        courseOfStudiesIds = courseOfStudiesIds,
+        authorIds = authorIds,
+        sortBy = sortBy)
 
     suspend fun downloadQuestionnaire(questionnaireId: String) = questionnaireApi.downloadQuestionnaire(questionnaireId)
 

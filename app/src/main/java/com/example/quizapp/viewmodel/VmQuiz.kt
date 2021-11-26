@@ -1,5 +1,6 @@
 package com.example.quizapp.viewmodel
 
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.*
 import com.example.quizapp.QuizNavGraphArgs
 import com.example.quizapp.R
@@ -12,6 +13,7 @@ import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
+import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.QuestionnaireShuffleType
 import com.example.quizapp.model.datastore.QuestionnaireShuffleType.*
@@ -67,19 +69,42 @@ class VmQuiz @Inject constructor(
         .map(CompleteQuestionnaire::toQuizStatisticNumbers::get)
         .distinctUntilChanged()
 
-    val areAllQuestionsAnsweredFlow = questionStatisticsFlow
+    val areAllQuestionsAnsweredStateFlow = questionStatisticsFlow
         .map(CompleteQuestionnaire.QuizStatisticNumbers::areAllQuestionsAnswered::get)
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
-    val areAllQuestionsAnswered get() = areAllQuestionsAnsweredFlow.value
+    val areAllQuestionsAnswered get() = areAllQuestionsAnsweredStateFlow.value
 
-    private var _shuffleSeed = state.get<Long>(SHUFFLE_SEED_KEY) ?: getTimeMillis()
-        set(value) {
-            state.set(SHUFFLE_SEED_KEY, value)
-            field = value
+
+
+    private var shuffleSeedStateFlow = preferencesRepository.shuffleSeedFlow
+        .stateIn(viewModelScope, SharingStarted.Eagerly, runBlocking(IO) { preferencesRepository.getShuffleSeed() })
+
+    val shuffleSeed get() = shuffleSeedStateFlow.value
+
+
+
+    val shuffleTypeStateFlow = preferencesRepository.shuffleTypeFlow
+        .stateIn(viewModelScope, SharingStarted.Eagerly, runBlocking(IO) { preferencesRepository.getShuffleType() })
+
+    val shuffleType get() = shuffleTypeStateFlow.value
+
+
+
+    val questionsWithAnswersCombinedStateFlow = combine(
+        questionsWithAnswersFlow,
+        shuffleTypeStateFlow,
+        shuffleSeedStateFlow
+    ) { qwa, shuffleType, shuffleSeed ->
+        when (shuffleType) {
+            SHUFFLED_QUESTIONS, SHUFFLED_QUESTIONS_AND_ANSWERS -> qwa.shuffled(Random(shuffleSeed))
+            else -> qwa
         }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    val shuffleSeed get() = _shuffleSeed
+    val questionsShuffled get() = questionsWithAnswersCombinedStateFlow.value.map(QuestionWithAnswers::question)
+
+    
 
     private var _bottomSheetState = state.get<Int>(BOTTOMSHEET_STATE_KEY) ?: BottomSheetBehavior.STATE_COLLAPSED
         set(value) {
@@ -89,24 +114,17 @@ class VmQuiz @Inject constructor(
 
     val bottomSheetState get() = _bottomSheetState
 
-    val shuffleTypeStateFlow = preferencesRepository.shuffleTypeFlow
-        .stateIn(viewModelScope, SharingStarted.Lazily, runBlocking { preferencesRepository.getShuffleType() })
 
-    val shuffleType get() = shuffleTypeStateFlow.value
 
-    val questionList
-        get() = when (shuffleType) {
-            SHUFFLED_QUESTIONS, SHUFFLED_QUESTIONS_AND_ANSWERS -> completeQuestionnaire?.allQuestions?.shuffled(Random(shuffleSeed))
-            else -> completeQuestionnaire?.allQuestions
-        } ?: emptyList()
 
-    suspend fun onMenuItemOrderSelected(shuffleType: QuestionnaireShuffleType) {
-        preferencesRepository.updateShuffleType(shuffleType)
-        updateShuffleTypeSeed()
-    }
 
-    fun updateShuffleTypeSeed(newSeed: Long = getTimeMillis()) {
-        _shuffleSeed = newSeed
+
+
+    fun onMenuItemOrderSelected(shuffleType: QuestionnaireShuffleType) {
+        launch(IO) {
+            preferencesRepository.updateShuffleSeed()
+            preferencesRepository.updateShuffleType(shuffleType)
+        }
     }
 
     fun onBottomSheetStateUpdated(newState: Int) {
@@ -125,6 +143,19 @@ class VmQuiz @Inject constructor(
                     fragmentEventChannel.send(ShowMessageSnackBar(R.string.pleaseAnswerAllQuestionsText))
                 }
             }
+        }
+    }
+
+    fun onQuestionItemClicked(position: Int, questionId: String, card: CardView) {
+        launch(IO) {
+            val questionPosition = questionsShuffled.indexOfFirst { it.id == questionId }
+            fragmentEventChannel.send(
+                NavigateToQuizScreen(
+                    false,
+                    if (questionPosition == -1) 0
+                    else questionPosition
+                )
+            )
         }
     }
 
@@ -195,7 +226,7 @@ class VmQuiz @Inject constructor(
     sealed class FragmentQuizEvent {
         class ShowUndoDeleteGivenAnswersSnackBack(val lastAnswerValues: List<Answer>) : FragmentQuizEvent()
         class ShowMessageSnackBar(val messageRes: Int) : FragmentQuizEvent()
-        class NavigateToQuizScreen(val isShowSolutionScreen: Boolean) : FragmentQuizEvent()
+        class NavigateToQuizScreen(val isShowSolutionScreen: Boolean, val position: Int = 0) : FragmentQuizEvent()
         object ShowPopupMenu : FragmentQuizEvent()
     }
 

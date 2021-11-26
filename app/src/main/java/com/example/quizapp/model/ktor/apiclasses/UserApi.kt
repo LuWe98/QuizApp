@@ -4,7 +4,7 @@ import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.ktor.requests.*
 import com.example.quizapp.model.ktor.responses.*
-import com.quizappbackend.routing.ApiPaths.*
+import com.example.quizapp.model.ktor.ApiPaths.*
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject
@@ -43,6 +43,12 @@ class UserApi @Inject constructor(
             body = RefreshJwtTokenRequest(userName, password)
         }
 
+    suspend fun getPagedCreators(limit: Int, page: Int, searchString: String) : List<User> =
+        client.post(UserPaths.USERS_PAGED) {
+            body = GetPagedUserRequest(limit, page, searchString)
+        }
+
+
 
     //ADMIN
     suspend fun updateUserRole(userId: String, newRole: Role): UpdateUserResponse =
@@ -50,9 +56,9 @@ class UserApi @Inject constructor(
             body = UpdateUserRoleRequest(userId, newRole)
         }
 
-    suspend fun getPagedUsers(limit: Int, page: Int, searchString: String) : List<User> =
-        client.post(UserPaths.USERS_PAGED) {
-            body = GetPagedUserRequest(limit, page, searchString)
+    suspend fun getPagedUsersAdmin(limit: Int, page: Int, searchString: String, roles: Set<Role>) : List<User> =
+        client.post(UserPaths.USERS_PAGED_ADMIN) {
+            body = GetPagedUserAdminRequest(limit, page, searchString, roles)
         }
 
     suspend fun deleteUser(userId: String): DeleteUserResponse = deleteUsers(listOf(userId))
@@ -61,4 +67,10 @@ class UserApi @Inject constructor(
         client.delete(UserPaths.DELETE_USER) {
             body = DeleteUsersRequest(userIds)
         }
+
+    suspend fun createUser(userName: String, password: String, role: Role) : CreateUserResponse =
+        client.post(UserPaths.CREATE) {
+            body = CreateUserRequest(userName, password, role)
+        }
+
 }

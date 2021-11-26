@@ -15,8 +15,12 @@ object BindingUtils {
     private fun findGenericTypeWith(classInstance: Any, genericClassToFind: Class<*>, relativePosition : Int): Class<*> {
         return try {
             (classInstance.javaClass.genericSuperclass as ParameterizedType).actualTypeArguments
-                .map {
-                    it as Class<*>
+                .mapNotNull {
+                    try {
+                        it as Class<*>
+                    } catch (e: Exception) {
+                        null
+                    }
                 }.filter {
                     genericClassToFind.isAssignableFrom(it)
                 }[relativePosition]

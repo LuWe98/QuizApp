@@ -21,6 +21,7 @@ import com.example.quizapp.viewmodel.VmQuiz.*
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.math.pow
 
@@ -46,8 +47,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
     private fun initRecyclerView() {
         rvAdapter = RvaQuestionQuiz(vmQuiz).apply {
             onItemClick = { position, questionId, card ->
-                //navigator.navigateToQuizContainerScreenWithQuestionCardClick(position, questionId, card)
-                navigator.navigateToQuizContainerScreen(position)
+                vmQuiz.onQuestionItemClicked(position, questionId, card)
             }
         }
 
@@ -61,7 +61,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
     private fun initBottomSheet() {
         bottomSheetBehaviour = BottomSheetBehavior.from(binding.bottomSheet.root).apply {
-            onBottomSheetSlide(if(vmQuiz.bottomSheetState == BottomSheetBehavior.STATE_COLLAPSED) 0f else 1f)
+            onBottomSheetSlide(if (vmQuiz.bottomSheetState == BottomSheetBehavior.STATE_COLLAPSED) 0f else 1f)
             state = vmQuiz.bottomSheetState
             peekHeight = 70.dp
             skipCollapsed = true
@@ -74,7 +74,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         }
     }
 
-    private fun onBottomSheetSlide(slideOffset: Float){
+    private fun onBottomSheetSlide(slideOffset: Float) {
         binding.bottomSheet.apply {
             rv.alpha = slideOffset.pow(2) + 0.1f
 
@@ -122,8 +122,12 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         }
 
 
+        //TODO -> noch durchmischeln lassen, da es noch nüt get -> Positionen der Fragen werden nicht richtig angezeigt
         vmQuiz.questionsWithAnswersFlow.collectWhenStarted(viewLifecycleOwner) { questionsWithAnswers ->
-            rvAdapter.submitList(questionsWithAnswers)
+            rvAdapter.submitList(questionsWithAnswers){
+//                log("TEST")
+//                rvAdapter.notifyDataSetChanged()
+            }
             binding.bottomSheet.tvQuestionsAmount.text = questionsWithAnswers.size.toString()
         }
 
@@ -144,8 +148,8 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             binding.apply {
                 tvQuestionsAnswered.text = it.answeredQuestionsPercentage.toString()
                 ivResultIcon.isVisible = it.areAllQuestionsAnswered
-                ivResultIcon.setImageDrawable(if(it.correctQuestionsPercentage > 80) R.drawable.ic_check else R.drawable.ic_cross)
-                ivResultIcon.setDrawableTintWithRes(if(it.correctQuestionsPercentage > 80) R.color.green else R.color.red)
+                ivResultIcon.setImageDrawable(if (it.correctQuestionsPercentage > 80) R.drawable.ic_check else R.drawable.ic_cross)
+                ivResultIcon.setDrawableTintWithRes(if (it.correctQuestionsPercentage > 80) R.color.green else R.color.red)
 
                 tvQuestionsAnswered.isVisible = !it.areAllQuestionsAnswered
                 tvQuestionsAnsweredLabel.isVisible = !it.areAllQuestionsAnswered
@@ -162,7 +166,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                     answeredQuestions.setProgressWithAnimation(it.answeredQuestionsPercentage, (it.answeredQuestionsPercentage * 3.5f).toLong())
                     answeredQuestionsAmount.text = it.answeredQuestionsAmount.toString()
 
-                    if(it.areAllQuestionsAnswered) {
+                    if (it.areAllQuestionsAnswered) {
                         correctQuestions.setProgressWithAnimation(it.correctQuestionsPercentage, (it.correctQuestionsPercentage * 3.5f).toLong())
                         correctQuestionsAmount.text = it.correctQuestionsAmount.toString()
                         incorrectQuestions.setProgressWithAnimation(it.incorrectQuestionsPercentage, (it.incorrectQuestionsPercentage * 3.5f).toLong())
@@ -177,7 +181,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             }
         }
 
-        vmQuiz.areAllQuestionsAnsweredFlow.collectWhenStarted(viewLifecycleOwner) {
+        vmQuiz.areAllQuestionsAnsweredStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.bottomSheet.rv.updateAllViewHolders()
         }
 
@@ -202,22 +206,23 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                         show()
                     }
                 }
-                is NavigateToQuizScreen -> navigator.navigateToQuizContainerScreen(isShowSolutionScreen = event.isShowSolutionScreen)
+                is NavigateToQuizScreen -> {
+                    navigator.navigateToQuizContainerScreen(event.position, event.isShowSolutionScreen)
+                    //navigator.navigateToQuizContainerScreenWithQuestionCardClick(position, questionId, card)
+                }
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes, anchorView = binding.bottomSheet.root)
             }
         }
     }
 
     override fun onMenuItemClick(item: MenuItem?) = item?.let {
-        launch {
-            when (item.itemId) {
-                R.id.menu_item_quiz_delete_given_answers -> vmQuiz.onMenuItemClearGivenAnswersClicked()
-                R.id.menu_item_quiz_show_solutions -> vmQuiz.onMenuItemShowSolutionClicked()
-                R.id.menu_item_quiz_shuffle_type_none -> vmQuiz.onMenuItemOrderSelected(NONE)
-                R.id.menu_item_quiz_shuffle_type_questions -> vmQuiz.onMenuItemOrderSelected(SHUFFLED_QUESTIONS)
-                R.id.menu_item_quiz_shuffle_type_answers -> vmQuiz.onMenuItemOrderSelected(SHUFFLED_ANSWERS)
-                R.id.menu_item_quiz_shuffle_type_questions_and_answers -> vmQuiz.onMenuItemOrderSelected(SHUFFLED_QUESTIONS_AND_ANSWERS)
-            }
+        when (item.itemId) {
+            R.id.menu_item_quiz_delete_given_answers -> vmQuiz.onMenuItemClearGivenAnswersClicked()
+            R.id.menu_item_quiz_show_solutions -> vmQuiz.onMenuItemShowSolutionClicked()
+            R.id.menu_item_quiz_shuffle_type_none -> vmQuiz.onMenuItemOrderSelected(NONE)
+            R.id.menu_item_quiz_shuffle_type_questions -> vmQuiz.onMenuItemOrderSelected(SHUFFLED_QUESTIONS)
+            R.id.menu_item_quiz_shuffle_type_answers -> vmQuiz.onMenuItemOrderSelected(SHUFFLED_ANSWERS)
+            R.id.menu_item_quiz_shuffle_type_questions_and_answers -> vmQuiz.onMenuItemOrderSelected(SHUFFLED_QUESTIONS_AND_ANSWERS)
         }
         true
     } ?: false

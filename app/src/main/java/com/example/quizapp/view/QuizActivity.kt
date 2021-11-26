@@ -75,7 +75,8 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             }
 
             addCard.onLongClick {
-                navigator.navigateToFacultySelection(emptySet())
+//                navigator.navigateToSelectionScreen(SelectionType.RoleSelection(Role.ADMIN))
+//                navigator.navigateToSelectionScreen(SelectionType.ThemeSelection(AppCompa))
             }
         }
     }

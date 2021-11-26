@@ -9,15 +9,14 @@ import com.example.quizapp.databinding.TabLayoutViewFacultyBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.viewpager.adapter.VpaCourseOfStudiesSelection
+import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.viewpager.adapter.VpaManageCourseOfStudies
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.*
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.FragmentAdminManageCourseOfStudiesEvent.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCourseOfStudiesBinding>() {
@@ -98,9 +97,18 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
     }
 
     private fun initObservers(){
+        setSelectionTypeWithParsedValueListener(vmAdmin::onMoreOptionsItemSelected)
+
+        setConfirmationTypeListener(vmAdmin::onDeleteCourseOfStudiesConfirmed)
+
         vmAdmin.fragmentAdminManageCourseOfStudiesEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                is NavigateToManageCourseOfStudiesMoreOptionsEvent -> navigator.navigateToAdminManageCoursesOfStudiesMoreOptionsDialog(event.courseOfStudies)
+                is NavigateToManageCourseOfStudiesMoreOptionsEvent ->
+                    navigator.navigateToSelectionDialog(SelectionType.CourseOfStudiesMoreOptionsSelection(event.courseOfStudies))
+                is NavigateToAddEditCourseOfStudiesEvent ->
+                    navigator.navigateToAdminAddEditCourseOfStudies(event.courseOfStudies)
+                is NavigateToConfirmDeletionEvent ->
+                    navigator.navigateToConfirmationDialog(ConfirmationType.DeleteCourseOfStudiesConfirmation(event.courseOfStudies))
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
             }
         }

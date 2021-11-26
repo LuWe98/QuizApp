@@ -8,7 +8,7 @@ import com.example.quizapp.model.ktor.requests.SyncCoursesOfStudiesRequest
 import com.example.quizapp.model.ktor.responses.DeleteCourseOfStudiesResponse
 import com.example.quizapp.model.ktor.responses.InsertCourseOfStudiesResponse
 import com.example.quizapp.model.ktor.responses.SyncCoursesOfStudiesResponse
-import com.quizappbackend.routing.ApiPaths.CourseOfStudiesPaths
+import com.example.quizapp.model.ktor.ApiPaths.CourseOfStudiesPaths
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject

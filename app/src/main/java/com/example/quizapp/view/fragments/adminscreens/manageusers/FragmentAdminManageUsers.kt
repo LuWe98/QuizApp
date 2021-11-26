@@ -8,6 +8,8 @@ import com.example.quizapp.databinding.FragmentAdminManageUsersBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.recyclerview.adapters.RvaAdminUser
 import com.example.quizapp.viewmodel.VmAdminManageUsers
 import com.example.quizapp.viewmodel.VmAdminManageUsers.FragmentAdminEvent.*
@@ -29,8 +31,7 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
 
     private fun initRecyclerView() {
         rvAdapter = RvaAdminUser().apply {
-            onItemClicked = { }
-            onItemLongClicked = navigator::navigateToUserMoreOptionsDialog
+            onItemClicked = vmAdmin::onUserItemClicked
         }
 
         binding.rv.apply {
@@ -47,11 +48,16 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
         binding.apply {
             btnBack.onClick(navigator::popBackStack)
             etSearchQuery.onTextChanged(vmAdmin::onSearchQueryChanged)
+            fabAdd.onClick(navigator::navigateToAdminAddEditUser)
         }
     }
 
     private fun initObservers() {
-        vmAdmin.filteredPagedData.observe(viewLifecycleOwner) {
+        setSelectionTypeWithParsedValueListener(vmAdmin::onMoreOptionsItemSelected)
+
+        setConfirmationTypeListener(vmAdmin::onDeleteUserConfirmed)
+
+        vmAdmin.filteredPagedDataStateFlow.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitData(lifecycle, it)
             binding.swipeRefreshLayout.isRefreshing = false
         }
@@ -61,6 +67,9 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
                 is UpdateUserRoleEvent -> rvAdapter.updateUserRole(event.userId, event.newRole)
                 is HideUserEvent -> rvAdapter.hideUser(event.userId)
                 is ShowUserEvent -> rvAdapter.showUser(event.user)
+                is NavigateToUserMoreOptionsSelection -> navigator.navigateToSelectionDialog(SelectionType.UserMoreOptionsSelection(event.user))
+                is NavigateToChangeUserRoleDialogEvent -> navigator.navigateToChangeUserRoleDialog(event.user)
+                is NavigateToDeletionConfirmationEvent -> navigator.navigateToConfirmationDialog(ConfirmationType.DeleteUserConfirmation(event.user))
             }
         }
     }

@@ -52,7 +52,6 @@
         <item name="android:windowExitAnimation">@anim/dialog_fragment_hide</item>
     </style>
 
-
     <style name="Style.QuizApp.MaterialCardView.RoundCornersTop" parent="@style/Widget.MaterialComponents.CardView">
         <item name="shapeAppearanceOverlay">@style/Style.QuizApp.MaterialCardView.RoundCornersTop.ShapeAppearanceOverlay</item>
     </style>
@@ -63,4 +62,33 @@
         <item name="cornerSizeTopRight">15dp</item>
         <item name="android:padding">0dp</item>
     </style>
+
+
+
+    <style name="Style.QuizApp.AddChip" parent="Widget.MaterialComponents.Chip.Action">
+        <item name="chipStrokeWidth">2dp</item>
+        <item name="chipStrokeColor">?colorPrimary</item>
+        <item name="chipBackgroundColor">@color/transparent</item>
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="chipIcon">@drawable/ic_add</item>
+        <item name="chipIconSize">20dp</item>
+        <item name="chipIconTint">?colorPrimary</item>
+        <item name="chipStartPadding">@dimen/grid_2</item>
+        <item name="chipEndPadding">@dimen/grid_2</item>
+        <item name="chipMinHeight">30dp</item>
+    </style>
+
+    <style name="Style.QuizApp.EntryChip" parent="Widget.MaterialComponents.Chip.Entry">
+        <item name="chipStrokeWidth">2dp</item>
+        <item name="chipStrokeColor">?colorPrimary</item>
+        <item name="chipBackgroundColor">?colorPrimary</item>
+        <item name="chipIconTint">?colorPrimary</item>
+        <item name="chipStartPadding">@dimen/grid_2</item>
+        <item name="chipEndPadding">@dimen/grid_2</item>
+        <item name="chipMinHeight">30dp</item>
+        <item name="closeIconTint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:checkable">false</item>
+    </style>
+
 </resources>

@@ -1,6 +1,6 @@
 package com.example.quizapp.viewmodel
 
-import androidx.appcompat.app.AppCompatDelegate.*
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
@@ -10,16 +10,20 @@ import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.QuestionnaireShuffleType
 import com.example.quizapp.model.datastore.QuizAppLanguage
+import com.example.quizapp.model.datastore.QuizAppTheme
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_CHANGED
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_UP_TO_DATE
+import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,14 +44,9 @@ class VmSettings @Inject constructor(
 
     val userNameFlow = userFlow.map(User::userName::get).stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val themeNameResFlow = preferencesRepository.themeFlow.map {
-        when (it) {
-            MODE_NIGHT_NO -> R.string.light
-            MODE_NIGHT_YES -> R.string.dark
-            MODE_NIGHT_FOLLOW_SYSTEM -> R.string.systemDefault
-            else -> throw IllegalStateException()
-        }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, null)
+    val themeNameResFlow = preferencesRepository.themeFlow
+        .map(QuizAppTheme::textRes::get)
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     val languageNameResFlow = preferencesRepository.languageFlow
         .map(QuizAppLanguage::textRes::get)
@@ -79,19 +78,73 @@ class VmSettings @Inject constructor(
         fragmentSettingsEventChannel.send(NavigateToAdminManageFacultiesScreenEvent)
     }
 
-    fun onPreferredCourseOfStudiesButtonClicked(){
+    fun onPreferredCourseOfStudiesButtonClicked() {
         launch(IO) {
             preferencesRepository.getPreferredCourseOfStudiesId().let {
-                fragmentSettingsEventChannel.send(NavigateToCourseOfStudiesSelectionScreen(it))
+                fragmentSettingsEventChannel.send(NavigateToCourseOfStudiesSelectionScreen(it.toTypedArray()))
             }
         }
     }
 
-    fun onCourseOfStudiesUpdateTriggered(coursesOfStudiesIds: List<String>){
+    fun onCourseOfStudiesUpdateTriggered(coursesOfStudiesIds: Array<String>) {
         launch(IO) {
-            preferencesRepository.updatePreferredCourseOfStudiesIds(coursesOfStudiesIds)
+            preferencesRepository.updatePreferredCourseOfStudiesIds(coursesOfStudiesIds.toList())
         }
     }
+
+
+    fun onLanguageButtonClicked() {
+        launch(IO) {
+            fragmentSettingsEventChannel.send(NavigateToLanguageSelection(preferencesRepository.getLanguage()))
+        }
+    }
+
+    fun onLanguageUpdateReceived(newLanguage: QuizAppLanguage) {
+        launch(IO) {
+            if (preferencesRepository.getLanguage() != newLanguage) {
+                preferencesRepository.updateLanguage(newLanguage)
+                fragmentSettingsEventChannel.send(RecreateActivityEvent)
+            }
+        }
+    }
+
+
+    fun onThemeButtonClicked() {
+        launch(IO) {
+            fragmentSettingsEventChannel.send(NavigateToThemeSelection(preferencesRepository.getTheme()))
+        }
+    }
+
+    fun onThemeUpdateReceived(newTheme: QuizAppTheme) {
+        launch(IO) {
+            if (preferencesRepository.getTheme() != newTheme) {
+                preferencesRepository.updateTheme(newTheme)
+                withContext(Main) {
+                    AppCompatDelegate.setDefaultNightMode(newTheme.appCompatId)
+                }
+            }
+        }
+    }
+
+
+    fun onShuffleTypeButtonClicked() {
+        launch(IO) {
+            fragmentSettingsEventChannel.send(NavigateToShuffleTypeSelection(preferencesRepository.getShuffleType()))
+        }
+    }
+
+    fun onShuffleTypeUpdateReceived(newShuffleType: QuestionnaireShuffleType) {
+        launch(IO) {
+            preferencesRepository.updateShuffleType(newShuffleType)
+        }
+    }
+
+    fun onLogoutConfirmationReceived(logoutConfirmation: ConfirmationType.LogoutConfirmation) {
+        launch(IO) {
+            fragmentSettingsEventChannel.send(LogoutEvent)
+        }
+    }
+
 
     fun onRefreshListenerTriggered() = applicationScope.launch(IO) {
         val user = preferencesRepository.user
@@ -127,7 +180,12 @@ class VmSettings @Inject constructor(
         object NavigateToAdminManageUsersScreenEvent : FragmentSettingsEvent()
         object NavigateToAdminManageCoursesOfStudiesScreenEvent : FragmentSettingsEvent()
         object NavigateToAdminManageFacultiesScreenEvent : FragmentSettingsEvent()
-        class NavigateToCourseOfStudiesSelectionScreen(val courseOfStudiesIds: Set<String>): FragmentSettingsEvent()
+        class NavigateToCourseOfStudiesSelectionScreen(val courseOfStudiesIds: Array<String>) : FragmentSettingsEvent()
         class ShowMessageSnackBarEvent(val messageRes: Int) : FragmentSettingsEvent()
+        object RecreateActivityEvent : FragmentSettingsEvent()
+        class NavigateToLanguageSelection(val currentLanguage: QuizAppLanguage) : FragmentSettingsEvent()
+        class NavigateToThemeSelection(val currentTheme: QuizAppTheme) : FragmentSettingsEvent()
+        class NavigateToShuffleTypeSelection(val shuffleType: QuestionnaireShuffleType) : FragmentSettingsEvent()
+        object LogoutEvent: FragmentSettingsEvent()
     }
 }

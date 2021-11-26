@@ -30,63 +30,70 @@
                 android:text="@string/manageUsers"
                 android:gravity="center"
                 android:layout_marginHorizontal="42dp"
-                app:autoSizeMaxTextSize="18sp"
+                android:lines="1"
+                app:autoSizeMaxTextSize="19sp"
                 app:autoSizeMinTextSize="10sp"
                 app:autoSizeTextType="uniform"
                 app:autoSizeStepGranularity="0.25sp"
-                android:lines="1"
                 android:textStyle="bold"
-                android:fontFamily="@font/work_sans_medium"
+                android:fontFamily="@font/work_sans_regular"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/btnBack"
                 app:layout_constraintBottom_toBottomOf="@+id/btnBack" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:layout_height="45dp"
-                android:id="@+id/searchLayout"
-                android:layout_marginTop="@dimen/grid_6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/clSearchBar"
+                android:background="@drawable/background_round_corners_10dp"
+                android:backgroundTint="?android:colorBackground"
                 android:layout_marginHorizontal="@dimen/grid_4"
-                android:background="@drawable/background_round_corners_7_5dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTitle"
-                android:elevation="2.5dp"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:layout_marginTop="@dimen/grid_4"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle">
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/btnSearch"
+                    android:background="?attr/actionBarItemBackground"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:srcCompat="@drawable/ic_search"
-                    android:padding="10dp"
-                    android:id="@+id/searchIcon"/>
+                    android:padding="7.5dp"
+                    android:layout_marginStart="@dimen/grid_1_5" />
 
             <androidx.appcompat.widget.AppCompatEditText
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_height="50dp"
                     android:id="@+id/etSearchQuery"
-                    android:background="@color/transparent"
+                    android:hint="@string/searchForUsers"
+                    android:background="@android:color/transparent"
+                    android:layout_marginHorizontal="@dimen/grid_1"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     android:textSize="16sp"
-                    android:gravity="center_vertical"
-                    app:layout_constraintStart_toEndOf="@id/searchIcon"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:hint="Search for Users"
+                    app:layout_constraintTop_toTopOf="@+id/btnSearch"
+                    app:layout_constraintBottom_toBottomOf="@+id/btnSearch"
+                    app:layout_constraintStart_toEndOf="@+id/btnSearch"
                     app:layout_constraintEnd_toStartOf="@+id/btnFilter" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/btnFilter"
+                    android:background="?attr/actionBarItemBackground"
                     app:srcCompat="@drawable/ic_sort"
-                    android:padding="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:id="@+id/btnFilter" />
+                    android:padding="7.5dp"
+                    android:layout_marginEnd="@dimen/grid_1"
+                    app:layout_constraintTop_toTopOf="@id/etSearchQuery"
+                    app:layout_constraintBottom_toBottomOf="@id/etSearchQuery"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -95,17 +102,27 @@
                 android:layout_marginTop="@dimen/grid_6"
                 android:id="@+id/swipeRefreshLayout"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/searchLayout">
+                app:layout_constraintTop_toBottomOf="@+id/clSearchBar">
 
             <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    tools:listitem="@layout/rvi_user"
-                    android:background="?android:colorBackground"
+                    tools:listitem="@layout/rvi_user_new"
                     android:paddingHorizontal="@dimen/grid_2"
                     android:clipToPadding="false"
                     android:paddingBottom="150dp"
                     android:id="@+id/rv" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fabAdd"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_margin="@dimen/grid_8"
+                android:src="@drawable/ic_add"
+                app:tint="@color/white"
+                app:backgroundTint="?colorPrimary"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
