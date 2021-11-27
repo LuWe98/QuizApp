@@ -1,9 +1,11 @@
 package com.example.quizapp.viewmodel
 
 import androidx.annotation.StringRes
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
+import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.extensions.log
 import com.example.quizapp.model.databases.room.LocalRepository
@@ -19,22 +21,32 @@ import com.example.quizapp.viewmodel.VmAdminManageFaculties.FragmentAdminManageF
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
 class VmAdminManageFaculties @Inject constructor(
     private val backendRepository: BackendRepository,
-    private val localRepository: LocalRepository
+    private val localRepository: LocalRepository,
+    private val state: SavedStateHandle
 ) : ViewModel() {
 
     private val fragmentAdminManageFacultiesEventChannel = Channel<FragmentAdminManageFacultiesEvent>()
 
     val fragmentAdminManageFacultiesEventChannelFlow = fragmentAdminManageFacultiesEventChannel.receiveAsFlow()
 
-    val facultiesStateFlow = localRepository.allFacultiesFlow.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    private val searchQueryMutableStateFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
+
+    val searchQueryStateFlow = searchQueryMutableStateFlow.asStateFlow()
+
+    val searchQuery get() = searchQueryMutableStateFlow.value
+
+
+    val facultiesStateFlow = searchQueryMutableStateFlow.map {
+        localRepository.findFacultiesWithName(it)
+    }.distinctUntilChanged()
+
 
 
     fun onFacultyItemClicked(faculty: Faculty) {
@@ -75,6 +87,20 @@ class VmAdminManageFaculties @Inject constructor(
     }
 
 
+    fun onSearchQueryChanged(newQuery: String) {
+        state.set(SEARCH_QUERY_KEY, newQuery)
+        searchQueryMutableStateFlow.value = newQuery
+    }
+
+    fun onDeleteSearchClicked(){
+        if(searchQuery.isNotBlank()){
+            launch {
+                fragmentAdminManageFacultiesEventChannel.send(ClearSearchQueryEvent)
+            }
+        }
+    }
+
+
     sealed class FragmentAdminManageFacultiesEvent {
         object NavigateBack: FragmentAdminManageFacultiesEvent()
         class NavigateToFacultiesMoreOptionsDialogEvent(val faculty: Faculty): FragmentAdminManageFacultiesEvent()
@@ -82,5 +108,10 @@ class VmAdminManageFaculties @Inject constructor(
         class ChangeProgressVisibilityEvent(val visible: Boolean): FragmentAdminManageFacultiesEvent()
         class NavigateToAddEditFacultyEvent(val faculty: Faculty): FragmentAdminManageFacultiesEvent()
         class NavigateToDeletionConfirmationEvent(val faculty: Faculty): FragmentAdminManageFacultiesEvent()
+        object ClearSearchQueryEvent: FragmentAdminManageFacultiesEvent()
+    }
+
+    companion object {
+        private const val SEARCH_QUERY_KEY = "searchQueryKey"
     }
 }

@@ -27,11 +27,11 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
+        initListeners()
         initObservers()
     }
 
-    private fun initViews() {
+    private fun initListeners() {
         binding.apply {
             adminLayout.apply {
                 btnAdminUser.onClick(vmSettings::onGoToManageUsersClicked)
@@ -43,7 +43,6 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
                 btnTheme.onClick(vmSettings::onThemeButtonClicked)
                 btnLanguage.onClick(vmSettings::onLanguageButtonClicked)
                 btnShuffleType.onClick(vmSettings::onShuffleTypeButtonClicked)
-
                 btnPreferredCos.onClick(vmSettings::onPreferredCourseOfStudiesButtonClicked)
             }
 
@@ -52,6 +51,11 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
                 btnChangePassword.onClick { }
                 btnRole.onClick { }
                 btnUserName.onClick { }
+            }
+
+            synchronizationLayout.apply {
+                btnSyncQuestionnaires.onClick(vmSettings::onSyncQuestionnairesClicked)
+                btnSyncCosAndFaculties.onClick(vmSettings::onSyncCosAndFacultiesClicked)
             }
 
             swipeRefreshLayout.setOnRefreshListener(vmSettings::onRefreshListenerTriggered)

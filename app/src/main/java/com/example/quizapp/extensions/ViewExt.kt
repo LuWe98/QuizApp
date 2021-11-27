@@ -5,12 +5,15 @@ import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.*
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -47,7 +50,7 @@ fun TabLayout.attachToViewPager(viewPager: ViewPager2, tabConfigurationStrategy:
 fun TextView.setDrawableSize(size: Int, pos: DrawablePos = DrawablePos.START) {
     val pixelSize = size.px
     compoundDrawablesRelative[pos.ordinal].setBounds(0, 0, pixelSize, pixelSize)
-    when(pos){
+    when (pos) {
         DrawablePos.START -> setCompoundDrawablesRelative(compoundDrawablesRelative[pos.ordinal], null, null, null)
         DrawablePos.TOP -> setCompoundDrawablesRelative(null, compoundDrawablesRelative[pos.ordinal], null, null)
         DrawablePos.END -> setCompoundDrawablesRelative(null, null, compoundDrawablesRelative[pos.ordinal], null)
@@ -55,7 +58,7 @@ fun TextView.setDrawableSize(size: Int, pos: DrawablePos = DrawablePos.START) {
     }
 }
 
-enum class DrawablePos{
+enum class DrawablePos {
     START,
     TOP,
     END,
@@ -131,15 +134,40 @@ fun TextView.textAsFloat() = text.toString().toFloat()
 fun TextView.textAsDouble() = text.toString().toDouble()
 
 
-inline fun EditText.onTextChanged(crossinline action : (String) -> (Unit)) {
-    doOnTextChanged { text, _, _, _ ->  action.invoke(text.toString())}
+inline fun EditText.onTextChanged(crossinline action: (String) -> (Unit)) {
+    doOnTextChanged { text, _, _, _ -> action.invoke(text.toString()) }
 }
 
-inline fun SwitchMaterial.onCheckedChange(crossinline action : (Boolean) -> (Unit)) {
-    setOnCheckedChangeListener { _, checked ->  action.invoke(checked)}
+inline fun ImageView.changeIconOnCondition(
+    @DrawableRes trueIcon: Int = R.drawable.ic_search,
+    @DrawableRes falseIcon: Int = R.drawable.ic_cross,
+    animDuration: Long = 150,
+    crossinline condition: () -> (Boolean),
+) {
+    val cond = condition()
+    if (tag == cond) return
+    tag = cond
+    clearAnimation()
+    animate().scaleX(0f)
+        .scaleY(0f)
+        .setInterpolator(AccelerateInterpolator())
+        .setDuration(animDuration)
+        .withEndAction {
+            setImageDrawable(if (cond) trueIcon else falseIcon)
+            animate().scaleY(1f)
+                .scaleX(1f)
+                .setInterpolator(DecelerateInterpolator())
+                .setDuration(animDuration)
+                .start()
+        }.start()
 }
 
-inline fun ViewPager2.onPageSelected(crossinline action : (Int) -> (Unit)){
+
+inline fun SwitchMaterial.onCheckedChange(crossinline action: (Boolean) -> (Unit)) {
+    setOnCheckedChangeListener { _, checked -> action.invoke(checked) }
+}
+
+inline fun ViewPager2.onPageSelected(crossinline action: (Int) -> (Unit)) {
     registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
@@ -149,7 +177,7 @@ inline fun ViewPager2.onPageSelected(crossinline action : (Int) -> (Unit)){
 }
 
 inline fun TabLayout.forEachTab(crossinline action: (TabLayout.Tab, Int) -> (Unit)) {
-    for (i in 0 .. tabCount){
+    for (i in 0..tabCount) {
         getTabAt(i)?.let { tab ->
             action.invoke(tab, i)
         }
@@ -160,25 +188,28 @@ fun TabLayout.getCustomViewAt(index: Int) = getTabAt(index)?.customView
 
 inline fun TabLayout.onTabSelected(crossinline action: (TabLayout.Tab?) -> Unit) {
     addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-        override fun onTabSelected(tab: TabLayout.Tab?) { action(tab) }
+        override fun onTabSelected(tab: TabLayout.Tab?) {
+            action(tab)
+        }
+
         override fun onTabUnselected(tab: TabLayout.Tab?) {}
         override fun onTabReselected(tab: TabLayout.Tab?) {}
     })
 }
 
-fun View.findDrawableWith(@DrawableRes res : Int) = ContextCompat.getDrawable(context, res)
+fun View.findDrawableWith(@DrawableRes res: Int) = ContextCompat.getDrawable(context, res)
 
-fun View.findColor(@ColorRes res : Int) = ContextCompat.getColor(context, res)
+fun View.findColor(@ColorRes res: Int) = ContextCompat.getColor(context, res)
 
-fun View.getThemeColor(@AttrRes res : Int) = context.getThemeColor(res)
+fun View.getThemeColor(@AttrRes res: Int) = context.getThemeColor(res)
 
-inline fun View.onClick(crossinline action : () -> (Unit)) {
+inline fun View.onClick(crossinline action: () -> (Unit)) {
     setOnClickListener {
         action.invoke()
     }
 }
 
-inline fun View.onLongClick(crossinline action : () -> (Unit)) {
+inline fun View.onLongClick(crossinline action: () -> (Unit)) {
     setOnLongClickListener {
         action.invoke()
         return@setOnLongClickListener true
@@ -190,12 +221,16 @@ fun RadioGroup.getSelectedButton(): RadioButton = findViewById(checkedRadioButto
 
 
 @SuppressLint("ClickableViewAccessibility")
-fun View.enableViewAndChildren(enable: Boolean){
+fun View.enableViewAndChildren(enable: Boolean) {
     isEnabled = enable
-    if(this is ViewGroup){
+    if (this is ViewGroup) {
 //        setOnTouchListener(if(!enable) View.OnTouchListener { _, _ -> false } else View.OnTouchListener { _, _ -> true })
-        for(index in 0 .. childCount){
+        for (index in 0..childCount) {
             getChildAt(index)?.enableViewAndChildren(enable)
         }
     }
 }
+
+
+
+

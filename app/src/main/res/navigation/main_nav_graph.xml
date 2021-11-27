@@ -383,9 +383,17 @@
             android:id="@+id/fragmentSearch"
             android:name="com.example.quizapp.view.fragments.searchscreen.FragmentSearch"
             android:label="FragmentSearchNew"
-            tools:layout="@layout/search_new" />
+            tools:layout="@layout/search_new" >
+        <action
+                android:id="@+id/action_fragmentSearch_to_bsdfSearchFilter"
+                app:destination="@id/bsdfSearchFilter" />
+    </fragment>
     <action
             android:id="@+id/action_global_fragmentSearch"
             app:destination="@id/fragmentSearch" />
+    <dialog
+            android:id="@+id/bsdfSearchFilter"
+            android:name="com.example.quizapp.view.fragments.searchscreen.BsdfSearchFilter"
+            android:label="BsdfSearchFilter" />
 
 </navigation>

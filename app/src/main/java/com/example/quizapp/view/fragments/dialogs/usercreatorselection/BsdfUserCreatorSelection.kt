@@ -11,7 +11,8 @@ import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaUserCreatorBrowse
 import com.example.quizapp.viewmodel.VmUserCreatorSelection
-import com.example.quizapp.viewmodel.VmUserCreatorSelection.UserCreatorSelectionEvent.SendResultEvent
+import com.example.quizapp.viewmodel.VmUserCreatorSelection.*
+import com.example.quizapp.viewmodel.VmUserCreatorSelection.UserCreatorSelectionEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -55,6 +56,7 @@ class BsdfUserCreatorSelection: BindingBottomSheetDialogFragment<BsdfUserCreator
         binding.apply {
             etSearchQuery.onTextChanged(vmUser::onSearchQueryChanged)
             btnConfirm.onClick(vmUser::onConfirmButtonClicked)
+            btnSearch.onClick(vmUser::onDeleteSearchQueryClicked)
         }
     }
 
@@ -67,6 +69,12 @@ class BsdfUserCreatorSelection: BindingBottomSheetDialogFragment<BsdfUserCreator
             rvAdapter.submitData(it)
         }
 
+        vmUser.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.btnSearch.changeIconOnCondition {
+                it.isBlank()
+            }
+        }
+
         vmUser.userCreatorSelectionEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
                 is SendResultEvent -> {
@@ -75,6 +83,7 @@ class BsdfUserCreatorSelection: BindingBottomSheetDialogFragment<BsdfUserCreator
                     })
                     navigator.popBackStack()
                 }
+                ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
             }
         }
     }

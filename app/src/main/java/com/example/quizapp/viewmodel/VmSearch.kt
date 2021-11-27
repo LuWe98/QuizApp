@@ -4,21 +4,18 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.paging.MongoQuestionnairePagingSource
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
 import com.example.quizapp.model.menus.SortBy
-import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
@@ -85,35 +82,21 @@ class VmSearch @Inject constructor(
         selectedCourseOfStudiesIdsMutableStateFlow,
         selectedFacultyIdsMutableStateFlow
     ) { sortBy: SortBy, searchQuery: String, users: Set<User>, cosIds: Set<String>, facultyIds: Set<String> ->
-        Pager(
-            config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
-            pagingSourceFactory = {
-                MongoQuestionnairePagingSource(
-                    backendRepository,
-                    localRepository,
-                    searchQuery,
-                    facultyIds.toList(),
-                    cosIds.toList(),
-                    users.map(User::id),
-                    sortBy
-                )
-            })
-    }.flatMapLatest {
-        it.flow.cachedIn(viewModelScope)
-    }.stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
+        PagingConfigValues.getDefaultPager { page ->
+            backendRepository.getPagedQuestionnaires(
+                page = page,
+                searchString = searchQuery,
+                questionnaireIdsToIgnore = localRepository.getAllQuestionnaireIds(),
+                facultyIds = facultyIds.toList(),
+                courseOfStudiesIds = cosIds.toList(),
+                authorIds = users.map(User::id),
+                sortBy = sortBy
+            )
+        }
+    }.flatMapLatest(Pager<Int, BrowsableQuestionnaire>::flow::get).cachedIn(viewModelScope)
 
 
     suspend fun getCourseOfStudiesNameWithIds(courseOfStudiesIds: List<String>) = localRepository.getCoursesOfStudiesNameWithIds(courseOfStudiesIds)
-
-
-//    val filteredPagedData = searchQueryMutableStateFlow.flatMapLatest { query ->
-//        Pager(
-//            config = PagingConfig(pageSize = PagingConfigValues.PAGE_SIZE, maxSize = PagingConfigValues.MAX_SIZE),
-//            pagingSourceFactory = {
-//                MongoQuestionnairePagingSource(backendRepository, localRepository, query)
-//            }).flow.cachedIn(viewModelScope)
-//    }
-
 
     fun removeFilteredFaculty(faculty: Faculty) {
         selectedFacultyIds.toMutableSet().apply {

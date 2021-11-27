@@ -2,16 +2,11 @@ package com.example.quizapp.viewmodel
 
 import androidx.annotation.StringRes
 import androidx.lifecycle.*
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.cachedIn
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.paging.MongoQuestionnairePagingSource
-import com.example.quizapp.model.ktor.paging.PagingConfigValues
 import com.example.quizapp.model.ktor.responses.GetQuestionnaireResponse.GetQuestionnaireResponseType
 import com.example.quizapp.model.ktor.status.DownloadStatus
 import com.example.quizapp.model.databases.room.LocalRepository
@@ -21,7 +16,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 

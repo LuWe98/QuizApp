@@ -14,7 +14,6 @@ import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.viewpager.adapter.VpaManageCourseOfStudies
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies
-import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.*
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.FragmentAdminManageCourseOfStudiesEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,6 +32,8 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
     }
 
     private fun initViews() {
+        binding.etSearchQuery.setText(vmAdmin.searchQuery)
+
         val facultyList = vmAdmin.getFacultiesWithPlaceholder
         vpAdapter = VpaManageCourseOfStudies(this, facultyList)
 
@@ -93,6 +94,8 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
         binding.apply {
             btnBack.onClick(navigator::popBackStack)
             fabAdd.onClick(navigator::navigateToAdminAddEditCourseOfStudies)
+            etSearchQuery.onTextChanged(vmAdmin::onSearchQueryChanged)
+            btnSearch.onClick(vmAdmin::onClearSearchQueryClicked)
         }
     }
 
@@ -100,6 +103,12 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
         setSelectionTypeWithParsedValueListener(vmAdmin::onMoreOptionsItemSelected)
 
         setConfirmationTypeListener(vmAdmin::onDeleteCourseOfStudiesConfirmed)
+
+        vmAdmin.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.btnSearch.changeIconOnCondition {
+                it.isBlank()
+            }
+        }
 
         vmAdmin.fragmentAdminManageCourseOfStudiesEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
@@ -110,6 +119,7 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
                 is NavigateToConfirmDeletionEvent ->
                     navigator.navigateToConfirmationDialog(ConfirmationType.DeleteCourseOfStudiesConfirmation(event.courseOfStudies))
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
+                ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
             }
         }
     }

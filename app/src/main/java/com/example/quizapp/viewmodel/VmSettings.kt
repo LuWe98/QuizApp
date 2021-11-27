@@ -14,6 +14,7 @@ import com.example.quizapp.model.datastore.QuizAppTheme
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_CHANGED
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_UP_TO_DATE
+import com.example.quizapp.utils.BackendSyncer
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +32,8 @@ class VmSettings @Inject constructor(
     private val applicationScope: CoroutineScope,
     private val preferencesRepository: PreferencesRepository,
     private val backendRepository: BackendRepository,
-    private val localRepository: LocalRepository
+    private val localRepository: LocalRepository,
+    private val backendSyncer: BackendSyncer
 ) : ViewModel() {
 
     private val fragmentSettingsEventChannel = Channel<FragmentSettingsEvent>()
@@ -173,6 +175,16 @@ class VmSettings @Inject constructor(
             }
         }
     }
+
+
+    fun onSyncQuestionnairesClicked(){
+
+    }
+
+    fun onSyncCosAndFacultiesClicked(){
+
+    }
+
 
     sealed class FragmentSettingsEvent {
         object OnLogoutClickedEvent : FragmentSettingsEvent()

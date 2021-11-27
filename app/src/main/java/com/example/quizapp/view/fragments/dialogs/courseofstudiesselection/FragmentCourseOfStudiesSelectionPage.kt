@@ -53,8 +53,8 @@ class FragmentCourseOfStudiesSelectionPage: BindingFragment<BsdfCourseOfStudiesS
     }
 
     private fun initObservers(){
-        vmCos.getFacultyWithCourseOfStudiesFlow(facultyId).collectWhenStarted(viewLifecycleOwner) {
-            rvAdapter.submitList(it.coursesOfStudies)
+        vmCos.getCourseOfStudiesFlow(facultyId).collectWhenStarted(viewLifecycleOwner) {
+            rvAdapter.submitList(it)
         }
 
         vmCos.selectedCoursesOfStudiesIdsStateFlow.collectWhenStarted(viewLifecycleOwner) {

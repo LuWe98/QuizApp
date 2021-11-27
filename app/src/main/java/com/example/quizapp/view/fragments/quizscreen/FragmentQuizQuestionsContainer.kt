@@ -13,8 +13,8 @@ import com.example.quizapp.databinding.FragmentQuizQuestionsContainerBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.datastore.QuestionnaireShuffleType.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaLazyQuestionTabsLayout
 import com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab.LazyQuestionTab
+import com.example.quizapp.view.recyclerview.adapters.RvaLazyQuestionTabsLayout
 import com.example.quizapp.view.viewpager.adapter.VpaQuiz
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmQuiz
@@ -23,8 +23,6 @@ import com.example.quizapp.viewmodel.VmQuizQuestionsContainer
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.FragmentQuizContainerEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.util.date.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.runBlocking
 import java.util.*
 
 @AndroidEntryPoint
@@ -186,26 +184,8 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
 
     private fun onPageSelected(position: Int) {
         vmContainer.onViewPagerPageSelected(position)
-        updateQuestionTypeIcon(vpaAdapter.createFragment(position).isMultipleChoice)
-    }
-
-    private fun updateQuestionTypeIcon(isMultipleChoice: Boolean) {
-        binding.btnQuestionType.apply {
-            if (tag == isMultipleChoice) return
-            tag = isMultipleChoice
-            clearAnimation()
-            animate().scaleX(0f)
-                .scaleY(0f)
-                .setInterpolator(AccelerateInterpolator())
-                .setDuration(150)
-                .withEndAction {
-                    setImageDrawable(if (isMultipleChoice) R.drawable.ic_check_circle else R.drawable.ic_radio_button)
-                    animate().scaleY(1f)
-                        .scaleX(1f)
-                        .setInterpolator(DecelerateInterpolator())
-                        .setDuration(150)
-                        .start()
-                }.start()
+        binding.btnQuestionType.changeIconOnCondition(R.drawable.ic_check_circle, R.drawable.ic_radio_button) {
+            vpaAdapter.createFragment(position).isMultipleChoice
         }
     }
 

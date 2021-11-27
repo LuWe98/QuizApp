@@ -99,7 +99,6 @@
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="@dimen/grid_6"
                 android:id="@+id/swipeRefreshLayout"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/clSearchBar">
@@ -109,6 +108,7 @@
                     android:layout_height="match_parent"
                     tools:listitem="@layout/rvi_user_new"
                     android:paddingHorizontal="@dimen/grid_2"
+                    android:paddingTop="@dimen/grid_2"
                     android:clipToPadding="false"
                     android:paddingBottom="150dp"
                     android:id="@+id/rv" />

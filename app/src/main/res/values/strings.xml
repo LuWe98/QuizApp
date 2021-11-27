@@ -11,6 +11,8 @@
     <string name="home">Home</string>
     <string name="search">Search</string>
     <string name="searchForUsers">Search for users</string>
+    <string name="searchForFaculties">Search for faculties</string>
+    <string name="searchForCourseOfStudies">Search for course of studies</string>
     <string name="settings">Settings</string>
 
     <string name="test">%1$s - %2$s - %3$s - %4$s</string>
@@ -275,8 +277,18 @@
 
 
 
+    <string name="synchronization">Synchronization</string>
+    <string name="syncQuestionnaires">Sync questionnaires</string>
+    <string name="syncCoursesOfStudiesAndFaculties">Sync courses of studies and faculties</string>
     <string name="syncUnsuccessful">Could not sync data!</string>
     <string name="syncSuccessful">Questionnaire synced!</string>
+
+
+    <string name="filterFaculties">Filter faculties</string>
+    <string name="filterCourseOfStudies">Filter course of studies</string>
+    <string name="filterAuthors">Filter authors</string>
+    <string name="apply">Apply</string>
+
 
     <!-- SETTINGS -->
     <string name="systemDefault">System default</string>

@@ -28,6 +28,7 @@ import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStrin
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizResultDirections
+import com.example.quizapp.view.fragments.searchscreen.FragmentSearchDirections
 import com.example.quizapp.view.fragments.settingsscreen.FragmentSettingsDirections
 import java.lang.ref.WeakReference
 import javax.inject.Inject
@@ -106,6 +107,10 @@ class Navigator @Inject constructor(
 
     fun navigateToSearchScreen() {
         navController.navigate(MainNavGraphDirections.actionGlobalFragmentSearch())
+    }
+
+    fun navigateToSearchFilterDialog() {
+        navController.navigate(FragmentSearchDirections.actionFragmentSearchToBsdfSearchFilter())
     }
 
     fun navigateToQuestionnaireMoreOptions(questionnaire: Questionnaire){

@@ -13,6 +13,7 @@ import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
+import com.example.quizapp.model.ktor.paging.PagingConfigValues
 import com.example.quizapp.model.menus.SortBy
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,7 +34,7 @@ class BackendRepository @Inject constructor(
 
     suspend fun registerUser(userName: String, password: String) = userApi.registerUser(userName, password)
 
-    suspend fun getPagedCreators(limit: Int, page: Int, searchString: String) = userApi.getPagedCreators(limit, page, searchString)
+    suspend fun getPagedCreators(limit: Int = PagingConfigValues.DEFAULT_PAGE_SIZE, page: Int, searchString: String) = userApi.getPagedCreators(limit, page, searchString)
 
     suspend fun updateUsername(newUserName: String) = userApi.updateUsername(newUserName)
 
@@ -41,7 +42,7 @@ class BackendRepository @Inject constructor(
 
     suspend fun updateUserRole(userId: String, newRole: Role) = userApi.updateUserRole(userId, newRole)
 
-    suspend fun getPagedUsersAdmin(limit: Int, page: Int, searchString: String, roles: Set<Role>) = userApi.getPagedUsersAdmin(limit, page, searchString, roles)
+    suspend fun getPagedUsersAdmin(limit: Int = PagingConfigValues.DEFAULT_PAGE_SIZE, page: Int, searchString: String, roles: Set<Role>) = userApi.getPagedUsersAdmin(limit, page, searchString, roles)
 
     suspend fun deleteUser(userId: String) = userApi.deleteUser(userId)
 
@@ -72,7 +73,7 @@ class BackendRepository @Inject constructor(
     suspend fun deleteQuestionnaire(questionnaireIds: List<String>) = questionnaireApi.deleteQuestionnaire(questionnaireIds)
 
     suspend fun getPagedQuestionnaires(
-        limit: Int,
+        limit: Int = PagingConfigValues.DEFAULT_PAGE_SIZE,
         page: Int,
         searchString: String,
         questionnaireIdsToIgnore: List<String>,

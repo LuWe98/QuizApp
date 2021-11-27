@@ -2,11 +2,12 @@ package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelectionArgs
-import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesSelectionEvent.ConfirmationEvent
+import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesSelectionEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
@@ -21,21 +22,37 @@ class VmCourseOfStudiesSelection @Inject constructor(
 
     private val args = BsdfCourseOfStudiesSelectionArgs.fromSavedStateHandle(state)
 
-    private var selectedCoursesOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_COURSES_OF_STUDIES_KEYS, args.selectedCourseOfStudiesIds.toMutableSet())
+    private val courseOfStudiesSelectionEventChannel = Channel<CourseOfStudiesSelectionEvent>()
+
+    val courseOfStudiesSelectionEventChannelFlow = courseOfStudiesSelectionEventChannel.receiveAsFlow()
+
+
+    private val selectedCoursesOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_COURSES_OF_STUDIES_KEYS, args.selectedCourseOfStudiesIds.toMutableSet())
 
     val selectedCoursesOfStudiesIdsStateFlow = selectedCoursesOfStudiesIdsMutableStateFlow.asStateFlow()
 
     private val selectedCoursesOfStudiesIds get() = selectedCoursesOfStudiesIdsMutableStateFlow.value
 
-    private val courseOfStudiesSelectionEventChannel = Channel<CourseOfStudiesSelectionEvent>()
 
-    val courseOfStudiesSelectionEventChannelFlow = courseOfStudiesSelectionEventChannel.receiveAsFlow()
+    private val searchQueryMutableStateFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
+
+    val searchQueryStateFlow = searchQueryMutableStateFlow.asStateFlow()
+
+    val searchQuery get() = searchQueryMutableStateFlow.value
+
+
+
+
+
 
     val facultyFlow = localRepository.allFacultiesFlow.mapNotNull { it }
 
     fun isCourseOfStudySelected(courseOfStudiesId: String) = selectedCoursesOfStudiesIds.contains(courseOfStudiesId)
 
-    fun getFacultyWithCourseOfStudiesFlow(facultyId: String) = localRepository.getFacultyWithCourseOfStudiesFlow(facultyId)
+    fun getCourseOfStudiesFlow(facultyId: String) = searchQueryMutableStateFlow.map { query ->
+        localRepository.getCoursesOfStudiesAssociatedWithFaculty(facultyId, query)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
 
     fun onItemClicked(courseOfStudiesId: String) {
         val updatedSet = mutableSetOf<String>().apply {
@@ -60,12 +77,27 @@ class VmCourseOfStudiesSelection @Inject constructor(
         }
     }
 
+    fun onSearchQueryChanged(newQuery: String) {
+        state.set(SEARCH_QUERY_KEY, newQuery)
+        searchQueryMutableStateFlow.value = newQuery
+    }
+
+    fun onClearSearchQueryClicked(){
+        if(searchQuery.isNotBlank()) {
+            launch {
+                courseOfStudiesSelectionEventChannel.send(ClearSearchQueryEvent)
+            }
+        }
+    }
+
 
     sealed class CourseOfStudiesSelectionEvent {
         class ConfirmationEvent(val courseOfStudiesIds: Array<String>) : CourseOfStudiesSelectionEvent()
+        object ClearSearchQueryEvent: CourseOfStudiesSelectionEvent()
     }
 
     companion object {
+        private const val SEARCH_QUERY_KEY = "searchQueryKey"
         private const val SELECTED_COURSES_OF_STUDIES_KEYS = "selectedCoursesOfStudiesKeys"
     }
 }

@@ -30,6 +30,8 @@ class FragmentAdminManageFaculties: BindingFragment<FragmentAdminManageFaculties
     }
 
     private fun initViews(){
+        binding.etSearchQuery.setText(vmAdmin.searchQuery)
+
         rvAdapter = RvaFaculty().apply {
             onItemLongClicked = vmAdmin::onFacultyItemClicked
             onItemClicked = vmAdmin::onFacultyItemClicked
@@ -47,6 +49,8 @@ class FragmentAdminManageFaculties: BindingFragment<FragmentAdminManageFaculties
         binding.apply {
             btnBack.onClick(navigator::popBackStack)
             fabAdd.onClick(navigator::navigateToAdminAddEditFaculty)
+            etSearchQuery.onTextChanged(vmAdmin::onSearchQueryChanged)
+            btnSearch.onClick(vmAdmin::onDeleteSearchClicked)
         }
     }
 
@@ -59,9 +63,16 @@ class FragmentAdminManageFaculties: BindingFragment<FragmentAdminManageFaculties
             rvAdapter.submitList(it)
         }
 
+        vmAdmin.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.btnSearch.changeIconOnCondition {
+                it.isEmpty()
+            }
+        }
+
         vmAdmin.fragmentAdminManageFacultiesEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
                 NavigateBack -> navigator.popBackStack()
+                ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
                 is NavigateToFacultiesMoreOptionsDialogEvent -> navigator.navigateToSelectionDialog(SelectionType.FacultyMoreOptionsSelection(event.faculty))
                 is NavigateToAddEditFacultyEvent -> navigator.navigateToAdminAddEditFaculty(event.faculty)
                 is NavigateToDeletionConfirmationEvent -> navigator.navigateToConfirmationDialog(ConfirmationType.DeleteFacultyConfirmation(event.faculty))

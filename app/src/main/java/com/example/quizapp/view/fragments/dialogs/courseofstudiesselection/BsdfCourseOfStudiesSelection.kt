@@ -13,8 +13,10 @@ import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFrag
 import com.example.quizapp.view.viewpager.adapter.VpaCourseOfStudiesSelection
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection
+import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesSelectionEvent.ClearSearchQueryEvent
 import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesSelectionEvent.ConfirmationEvent
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
@@ -32,13 +34,16 @@ class BsdfCourseOfStudiesSelection : BindingBottomSheetDialogFragment<BsdfCourse
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         enableFullscreenMode()
+
         initViews()
         initClickListeners()
         initObservers()
     }
 
     private fun initViews() {
-        val facultyList = runBlocking { vmCos.facultyFlow.first() }
+        binding.etSearchQuery.setText(vmCos.searchQuery)
+
+        val facultyList = runBlocking(IO) { vmCos.facultyFlow.first() }
         vpAdapter = VpaCourseOfStudiesSelection(this, facultyList)
 
         binding.viewPager.apply {
@@ -100,10 +105,18 @@ class BsdfCourseOfStudiesSelection : BindingBottomSheetDialogFragment<BsdfCourse
     private fun initClickListeners(){
         binding.apply {
             btnConfirm.onClick(vmCos::onConfirmButtonClicked)
+            etSearchQuery.onTextChanged(vmCos::onSearchQueryChanged)
+            btnSearch.onClick(vmCos::onClearSearchQueryClicked)
         }
     }
 
     private fun initObservers() {
+        vmCos.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner){
+            binding.btnSearch.changeIconOnCondition {
+                it.isBlank()
+            }
+        }
+
         vmCos.courseOfStudiesSelectionEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
                 is ConfirmationEvent -> {
@@ -112,6 +125,7 @@ class BsdfCourseOfStudiesSelection : BindingBottomSheetDialogFragment<BsdfCourse
                     })
                     navigator.popBackStack()
                 }
+                ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
             }
         }
     }

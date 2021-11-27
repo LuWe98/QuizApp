@@ -30,6 +30,8 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
     }
 
     private fun initRecyclerView() {
+        binding.etSearchQuery.setText(vmAdmin.searchQuery)
+
         rvAdapter = RvaAdminUser().apply {
             onItemClicked = vmAdmin::onUserItemClicked
         }
@@ -49,6 +51,7 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
             btnBack.onClick(navigator::popBackStack)
             etSearchQuery.onTextChanged(vmAdmin::onSearchQueryChanged)
             fabAdd.onClick(navigator::navigateToAdminAddEditUser)
+            btnSearch.onClick(vmAdmin::onClearSearchQueryClicked)
         }
     }
 
@@ -62,6 +65,12 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
+        vmAdmin.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.btnSearch.changeIconOnCondition {
+                it.isBlank()
+            }
+        }
+
         vmAdmin.fragmentAdminEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 is UpdateUserRoleEvent -> rvAdapter.updateUserRole(event.userId, event.newRole)
@@ -70,6 +79,7 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
                 is NavigateToUserMoreOptionsSelection -> navigator.navigateToSelectionDialog(SelectionType.UserMoreOptionsSelection(event.user))
                 is NavigateToChangeUserRoleDialogEvent -> navigator.navigateToChangeUserRoleDialog(event.user)
                 is NavigateToDeletionConfirmationEvent -> navigator.navigateToConfirmationDialog(ConfirmationType.DeleteUserConfirmation(event.user))
+                ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
             }
         }
     }

@@ -8,6 +8,7 @@
         android:background="@drawable/background_round_corners_top_15dp"
         android:backgroundTint="?colorOnPrimary"
         android:paddingTop="@dimen/grid_4">
+
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -17,7 +18,7 @@
             android:backgroundTint="@color/transparent"
             android:gravity="center_vertical"
             android:paddingHorizontal="@dimen/grid_3"
-            app:autoSizeMaxTextSize="20sp"
+            app:autoSizeMaxTextSize="19sp"
             app:autoSizeMinTextSize="10sp"
             app:autoSizeTextType="uniform"
             app:autoSizeStepGranularity="0.25sp"
@@ -81,12 +82,11 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/grid_2"
             android:paddingHorizontal="@dimen/grid_4"
+            android:paddingTop="@dimen/grid_2"
             android:clipToPadding="false"
             android:id="@+id/rv"
             tools:listitem="@layout/rvi_user_new"
@@ -94,7 +94,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/btnConfirm" />
-
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"

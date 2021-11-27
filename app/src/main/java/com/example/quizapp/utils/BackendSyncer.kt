@@ -19,11 +19,15 @@ import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+
+//TODO -> Filled Questionnaires sollen vom backend runtergeladen werden, wenn lokal kein [LocallyFilledQuestionnaireToUpload] vorhanden ist
+// Wenn es vorhanden ist, werden stattdessen die Antworten hochgeladen
 
 @Singleton
 class BackendSyncer @Inject constructor(
@@ -34,7 +38,7 @@ class BackendSyncer @Inject constructor(
 
     suspend fun syncData() = withContext(IO) {
         val facultyAndCursesOfStudiesAsync = async {
-            syncFacultiesAndCoursesOfStudies()
+            syncFacultiesAndCoursesOfStudies(getFacultiesAsync(), getCourseOfStudiesAsync())
         }
 
         val questionnaireAsync = async {
@@ -45,18 +49,44 @@ class BackendSyncer @Inject constructor(
         questionnaireAsync.await()
     }
 
+    private suspend fun getFacultiesAsync() = withContext(IO) {
+        async {
+            try {
+                backendRepository.getFacultySynchronizationData(localRepository.getFacultyIdsWithTimestamp())
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    private suspend fun getCourseOfStudiesAsync() = withContext(IO) {
+        async {
+            try {
+                backendRepository.getCourseOfStudiesSynchronizationData(localRepository.getCourseOfStudiesIdsWithTimestamp())
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    //TODO -> Subjects sind nur Strings, also irrelevant hier
+    private suspend fun syncSubject() = withContext(IO) {
+
+    }
+
 
     //TODO -> Update funktioniert noch nicht richtig, anschauen!
-    private suspend fun syncFacultiesAndCoursesOfStudies() = withContext(IO) {
-        val facultiesAsync = async { getFacultiesAsync() }
-        val coursesOfStudiesAsync = async { getCourseOfStudiesAsync() }
+    suspend fun syncFacultiesAndCoursesOfStudies(
+        faultyResponse: Deferred<SyncFacultiesResponse?>,
+        cosResponse: Deferred<SyncCoursesOfStudiesResponse?>
+    ) {
 
-        facultiesAsync.await()?.let { facultyResponse ->
+        faultyResponse.await()?.let { facultyResponse ->
             localRepository.insert(facultyResponse.facultiesToInsert.map(DataMapper::mapMongoFacultyToRoomFaculty))
             localRepository.update(facultyResponse.facultiesToUpdate.map(DataMapper::mapMongoFacultyToRoomFaculty))
             localRepository.deleteFacultiesWith(facultyResponse.facultyIdsToDelete)
 
-            coursesOfStudiesAsync.await()?.let { cosResponse ->
+            cosResponse.await()?.let { cosResponse ->
                 val allLocalFaculties = localRepository.getFacultyIdsWithTimestamp().map(FacultyIdWithTimeStamp::facultyId)
                 val facultyCosRelations: MutableList<FacultyCourseOfStudiesRelation>
 
@@ -79,22 +109,7 @@ class BackendSyncer @Inject constructor(
         }
     }
 
-    private suspend fun getFacultiesAsync() = try {
-        backendRepository.getFacultySynchronizationData(localRepository.getFacultyIdsWithTimestamp())
-    } catch (e: Exception) {
-        null
-    }
 
-    private suspend fun getCourseOfStudiesAsync() = try {
-        backendRepository.getCourseOfStudiesSynchronizationData(localRepository.getCourseOfStudiesIdsWithTimestamp())
-    } catch (e: Exception) {
-        null
-    }
-
-    //TODO -> Subjects sind nur Strings, also irrelevant hier
-    private suspend fun syncSubject() = withContext(IO) {
-
-    }
 
 
     //TODO -> Die müssen auch ignoriert werden beim runterladen von den Antworten

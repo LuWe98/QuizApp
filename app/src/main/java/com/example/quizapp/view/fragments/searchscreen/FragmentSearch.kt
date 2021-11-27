@@ -70,7 +70,10 @@ class FragmentSearch : BindingFragment<SearchNewBinding>() {
     private fun initListeners(){
         binding.apply {
             backLayer.apply {
-                btnFilter.onClick { backdrop.toggle() }
+                btnFilter.onClick {
+                    navigator.navigateToSearchFilterDialog()
+//                    backdrop.toggle()
+                }
 
                 tvSortBy.onClick(vmSearch::onSortByCardClicked)
 

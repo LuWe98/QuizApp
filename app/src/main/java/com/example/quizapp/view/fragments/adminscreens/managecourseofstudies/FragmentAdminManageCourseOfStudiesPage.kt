@@ -54,7 +54,7 @@ class FragmentAdminManageCourseOfStudiesPage: BindingFragment<FragmentAdminManag
     }
 
     private fun initObservers(){
-        vmAdmin.getFacultyWithCourseOfStudiesFlow(facultyId).collectWhenStarted(viewLifecycleOwner) {
+        vmAdmin.getCourseOfStudiesFlowWith(facultyId).collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitList(it)
         }
     }

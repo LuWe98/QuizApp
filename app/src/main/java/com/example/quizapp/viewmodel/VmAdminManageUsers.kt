@@ -6,7 +6,6 @@ import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.model.ktor.paging.UserAdminPagingSource
 import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
@@ -38,6 +37,12 @@ class VmAdminManageUsers @Inject constructor(
 
     private val searchQueryMutableStatFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
+    val searchQueryStateFlow = searchQueryMutableStatFlow.asStateFlow()
+
+    val searchQuery get() = searchQueryMutableStatFlow.value
+
+
+
     private val selectedRolesMutableStateFlow = state.getMutableStateFlow(SELECTED_ROLES_KEY, Role.values().toSet())
 
 
@@ -45,20 +50,27 @@ class VmAdminManageUsers @Inject constructor(
         searchQueryMutableStatFlow,
         selectedRolesMutableStateFlow
     ) { query, roles ->
-        Pager(config = PagingConfig(
-            pageSize = PagingConfigValues.PAGE_SIZE,
-            maxSize = PagingConfigValues.MAX_SIZE
-        ), pagingSourceFactory = {
-            UserAdminPagingSource(backendRepository, query, roles)
-        })
-    }.flatMapLatest {
-        it.flow.cachedIn(viewModelScope)
-    }.stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
+        PagingConfigValues.getDefaultPager { page ->
+            backendRepository.getPagedUsersAdmin(
+                page = page,
+                searchString = query,
+                roles = roles
+            )
+        }
+    }.flatMapLatest(Pager<Int, User>::flow::get).cachedIn(viewModelScope)
 
 
     fun onSearchQueryChanged(query: String) {
         state.set(SEARCH_QUERY_KEY, query)
         searchQueryMutableStatFlow.value = query
+    }
+
+    fun onClearSearchQueryClicked(){
+        if(searchQuery.isNotBlank()) {
+            launch {
+                fragmentAdminEventChannel.send(ClearSearchQueryEvent)
+            }
+        }
     }
 
     fun onRoleSelectionChanged(selectedRoles: Set<Role>) {
@@ -105,6 +117,7 @@ class VmAdminManageUsers @Inject constructor(
         class NavigateToUserMoreOptionsSelection(val user: User) : FragmentAdminEvent()
         class NavigateToChangeUserRoleDialogEvent(val user: User) : FragmentAdminEvent()
         class NavigateToDeletionConfirmationEvent(val user: User) : FragmentAdminEvent()
+        object ClearSearchQueryEvent: FragmentAdminEvent()
     }
 
     companion object {

@@ -17,6 +17,9 @@ abstract class FacultyDao : BaseDao<Faculty>(Faculty.TABLE_NAME) {
     @get:Query("SELECT * FROM facultyTable")
     abstract val allFacultiesFlow : Flow<List<Faculty>>
 
+    @Query("SELECT * FROM facultyTable WHERE name LIKE '%' || :nameToSearch || '%'")
+    abstract suspend fun findFacultiesWithName(nameToSearch: String) : List<Faculty>
+
     @Transaction
     @Query("SELECT * FROM facultyTable WHERE facultyId = :facultyId")
     abstract suspend fun getFacultyWithCourseOfStudies(facultyId: String): FacultyWithCoursesOfStudies?

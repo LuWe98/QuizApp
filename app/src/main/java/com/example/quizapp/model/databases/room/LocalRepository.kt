@@ -18,6 +18,7 @@ import com.example.quizapp.model.databases.room.entities.relations.Questionnaire
 import com.example.quizapp.model.databases.room.entities.sync.*
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.ktor.status.SyncStatus
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.reflect.KClass
@@ -199,6 +200,9 @@ class LocalRepository @Inject constructor(
 
     suspend fun deleteFacultiesWith(facultyIds: List<String>) = facultyDao.deleteFacultiesWith(facultyIds)
 
+    suspend fun findFacultiesWithName(nameToSearch: String) = facultyDao.findFacultiesWithName(nameToSearch)
+
+
 
 
     //COURSE OF STUDIES
@@ -220,7 +224,9 @@ class LocalRepository @Inject constructor(
 
     suspend fun deleteCoursesOfStudiesWith(courseOfStudiesIds: List<String>) = courseOfStudiesDao.deleteCoursesOfStudiesWith(courseOfStudiesIds)
 
-    fun getCoursesOfStudiesNotAssociatedWithFacultyFlow() = courseOfStudiesDao.getCoursesOfStudiesNotAssociatedWithFacultyFlow()
+    suspend fun getCoursesOfStudiesNotAssociatedWithFaculty(searchQuery: String) = courseOfStudiesDao.getCoursesOfStudiesNotAssociatedWithFaculty(searchQuery)
+
+    suspend fun getCoursesOfStudiesAssociatedWithFaculty(facultyId: String, searchQuery: String) = courseOfStudiesDao.getCoursesOfStudiesAssociatedWithFaculty(facultyId, searchQuery)
 
 
 
