@@ -15,6 +15,10 @@ enum class UserMoreOptionsItem(
         R.string.changeUserRole,
         R.drawable.ic_role_badge
     ),
+    VIEW_CREATED_QUESTIONNAIRES(
+        R.string.browseCreatedQuestionnaires,
+        R.drawable.ic_question
+    ),
     DELETE(
         R.string.delete,
         R.drawable.ic_delete

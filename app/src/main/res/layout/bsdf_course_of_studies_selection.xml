@@ -35,6 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/clSearchBar"
+            android:elevation="2dp"
             android:background="@drawable/background_round_corners_10dp"
             android:backgroundTint="?android:colorBackground"
             android:layout_marginHorizontal="@dimen/grid_4"
@@ -67,19 +68,8 @@
                 app:layout_constraintTop_toTopOf="@+id/btnSearch"
                 app:layout_constraintBottom_toBottomOf="@+id/btnSearch"
                 app:layout_constraintStart_toEndOf="@+id/btnSearch"
-                app:layout_constraintEnd_toStartOf="@+id/btnFilter" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:id="@+id/btnFilter"
-                android:background="?attr/actionBarItemBackground"
-                app:srcCompat="@drawable/ic_sort"
-                android:padding="7.5dp"
-                android:layout_marginEnd="@dimen/grid_1"
-                app:layout_constraintTop_toTopOf="@id/etSearchQuery"
-                app:layout_constraintBottom_toBottomOf="@id/etSearchQuery"
                 app:layout_constraintEnd_toEndOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -11,7 +11,7 @@ import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizQuestionsContainerBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.datastore.QuestionnaireShuffleType.*
+import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab.LazyQuestionTab
 import com.example.quizapp.view.recyclerview.adapters.RvaLazyQuestionTabsLayout

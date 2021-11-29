@@ -43,10 +43,6 @@
             android:background="@drawable/shape_circle"
             android:backgroundTint="?android:colorBackground"
             android:padding="@dimen/grid_2"
-            android:scaleX="0"
-            android:scaleY="0"
-            tools:scaleX="1"
-            tools:scaleY="1"
             app:layout_constraintTop_toTopOf="@+id/btnMoreOptions"
             app:layout_constraintEnd_toStartOf="@+id/btnMoreOptions"
             app:layout_constraintBottom_toBottomOf="@+id/btnMoreOptions" />

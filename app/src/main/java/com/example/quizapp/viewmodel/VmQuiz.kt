@@ -15,8 +15,8 @@ import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuest
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.datastore.QuestionnaireShuffleType
-import com.example.quizapp.model.datastore.QuestionnaireShuffleType.*
+import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
+import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType.*
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.lifecycle.HiltViewModel

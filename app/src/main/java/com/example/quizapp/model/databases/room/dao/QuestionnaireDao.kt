@@ -12,6 +12,10 @@ import kotlinx.coroutines.flow.Flow
 abstract class QuestionnaireDao : BaseDao<Questionnaire>(Questionnaire.TABLE_NAME) {
 
     @Transaction
+    @Query("SELECT * FROM questionnaireTable WHERE title LIKE '%' || :searchQuery || '%' ORDER BY title")
+    abstract fun getFilteredCompleteQuestionnaireFlow(searchQuery: String) : Flow<List<CompleteQuestionnaire>>
+
+    @Transaction
     @Query("SELECT * FROM questionnaireTable WHERE userId != :userId ORDER BY title")
     abstract fun findAllCompleteQuestionnairesNotForUserFlow(userId: String) : Flow<List<CompleteQuestionnaire>>
 
@@ -31,23 +35,22 @@ abstract class QuestionnaireDao : BaseDao<Questionnaire>(Questionnaire.TABLE_NAM
     @Query("SELECT * FROM questionnaireTable WHERE userId =:userId AND questionnaireId IN(:questionnaireIds)")
     abstract suspend fun findCompleteQuestionnairesWith(questionnaireIds: List<String>, userId: String) : List<CompleteQuestionnaire>
 
+    @Transaction
+    @Query("SELECT * FROM questionnaireTable WHERE questionnaireId = :questionnaireId")
+    abstract fun findCompleteQuestionnaireAsFlowWith(questionnaireId: String) : Flow<CompleteQuestionnaire>
+
+    @Transaction
+    @Query("SELECT * FROM questionnaireTable WHERE syncStatus = :syncStatus")
+    abstract suspend fun findAllSyncedQuestionnaires(syncStatus: SyncStatus = SyncStatus.SYNCED): List<CompleteQuestionnaire>
+
     @Query("SELECT * FROM questionnaireTable WHERE questionnaireId = :questionnaireId")
     abstract suspend fun findQuestionnaireWith(questionnaireId: String) : Questionnaire?
 
     @Query("SELECT * FROM questionnaireTable WHERE questionnaireId IN(:questionnaireIds)")
     abstract suspend fun findQuestionnairesWith(questionnaireIds: List<String>) : List<Questionnaire>
 
-
-    @Transaction
-    @Query("SELECT * FROM questionnaireTable WHERE questionnaireId = :questionnaireId")
-    abstract fun findCompleteQuestionnaireAsFlowWith(questionnaireId: String) : Flow<CompleteQuestionnaire>
-
     @Query("SELECT questionnaireId FROM questionnaireTable WHERE syncStatus = :syncStatus")
     abstract suspend fun findAllNonSyncedQuestionnaireIds(syncStatus: SyncStatus = SyncStatus.UNSYNCED): List<String>
-
-    @Transaction
-    @Query("SELECT * FROM questionnaireTable WHERE syncStatus = :syncStatus")
-    abstract suspend fun findAllSyncedQuestionnaires(syncStatus: SyncStatus = SyncStatus.SYNCED): List<CompleteQuestionnaire>
 
     @Query("SELECT * FROM questionnaireTable WHERE syncStatus = :syncStatus")
     abstract suspend fun findAllSyncingQuestionnaires(syncStatus: SyncStatus = SyncStatus.SYNCING): List<Questionnaire>

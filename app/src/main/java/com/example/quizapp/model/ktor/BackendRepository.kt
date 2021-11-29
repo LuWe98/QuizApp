@@ -14,7 +14,8 @@ import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.model.menus.SortBy
+import com.example.quizapp.model.datastore.datawrappers.BrowsableOrderBy
+import com.example.quizapp.model.datastore.datawrappers.ManageUsersOrderBy
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,7 +35,7 @@ class BackendRepository @Inject constructor(
 
     suspend fun registerUser(userName: String, password: String) = userApi.registerUser(userName, password)
 
-    suspend fun getPagedCreators(limit: Int = PagingConfigValues.DEFAULT_PAGE_SIZE, page: Int, searchString: String) = userApi.getPagedCreators(limit, page, searchString)
+    suspend fun getPagedAuthors(limit: Int = PagingConfigValues.DEFAULT_PAGE_SIZE, page: Int, searchString: String) = userApi.getPagedAuthors(limit, page, searchString)
 
     suspend fun updateUsername(newUserName: String) = userApi.updateUsername(newUserName)
 
@@ -42,7 +43,13 @@ class BackendRepository @Inject constructor(
 
     suspend fun updateUserRole(userId: String, newRole: Role) = userApi.updateUserRole(userId, newRole)
 
-    suspend fun getPagedUsersAdmin(limit: Int = PagingConfigValues.DEFAULT_PAGE_SIZE, page: Int, searchString: String, roles: Set<Role>) = userApi.getPagedUsersAdmin(limit, page, searchString, roles)
+    suspend fun getPagedUsersAdmin(
+        limit: Int = PagingConfigValues.DEFAULT_PAGE_SIZE,
+        page: Int, searchString: String,
+        roles: Set<Role>,
+        orderBy: ManageUsersOrderBy,
+        ascending: Boolean
+    ) = userApi.getPagedUsersAdmin(limit, page, searchString, roles, orderBy, ascending)
 
     suspend fun deleteUser(userId: String) = userApi.deleteUser(userId)
 
@@ -80,7 +87,8 @@ class BackendRepository @Inject constructor(
         facultyIds: List<String>,
         courseOfStudiesIds: List<String>,
         authorIds: List<String>,
-        sortBy: SortBy
+        browsableOrderBy: BrowsableOrderBy,
+        ascending: Boolean
     ) = questionnaireApi.getPagedQuestionnaires(
         limit = limit,
         page = page,
@@ -89,7 +97,9 @@ class BackendRepository @Inject constructor(
         facultyIds = facultyIds,
         courseOfStudiesIds = courseOfStudiesIds,
         authorIds = authorIds,
-        sortBy = sortBy)
+        browsableOrderBy = browsableOrderBy,
+        ascending = ascending
+    )
 
     suspend fun downloadQuestionnaire(questionnaireId: String) = questionnaireApi.downloadQuestionnaire(questionnaireId)
 
@@ -133,9 +143,4 @@ class BackendRepository @Inject constructor(
     suspend fun insertCourseOfStudies(courseOfStudies: MongoCourseOfStudies) = courseOfStudiesApi.insertCourseOfStudies(courseOfStudies)
 
     suspend fun deleteCourseOfStudies(courseOfStudiesId: String) = courseOfStudiesApi.deleteCourseOfStudies(courseOfStudiesId)
-
-
-
-    // SUBJECT
-
 }

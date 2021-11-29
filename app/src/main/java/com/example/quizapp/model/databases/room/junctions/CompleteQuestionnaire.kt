@@ -4,7 +4,9 @@ import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.DataMapper
+import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
@@ -32,6 +34,13 @@ data class CompleteQuestionnaire(
     )
     var coursesOfStudiesWithFaculties: List<CourseOfStudiesWithFaculties>,
 ) : Parcelable {
+
+    val asMongoQuestionnaire: MongoQuestionnaire get() = DataMapper.mapRoomQuestionnaireToMongoQuestionnaire(this)
+
+    val asMongoFilledQuestionnaire: MongoFilledQuestionnaire get() = DataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(this)
+
+    val asEmptyMongoFilledQuestionnaire: MongoFilledQuestionnaire get() = DataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(this)
+
 
     val allQuestions: List<Question> get() = questionsWithAnswers.map(QuestionWithAnswers::question)
 
@@ -93,13 +102,8 @@ data class CompleteQuestionnaire(
 
 
 
-
-
-
     companion object {
         val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<CompleteQuestionnaire> { old, new -> old.questionnaire.id == new.questionnaire.id }
-
-        val EMPTY_COMPLETE_QUESTIONNAIRE = CompleteQuestionnaire(Questionnaire("", "", AuthorInfo("", ""), ""), mutableListOf(), listOf())
     }
 
     data class QuizStatisticNumbers(

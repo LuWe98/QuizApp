@@ -1,5 +1,6 @@
 package com.example.quizapp.model.databases.mongodb.documents.faculty
 
+import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.Degree
 import io.ktor.util.date.*
 import kotlinx.serialization.Serializable
@@ -14,4 +15,8 @@ data class MongoCourseOfStudies(
     var name: String,
     var degree: Degree,
     var lastModifiedTimestamp : Long = getTimeMillis()
-)
+) {
+
+    val asRoomCourseOfStudies get() = DataMapper.mapMongoCourseOfStudiesToRoomCourseOfStudies(this)
+
+}

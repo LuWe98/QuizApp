@@ -4,21 +4,18 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.*
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.extensions.log
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.datastore.QuestionnaireShuffleType
+import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerArgs
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.FragmentQuizContainerEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.util.date.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel

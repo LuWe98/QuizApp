@@ -5,7 +5,6 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentSettingsBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
@@ -33,6 +32,8 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
     private fun initListeners() {
         binding.apply {
+            btnBack.onClick(navigator::popBackStack)
+
             adminLayout.apply {
                 btnAdminUser.onClick(vmSettings::onGoToManageUsersClicked)
                 btnAdminCourseOfStudies.onClick(vmSettings::onGoToManageCoursesOfStudiesClicked)
@@ -54,11 +55,10 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
             }
 
             synchronizationLayout.apply {
+                btnSyncUserData.onClick(vmSettings::syncUserDataClicked)
                 btnSyncQuestionnaires.onClick(vmSettings::onSyncQuestionnairesClicked)
                 btnSyncCosAndFaculties.onClick(vmSettings::onSyncCosAndFacultiesClicked)
             }
-
-            swipeRefreshLayout.setOnRefreshListener(vmSettings::onRefreshListenerTriggered)
         }
     }
 
@@ -118,13 +118,7 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
                 is NavigateToLanguageSelection -> navigator.navigateToSelectionDialog(LanguageSelection(event.currentLanguage))
                 is NavigateToThemeSelection -> navigator.navigateToSelectionDialog(ThemeSelection(event.currentTheme))
                 is NavigateToShuffleTypeSelection -> navigator.navigateToSelectionDialog(ShuffleTypeSelection(event.shuffleType))
-                is ShowMessageSnackBarEvent -> {
-                    binding.swipeRefreshLayout.isRefreshing = false
-                    showSnackBar(
-                        textRes = event.messageRes,
-                        anchorView = bindingActivity.binding.root.findViewById(R.id.bottomAppBar)
-                    )
-                }
+                is ShowMessageSnackBarEvent -> showSnackBar(textRes = event.messageRes)
             }
         }
     }

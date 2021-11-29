@@ -9,9 +9,7 @@ import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
-import com.example.quizapp.model.datastore.QuestionnaireShuffleType
-import com.example.quizapp.model.datastore.QuizAppLanguage
-import com.example.quizapp.model.datastore.QuizAppTheme
+import com.example.quizapp.model.datastore.datawrappers.*
 import com.example.quizapp.model.menus.*
 import kotlinx.parcelize.Parcelize
 
@@ -34,7 +32,9 @@ sealed class SelectionType(
         const val SELECTION_COS_MORE_OPTIONS_RESULT_KEY = "cosMoreOptionsSelectionResultKey"
         const val SELECTION_FACULTY_MORE_OPTIONS_RESULT_KEY = "facultyMoreOptionsSelectionResultKey"
         const val SELECTION_QUESTIONNAIRE_MORE_OPTIONS_RESULT_KEY = "questionnaireMoreOptionsSelectionResultKey"
-        const val SELECTION_SORTING_TYPE_RESULT_KEY = "sortBySelectionResultKey"
+        const val SELECTION_BROWSABLE_ORDER_BY_RESULT_KEY = "orderByBrowseQuestionnairesSelectionResultKey"
+        const val SELECTION_LOCAL_QUESTIONNAIRE_ORDER_BY_RESULT_KEY = "orderByLocalQuestionnairesSelectionResultKey"
+        const val SELECTION_MANAGE_USERS_ORDER_BY_RESULT_KEY = "orderByManageUsersSelectionResultKey"
 
         inline fun <reified ResultType : SelectionTypeItemMarker<ResultType>> getResultKeyWithResultClass() = when (ResultType::class) {
             Role::class -> SELECTION_ROLE_RESULT_KEY
@@ -46,7 +46,9 @@ sealed class SelectionType(
             CosMoreOptionsItem::class -> SELECTION_COS_MORE_OPTIONS_RESULT_KEY
             FacultyMoreOptionsItem::class -> SELECTION_FACULTY_MORE_OPTIONS_RESULT_KEY
             QuestionnaireMoreOptionsItem::class -> SELECTION_QUESTIONNAIRE_MORE_OPTIONS_RESULT_KEY
-            SortBy::class -> SELECTION_SORTING_TYPE_RESULT_KEY
+            BrowsableOrderBy::class -> SELECTION_BROWSABLE_ORDER_BY_RESULT_KEY
+            LocalQuestionnaireOrderBy::class -> SELECTION_LOCAL_QUESTIONNAIRE_ORDER_BY_RESULT_KEY
+            ManageUsersOrderBy::class -> SELECTION_MANAGE_USERS_ORDER_BY_RESULT_KEY
             else -> throw IllegalArgumentException("Cant get result key with '${ResultType::class.simpleName}'")
         }
     }
@@ -111,10 +113,24 @@ sealed class SelectionType(
     )
 
     @Parcelize
-    data class SortingTypeSelection(val currentValue: SortBy) : SelectionType(
-        titleRes = R.string.sortingTypeSelection,
-        resultKey = SELECTION_SORTING_TYPE_RESULT_KEY,
-        recyclerViewList = SortBy.values().toList()
+    data class BrowsableOrderBySelection(val currentValue: BrowsableOrderBy) : SelectionType(
+        titleRes = R.string.orderByTypeSelection,
+        resultKey = SELECTION_BROWSABLE_ORDER_BY_RESULT_KEY,
+        recyclerViewList = BrowsableOrderBy.values().toList()
+    )
+
+    @Parcelize
+    data class LocalQuestionnaireOrderBySelection(val currentValue: LocalQuestionnaireOrderBy) : SelectionType(
+        titleRes = R.string.orderByTypeSelection,
+        resultKey = SELECTION_LOCAL_QUESTIONNAIRE_ORDER_BY_RESULT_KEY,
+        recyclerViewList = LocalQuestionnaireOrderBy.values().toList()
+    )
+
+    @Parcelize
+    data class ManageUsersOrderBySelection(val currentValue: ManageUsersOrderBy) : SelectionType(
+        titleRes = R.string.orderByTypeSelection,
+        resultKey = SELECTION_MANAGE_USERS_ORDER_BY_RESULT_KEY,
+        recyclerViewList = ManageUsersOrderBy.values().toList()
     )
 
 
@@ -129,7 +145,6 @@ sealed class SelectionType(
     )
 
 
-
     fun isItemSelected(item: SelectionTypeItemMarker<*>) = run {
         when (this) {
             is RoleSelection -> currentRole == item
@@ -137,7 +152,9 @@ sealed class SelectionType(
             is DegreeSelection -> currentDegree == item
             is ShuffleTypeSelection -> currentShuffleType == item
             is LanguageSelection -> currentLanguage == item
-            is SortingTypeSelection -> currentValue == item
+            is BrowsableOrderBySelection -> currentValue == item
+            is ManageUsersOrderBySelection -> currentValue == item
+            is LocalQuestionnaireOrderBySelection -> currentValue == item
             else -> false
         }
     }

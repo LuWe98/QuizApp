@@ -18,7 +18,6 @@ import com.example.quizapp.model.databases.room.entities.relations.Questionnaire
 import com.example.quizapp.model.databases.room.entities.sync.*
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.ktor.status.SyncStatus
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.reflect.KClass
@@ -108,6 +107,7 @@ class LocalRepository @Inject constructor(
 
     suspend fun getAllQuestionnaireIds() = questionnaireDao.getAllQuestionnaireIds()
 
+    fun getFilteredCompleteQuestionnaireFlow(searchQuery: String) = questionnaireDao.getFilteredCompleteQuestionnaireFlow(searchQuery)
 
     fun findAllCompleteQuestionnairesNotForUserFlow(userId: String) = questionnaireDao.findAllCompleteQuestionnairesNotForUserFlow(userId)
 
@@ -146,9 +146,6 @@ class LocalRepository @Inject constructor(
         }
     }
 
-    //QUESTION - Not needed
-
-    //ANSWER - Not needed
 
     //LOCALLY DELETED QUESTIONNAIRE
     suspend fun getLocallyDeletedQuestionnaireIds() = locallyDeletedQuestionnaireDao.getLocallyDeletedQuestionnaireIds()
@@ -242,6 +239,5 @@ class LocalRepository @Inject constructor(
     //FACULTY COURSE OF STUDIES RELATION
     suspend fun deleteFacultyCourseOfStudiesRelationsWith(courseOfStudiesId: String) =
         facultyCourseOfStudiesRelationDao.deleteFacultyCourseOfStudiesRelationsWith(courseOfStudiesId)
-
 
 }

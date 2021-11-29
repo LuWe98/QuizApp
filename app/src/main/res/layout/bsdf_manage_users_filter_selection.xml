@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/background_round_corners_top_15dp"
+        android:backgroundTint="?colorOnPrimary"
+        android:paddingTop="@dimen/grid_4">
+
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:id="@+id/tvTitle"
+            android:text="@string/userSearchFilters"
+            android:background="@drawable/background_round_corners_10dp"
+            android:backgroundTint="@color/transparent"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/grid_3"
+            android:layout_marginHorizontal="@dimen/grid_3"
+            app:autoSizeMaxTextSize="19sp"
+            app:autoSizeMinTextSize="10sp"
+            app:autoSizeTextType="uniform"
+            app:autoSizeStepGranularity="0.25sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/work_sans_regular"
+            android:lines="1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/grid_2"
+            android:paddingBottom="40dp"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btnApply">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/orderByCard"
+                    android:background="@drawable/background_round_corners_7_5dp"
+                    android:backgroundTint="?android:colorBackground"
+                    android:paddingVertical="@dimen/grid_3"
+                    android:layout_marginHorizontal="@dimen/grid_6"
+                    android:layout_marginTop="@dimen/grid_4"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:id="@+id/orderFilterHeader"
+                        android:text="@string/orderByTypeSelection"
+                        android:background="@drawable/background_round_corners_10dp"
+                        android:backgroundTint="@color/transparent"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="@dimen/grid_4"
+                        android:layout_marginHorizontal="@dimen/grid_2"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/work_sans_medium"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:id="@+id/ivOrderBy"
+                        app:tint="?colorPrimary"
+                        app:srcCompat="@drawable/ic_title"
+                        android:padding="5dp"
+                        android:elevation="@dimen/grid_2"
+                        android:layout_marginStart="@dimen/grid_2"
+                        app:layout_constraintStart_toStartOf="@id/tvOrderBy"
+                        app:layout_constraintTop_toTopOf="@id/tvOrderBy"
+                        app:layout_constraintBottom_toBottomOf="@id/tvOrderBy" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:background="@drawable/ripple_round_corners_10_dp"
+                        android:text="@string/title"
+                        android:id="@+id/tvOrderBy"
+                        android:gravity="center_vertical"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?colorPrimary"
+                        android:fontFamily="@font/work_sans_regular"
+                        android:paddingHorizontal="@dimen/grid_12"
+                        android:layout_marginHorizontal="@dimen/grid_4"
+                        android:layout_marginTop="@dimen/grid_2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/orderFilterHeader" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        app:tint="?colorPrimary"
+                        app:srcCompat="@drawable/ic_arrow_down"
+                        android:padding="5dp"
+                        android:layout_marginEnd="@dimen/grid_2"
+                        app:layout_constraintEnd_toEndOf="@id/tvOrderBy"
+                        app:layout_constraintTop_toTopOf="@id/tvOrderBy"
+                        app:layout_constraintBottom_toBottomOf="@id/tvOrderBy" />
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:id="@+id/ivOrderAscending"
+                        app:tint="?colorPrimary"
+                        app:srcCompat="@drawable/ic_arrow_drop_down"
+                        android:elevation="@dimen/grid_2"
+                        android:layout_marginStart="@dimen/grid_2"
+                        app:layout_constraintStart_toStartOf="@id/tvOrderAscending"
+                        app:layout_constraintTop_toTopOf="@id/tvOrderAscending"
+                        app:layout_constraintBottom_toBottomOf="@id/tvOrderAscending" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:background="@drawable/ripple_round_corners_10_dp"
+                        android:text="@string/ascending"
+                        android:id="@+id/tvOrderAscending"
+                        android:gravity="center_vertical"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?colorPrimary"
+                        android:fontFamily="@font/work_sans_regular"
+                        android:paddingHorizontal="@dimen/grid_12"
+                        android:layout_marginTop="@dimen/grid_2"
+                        android:layout_marginHorizontal="@dimen/grid_4"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvOrderBy" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/facultyCard"
+                    android:background="@drawable/background_round_corners_7_5dp"
+                    android:backgroundTint="?android:colorBackground"
+                    android:paddingVertical="@dimen/grid_3"
+                    android:layout_marginTop="@dimen/grid_4"
+                    android:layout_marginHorizontal="@dimen/grid_6"
+                    app:layout_constraintTop_toBottomOf="@id/orderByCard"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:id="@+id/facultyFilterHeader"
+                        android:text="@string/selectedRoles"
+                        android:background="@drawable/background_round_corners_10dp"
+                        android:backgroundTint="@color/transparent"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="@dimen/grid_4"
+                        android:layout_marginHorizontal="@dimen/grid_2"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/work_sans_medium"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.chip.ChipGroup
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
+                        android:id="@+id/roleChipGroup"
+                        app:singleSelection="false"
+                        app:selectionRequired="true"
+                        app:layout_constraintTop_toBottomOf="@id/facultyFilterHeader"
+                        android:layout_marginTop="@dimen/grid_1"
+                        android:layout_marginHorizontal="@dimen/grid_3"
+                        app:layout_constraintStart_toStartOf="@id/facultyFilterHeader"
+                        app:layout_constraintEnd_toEndOf="@id/facultyFilterHeader"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/btnApply"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="?colorPrimary"
+            android:text="@string/apply"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:fontFamily="@font/work_sans_medium"
+            android:textColor="@color/white" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

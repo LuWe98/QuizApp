@@ -146,6 +146,13 @@ inline fun ImageView.changeIconOnCondition(
 ) {
     val cond = condition()
     if (tag == cond) return
+
+    if (tag == null) {
+        tag = cond
+        setImageDrawable(if (cond) trueIcon else falseIcon)
+        return
+    }
+
     tag = cond
     clearAnimation()
     animate().scaleX(0f)

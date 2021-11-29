@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizOverviewBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.datastore.QuestionnaireShuffleType.*
+import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionQuiz
 import com.example.quizapp.viewmodel.VmQuiz
@@ -21,7 +21,6 @@ import com.example.quizapp.viewmodel.VmQuiz.*
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.math.pow
 

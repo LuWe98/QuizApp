@@ -10,6 +10,8 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.quizapp.MainNavGraphDirections
 import com.example.quizapp.R
 import com.example.quizapp.extensions.initMaterialElevationScale
+import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
@@ -25,6 +27,7 @@ import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
+import com.example.quizapp.view.fragments.homescreen.FragmentHomeDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizResultDirections
@@ -38,6 +41,10 @@ import javax.inject.Singleton
 class Navigator @Inject constructor(
     private val navHostWeakReference: WeakReference<NavHostFragment>
 ) {
+
+    companion object {
+        const val FIRST_QUESTION_POSITION = 0
+    }
 
     private val naHostFragment get() = navHostWeakReference.get()!!
     val navController get() = naHostFragment.navController
@@ -100,17 +107,29 @@ class Navigator @Inject constructor(
         navController.navigate(MainNavGraphDirections.actionGlobalGoToAuthScreen(), navOptions)
     }
 
+
     fun navigateToHomeScreen() {
         val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentAuth, true).build()
         navController.navigate(FragmentAuthDirections.actionFragmentAuthToFragmentHome(), navOptions)
     }
 
+    fun navigateToLocalQuestionnaireFilterSelection(){
+        if(currentDestinationId == R.id.bsdfLocalQuestionnaireFilterSelection) return
+        navController.navigate(FragmentHomeDirections.actionGlobalBsdfLocalQuestionnaireFilterSelection())
+    }
+
+
     fun navigateToSearchScreen() {
         navController.navigate(MainNavGraphDirections.actionGlobalFragmentSearch())
     }
 
-    fun navigateToSearchFilterDialog() {
-        navController.navigate(FragmentSearchDirections.actionFragmentSearchToBsdfSearchFilter())
+    fun navigateToQuestionnaireFilterDialog(
+        selectedCosIds: Array<String>,
+        selectedFacultyIds: Array<String>,
+        selectedAuthors: Array<AuthorInfo>
+    ) {
+        if(currentDestinationId == R.id.bsdfBrowseQuestionnaireFilterSelection) return
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfBrowseQuestionnaireFilterSelection(selectedCosIds, selectedFacultyIds, selectedAuthors))
     }
 
     fun navigateToQuestionnaireMoreOptions(questionnaire: Questionnaire){
@@ -122,9 +141,6 @@ class Navigator @Inject constructor(
         navController.navigate(MainNavGraphDirections.actionGlobalDfShareQuestionnaire(questionnaireId))
     }
 
-    fun navigateToBackdropFragment(){
-        navController.navigate(MainNavGraphDirections.actionGlobalBackdropFragment())
-    }
 
     fun navigateToAddEditQuestionnaireScreen(completeQuestionnaire: CompleteQuestionnaire? = null, copy: Boolean = false) {
         navController.navigate(MainNavGraphDirections.actionGlobalAddEditQuestionnaireNavGraph(completeQuestionnaire, copy))
@@ -145,9 +161,15 @@ class Navigator @Inject constructor(
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfFacultySelection(selectedFacultyIds))
     }
 
-    fun navigateToUserCreatorSelectionScreen(selectedUsers: Array<User>) {
-        if(currentDestinationId == R.id.bsdfUserCreatorSelection) return
-        navController.navigate(MainNavGraphDirections.actionGlobalBsdfUserCreatorSelection(selectedUsers))
+    fun navigateToRemoteAuthorSelection(selectedAuthors: Array<AuthorInfo>) {
+        if(currentDestinationId == R.id.bsdfRemoteAuthorSelection) return
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfRemoteAuthorSelection(selectedAuthors))
+    }
+
+    //TODO EINBAUEN DER REMOTE LOGIK
+    fun navigateToLocalAuthorSelection(selectedAuthors: Array<AuthorInfo>) {
+        if(currentDestinationId == R.id.bsdfRemoteAuthorSelection) return
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfRemoteAuthorSelection(selectedAuthors))
     }
 
     fun navigateToUpdateStringDialog(initialValue: String, updateStringType: UpdateStringType) {
@@ -183,6 +205,11 @@ class Navigator @Inject constructor(
         navController.navigate(FragmentAdminManageUsersDirections.actionFragmentAdminManageUsersToFragmentAdminAddEditUser(user))
     }
 
+    fun navigateToAdminManageUsersFilterSelection(selectedRoles: Array<Role>){
+        if(currentDestinationId == R.id.bsdfManageUsersFilterSelection) return
+        navController.navigate(FragmentAdminManageUsersDirections.actionFragmentAdminManageUsersToBsdfManageUsersFilterSelection(selectedRoles))
+    }
+
 
 
 
@@ -206,7 +233,9 @@ class Navigator @Inject constructor(
     }
 
 
-    companion object {
-        const val FIRST_QUESTION_POSITION = 0
+
+
+    fun navigateToBackdropFragment(){
+        navController.navigate(MainNavGraphDirections.actionGlobalBackdropFragment())
     }
 }

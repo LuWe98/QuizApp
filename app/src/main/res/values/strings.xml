@@ -10,7 +10,13 @@
 
     <string name="home">Home</string>
     <string name="search">Search</string>
+    <string name="onlineSearch">Online search</string>
+    <string name="onlineSearchFilters">Online search filters</string>
+    <string name="localSearchFilters">Local search filters</string>
+    <string name="userSearchFilters">User search filters</string>
+    <string name="selectedRoles">Selected roles</string>
     <string name="searchForUsers">Search for users</string>
+    <string name="searchForAuthors">Search for authors</string>
     <string name="searchForFaculties">Search for faculties</string>
     <string name="searchForCourseOfStudies">Search for course of studies</string>
     <string name="settings">Settings</string>
@@ -184,16 +190,18 @@
     <!-- Settings-->
     <string name="darkMode">Dark Mode</string>
     <string name="language">Language</string>
-    <string name="showSolutionDirectly">Show Solution directly</string>
-    <string name="hideCompletedQuestions">Hide completed Questions</string>
+    <string name="showSolutionDirectly">Show solution directly</string>
+    <string name="hideCompletedQuestions">Hide completed questions</string>
     <string name="preference">Preferences</string>
     <string name="statistics">Statistics</string>
 
-    <string name="startedQuestionnaires">Started Questionnaires</string>
-    <string name="completedQuestionnaires">Completed Questionnaires</string>
+    <string name="startedQuestionnaires">Started questionnaires</string>
+    <string name="completedQuestionnaires">Completed questionnaires</string>
     <string name="givenQuestionsAmount">Given Question amount</string>
-    <string name="correctlyGivenQuestionAmount">Correctly given Question amount</string>
-    <string name="createdQuestionnaires">Created Questionnaires</string>
+    <string name="correctlyGivenQuestionAmount">Correctly given question amount</string>
+    <string name="createdQuestionnaires">Created questionnaires</string>
+    <string name="browseCreatedQuestionnaires">Browse created questionnaires</string>
+    <string name="findNotConnectedQuestionnaires">Find not connected questionnaires</string>
 
     <string name="userInfo">User info</string>
     <string name="user">User</string>
@@ -216,6 +224,14 @@
     <string name="deletedCourseOfStudies">Course of studies deleted</string>
     <string name="coursesOfStudiesWithoutFaculty">Courses of studies without Faculty</string>
 
+    <string name="questionCount">Question count</string>
+    <string name="progressText">Progress</string>
+
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
+    <string name="allQuestionnaires">All</string>
+    <string name="ownQuestionnaires">Own</string>
+    <string name="downloadedQuestionnaires">Downloaded</string>
 
     <!-- Quiz Screen-->
     <string name="showSolutions">Show solutions</string>
@@ -258,9 +274,10 @@
 
     <string name="courseOfStudiesSelection">Course of studies selection</string>
     <string name="facultySelection">Faculty selection</string>
-    <string name="userCreatorSelection">User creator selection</string>
+    <string name="authorSelection">Author selection</string>
 
     <string name="sortingTypeSelection">Sort by</string>
+    <string name="orderByTypeSelection">Order by</string>
 
 
     <!-- Strings for voice Search functionality -->
@@ -278,6 +295,7 @@
 
 
     <string name="synchronization">Synchronization</string>
+    <string name="syncUserData">Sync user data</string>
     <string name="syncQuestionnaires">Sync questionnaires</string>
     <string name="syncCoursesOfStudiesAndFaculties">Sync courses of studies and faculties</string>
     <string name="syncUnsuccessful">Could not sync data!</string>
@@ -309,9 +327,13 @@
 
     <string name="errorCouldNotSyncUserData">Could not sync User data</string>
     <string name="errorYourUserDoesNotExistAnymore">Your User does not exists anymore!/nYou were logged out!</string>
-    <string name="userDataUpToDate">Your data is already up to date</string>
     <string name="userDataUpdated">User data updated</string>
-
+    <string name="userDataIsAlreadyUpToDate">User data is already up to date</string>
+    <string name="errorCouldNotSyncFacultyAndCosData">Could not sync faculty and course of studies</string>
+    <string name="onlyFacultiesCouldBeSynced">Only faculties could be synced</string>
+    <string name="syncedFacultyAndCourseOfStudiesData">Faculties and course of studies were synced!</string>
+    <string name="facultyAndCourseOfStudiesDataAlreayUpToDate">Faculty and course of studies are already up to date</string>
+    <string name="yourDataIsAlreadyUpToDate">Your data is already up to date!</string>
 
     <!-- ALERT DIALOG -->
     <string name="logoutWarningTitle">Logout Warning</string>

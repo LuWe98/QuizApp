@@ -42,43 +42,8 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
         setContentView(binding.root)
         playFadeInAnim(savedInstanceState)
 
-        initViews()
         navigator.addOnDestinationChangedListener(this)
         registerObservers()
-    }
-
-    private fun initViews() {
-        binding.apply {
-            bottomNavView.setupWithNavController(navigator.navController)
-
-            cardHome.onClick {
-                if (bottomNavView.selectedItemId == R.id.fragmentSettings) {
-                    navigator.popBackStack()
-                } else {
-                    bottomNavView.selectedItemId = R.id.fragmentHome
-                }
-            }
-
-            cardSettings.onClick {
-//                bottomNavView.selectedItemId = R.id.fragmentSettings
-                navigator.navigateToSettingsScreen()
-            }
-
-            cardSearch.onClick {
-                navigator.navigateToSearchScreen()
-//               bottomNavView.selectedItemId = R.id.fragmentSearch
-            }
-
-            addCard.onClick {
-//                navigator.navigateToAddQuestionnaireScreen()
-                navigator.navigateToAddEditQuestionnaireScreen()
-            }
-
-            addCard.onLongClick {
-//                navigator.navigateToSelectionScreen(SelectionType.RoleSelection(Role.ADMIN))
-//                navigator.navigateToSelectionScreen(SelectionType.ThemeSelection(AppCompa))
-            }
-        }
     }
 
 
@@ -88,66 +53,66 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             currentSnackBar = null
         }
 
-        when (destination.id) {
-            R.id.fragmentHome -> {
-                binding.apply {
-                    changeCustomBottomNavBarVisibility(cardHome, ivHome)
-                }
-                changeBottomAppBarVisibility(true)
-            }
-            R.id.fragmentSettings -> {
-                binding.apply {
-                    changeCustomBottomNavBarVisibility(cardSettings, ivSettings)
-                }
-                changeBottomAppBarVisibility(true)
-            }
-            else -> {
-                changeBottomAppBarVisibility(false)
-            }
-        }
+//        when (destination.id) {
+//            R.id.fragmentHome -> {
+//                binding.apply {
+//                    changeCustomBottomNavBarVisibility(cardHome, ivHome)
+//                }
+//                changeBottomAppBarVisibility(true)
+//            }
+//            R.id.fragmentSettings -> {
+//                binding.apply {
+//                    changeCustomBottomNavBarVisibility(cardSettings, ivSettings)
+//                }
+//                changeBottomAppBarVisibility(true)
+//            }
+//            else -> {
+//                changeBottomAppBarVisibility(false)
+//            }
+//        }
     }
 
-    private fun changeCustomBottomNavBarVisibility(cardToShow: MaterialCardView, imageViewToChangeTintOf: ImageView) {
-        binding.apply {
-            cardHome.setCardBackgroundColor(getColor(R.color.transparent))
-            ivHome.setDrawableTint(getThemeColor(R.attr.colorControlNormal))
-            cardSearch.setCardBackgroundColor(getColor(R.color.transparent))
-            ivSearch.setDrawableTint(getThemeColor(R.attr.colorControlNormal))
-            cardSettings.setCardBackgroundColor(getColor(R.color.transparent))
-            ivSettings.setDrawableTint(getThemeColor(R.attr.colorControlNormal))
-        }
+//    private fun changeCustomBottomNavBarVisibility(cardToShow: MaterialCardView, imageViewToChangeTintOf: ImageView) {
+//        binding.apply {
+//            cardHome.setCardBackgroundColor(getColor(R.color.transparent))
+//            ivHome.setDrawableTint(getThemeColor(R.attr.colorControlNormal))
+//            cardSearch.setCardBackgroundColor(getColor(R.color.transparent))
+//            ivSearch.setDrawableTint(getThemeColor(R.attr.colorControlNormal))
+//            cardSettings.setCardBackgroundColor(getColor(R.color.transparent))
+//            ivSettings.setDrawableTint(getThemeColor(R.attr.colorControlNormal))
+//        }
+//
+//        cardToShow.setCardBackgroundColor(getThemeColor(R.attr.colorPrimary))
+//        imageViewToChangeTintOf.setDrawableTintWithRes(R.color.white)
+//    }
 
-        cardToShow.setCardBackgroundColor(getThemeColor(R.attr.colorPrimary))
-        imageViewToChangeTintOf.setDrawableTintWithRes(R.color.white)
-    }
 
-
-    private fun changeBottomAppBarVisibility(show: Boolean) {
-        if (show) {
-            binding.bottomAppBar.performShow()
-            binding.bottomAppBar.isVisible = true
-        } else {
-            binding.bottomAppBar.performHide()
-        }
-
-        binding.bottomAppBar.animate().setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                if (!show) {
-                    binding.bottomAppBar.isVisible = show
-                } else {
-                    //binding.fab.show()
-                }
-            }
-
-            override fun onAnimationStart(animation: Animator?) {
-                if (show) {
-                    binding.bottomAppBar.isVisible = show
-                } else {
-                    //binding.fab.hide()
-                }
-            }
-        })
-    }
+//    private fun changeBottomAppBarVisibility(show: Boolean) {
+//        if (show) {
+//            binding.bottomAppBar.performShow()
+//            binding.bottomAppBar.isVisible = true
+//        } else {
+//            binding.bottomAppBar.performHide()
+//        }
+//
+//        binding.bottomAppBar.animate().setListener(object : AnimatorListenerAdapter() {
+//            override fun onAnimationEnd(animation: Animator?) {
+//                if (!show) {
+//                    binding.bottomAppBar.isVisible = show
+//                } else {
+//                    //binding.fab.show()
+//                }
+//            }
+//
+//            override fun onAnimationStart(animation: Animator?) {
+//                if (show) {
+//                    binding.bottomAppBar.isVisible = show
+//                } else {
+//                    //binding.fab.hide()
+//                }
+//            }
+//        })
+//    }
 
     private fun registerObservers() {
         vmQuizActivity.userFlow.collectWhenStarted(this) {

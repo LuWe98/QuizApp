@@ -22,10 +22,18 @@
     <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/btnSyncUserData"
+            app:icon="@drawable/ic_sync"
+            app:title="@string/syncUserData"
+            app:layout_constraintTop_toBottomOf="@id/userDataHeader" />
+
+    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/btnSyncQuestionnaires"
             app:icon="@drawable/ic_sync"
             app:title="@string/syncQuestionnaires"
-            app:layout_constraintTop_toBottomOf="@id/userDataHeader" />
+            app:layout_constraintTop_toBottomOf="@id/btnSyncUserData" />
 
     <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
             android:layout_width="match_parent"

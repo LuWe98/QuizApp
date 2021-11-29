@@ -102,27 +102,13 @@ object DataMapper {
             QuestionnaireCourseOfStudiesRelation(mongoQuestionnaire.id, courseOfStudiesId)
         }
 
-
     fun mapRoomQuestionnaireToMongoFilledQuestionnaire(
         completeCompleteQuestionnaire: CompleteQuestionnaire
-    ) = completeCompleteQuestionnaire.run { mapRoomQuestionnaireToMongoFilledQuestionnaire(questionnaire, questionsWithAnswers) }
-
-    fun mapRoomQuestionnaireToMongoFilledQuestionnaire(
-        questionnaire: Questionnaire,
-        questions: List<Question>,
-        answers: List<Answer>
-    ) = mapRoomQuestionnaireToMongoFilledQuestionnaire(questionnaire, questions.map { question ->
-        QuestionWithAnswers(question = question, answers = answers.filter { answer -> answer.questionId == question.id })
-    })
-
-    fun mapRoomQuestionnaireToMongoFilledQuestionnaire(
-        questionnaire: Questionnaire,
-        questionsWithAnswers: List<QuestionWithAnswers>
     ) = MongoFilledQuestionnaire(
-        questionnaireId = questionnaire.id,
-        userId = questionnaire.authorInfo.userId
+        questionnaireId = completeCompleteQuestionnaire.questionnaire.id,
+        userId = completeCompleteQuestionnaire.questionnaire.authorInfo.userId
     ).apply {
-        questions = questionsWithAnswers.filter(QuestionWithAnswers::isAnswered).map { qwa ->
+        questions = completeCompleteQuestionnaire.questionsWithAnswers.filter(QuestionWithAnswers::isAnswered).map { qwa ->
             qwa.question.let { question ->
                 MongoFilledQuestion(
                     questionId = question.questionnaireId
@@ -145,14 +131,14 @@ object DataMapper {
     )
 
 
-    fun mapMongoFacultyToRoomFaculty(mongoFaculty: MongoFaculty) = Faculty(
+    fun mapMongoFacultyToRoomFaculty(mongoFaculty: MongoFaculty) : Faculty = Faculty(
         id = mongoFaculty.id,
         abbreviation = mongoFaculty.abbreviation,
         name = mongoFaculty.name,
         lastModifiedTimestamp = mongoFaculty.lastModifiedTimestamp
     )
 
-    fun mapRoomFacultyToMongoFaculty(roomFaculty: Faculty) = MongoFaculty(
+    fun mapRoomFacultyToMongoFaculty(roomFaculty: Faculty): MongoFaculty = MongoFaculty(
         id = roomFaculty.id,
         abbreviation = roomFaculty.abbreviation,
         name = roomFaculty.name,

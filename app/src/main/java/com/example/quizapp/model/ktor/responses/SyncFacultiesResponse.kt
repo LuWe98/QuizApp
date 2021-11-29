@@ -8,4 +8,8 @@ data class SyncFacultiesResponse(
     val facultiesToInsert: List<MongoFaculty>,
     val facultiesToUpdate: List<MongoFaculty>,
     val facultyIdsToDelete: List<String>
-)
+) {
+
+    fun isEmpty() = facultiesToInsert.isEmpty() && facultiesToUpdate.isEmpty() && facultyIdsToDelete.isEmpty()
+
+}

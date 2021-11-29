@@ -217,6 +217,9 @@
                 <action
                         android:id="@+id/action_fragmentAdminManageUsers_to_bsdfUserRoleChange"
                         app:destination="@id/bsdfUserRoleChange" />
+                <action
+                        android:id="@+id/action_fragmentAdminManageUsers_to_bsdfManageUsersFilterSelection"
+                        app:destination="@id/bsdfManageUsersFilterSelection" />
             </fragment>
             <dialog
                     android:id="@+id/bsdfUserRoleChange"
@@ -237,6 +240,15 @@
                         app:argType="com.example.quizapp.model.databases.mongodb.documents.user.User"
                         app:nullable="true" />
             </fragment>
+            <dialog
+                    android:id="@+id/bsdfManageUsersFilterSelection"
+                    android:name="com.example.quizapp.view.fragments.adminscreens.manageusers.filterselection.BsdfManageUsersFilterSelection"
+                    android:label="BsdfManageUsersFilterSelection"
+                    tools:layout="@layout/bsdf_manage_users_filter_selection">
+                <argument
+                        android:name="selectedRoles"
+                        app:argType="com.example.quizapp.model.databases.mongodb.documents.user.Role[]" />
+            </dialog>
         </navigation>
     </navigation>
 
@@ -267,15 +279,14 @@
 
     <!-- USER CREATOR SELECTION -->
     <dialog
-            android:id="@+id/bsdfUserCreatorSelection"
-            android:name="com.example.quizapp.view.fragments.dialogs.usercreatorselection.BsdfUserCreatorSelection"
-            android:label="BsdfUserCreatorSelection"
-            tools:layout="@layout/bsdf_user_creator_selection">
+            android:id="@+id/bsdfRemoteAuthorSelection"
+            android:name="com.example.quizapp.view.fragments.dialogs.authorselection.remote.BsdfRemoteAuthorSelection"
+            android:label="BsdfAuthorSelection"
+            tools:layout="@layout/bsdf_author_selection">
         <argument
-            android:name="selectedUsers"
-            app:argType="com.example.quizapp.model.databases.mongodb.documents.user.User[]"/>
+                android:name="selectedAuthors"
+                app:argType="com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo[]" />
     </dialog>
-
 
 
     <!-- UPDATE STRING VALUE DIALOG SCREEN -->
@@ -330,8 +341,9 @@
             android:id="@+id/action_global_bsdfFacultySelection"
             app:destination="@id/bsdfFacultySelection" />
 
-    <action android:id="@+id/action_global_bsdfUserCreatorSelection"
-            app:destination="@id/bsdfUserCreatorSelection"/>
+    <action
+            android:id="@+id/action_global_bsdfRemoteAuthorSelection"
+            app:destination="@id/bsdfRemoteAuthorSelection" />
 
     <!-- BACKDROP TEST -->
     <fragment
@@ -377,23 +389,55 @@
             app:destination="@id/dfConfirmation" />
 
 
-
     <!-- SEARCH SCREEN-->
     <fragment
             android:id="@+id/fragmentSearch"
             android:name="com.example.quizapp.view.fragments.searchscreen.FragmentSearch"
             android:label="FragmentSearchNew"
-            tools:layout="@layout/search_new" >
-        <action
-                android:id="@+id/action_fragmentSearch_to_bsdfSearchFilter"
-                app:destination="@id/bsdfSearchFilter" />
-    </fragment>
+            tools:layout="@layout/fragment_search" />
     <action
             android:id="@+id/action_global_fragmentSearch"
             app:destination="@id/fragmentSearch" />
+
+
+    <!-- REMOTE/BROWSE SEARCH FILTER SCREEN-->
     <dialog
-            android:id="@+id/bsdfSearchFilter"
-            android:name="com.example.quizapp.view.fragments.searchscreen.BsdfSearchFilter"
-            android:label="BsdfSearchFilter" />
+            android:id="@+id/bsdfBrowseQuestionnaireFilterSelection"
+            android:name="com.example.quizapp.view.fragments.searchscreen.filterselection.BsdfBrowseQuestionnaireFilterSelection"
+            android:label="BsdfBrowseQuestionnaireFilterSelection"
+            tools:layout="@layout/bsdf_browse_questionnaire_filter_selection">
+        <argument
+                android:name="selectedCourseOfStudiesIds"
+                app:argType="string[]" />
+
+        <argument
+                android:name="selectedFacultyIds"
+                app:argType="string[]" />
+
+        <argument
+                android:name="selectedAuthors"
+                app:argType="com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo[]" />
+    </dialog>
+
+    <action
+            android:id="@+id/action_global_bsdfBrowseQuestionnaireFilterSelection"
+            app:destination="@id/bsdfBrowseQuestionnaireFilterSelection" />
+
+
+
+
+    <!-- LOCAL SEARCH FILTER SCREEN -->
+    <dialog
+            android:id="@+id/bsdfLocalQuestionnaireFilterSelection"
+            android:name="com.example.quizapp.view.fragments.homescreen.filterselection.BsdfLocalQuestionnaireFilterSelection"
+            android:label="BsdfLocalQuestionnaireFilterSelection"
+            tools:layout="@layout/bsdf_local_questionnaire_filter_selection">
+
+    </dialog>
+
+    <action
+            android:id="@+id/action_global_bsdfLocalQuestionnaireFilterSelection"
+            app:destination="@id/bsdfLocalQuestionnaireFilterSelection" />
+
 
 </navigation>

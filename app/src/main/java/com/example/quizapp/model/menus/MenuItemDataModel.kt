@@ -1,13 +1,9 @@
 package com.example.quizapp.model.menus
 
 import com.example.quizapp.R
-import com.example.quizapp.model.databases.Degree
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
-import com.example.quizapp.model.datastore.QuestionnaireShuffleType
-import com.example.quizapp.model.datastore.QuizAppLanguage
-import com.example.quizapp.model.datastore.QuizAppTheme
 import com.example.quizapp.view.fragments.dialogs.moreoptions.BsdfQuestionnaireMoreOptionsArgs
 
 object MenuItemDataModel {

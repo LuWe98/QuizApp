@@ -3,14 +3,14 @@ package com.example.quizapp.view.recyclerview.adapters
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviUserNewBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.view.recyclerview.impl.BindingPagingDataAdapter
 
-class RvaUserCreatorBrowse : BindingPagingDataAdapter<User, RviUserNewBinding>(User.DIFF_CALLBACK) {
+class RvaAuthorSelection : BindingPagingDataAdapter<AuthorInfo, RviUserNewBinding>(AuthorInfo.DIFF_CALLBACK) {
 
-    var onItemClicked: ((User) -> Unit)? = null
+    var onItemClicked: ((AuthorInfo) -> Unit)? = null
 
-    var selectionPredicate: ((User) -> (Boolean)) = { false }
+    var selectionPredicate: ((AuthorInfo) -> (Boolean)) = { false }
 
     var selectionColor: Int? = null
 
@@ -30,7 +30,7 @@ class RvaUserCreatorBrowse : BindingPagingDataAdapter<User, RviUserNewBinding>(U
         }
     }
 
-    override fun bindViews(binding: RviUserNewBinding, item: User, position: Int) {
+    override fun bindViews(binding: RviUserNewBinding, item: AuthorInfo, position: Int) {
         binding.apply {
             roleIcon.setImageDrawable(R.drawable.ic_person)
             tvName.text = item.userName

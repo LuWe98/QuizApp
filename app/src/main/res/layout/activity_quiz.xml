@@ -7,7 +7,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.QuizActivity">
-
     <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -15,7 +14,6 @@
             android:background="@color/black"
             android:elevation="100dp"
             android:visibility="gone"/>
-
     <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -23,132 +21,4 @@
             app:defaultNavHost="true"
             app:navGraph="@navigation/main_nav_graph"
             android:id="@+id/navHost" />
-
-    <com.google.android.material.bottomappbar.BottomAppBar
-            android:id="@+id/bottomAppBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@drawable/background_transparent"
-            app:background="@drawable/background_transparent"
-            app:hideOnScroll="false"
-            app:elevation="@dimen/defaultElevation"
-            android:visibility="gone"
-            tools:visibility="visible"
-            app:fabAnimationMode="scale"
-            app:fabAlignmentMode="end"
-            app:contentInsetStart="0dp"
-            app:contentInsetLeft="0dp">
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/bottomNavView"
-                    app:labelVisibilityMode="unlabeled"
-                    android:visibility="invisible"
-                    app:menu="@menu/bottom_nav_menu"
-                    android:background="@drawable/background_transparent"
-                    app:background="@drawable/background_transparent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:paddingHorizontal="20dp"/>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:elevation="@dimen/defaultElevation"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent">
-
-                <com.google.android.material.card.MaterialCardView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:id="@+id/cardHome"
-                        app:cardBackgroundColor="?attr/colorAccent"
-                        app:cardCornerRadius="12.5dp"
-                        app:cardElevation="0dp"
-                        app:rippleColor="?colorAccent"
-                        app:layout_constraintEnd_toStartOf="@id/cardSearch"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/ivHome"
-                            app:srcCompat="@drawable/ic_home"
-                            android:padding="10dp" />
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:id="@+id/cardSearch"
-                        app:cardBackgroundColor="@color/transparent"
-                        app:cardCornerRadius="12.5dp"
-                        app:cardElevation="0dp"
-                        app:rippleColor="?colorAccent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/addCard"
-                        app:layout_constraintStart_toEndOf="@+id/cardHome">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:srcCompat="@drawable/ic_search"
-                            android:id="@+id/ivSearch"
-                            android:padding="10dp" />
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:id="@+id/addCard"
-                        app:cardBackgroundColor="@color/transparent"
-                        app:cardCornerRadius="12.5dp"
-                        app:cardElevation="0dp"
-                        app:rippleColor="?colorAccent"
-                        app:layout_constraintStart_toEndOf="@id/cardSearch"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/cardSettings">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:srcCompat="@drawable/ic_add"
-                            android:padding="10dp" />
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:id="@+id/cardSettings"
-                        app:cardBackgroundColor="@color/transparent"
-                        app:cardCornerRadius="12.5dp"
-                        app:cardElevation="0dp"
-                        app:rippleColor="?colorAccent"
-                        app:layout_constraintStart_toEndOf="@id/addCard"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/ivSettings"
-                            app:srcCompat="@drawable/ic_settings"
-                            android:padding="10dp" />
-                </com.google.android.material.card.MaterialCardView>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.bottomappbar.BottomAppBar>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

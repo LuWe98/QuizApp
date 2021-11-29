@@ -19,7 +19,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.datastore.QuizAppLanguage
+import com.example.quizapp.model.datastore.datawrappers.QuizAppLanguage
 import com.example.quizapp.utils.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch

@@ -1,7 +1,9 @@
 package com.example.quizapp.model.ktor.apiclasses
 
+import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.datastore.datawrappers.ManageUsersOrderBy
 import com.example.quizapp.model.ktor.requests.*
 import com.example.quizapp.model.ktor.responses.*
 import com.example.quizapp.model.ktor.ApiPaths.*
@@ -43,9 +45,9 @@ class UserApi @Inject constructor(
             body = RefreshJwtTokenRequest(userName, password)
         }
 
-    suspend fun getPagedCreators(limit: Int, page: Int, searchString: String) : List<User> =
-        client.post(UserPaths.USERS_PAGED) {
-            body = GetPagedUserRequest(limit, page, searchString)
+    suspend fun getPagedAuthors(limit: Int, page: Int, searchString: String) : List<AuthorInfo> =
+        client.post(UserPaths.AUTHORS_PAGED) {
+            body = GetPagedAuthorsRequest(limit, page, searchString)
         }
 
 
@@ -56,9 +58,9 @@ class UserApi @Inject constructor(
             body = UpdateUserRoleRequest(userId, newRole)
         }
 
-    suspend fun getPagedUsersAdmin(limit: Int, page: Int, searchString: String, roles: Set<Role>) : List<User> =
+    suspend fun getPagedUsersAdmin(limit: Int, page: Int, searchString: String, roles: Set<Role>, orderBy: ManageUsersOrderBy, ascending: Boolean) : List<User> =
         client.post(UserPaths.USERS_PAGED_ADMIN) {
-            body = GetPagedUserAdminRequest(limit, page, searchString, roles)
+            body = GetPagedUserAdminRequest(limit, page, searchString, roles, orderBy, ascending)
         }
 
     suspend fun deleteUser(userId: String): DeleteUserResponse = deleteUsers(listOf(userId))

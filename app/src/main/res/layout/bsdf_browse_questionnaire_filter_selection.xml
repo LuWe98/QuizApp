@@ -14,7 +14,7 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:id="@+id/tvTitle"
-            android:text="Search filters"
+            android:text="@string/onlineSearchFilters"
             android:background="@drawable/background_round_corners_10dp"
             android:backgroundTint="@color/transparent"
             android:gravity="center_vertical"
@@ -63,7 +63,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:id="@+id/orderFilterHeader"
-                        android:text="Sort by"
+                        android:text="@string/orderByTypeSelection"
                         android:background="@drawable/background_round_corners_10dp"
                         android:backgroundTint="@color/transparent"
                         android:gravity="center_vertical"
@@ -83,16 +83,16 @@
                         android:padding="5dp"
                         android:elevation="@dimen/grid_2"
                         android:layout_marginStart="@dimen/grid_2"
-                        app:layout_constraintStart_toStartOf="@id/tvSortBy"
-                        app:layout_constraintTop_toTopOf="@id/tvSortBy"
-                        app:layout_constraintBottom_toBottomOf="@id/tvSortBy" />
+                        app:layout_constraintStart_toStartOf="@id/tvOrderBy"
+                        app:layout_constraintTop_toTopOf="@id/tvOrderBy"
+                        app:layout_constraintBottom_toBottomOf="@id/tvOrderBy" />
 
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:background="@drawable/ripple_round_corners_10_dp"
                         android:text="@string/title"
-                        android:id="@+id/tvSortBy"
+                        android:id="@+id/tvOrderBy"
                         android:gravity="center_vertical"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -112,9 +112,40 @@
                         app:srcCompat="@drawable/ic_arrow_down"
                         android:padding="5dp"
                         android:layout_marginEnd="@dimen/grid_2"
-                        app:layout_constraintEnd_toEndOf="@id/tvSortBy"
-                        app:layout_constraintTop_toTopOf="@id/tvSortBy"
-                        app:layout_constraintBottom_toBottomOf="@id/tvSortBy" />
+                        app:layout_constraintEnd_toEndOf="@id/tvOrderBy"
+                        app:layout_constraintTop_toTopOf="@id/tvOrderBy"
+                        app:layout_constraintBottom_toBottomOf="@id/tvOrderBy" />
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:id="@+id/ivOrderAscending"
+                        app:tint="?colorPrimary"
+                        app:srcCompat="@drawable/ic_arrow_drop_down"
+                        android:elevation="@dimen/grid_2"
+                        android:layout_marginStart="@dimen/grid_2"
+                        app:layout_constraintStart_toStartOf="@id/tvOrderAscending"
+                        app:layout_constraintTop_toTopOf="@id/tvOrderAscending"
+                        app:layout_constraintBottom_toBottomOf="@id/tvOrderAscending" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:background="@drawable/ripple_round_corners_10_dp"
+                        android:text="@string/ascending"
+                        android:id="@+id/tvOrderAscending"
+                        android:gravity="center_vertical"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?colorPrimary"
+                        android:fontFamily="@font/work_sans_regular"
+                        android:paddingHorizontal="@dimen/grid_12"
+                        android:layout_marginTop="@dimen/grid_2"
+                        android:layout_marginHorizontal="@dimen/grid_4"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvOrderBy" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

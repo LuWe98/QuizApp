@@ -9,4 +9,8 @@ data class SyncQuestionnairesResponse(
     val mongoQuestionnaires: List<MongoQuestionnaire>,
     val mongoFilledQuestionnaires: List<MongoFilledQuestionnaire>,
     val questionnaireIdsToUnsync: List<String>
-)
+) {
+
+    fun isEmpty() = mongoQuestionnaires.isEmpty() && mongoFilledQuestionnaires.isEmpty() && questionnaireIdsToUnsync.isEmpty()
+
+}

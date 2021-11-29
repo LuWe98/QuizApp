@@ -1,5 +1,6 @@
 package com.example.quizapp.viewmodel
 
+import android.os.Bundle
 import androidx.lifecycle.*
 import androidx.paging.*
 import com.example.quizapp.extensions.getMutableStateFlow
@@ -10,6 +11,7 @@ import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.menus.UserMoreOptionsItem
 import com.example.quizapp.model.menus.UserMoreOptionsItem.*
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
@@ -27,6 +29,7 @@ import javax.inject.Inject
 class VmAdminManageUsers @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
+    private val preferencesRepository: PreferencesRepository,
     private val applicationScope: CoroutineScope,
     private val state: SavedStateHandle
 ) : ViewModel() {
@@ -45,16 +48,22 @@ class VmAdminManageUsers @Inject constructor(
 
     private val selectedRolesMutableStateFlow = state.getMutableStateFlow(SELECTED_ROLES_KEY, Role.values().toSet())
 
+    private val selectedRoles get() = selectedRolesMutableStateFlow.value
+
 
     val filteredPagedDataStateFlow = combine(
         searchQueryMutableStatFlow,
-        selectedRolesMutableStateFlow
-    ) { query, roles ->
+        selectedRolesMutableStateFlow,
+        preferencesRepository.manageUsersOrderByFlow,
+        preferencesRepository.manageUsersAscendingOrderFlow
+    ) { query, roles, orderBy, ascending ->
         PagingConfigValues.getDefaultPager { page ->
             backendRepository.getPagedUsersAdmin(
                 page = page,
                 searchString = query,
-                roles = roles
+                roles = roles,
+                orderBy = orderBy,
+                ascending = ascending
             )
         }
     }.flatMapLatest(Pager<Int, User>::flow::get).cachedIn(viewModelScope)
@@ -73,9 +82,10 @@ class VmAdminManageUsers @Inject constructor(
         }
     }
 
-    fun onRoleSelectionChanged(selectedRoles: Set<Role>) {
-        state.set(SELECTED_ROLES_KEY, selectedRoles)
-        selectedRolesMutableStateFlow.value = selectedRoles
+    fun onFilterButtonClicked(){
+        launch {
+            fragmentAdminEventChannel.send(NavigateToManageUserSelectionEvent(selectedRoles.toTypedArray()))
+        }
     }
 
 
@@ -90,6 +100,9 @@ class VmAdminManageUsers @Inject constructor(
             when (item) {
                 CHANGE_ROLE -> fragmentAdminEventChannel.send(NavigateToChangeUserRoleDialogEvent(type.user))
                 DELETE -> fragmentAdminEventChannel.send(NavigateToDeletionConfirmationEvent(type.user))
+                VIEW_CREATED_QUESTIONNAIRES -> {
+                    //TODO -> Browse die questionnaires
+                }
             }
         }
     }
@@ -109,6 +122,18 @@ class VmAdminManageUsers @Inject constructor(
         }
     }
 
+    fun onFilterUpdateReceived(key: String, bundle: Bundle){
+        bundle.apply {
+            classLoader = Role::class.java.classLoader
+            (getParcelableArray(key) as Array<Role>?)?.let {
+                it.toSet().let { selectedRoles ->
+                    state.set(SELECTED_ROLES_KEY, selectedRoles)
+                    selectedRolesMutableStateFlow.value = selectedRoles
+                }
+            }
+        }
+    }
+
 
     sealed class FragmentAdminEvent {
         class UpdateUserRoleEvent(val userId: String, val newRole: Role) : FragmentAdminEvent()
@@ -117,6 +142,7 @@ class VmAdminManageUsers @Inject constructor(
         class NavigateToUserMoreOptionsSelection(val user: User) : FragmentAdminEvent()
         class NavigateToChangeUserRoleDialogEvent(val user: User) : FragmentAdminEvent()
         class NavigateToDeletionConfirmationEvent(val user: User) : FragmentAdminEvent()
+        class NavigateToManageUserSelectionEvent(val selectedRoles: Array<Role>) : FragmentAdminEvent()
         object ClearSearchQueryEvent: FragmentAdminEvent()
     }
 

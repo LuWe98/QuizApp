@@ -3,27 +3,30 @@ package com.example.quizapp.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
+import androidx.paging.cachedIn
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.view.fragments.dialogs.usercreatorselection.BsdfUserCreatorSelectionArgs
-import com.example.quizapp.viewmodel.VmUserCreatorSelection.UserCreatorSelectionEvent.*
+import com.example.quizapp.view.fragments.dialogs.authorselection.remote.BsdfRemoteAuthorSelectionArgs
+import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.UserCreatorSelectionEvent.ClearSearchQueryEvent
+import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.UserCreatorSelectionEvent.SendResultEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class VmUserCreatorSelection @Inject constructor(
+class VmRemoteAuthorSelection @Inject constructor(
     private val backendRepository: BackendRepository,
     private val state: SavedStateHandle
 ) : ViewModel() {
 
-    private val args = BsdfUserCreatorSelectionArgs.fromSavedStateHandle(state)
+    private val args = BsdfRemoteAuthorSelectionArgs.fromSavedStateHandle(state)
 
     private val userCreatorSelectionEventChannel = Channel<UserCreatorSelectionEvent>()
 
@@ -37,16 +40,16 @@ class VmUserCreatorSelection @Inject constructor(
     val searchQuery get() = searchQueryMutableStateFlow.value
 
 
-    private val selectedUsersMutableStateFlow = state.getMutableStateFlow(SELECTED_USERS, args.selectedUsers.toList())
+    private val selectedAuthorsMutableStateFlow = state.getMutableStateFlow(SELECTED_AUTHORS, args.selectedAuthors.toList())
 
-    val selectedUsersStateFlow = selectedUsersMutableStateFlow.asStateFlow()
+    val selectedAuthorsStateFlow = selectedAuthorsMutableStateFlow.asStateFlow()
 
-    private val selectedUsers get() = selectedUsersMutableStateFlow.value
+    private val selectedAuthors get() = selectedAuthorsMutableStateFlow.value
 
 
     val filteredPagedDataStateFlow = searchQueryMutableStateFlow.flatMapLatest { query ->
         PagingConfigValues.getDefaultPager { page ->
-            backendRepository.getPagedCreators(
+            backendRepository.getPagedAuthors(
                 page = page,
                 searchString = query
             )
@@ -54,7 +57,7 @@ class VmUserCreatorSelection @Inject constructor(
     }.cachedIn(viewModelScope)
 
 
-    fun isUserSelected(user: User) = user in selectedUsers
+    fun isAuthorSelected(author: AuthorInfo) = author in selectedAuthors
 
     fun onSearchQueryChanged(newQuery: String) {
         state.set(SEARCH_QUERY_KEY, newQuery)
@@ -69,32 +72,32 @@ class VmUserCreatorSelection @Inject constructor(
         }
     }
 
-    fun onUserClicked(user: User) {
-        selectedUsers.toMutableList().apply {
-            if (user in this) {
-                remove(user)
+    fun onAuthorClicked(author: AuthorInfo) {
+        selectedAuthors.toMutableList().apply {
+            if (author in this) {
+                remove(author)
             } else {
-                add(user)
+                add(author)
             }
 
-            state.set(SELECTED_USERS, this)
-            selectedUsersMutableStateFlow.value = this
+            state.set(SELECTED_AUTHORS, this)
+            selectedAuthorsMutableStateFlow.value = this
         }
     }
 
     fun onConfirmButtonClicked() {
         launch(IO) {
-            userCreatorSelectionEventChannel.send(SendResultEvent(selectedUsers.toTypedArray()))
+            userCreatorSelectionEventChannel.send(SendResultEvent(selectedAuthors.toTypedArray()))
         }
     }
 
     sealed class UserCreatorSelectionEvent {
-        class SendResultEvent(val selectedUsers: Array<User>) : UserCreatorSelectionEvent()
+        class SendResultEvent(val selectedAuthors: Array<AuthorInfo>) : UserCreatorSelectionEvent()
         object ClearSearchQueryEvent: UserCreatorSelectionEvent()
     }
 
     companion object {
         private const val SEARCH_QUERY_KEY = "searchQueryKey"
-        private const val SELECTED_USERS = "selectedUsersKey"
+        private const val SELECTED_AUTHORS = "selectedAuthorsKey"
     }
 }

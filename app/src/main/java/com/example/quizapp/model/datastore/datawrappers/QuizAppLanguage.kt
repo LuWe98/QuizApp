@@ -1,4 +1,4 @@
-package com.example.quizapp.model.datastore
+package com.example.quizapp.model.datastore.datawrappers
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -13,8 +13,12 @@ enum class QuizAppLanguage(
     @DrawableRes override val iconRes: Int = R.drawable.ic_language
 ) : SelectionTypeItemMarker<QuizAppLanguage> {
 
-    ENGLISH(R.string.english),
-    GERMAN(R.string.german);
+    ENGLISH(
+        R.string.english
+    ),
+    GERMAN(
+        R.string.german
+    );
 
     val locale: Locale
         get() = when (this) {

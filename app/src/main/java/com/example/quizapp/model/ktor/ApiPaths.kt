@@ -12,7 +12,7 @@ sealed class ApiPaths {
         const val DELETE_SELF = "/user/delete"
         const val DELETE_USER = "/admin/users/delete"
         const val SYNC = "/user/sync"
-        const val USERS_PAGED = "/users/paged"
+        const val AUTHORS_PAGED = "/authors/paged"
         const val USERS_PAGED_ADMIN = "/admin/users/paged"
         const val GENERATE_RANDOM = "/user/random"
     }

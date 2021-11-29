@@ -1,14 +1,13 @@
 package com.example.quizapp.model.datastore
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.quizapp.extensions.dataStore
 import com.example.quizapp.extensions.dataflow
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
-import com.example.quizapp.model.menus.SortBy
+import com.example.quizapp.model.datastore.datawrappers.*
 import com.example.quizapp.utils.EncryptionUtil.decrypt
 import com.example.quizapp.utils.EncryptionUtil.encrypt
 import io.ktor.util.date.*
@@ -16,7 +15,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -34,10 +32,17 @@ class PreferencesRepository @Inject constructor(context: Context) {
         private val SHUFFLE_TYPE_KEY = stringPreferencesKey("shuffleTypePreference")
         private val SHUFFLE_SEED_KEY = longPreferencesKey("shuffleSeedKey")
 
-        private val SORT_BY_KEY = stringPreferencesKey("sortByPreferenceKey")
+        private val BROWSABLE_ORDER_BY_KEY = stringPreferencesKey("sortByPreferenceKey")
+        private val BROWSABLE_ASCENDING_ORDER_KEY = booleanPreferencesKey("browsableAscendingKey")
+
+        private val MANAGE_USER_ORDER_BY_KEY = stringPreferencesKey("userOrderByKey")
+        private val MANAGE_USER_ASCENDING_ORDER_KEY = booleanPreferencesKey("userOrderAscendingKey")
+
+        private val LOCAL_QUESTIONNAIRE_ORDER_BY_KEY = stringPreferencesKey("localQuestionnaireOrderByKey")
+        private val LOCAL_QUESTIONNAIRE_ASCENDING_ORDER_KEY = booleanPreferencesKey("localQuestionnaireAscendingOrderKey")
 
         private val PREFERRED_COURSE_OF_STUDIES_ID_KEY = stringSetPreferencesKey("preferredCosKey")
-        private val USE_PREFERRED_COS_FOR_QUESTIONNAIRE_SEARCH = booleanPreferencesKey("preferredCosFprQuestionnaireKey")
+        private val PREFERRED_COURSE_OF_STUDIES_USE_FOR_QUESTIONNAIRE_SEARCH = booleanPreferencesKey("preferredCosFprQuestionnaireKey")
 
         private val JWT_TOKEN_KEY = stringPreferencesKey("jwtTokenKey")
         private val USER_ID_KEY = stringPreferencesKey("userIdKey")
@@ -120,17 +125,96 @@ class PreferencesRepository @Inject constructor(context: Context) {
     }
 
 
-    val sortByFlow = dataFlow.map { preferences ->
-        preferences[SORT_BY_KEY]?.let { SortBy.valueOf(it) } ?: SortBy.TITLE
+
+
+
+
+    //BROWSE QUESTIONNAIRE FILTERS
+    val browsableOrderByFlow = dataFlow.map { preferences ->
+        preferences[BROWSABLE_ORDER_BY_KEY]?.let { BrowsableOrderBy.valueOf(it) } ?: BrowsableOrderBy.TITLE
     }
 
-    suspend fun getSortBy() = sortByFlow.first()
+    suspend fun getBrowsableOrderBy() = browsableOrderByFlow.first()
 
-    suspend fun updateSortBy(sortBy: SortBy) {
+    suspend fun updateBrowsableOrderBy(browsableOrderBy: BrowsableOrderBy) {
         dataStore.edit { preferences ->
-            preferences[SORT_BY_KEY] = sortBy.name
+            preferences[BROWSABLE_ORDER_BY_KEY] = browsableOrderBy.name
         }
     }
+
+
+    val browsableAscendingOrderFlow = dataFlow.map { preferences ->
+        preferences[BROWSABLE_ASCENDING_ORDER_KEY] ?: true
+    }
+
+    suspend fun getBrowsableAscendingOrder() = browsableAscendingOrderFlow.first()
+
+    suspend fun updateBrowsableAscendingOrder(ascending: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[BROWSABLE_ASCENDING_ORDER_KEY] = ascending
+        }
+    }
+
+
+
+    //LOCAL QUESTIONNAIRE FILTERS
+    val localOrderByFlow = dataFlow.map { preferences ->
+        preferences[LOCAL_QUESTIONNAIRE_ORDER_BY_KEY]?.let { LocalQuestionnaireOrderBy.valueOf(it) } ?: LocalQuestionnaireOrderBy.TITLE
+    }
+
+    suspend fun getLocalQuestionnaireOrderBy() = localOrderByFlow.first()
+
+    suspend fun updateLocalQuestionnaireOrderBy(localOrderBy: LocalQuestionnaireOrderBy) {
+        dataStore.edit { preferences ->
+            preferences[LOCAL_QUESTIONNAIRE_ORDER_BY_KEY] = localOrderBy.name
+        }
+    }
+
+
+    val localAscendingOrderFlow = dataFlow.map { preferences ->
+        preferences[LOCAL_QUESTIONNAIRE_ASCENDING_ORDER_KEY] ?: true
+    }
+
+    suspend fun getLocalAscendingOrder() = localAscendingOrderFlow.first()
+
+    suspend fun updateLocalAscendingOrder(ascending: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[LOCAL_QUESTIONNAIRE_ASCENDING_ORDER_KEY] = ascending
+        }
+    }
+
+
+
+    //USER FILTERS
+    val manageUsersOrderByFlow = dataFlow.map { preferences ->
+        preferences[MANAGE_USER_ORDER_BY_KEY]?.let { ManageUsersOrderBy.valueOf(it) } ?: ManageUsersOrderBy.USER_NAME
+    }
+
+    suspend fun getManageUsersOrderBy() = manageUsersOrderByFlow.first()
+
+    suspend fun updateManageUsersOrderBy(manageUsersOrderBy: ManageUsersOrderBy) {
+        dataStore.edit { preferences ->
+            preferences[MANAGE_USER_ORDER_BY_KEY] = manageUsersOrderBy.name
+        }
+    }
+
+
+    val manageUsersAscendingOrderFlow = dataFlow.map { preferences ->
+        preferences[MANAGE_USER_ASCENDING_ORDER_KEY] ?: true
+    }
+
+    suspend fun getManageUsersAscendingOrder() = manageUsersAscendingOrderFlow.first()
+
+    suspend fun updateManageUsersAscendingOrder(ascending: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[MANAGE_USER_ASCENDING_ORDER_KEY] = ascending
+        }
+    }
+
+
+
+
+
 
 
 
@@ -152,14 +236,14 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
 
     val usePreferredCourseOfStudiesForSearchFlow = dataFlow.map {  preferences ->
-        preferences[USE_PREFERRED_COS_FOR_QUESTIONNAIRE_SEARCH] ?: true
+        preferences[PREFERRED_COURSE_OF_STUDIES_USE_FOR_QUESTIONNAIRE_SEARCH] ?: false
     }
 
     suspend fun usePreferredCourseOfStudiesForSearch() = usePreferredCourseOfStudiesForSearchFlow.first()
 
     suspend fun updateUsePreferredCosForSearch(newValue: Boolean) {
         dataStore.edit { preferences ->
-            preferences[USE_PREFERRED_COS_FOR_QUESTIONNAIRE_SEARCH] = newValue
+            preferences[PREFERRED_COURSE_OF_STUDIES_USE_FOR_QUESTIONNAIRE_SEARCH] = newValue
         }
     }
 

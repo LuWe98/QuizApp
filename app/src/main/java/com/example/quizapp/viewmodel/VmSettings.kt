@@ -8,13 +8,14 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.datastore.QuestionnaireShuffleType
-import com.example.quizapp.model.datastore.QuizAppLanguage
-import com.example.quizapp.model.datastore.QuizAppTheme
+import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
+import com.example.quizapp.model.datastore.datawrappers.QuizAppLanguage
+import com.example.quizapp.model.datastore.datawrappers.QuizAppTheme
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_CHANGED
 import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_UP_TO_DATE
-import com.example.quizapp.utils.BackendSyncer
+import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
+import com.example.quizapp.model.ktor.backendsyncer.SyncFacultyAndCourseOfStudiesResultType.*
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +24,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -148,17 +148,16 @@ class VmSettings @Inject constructor(
     }
 
 
-    fun onRefreshListenerTriggered() = applicationScope.launch(IO) {
+
+    fun syncUserDataClicked() = launch(IO, applicationScope) {
         val user = preferencesRepository.user
 
         runCatching {
             backendRepository.syncUserData(user.id)
-        }.onFailure {
-            fragmentSettingsEventChannel.send(ShowMessageSnackBarEvent(R.string.errorCouldNotSyncUserData))
         }.onSuccess { response ->
             when (response.responseType) {
                 DATA_UP_TO_DATE -> {
-                    fragmentSettingsEventChannel.send(ShowMessageSnackBarEvent(R.string.userDataUpToDate))
+                    fragmentSettingsEventChannel.send(ShowMessageSnackBarEvent(R.string.userDataIsAlreadyUpToDate))
                 }
                 DATA_CHANGED -> {
                     fragmentSettingsEventChannel.send(ShowMessageSnackBarEvent(R.string.userDataUpdated))
@@ -173,16 +172,20 @@ class VmSettings @Inject constructor(
                     }
                 }
             }
+        }.onFailure {
+            fragmentSettingsEventChannel.send(ShowMessageSnackBarEvent(R.string.errorCouldNotSyncUserData))
         }
     }
 
-
-    fun onSyncQuestionnairesClicked(){
+    fun onSyncQuestionnairesClicked() {
 
     }
 
-    fun onSyncCosAndFacultiesClicked(){
-
+    fun onSyncCosAndFacultiesClicked() = launch(IO, applicationScope) {
+        //TODO SHOW LADEBILDSCHIRM / DIALOG
+        backendSyncer.syncFacultiesAndCoursesOfStudies().let { resultType ->
+            fragmentSettingsEventChannel.send(ShowMessageSnackBarEvent(resultType.messageRes))
+        }
     }
 
 
@@ -198,6 +201,6 @@ class VmSettings @Inject constructor(
         class NavigateToLanguageSelection(val currentLanguage: QuizAppLanguage) : FragmentSettingsEvent()
         class NavigateToThemeSelection(val currentTheme: QuizAppTheme) : FragmentSettingsEvent()
         class NavigateToShuffleTypeSelection(val shuffleType: QuestionnaireShuffleType) : FragmentSettingsEvent()
-        object LogoutEvent: FragmentSettingsEvent()
+        object LogoutEvent : FragmentSettingsEvent()
     }
 }

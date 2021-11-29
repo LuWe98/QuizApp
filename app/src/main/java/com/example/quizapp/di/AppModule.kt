@@ -9,7 +9,7 @@ import com.example.quizapp.model.ktor.client.KtorClientAuth
 import com.example.quizapp.model.ktor.client.KtorClientExceptionHandler
 import com.example.quizapp.model.databases.room.LocalDatabase
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.utils.BackendSyncer
+import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
 import com.example.quizapp.utils.ConnectivityHelper
 import com.example.quizapp.utils.Constants
 import dagger.Module

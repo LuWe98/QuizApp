@@ -33,7 +33,7 @@
     </style>
 
 
-    <style name="Style.QuizApp.FilterChip" parent="Widget.MaterialComponents.Chip.Filter">
+    <style name="Style.QuizApp.FilterChipOld" parent="Widget.MaterialComponents.Chip.Filter">
         <item name="android:textSize">12sp</item>
         <item name="chipIconSize">15dp</item>
         <item name="chipBackgroundColor">@color/chip_background_color_selector</item>
@@ -91,4 +91,24 @@
         <item name="android:checkable">false</item>
     </style>
 
+    <style name="Style.QuizApp.FilterChip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">?colorOnPrimary</item>
+        <item name="chipIconTint">?colorPrimary</item>
+        <item name="chipStartPadding">@dimen/grid_2</item>
+        <item name="chipEndPadding">@dimen/grid_2</item>
+        <item name="chipMinHeight">30dp</item>
+        <item name="android:checkable">true</item>
+        <item name="checkedIconVisible">true</item>
+        <item name="checkedIcon">@drawable/ic_check_circle</item>
+        <item name="chipIconSize">20dp</item>
+        <item name="checkedIconTint">?colorPrimary</item>
+    </style>
+
+    style="@style/Widget.MaterialComponents.Chip.Choice"
+    app:checkedIcon="@drawable/ic_check_circle"
+    app:chipIconSize="20dp"
+    app:checkedIconTint="?colorPrimary"
+    app:checkedIconVisible="true"
+    android:checked="true"
+    app:chipBackgroundColor="?colorOnPrimary"
 </resources>

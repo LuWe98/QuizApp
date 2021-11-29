@@ -2,12 +2,20 @@ package com.example.quizapp.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
 import com.example.quizapp.extensions.app
+import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.isConnectedToInternet
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
+import com.example.quizapp.model.databases.QuestionnaireVisibility
+import com.example.quizapp.model.databases.QuestionnaireVisibility.PRIVATE
+import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.ChangeQuestionnaireVisibilityResponse.ChangeQuestionnaireVisibilityResponseType
@@ -16,21 +24,11 @@ import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.Dele
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.InsertFilledQuestionnaireResponseType
 import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.InsertQuestionnairesResponseType
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.databases.QuestionnaireVisibility
-import com.example.quizapp.model.databases.QuestionnaireVisibility.PRIVATE
-import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
-import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
-import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
-import com.example.quizapp.utils.BackendSyncer
-import com.example.quizapp.viewmodel.VmHome.FragmentHomeCachedEvent.ChangeCachedSwipeRefreshLayoutVisibility
-import com.example.quizapp.viewmodel.VmHome.FragmentHomeCreatedEvent.ChangeCreatedSwipeRefreshLayoutVisibility
+import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
 import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -44,52 +42,70 @@ class VmHome @Inject constructor(
     private val backendRepository: BackendRepository,
     private val backendSyncer: BackendSyncer,
     preferencesRepository: PreferencesRepository,
-    application: Application
+    application: Application,
+    private val state: SavedStateHandle
 ) : AndroidViewModel(application) {
 
     private val fragmentHomeEventChannel = Channel<FragmentHomeEvent>()
-    private val fragmentHomeCachedEventChannel = Channel<FragmentHomeCachedEvent>()
-    private val fragmentHomeCreatedEventChannel = Channel<FragmentHomeCreatedEvent>()
 
     val fragmentHomeEventChannelFlow = fragmentHomeEventChannel.receiveAsFlow()
-    val fragmentHomeCachedEventChannelFlow = fragmentHomeCachedEventChannel.receiveAsFlow()
-    val fragmentHomeCreatedEventChannelFlow = fragmentHomeCreatedEventChannel.receiveAsFlow()
 
     init {
         if (app.isConnectedToInternet) {
             applicationScope.launch(IO) {
                 fragmentHomeEventChannel.send(ChangeProgressVisibility(true))
-//            fragmentHomeCachedEventChannel.send(ChangeCachedSwipeRefreshLayoutVisibility(true))
-//            fragmentHomeCreatedEventChannel.send(ChangeCreatedSwipeRefreshLayoutVisibility(true))
                 backendSyncer.syncData()
                 delay(500)
-//            fragmentHomeCachedEventChannel.send(ChangeCachedSwipeRefreshLayoutVisibility(false))
-//            fragmentHomeCreatedEventChannel.send(ChangeCreatedSwipeRefreshLayoutVisibility(false))
                 fragmentHomeEventChannel.send(ChangeProgressVisibility(false))
             }
         }
     }
 
+    private val searchQueryMutableStateFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
-    private val userIdFlow = preferencesRepository.userIdFlow.flowOn(IO)
+    val searchQueryStateFlow = searchQueryMutableStateFlow.asStateFlow()
 
-    val allCachedQuestionnairesFlow = userIdFlow
-        .flatMapLatest(localRepository::findAllCompleteQuestionnairesNotForUserFlow)
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-
-    val allCreatedQuestionnairesFlow = userIdFlow
-        .flatMapLatest(localRepository::findAllCompleteQuestionnairesForUserFlow)
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    val searchQuery get() = searchQueryMutableStateFlow.value
 
 
-    fun onSwipeRefreshCachedQuestionnairesList() = launch(IO) {
+//    private val userIdFlow = preferencesRepository.userIdFlow.flowOn(IO)
+//
+//    val allCachedQuestionnairesFlow = userIdFlow
+//        .flatMapLatest(localRepository::findAllCompleteQuestionnairesNotForUserFlow)
+//        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+//
+//    val allCreatedQuestionnairesFlow = userIdFlow
+//        .flatMapLatest(localRepository::findAllCompleteQuestionnairesForUserFlow)
+//        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+
+    val allCompleteQuestionnaireFlow = searchQueryMutableStateFlow.flatMapLatest { query ->
+        localRepository.getFilteredCompleteQuestionnaireFlow(query)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+
+    fun onSwipeRefreshTriggered() = launch(IO) {
         backendSyncer.synAllQuestionnaireData()
-        fragmentHomeCachedEventChannel.send(ChangeCachedSwipeRefreshLayoutVisibility(false))
+        fragmentHomeEventChannel.send(ChangeProgressVisibility(false))
     }
 
-    fun onSwipeRefreshCreatedQuestionnairesList() = launch(IO) {
-        backendSyncer.synAllQuestionnaireData()
-        fragmentHomeCreatedEventChannel.send(ChangeCreatedSwipeRefreshLayoutVisibility(false))
+    fun onSearchQueryChanged(newQuery: String) {
+        state.set(SEARCH_QUERY_KEY, newQuery)
+        searchQueryMutableStateFlow.value = newQuery
+    }
+
+    fun onClearSearchQueryClicked(){
+        if(searchQuery.isNotBlank()) {
+            launch {
+                fragmentHomeEventChannel.send(ClearSearchQueryEvent)
+            }
+        }
+    }
+
+    fun onFilterButtonClicked(){
+        launch(IO) {
+            fragmentHomeEventChannel.send(NavigateToLocalQuestionnairesFilterSelection())
+        }
     }
 
 
@@ -222,13 +238,11 @@ class VmHome @Inject constructor(
         class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire, ) : FragmentHomeEvent()
         class ShowUndoDeleteAnswersOfQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
         class ChangeProgressVisibility(val visible: Boolean) : FragmentHomeEvent()
+        class NavigateToLocalQuestionnairesFilterSelection() : FragmentHomeEvent()
+        object ClearSearchQueryEvent: FragmentHomeEvent()
     }
 
-    sealed class FragmentHomeCreatedEvent {
-        class ChangeCreatedSwipeRefreshLayoutVisibility(val visible: Boolean) : FragmentHomeCreatedEvent()
-    }
-
-    sealed class FragmentHomeCachedEvent {
-        class ChangeCachedSwipeRefreshLayoutVisibility(val visible: Boolean) : FragmentHomeCachedEvent()
+    companion object {
+        private const val SEARCH_QUERY_KEY = "searchQueryKey"
     }
 }

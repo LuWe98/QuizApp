@@ -8,7 +8,7 @@ import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQues
 import com.example.quizapp.model.ktor.requests.*
 import com.example.quizapp.model.ktor.responses.*
 import com.example.quizapp.model.ktor.ApiPaths.QuestionnairePaths
-import com.example.quizapp.model.menus.SortBy
+import com.example.quizapp.model.datastore.datawrappers.BrowsableOrderBy
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject
@@ -51,7 +51,8 @@ class QuestionnaireApi @Inject constructor(
         facultyIds: List<String>,
         courseOfStudiesIds: List<String>,
         authorIds: List<String>,
-        sortBy: SortBy
+        browsableOrderBy: BrowsableOrderBy,
+        ascending: Boolean
     ) : List<BrowsableQuestionnaire> =
         client.post(QuestionnairePaths.PAGED){
             body = GetPagedQuestionnairesRequest(
@@ -62,7 +63,8 @@ class QuestionnaireApi @Inject constructor(
                 facultyIds = facultyIds,
                 courseOfStudiesIds = courseOfStudiesIds,
                 authorIds = authorIds,
-                sortBy = sortBy
+                browsableOrderBy = browsableOrderBy,
+                ascending = ascending
             )
         }
 

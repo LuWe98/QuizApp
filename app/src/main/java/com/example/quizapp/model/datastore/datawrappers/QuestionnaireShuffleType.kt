@@ -1,4 +1,4 @@
-package com.example.quizapp.model.datastore
+package com.example.quizapp.model.datastore.datawrappers
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
