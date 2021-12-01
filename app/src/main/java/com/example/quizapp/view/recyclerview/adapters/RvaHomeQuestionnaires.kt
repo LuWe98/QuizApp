@@ -2,14 +2,14 @@ package com.example.quizapp.view.recyclerview.adapters
 
 import androidx.core.view.isVisible
 import com.example.quizapp.R
-import com.example.quizapp.databinding.RviQuestionnaireCreatedNewBinding
+import com.example.quizapp.databinding.RviQuestionnaireCreatedBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
-class RvaCreatedQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuestionnaireCreatedNewBinding>(CompleteQuestionnaire.DIFF_CALLBACK) {
+class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuestionnaireCreatedBinding>(CompleteQuestionnaire.DIFF_CALLBACK) {
 
     var onItemClick: ((String) -> (Unit))? = null
 
@@ -17,7 +17,7 @@ class RvaCreatedQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQu
 
     var onSyncClick: ((String) -> (Unit))? = null
 
-    override fun initListeners(binding: RviQuestionnaireCreatedNewBinding, vh: BindingListAdapterViewHolder) {
+    override fun initListeners(binding: RviQuestionnaireCreatedBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
             root.onClick {
                 getItem(vh).let {
@@ -41,7 +41,7 @@ class RvaCreatedQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQu
         }
     }
 
-    override fun bindViews(binding: RviQuestionnaireCreatedNewBinding, item: CompleteQuestionnaire, position: Int) {
+    override fun bindViews(binding: RviQuestionnaireCreatedBinding, item: CompleteQuestionnaire, position: Int) {
         binding.apply {
             tvTitle.text = item.questionnaire.title
             tvDateAndQuestionAmount.text = context.getString(

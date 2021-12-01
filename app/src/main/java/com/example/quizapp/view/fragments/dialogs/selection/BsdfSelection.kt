@@ -10,7 +10,7 @@ import com.example.quizapp.databinding.BsdfSelectionBinding
 import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.getThemeColor
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaMenuItem
+import com.example.quizapp.view.recyclerview.adapters.RvaSelectionDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,24 +20,16 @@ class BsdfSelection : BindingBottomSheetDialogFragment<BsdfSelectionBinding>() {
 
     private val selectionType get() = args.selectionType
 
-    private lateinit var rvAdapter: RvaMenuItem
+    private lateinit var rvAdapter: RvaSelectionDialog
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.tvTitle.text = run {
-            if(selectionType.additionalTitleResources.isEmpty()) {
-                getString(selectionType.titleRes)
-            } else {
-                getString(selectionType.titleRes, selectionType.additionalTitleResources.toList())
-            }
-        }
-
+        binding.tvTitle.text = selectionType.getTitle(requireContext())
         initRecyclerView()
     }
 
     private fun initRecyclerView() {
-        rvAdapter = RvaMenuItem().apply {
+        rvAdapter = RvaSelectionDialog().apply {
             onItemClicked = {
                 setFragmentResult(selectionType.resultKey, Bundle().apply {
                     putParcelable(selectionType.resultKey, it)

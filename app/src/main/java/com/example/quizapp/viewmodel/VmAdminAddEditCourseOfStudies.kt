@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.extensions.log
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.Degree
 import com.example.quizapp.model.databases.room.LocalRepository
@@ -15,6 +16,7 @@ import com.example.quizapp.model.databases.room.entities.relations.FacultyCourse
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertCourseOfStudiesResponse.*
 import com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.FragmentAdminAddEditCourseOfStudiesArgs
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.AddEditCourseOfStudiesEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +24,7 @@ import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -151,21 +154,15 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
     }
 
 
-    //TODO -> Save richtig machen mit laden anzeigen etc
     fun onSaveButtonClicked() {
         launch(IO, applicationScope) {
-            if(cosAbbreviation.isEmpty()) {
-
-                return@launch
-            }
-
-            if(cosName.isEmpty()) {
-
+            if(cosAbbreviation.isBlank() || cosName.isEmpty()) {
+                addEditCourseOfStudiesEventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
                 return@launch
             }
 
             if(cosFacultyIds.isEmpty()) {
-
+                addEditCourseOfStudiesEventChannel.send(ShowMessageSnackBar(R.string.errorNoFacultyAssigned))
                 return@launch
             }
 
@@ -173,37 +170,38 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
                 id = parsedCourseOfStudiesId,
                 abbreviation = cosAbbreviation,
                 name = cosName,
-                degree = parsedCourseOfStudiesDegree,
-                lastModifiedTimestamp = getTimeMillis()
+                degree = cosDegree
             )
+
+            addEditCourseOfStudiesEventChannel.send(ShowLoadingDialog(R.string.savingCourseOfStudies))
 
             runCatching {
                 DataMapper.mapRoomCourseOfStudiesToMongoCourseOfStudies(updatedCourseOfStudies, cosFacultyIds).let { mongoCourseOfStudies ->
                     backendRepository.insertCourseOfStudies(mongoCourseOfStudies)
                 }
+            }.also {
+                delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+                addEditCourseOfStudiesEventChannel.send(HideLoadingDialog)
             }.onSuccess { response ->
-                when(response.responseType){
-                    InsertCourseOfStudiesResponseType.SUCCESSFUL -> {
-                        localRepository.deleteFacultyCourseOfStudiesRelationsWith(updatedCourseOfStudies.id)
+                if(response.responseType == InsertCourseOfStudiesResponseType.SUCCESSFUL) {
+                    localRepository.deleteFacultyCourseOfStudiesRelationsWith(updatedCourseOfStudies.id)
 
-                        if(args.courseOfStudiesWithFaculties == null) {
-                            localRepository.insert(updatedCourseOfStudies)
-                        } else {
-                            localRepository.update(updatedCourseOfStudies)
-                        }
-
-                        cosFacultyIds.map { FacultyCourseOfStudiesRelation(it, updatedCourseOfStudies.id) }.let {
-                            localRepository.insert(it)
-                        }
-
-                        addEditCourseOfStudiesEventChannel.send(NavigateBackEvent)
+                    if(args.courseOfStudiesWithFaculties == null) {
+                        localRepository.insert(updatedCourseOfStudies)
+                    } else {
+                        localRepository.update(updatedCourseOfStudies)
                     }
-                    InsertCourseOfStudiesResponseType.NOT_ACKNOWLEDGED -> {
 
+                    cosFacultyIds.map { FacultyCourseOfStudiesRelation(it, updatedCourseOfStudies.id) }.let {
+                        localRepository.insert(it)
                     }
+
+                    addEditCourseOfStudiesEventChannel.send(NavigateBackEvent)
                 }
-            }.onFailure {
 
+                addEditCourseOfStudiesEventChannel.send(ShowMessageSnackBar(response.responseType.messageRes))
+            }.onFailure {
+                addEditCourseOfStudiesEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotSaveCourseOfStudies))
             }
         }
     }
@@ -217,6 +215,8 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
         class NavigateToDegreeSelectionScreen(val currentDegree: Degree?) : AddEditCourseOfStudiesEvent()
         class ShowMessageSnackBar(@StringRes val messageRes: Int): AddEditCourseOfStudiesEvent()
         object NavigateBackEvent: AddEditCourseOfStudiesEvent()
+        class ShowLoadingDialog(@StringRes val messageRes: Int): AddEditCourseOfStudiesEvent()
+        object HideLoadingDialog: AddEditCourseOfStudiesEvent()
     }
 
     companion object {

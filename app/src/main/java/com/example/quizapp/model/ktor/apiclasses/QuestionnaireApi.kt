@@ -42,7 +42,6 @@ class QuestionnaireApi @Inject constructor(
             body = DeleteQuestionnaireRequest(questionnaireIds)
         }
 
-    //TODO -> RÜCKGABEWERT ZU RESPONSE SEALED CLASS UMÄNDERN!
     suspend fun getPagedQuestionnaires(
         limit: Int,
         page: Int,

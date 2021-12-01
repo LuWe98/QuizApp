@@ -45,7 +45,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/searchBarHeight"
                 android:id="@+id/clSearchBar"
                 android:elevation="2dp"
                 android:background="@drawable/background_round_corners_10dp"
@@ -68,7 +68,7 @@
 
             <androidx.appcompat.widget.AppCompatEditText
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="match_parent"
                     android:id="@+id/etSearchQuery"
                     android:hint="@string/searchForQuestionnaires"
                     android:background="@android:color/transparent"
@@ -111,7 +111,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/rv"
-                    tools:listitem="@layout/rvi_questionnaire_browse_new"
+                    tools:listitem="@layout/rvi_questionnaire_browse"
                     android:clipToPadding="false"
                     android:paddingTop="@dimen/grid_4"
                     android:paddingHorizontal="@dimen/grid_3"

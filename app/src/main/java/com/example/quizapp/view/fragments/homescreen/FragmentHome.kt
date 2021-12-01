@@ -7,7 +7,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaCreatedQuestionnaires
+import com.example.quizapp.view.recyclerview.adapters.RvaHomeQuestionnaires
 import com.example.quizapp.viewmodel.VmHome
 import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,7 +17,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
 
     private val vmHome: VmHome by hiltNavDestinationViewModels(R.id.fragmentHome)
 
-    private lateinit var rvAdapter: RvaCreatedQuestionnaires
+    private lateinit var rvAdapter: RvaHomeQuestionnaires
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,7 +30,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
         binding.apply {
             etSearchQuery.setText(vmHome.searchQuery)
 
-            rvAdapter = RvaCreatedQuestionnaires().apply {
+            rvAdapter = RvaHomeQuestionnaires().apply {
                 onItemClick = navigator::navigateToQuizScreen
                 onItemLongClick = navigator::navigateToQuestionnaireMoreOptions
             }
@@ -57,7 +57,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
     }
 
     private fun initObservers() {
-        vmHome.allCompleteQuestionnaireFlow.collectWhenStarted(viewLifecycleOwner) {
+        vmHome.completeQuestionnaireFlow.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitList(it)
         }
 
@@ -65,6 +65,10 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
             binding.btnSearch.changeIconOnCondition {
                 it.isBlank()
             }
+        }
+
+        vmHome.locallyPresentAuthors.collectWhenStarted(viewLifecycleOwner) {
+            vmHome.onLocallyPresentAuthorsChanged(it)
         }
 
         vmHome.fragmentHomeEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
@@ -99,7 +103,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
                 }
                 is ChangeProgressVisibility -> binding.swipeRefreshLayout.isRefreshing = event.visible
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
-                is NavigateToLocalQuestionnairesFilterSelection -> navigator.navigateToLocalQuestionnaireFilterSelection()
+                NavigateToLocalQuestionnairesFilterSelection -> navigator.navigateToLocalQuestionnaireFilterSelection()
             }
         }
     }

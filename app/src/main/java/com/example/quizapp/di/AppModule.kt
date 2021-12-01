@@ -61,7 +61,6 @@ object AppModule {
         roomDatabase.getAnswerDao(),
         roomDatabase.getFacultyDao(),
         roomDatabase.getCourseOfStudiesDao(),
-        roomDatabase.getSubjectDao(),
         roomDatabase.getQuestionnaireCourseOfStudiesRelationDao(),
         roomDatabase.getFacultyCourseOfStudiesRelationDao(),
         roomDatabase.getLocallyDeletedQuestionnaireDao(),
@@ -120,8 +119,8 @@ object AppModule {
         }
 
         engine {
-            connectTimeout = 10_000
-            socketTimeout = 10_000
+            connectTimeout = 15_000
+            socketTimeout = 15_000
         }
 
         HttpResponseValidator {

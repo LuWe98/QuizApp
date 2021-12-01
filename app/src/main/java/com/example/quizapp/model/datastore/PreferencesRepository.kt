@@ -40,6 +40,10 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
         private val LOCAL_QUESTIONNAIRE_ORDER_BY_KEY = stringPreferencesKey("localQuestionnaireOrderByKey")
         private val LOCAL_QUESTIONNAIRE_ASCENDING_ORDER_KEY = booleanPreferencesKey("localQuestionnaireAscendingOrderKey")
+        private val LOCAL_QUESTIONNAIRE_FILTER_AUTHOR_IDS = stringSetPreferencesKey("localQuestionnairesFilterAuthorIdsKey")
+        private val LOCAL_QUESTIONNAIRE_FILTER_COS_IDS = stringSetPreferencesKey("localQuestionnairesFilterCosIdsKey")
+        private val LOCAL_QUESTIONNAIRE_FILTER_FACULTY_IDS = stringSetPreferencesKey("localQuestionnairesFilterFacultyIdsKey")
+        private val LOCAL_QUESTIONNAIRE_FILTER_HIDE_COMPLETED = booleanPreferencesKey("localQuestionnairesFilterHideCompletedKey")
 
         private val PREFERRED_COURSE_OF_STUDIES_ID_KEY = stringSetPreferencesKey("preferredCosKey")
         private val PREFERRED_COURSE_OF_STUDIES_USE_FOR_QUESTIONNAIRE_SEARCH = booleanPreferencesKey("preferredCosFprQuestionnaireKey")
@@ -58,7 +62,7 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
     private val dataFlow = dataStore.dataflow
 
-    suspend fun clearPreferenceData() {
+    suspend fun clearPreferenceDataOnLogout() {
         dataStore.edit { preferences ->
             cachedUser = null
             preferences[USER_NAME_KEY] = EMPTY_STRING
@@ -68,6 +72,30 @@ class PreferencesRepository @Inject constructor(context: Context) {
         }
     }
 
+    suspend fun wipePreferenceData() {
+        dataStore.edit { preferences ->
+            cachedUser = null
+            preferences[USER_NAME_KEY] = EMPTY_STRING
+            preferences[USER_PASSWORD_KEY] = EMPTY_STRING
+            preferences[USER_ROLE_KEY] = EMPTY_STRING
+            preferences[JWT_TOKEN_KEY] = EMPTY_STRING
+            preferences[LANGUAGE_KEY] = QuizAppLanguage.ENGLISH.name
+            preferences[THEME_KEY] = QuizAppTheme.LIGHT.name
+            preferences[SHUFFLE_TYPE_KEY] = QuestionnaireShuffleType.NONE.name
+            preferences[BROWSABLE_ORDER_BY_KEY] = BrowsableOrderBy.TITLE.name
+            preferences[BROWSABLE_ASCENDING_ORDER_KEY] = true
+            preferences[MANAGE_USER_ORDER_BY_KEY] = ManageUsersOrderBy.USER_NAME.name
+            preferences[MANAGE_USER_ASCENDING_ORDER_KEY] = true
+            preferences[LOCAL_QUESTIONNAIRE_ORDER_BY_KEY] = LocalQuestionnaireOrderBy.TITLE.name
+            preferences[LOCAL_QUESTIONNAIRE_ASCENDING_ORDER_KEY] = true
+            preferences[LOCAL_QUESTIONNAIRE_FILTER_AUTHOR_IDS] = emptySet()
+            preferences[LOCAL_QUESTIONNAIRE_FILTER_COS_IDS] = emptySet()
+            preferences[LOCAL_QUESTIONNAIRE_FILTER_FACULTY_IDS] = emptySet()
+            preferences[LOCAL_QUESTIONNAIRE_FILTER_HIDE_COMPLETED] = false
+            preferences[PREFERRED_COURSE_OF_STUDIES_ID_KEY] = emptySet()
+            preferences[PREFERRED_COURSE_OF_STUDIES_USE_FOR_QUESTIONNAIRE_SEARCH] = true
+        }
+    }
 
 
     val themeFlow = dataFlow.map { preferences ->
@@ -83,33 +111,30 @@ class PreferencesRepository @Inject constructor(context: Context) {
     }
 
 
-
     val languageFlow = dataFlow.map { preferences ->
         preferences[LANGUAGE_KEY]?.let { QuizAppLanguage.valueOf(it) } ?: QuizAppLanguage.ENGLISH
     }
 
     suspend fun getLanguage(): QuizAppLanguage = languageFlow.first()
 
-    suspend fun updateLanguage(quizAppLanguage: QuizAppLanguage){
+    suspend fun updateLanguage(quizAppLanguage: QuizAppLanguage) {
         dataStore.edit { preferences ->
             preferences[LANGUAGE_KEY] = quizAppLanguage.name
         }
     }
 
 
-
     val shuffleTypeFlow = dataFlow.map { preferences ->
         preferences[SHUFFLE_TYPE_KEY]?.let { QuestionnaireShuffleType.valueOf(it) } ?: QuestionnaireShuffleType.NONE
     }
 
-    suspend fun getShuffleType() : QuestionnaireShuffleType = shuffleTypeFlow.first()
+    suspend fun getShuffleType(): QuestionnaireShuffleType = shuffleTypeFlow.first()
 
     suspend fun updateShuffleType(shuffleType: QuestionnaireShuffleType) {
         dataStore.edit { preferences ->
             preferences[SHUFFLE_TYPE_KEY] = shuffleType.name
         }
     }
-
 
 
     val shuffleSeedFlow = dataFlow.map { preferences ->
@@ -125,22 +150,12 @@ class PreferencesRepository @Inject constructor(context: Context) {
     }
 
 
-
-
-
-
     //BROWSE QUESTIONNAIRE FILTERS
     val browsableOrderByFlow = dataFlow.map { preferences ->
         preferences[BROWSABLE_ORDER_BY_KEY]?.let { BrowsableOrderBy.valueOf(it) } ?: BrowsableOrderBy.TITLE
     }
 
     suspend fun getBrowsableOrderBy() = browsableOrderByFlow.first()
-
-    suspend fun updateBrowsableOrderBy(browsableOrderBy: BrowsableOrderBy) {
-        dataStore.edit { preferences ->
-            preferences[BROWSABLE_ORDER_BY_KEY] = browsableOrderBy.name
-        }
-    }
 
 
     val browsableAscendingOrderFlow = dataFlow.map { preferences ->
@@ -149,12 +164,16 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
     suspend fun getBrowsableAscendingOrder() = browsableAscendingOrderFlow.first()
 
-    suspend fun updateBrowsableAscendingOrder(ascending: Boolean) {
+
+    suspend fun updateRemoteFilters(
+        browsableOrderBy: BrowsableOrderBy,
+        ascending: Boolean
+    ) {
         dataStore.edit { preferences ->
+            preferences[BROWSABLE_ORDER_BY_KEY] = browsableOrderBy.name
             preferences[BROWSABLE_ASCENDING_ORDER_KEY] = ascending
         }
     }
-
 
 
     //LOCAL QUESTIONNAIRE FILTERS
@@ -164,25 +183,60 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
     suspend fun getLocalQuestionnaireOrderBy() = localOrderByFlow.first()
 
-    suspend fun updateLocalQuestionnaireOrderBy(localOrderBy: LocalQuestionnaireOrderBy) {
-        dataStore.edit { preferences ->
-            preferences[LOCAL_QUESTIONNAIRE_ORDER_BY_KEY] = localOrderBy.name
-        }
-    }
-
-
     val localAscendingOrderFlow = dataFlow.map { preferences ->
         preferences[LOCAL_QUESTIONNAIRE_ASCENDING_ORDER_KEY] ?: true
     }
 
     suspend fun getLocalAscendingOrder() = localAscendingOrderFlow.first()
 
-    suspend fun updateLocalAscendingOrder(ascending: Boolean) {
+    val localFilteredAuthorIdsFlow = dataFlow.map { preferences ->
+        preferences[LOCAL_QUESTIONNAIRE_FILTER_AUTHOR_IDS] ?: emptySet()
+    }
+
+    suspend fun getLocalFilteredAuthorIds() = localFilteredAuthorIdsFlow.first()
+
+    val localFilterHideCompletedFlow = dataFlow.map { preferences ->
+        preferences[LOCAL_QUESTIONNAIRE_FILTER_HIDE_COMPLETED] ?: false
+    }
+
+    suspend fun updateLocalFilteredAuthorIds(authorIds: Collection<String>) {
         dataStore.edit { preferences ->
-            preferences[LOCAL_QUESTIONNAIRE_ASCENDING_ORDER_KEY] = ascending
+            preferences[LOCAL_QUESTIONNAIRE_FILTER_AUTHOR_IDS] = authorIds.toSet()
         }
     }
 
+    suspend fun getLocalFilterHideCompleted() = localFilterHideCompletedFlow.first()
+
+    val localFilteredCosIdsFlow = dataFlow.map { preferences ->
+        preferences[LOCAL_QUESTIONNAIRE_FILTER_COS_IDS] ?: emptySet()
+    }
+
+    suspend fun getLocalFilteredCosIds() = localFilteredCosIdsFlow.first()
+
+    val localFilteredFacultyIdsFlow = dataFlow.map { preferences ->
+        preferences[LOCAL_QUESTIONNAIRE_FILTER_FACULTY_IDS] ?: emptySet()
+    }
+
+    suspend fun getLocalFilteredFacultyIds() = localFilteredFacultyIdsFlow.first()
+
+
+    suspend fun updateLocalFilters(
+        localOrderBy: LocalQuestionnaireOrderBy,
+        ascending: Boolean,
+        authorIds: Collection<String>,
+        cosIds: Collection<String>,
+        facultyIds: Collection<String>,
+        hideCompleted: Boolean
+    ) {
+        dataStore.edit { preferences ->
+            preferences[LOCAL_QUESTIONNAIRE_ORDER_BY_KEY] = localOrderBy.name
+            preferences[LOCAL_QUESTIONNAIRE_ASCENDING_ORDER_KEY] = ascending
+            preferences[LOCAL_QUESTIONNAIRE_FILTER_AUTHOR_IDS] = authorIds.toSet()
+            preferences[LOCAL_QUESTIONNAIRE_FILTER_COS_IDS] = cosIds.toSet()
+            preferences[LOCAL_QUESTIONNAIRE_FILTER_FACULTY_IDS] = facultyIds.toSet()
+            preferences[LOCAL_QUESTIONNAIRE_FILTER_HIDE_COMPLETED] = hideCompleted
+        }
+    }
 
 
     //USER FILTERS
@@ -212,15 +266,6 @@ class PreferencesRepository @Inject constructor(context: Context) {
     }
 
 
-
-
-
-
-
-
-    //TODO -> Mehr options einbauen:
-    // Use preferredCos for filtering -> Also bei der Suche von Fragebögen
-    // Use preferredCos for Questionnaire creation -> Dass das Feld prefilled wird mit der COS
     val preferredCourseOfStudiesIdFlow = dataFlow.map { preferences ->
         preferences[PREFERRED_COURSE_OF_STUDIES_ID_KEY] ?: emptySet()
     }
@@ -234,8 +279,7 @@ class PreferencesRepository @Inject constructor(context: Context) {
     }
 
 
-
-    val usePreferredCourseOfStudiesForSearchFlow = dataFlow.map {  preferences ->
+    val usePreferredCourseOfStudiesForSearchFlow = dataFlow.map { preferences ->
         preferences[PREFERRED_COURSE_OF_STUDIES_USE_FOR_QUESTIONNAIRE_SEARCH] ?: false
     }
 
@@ -248,19 +292,15 @@ class PreferencesRepository @Inject constructor(context: Context) {
     }
 
 
-
-
-
-
     private val jwtTokenFlow = dataFlow.map { preferences ->
         preferences[JWT_TOKEN_KEY]
     }
 
     suspend fun getJwtToken() = jwtTokenFlow.first()?.let {
-        if(it.isEmpty()) null else it
+        if (it.isEmpty()) null else it
     }
 
-    suspend fun updateJwtToken(token: String?){
+    suspend fun updateJwtToken(token: String?) {
         dataStore.edit { preferences ->
             preferences[JWT_TOKEN_KEY] = token ?: EMPTY_STRING
         }
@@ -295,11 +335,13 @@ class PreferencesRepository @Inject constructor(context: Context) {
                 preferences[USER_LAST_MODIFIED_TIMESTAMP_KEY] ?: UNKNOWN_TIMESTAMP
             }
 
-            User(id = id.await(),
+            User(
+                id = id.await(),
                 userName = userName.await(),
                 password = password.await(),
                 role = role.await(),
-                lastModifiedTimestamp = lastModifiedTimestamp.await()).also {
+                lastModifiedTimestamp = lastModifiedTimestamp.await()
+            ).also {
                 cachedUser = it
             }
         }
@@ -315,18 +357,21 @@ class PreferencesRepository @Inject constructor(context: Context) {
             cachedUser!!
         }
 
-    val userIdFlow get() = dataFlow.map {
-        it[USER_ID_KEY]?.decrypt() ?: EMPTY_STRING
-    }
+    val userIdFlow
+        get() = dataFlow.map {
+            it[USER_ID_KEY]?.decrypt() ?: EMPTY_STRING
+        }
 
     suspend fun getUserId() = userIdFlow.first()
+
+    suspend fun getOwnAuthorInfo() = userFlow.first().asAuthorInfo
 
     suspend fun updateUserCredentials(user: User) {
         dataStore.edit { preferences ->
             cachedUser = user
-            preferences[USER_ID_KEY] = if(user.id.isEmpty()) "" else user.id.encrypt()
-            preferences[USER_NAME_KEY] = if(user.userName.isEmpty()) "" else user.userName.encrypt()
-            preferences[USER_PASSWORD_KEY] = if(user.password.isEmpty()) "" else user.password.encrypt()
+            preferences[USER_ID_KEY] = if (user.id.isEmpty()) "" else user.id.encrypt()
+            preferences[USER_NAME_KEY] = if (user.userName.isEmpty()) "" else user.userName.encrypt()
+            preferences[USER_PASSWORD_KEY] = if (user.password.isEmpty()) "" else user.password.encrypt()
             preferences[USER_ROLE_KEY] = user.role.name.encrypt()
             preferences[USER_LAST_MODIFIED_TIMESTAMP_KEY] = user.lastModifiedTimestamp
         }

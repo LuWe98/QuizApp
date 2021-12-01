@@ -7,7 +7,6 @@ import com.example.quizapp.model.databases.room.entities.EntityMarker
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
-//TODO -> Diese Entity ist dazu da Antworten zu einem Fragebogen hochzuladen,  wenn sich Antworten zu einem Fragebogen geändert haben, auch wenn man die App verlassen sollte.
 @Parcelize
 @Serializable
 @Entity(tableName = LocallyFilledQuestionnaireToUpload.TABLE_NAME)

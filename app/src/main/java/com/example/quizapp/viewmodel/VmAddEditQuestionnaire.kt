@@ -88,8 +88,6 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val questionnaireSubject get() = questionnaireSubjectStateFlow.value
 
 
-    //TODO -> Faculty kommt im CompleteQuestionnaire wenn man den reinladed, nachem man speichern gedrückt hat!
-    //TODO -> Um sie dann online zu speichern und in MongoQuestionnaire umzuwandeln
     private var coursesOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(COURSES_OF_STUDIES_IDS_KEY, parsedCourseOfStudiesIds)
 
     val coursesOfStudiesStateFlow = coursesOfStudiesIdsMutableStateFlow

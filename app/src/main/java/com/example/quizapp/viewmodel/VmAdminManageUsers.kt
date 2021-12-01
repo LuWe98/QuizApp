@@ -1,42 +1,41 @@
 package com.example.quizapp.viewmodel
 
 import android.os.Bundle
+import androidx.annotation.StringRes
 import androidx.lifecycle.*
 import androidx.paging.*
+import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
 import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
-import com.example.quizapp.model.databases.mongodb.documents.user.User
-import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.menus.UserMoreOptionsItem
-import com.example.quizapp.model.menus.UserMoreOptionsItem.*
+import com.example.quizapp.model.menus.datawrappers.UserMoreOptionsItem
+import com.example.quizapp.model.menus.datawrappers.UserMoreOptionsItem.*
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
-import com.example.quizapp.viewmodel.VmAdminManageUsers.FragmentAdminEvent.*
+import com.example.quizapp.viewmodel.VmAdminManageUsers.ManageUsersEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class VmAdminManageUsers @Inject constructor(
     private val backendRepository: BackendRepository,
-    private val localRepository: LocalRepository,
-    private val preferencesRepository: PreferencesRepository,
-    private val applicationScope: CoroutineScope,
+    preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
 ) : ViewModel() {
 
-    private val fragmentAdminEventChannel = Channel<FragmentAdminEvent>()
+    private val manageUsersEventChannel = Channel<ManageUsersEvent>()
 
-    val fragmentAdminEventChannelFlow = fragmentAdminEventChannel.receiveAsFlow()
+    val manageUsersEventChannelFlow = manageUsersEventChannel.receiveAsFlow()
 
     private val searchQueryMutableStatFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
@@ -77,29 +76,29 @@ class VmAdminManageUsers @Inject constructor(
     fun onClearSearchQueryClicked(){
         if(searchQuery.isNotBlank()) {
             launch {
-                fragmentAdminEventChannel.send(ClearSearchQueryEvent)
+                manageUsersEventChannel.send(ClearSearchQueryEvent)
             }
         }
     }
 
     fun onFilterButtonClicked(){
         launch {
-            fragmentAdminEventChannel.send(NavigateToManageUserSelectionEvent(selectedRoles.toTypedArray()))
+            manageUsersEventChannel.send(NavigateToManageUserSelectionEvent(selectedRoles.toTypedArray()))
         }
     }
 
 
     fun onUserItemClicked(user: User) {
         launch(IO) {
-            fragmentAdminEventChannel.send(NavigateToUserMoreOptionsSelection(user))
+            manageUsersEventChannel.send(NavigateToSelectionScreen(SelectionType.UserMoreOptionsSelection(user)))
         }
     }
 
     fun onMoreOptionsItemSelected(item: UserMoreOptionsItem, type: SelectionType.UserMoreOptionsSelection) {
         launch(IO) {
             when (item) {
-                CHANGE_ROLE -> fragmentAdminEventChannel.send(NavigateToChangeUserRoleDialogEvent(type.user))
-                DELETE -> fragmentAdminEventChannel.send(NavigateToDeletionConfirmationEvent(type.user))
+                CHANGE_ROLE -> manageUsersEventChannel.send(NavigateToChangeUserRoleDialogEvent(type.user))
+                DELETE -> manageUsersEventChannel.send(NavigateToDeletionConfirmationEvent(type.user))
                 VIEW_CREATED_QUESTIONNAIRES -> {
                     //TODO -> Browse die questionnaires
                 }
@@ -109,19 +108,27 @@ class VmAdminManageUsers @Inject constructor(
 
 
     fun onUserRoleSuccessfullyChanged(userId: String, newRole: Role) = launch(IO) {
-        fragmentAdminEventChannel.send(UpdateUserRoleEvent(userId, newRole))
+        manageUsersEventChannel.send(UpdateUserRoleEvent(userId, newRole))
     }
 
-    fun onDeleteUserConfirmed(deleteConfirmation: ConfirmationType.DeleteUserConfirmation) = applicationScope.launch(IO) {
+    fun onDeleteUserConfirmed(deleteConfirmation: ConfirmationType.DeleteUserConfirmation) = launch(IO) {
+        manageUsersEventChannel.send(ShowLoadingDialog(R.string.deletingUser))
         runCatching {
             backendRepository.deleteUser(deleteConfirmation.user.id)
+        }.also {
+            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+            manageUsersEventChannel.send(HideLoadingDialog)
         }.onSuccess { response ->
             if (response.responseType == DeleteUserResponseType.SUCCESSFUL) {
-                fragmentAdminEventChannel.send(HideUserEvent(deleteConfirmation.user.id))
+                manageUsersEventChannel.send(HideUserEvent(deleteConfirmation.user.id))
+                manageUsersEventChannel.send(ShowMessageSnackBarEvent(R.string.userDeleted))
             }
+        }.onFailure {
+            manageUsersEventChannel.send(ShowMessageSnackBarEvent(R.string.errorCouldNotDeleteUser))
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun onFilterUpdateReceived(key: String, bundle: Bundle){
         bundle.apply {
             classLoader = Role::class.java.classLoader
@@ -135,15 +142,18 @@ class VmAdminManageUsers @Inject constructor(
     }
 
 
-    sealed class FragmentAdminEvent {
-        class UpdateUserRoleEvent(val userId: String, val newRole: Role) : FragmentAdminEvent()
-        class HideUserEvent(val userId: String) : FragmentAdminEvent()
-        class ShowUserEvent(val user: User) : FragmentAdminEvent()
-        class NavigateToUserMoreOptionsSelection(val user: User) : FragmentAdminEvent()
-        class NavigateToChangeUserRoleDialogEvent(val user: User) : FragmentAdminEvent()
-        class NavigateToDeletionConfirmationEvent(val user: User) : FragmentAdminEvent()
-        class NavigateToManageUserSelectionEvent(val selectedRoles: Array<Role>) : FragmentAdminEvent()
-        object ClearSearchQueryEvent: FragmentAdminEvent()
+    sealed class ManageUsersEvent {
+        class UpdateUserRoleEvent(val userId: String, val newRole: Role) : ManageUsersEvent()
+        class HideUserEvent(val userId: String) : ManageUsersEvent()
+        class ShowUserEvent(val user: User) : ManageUsersEvent()
+        class NavigateToSelectionScreen(val selectionType: SelectionType) : ManageUsersEvent()
+        class NavigateToChangeUserRoleDialogEvent(val user: User) : ManageUsersEvent()
+        class NavigateToDeletionConfirmationEvent(val user: User) : ManageUsersEvent()
+        class NavigateToManageUserSelectionEvent(val selectedRoles: Array<Role>) : ManageUsersEvent()
+        object ClearSearchQueryEvent: ManageUsersEvent()
+        class ShowMessageSnackBarEvent(@StringRes val messageRes: Int): ManageUsersEvent()
+        class ShowLoadingDialog(@StringRes val messageRes: Int): ManageUsersEvent()
+        object HideLoadingDialog: ManageUsersEvent()
     }
 
     companion object {

@@ -38,7 +38,8 @@ class DfShareQuestionnaire : BindingDialogFragment<DfShareQuestionnaireBinding>(
     private fun initListeners() {
         binding.apply {
             etUserName.onTextChanged(vmShare::onUserNameEditTextChanged)
-            btnShare.onClick(vmShare::onShareButtonClicked)
+            btnConfirm.onClick(vmShare::onShareButtonClicked)
+            btnCancel.onClick(navigator::popBackStack)
         }
     }
 

@@ -6,7 +6,7 @@ import com.example.quizapp.extensions.*
 import com.example.quizapp.model.menus.SelectionTypeItemMarker
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
-class RvaMenuItem : BindingListAdapter<SelectionTypeItemMarker<*>, RviMenuBinding>(SelectionTypeItemMarker.DIFF_CALLBACK) {
+class RvaSelectionDialog : BindingListAdapter<SelectionTypeItemMarker<*>, RviMenuBinding>(SelectionTypeItemMarker.DIFF_CALLBACK) {
 
     var onItemClicked: ((SelectionTypeItemMarker<*>) -> (Unit))? = null
 

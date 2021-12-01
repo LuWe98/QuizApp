@@ -88,7 +88,7 @@ class BsdfManageUsersFilterSelection: BindingBottomSheetDialogFragment<BsdfManag
 
         vmFilter.manageUsersFilterSelectionEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                is NavigateToOrderByTypeSelectionDialog -> navigator.navigateToSelectionDialog(SelectionType.ManageUsersOrderBySelection(event.currentOrderBy))
+                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
                 is ApplySelectionEvent -> {
                     setFragmentResult(SELECTED_ROLES_RESULT_KEY, Bundle().apply {
                         putParcelableArray(SELECTED_ROLES_RESULT_KEY, event.selectedRoles)

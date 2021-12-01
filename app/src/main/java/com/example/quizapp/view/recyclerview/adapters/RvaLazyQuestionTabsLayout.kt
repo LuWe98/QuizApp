@@ -10,7 +10,6 @@ import androidx.core.view.isVisible
 import com.example.quizapp.R
 import com.example.quizapp.databinding.TabLayoutViewQuestionBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.utils.DiffCallbackUtil
 import com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab.LazyQuestionTab
 import com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab.LazyQuestionTabLayout
 import com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab.LazyQuestionTabLayoutAdapter
@@ -19,7 +18,7 @@ class RvaLazyQuestionTabsLayout(
     private val lazyTabLayout: LazyQuestionTabLayout,
     private val isShowSolutionScreen: Boolean,
     private val tabPredicate: ((String) -> Boolean)
-) : LazyQuestionTabLayoutAdapter<LazyQuestionTab, RvaLazyQuestionTabsLayout.ImplementedLazyViewHolder>(DiffCallbackUtil.createDiffUtil { t, t2 -> t == t2 }) {
+) : LazyQuestionTabLayoutAdapter<LazyQuestionTab, RvaLazyQuestionTabsLayout.ImplementedLazyViewHolder>(generateDiffItemCallback(LazyQuestionTab::questionId)) {
 
     var onItemClicked: ((Int) -> Unit)? = null
 

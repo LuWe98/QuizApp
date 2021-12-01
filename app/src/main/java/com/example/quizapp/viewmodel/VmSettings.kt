@@ -1,5 +1,6 @@
 package com.example.quizapp.viewmodel
 
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,12 +18,15 @@ import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDat
 import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
 import com.example.quizapp.model.ktor.backendsyncer.SyncFacultyAndCourseOfStudiesResultType.*
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -97,7 +101,7 @@ class VmSettings @Inject constructor(
 
     fun onLanguageButtonClicked() {
         launch(IO) {
-            fragmentSettingsEventChannel.send(NavigateToLanguageSelection(preferencesRepository.getLanguage()))
+            fragmentSettingsEventChannel.send(NavigateToSelectionScreen(SelectionType.LanguageSelection(preferencesRepository.getLanguage())))
         }
     }
 
@@ -113,7 +117,7 @@ class VmSettings @Inject constructor(
 
     fun onThemeButtonClicked() {
         launch(IO) {
-            fragmentSettingsEventChannel.send(NavigateToThemeSelection(preferencesRepository.getTheme()))
+            fragmentSettingsEventChannel.send(NavigateToSelectionScreen(SelectionType.ThemeSelection(preferencesRepository.getTheme())))
         }
     }
 
@@ -128,10 +132,9 @@ class VmSettings @Inject constructor(
         }
     }
 
-
     fun onShuffleTypeButtonClicked() {
         launch(IO) {
-            fragmentSettingsEventChannel.send(NavigateToShuffleTypeSelection(preferencesRepository.getShuffleType()))
+            fragmentSettingsEventChannel.send(NavigateToSelectionScreen(SelectionType.ShuffleTypeSelection(preferencesRepository.getShuffleType())))
         }
     }
 
@@ -151,9 +154,12 @@ class VmSettings @Inject constructor(
 
     fun syncUserDataClicked() = launch(IO, applicationScope) {
         val user = preferencesRepository.user
-
+        fragmentSettingsEventChannel.send(ShowLoadingDialog(R.string.syncingUserData))
         runCatching {
             backendRepository.syncUserData(user.id)
+        }.also {
+            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+            fragmentSettingsEventChannel.send(HideLoadingDialog)
         }.onSuccess { response ->
             when (response.responseType) {
                 DATA_UP_TO_DATE -> {
@@ -177,13 +183,20 @@ class VmSettings @Inject constructor(
         }
     }
 
-    fun onSyncQuestionnairesClicked() {
-
+    fun onSyncQuestionnairesClicked() = launch(IO) {
+        fragmentSettingsEventChannel.send(ShowLoadingDialog(R.string.syncingQuestionnaires))
+        backendSyncer.synAllQuestionnaireData().let { resultType ->
+            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+            fragmentSettingsEventChannel.send(HideLoadingDialog)
+            fragmentSettingsEventChannel.send(ShowMessageSnackBarEvent(resultType.messageRes))
+        }
     }
 
-    fun onSyncCosAndFacultiesClicked() = launch(IO, applicationScope) {
-        //TODO SHOW LADEBILDSCHIRM / DIALOG
+    fun onSyncCosAndFacultiesClicked() = launch(IO) {
+        fragmentSettingsEventChannel.send(ShowLoadingDialog(R.string.syncingFacultiesAndCourseOfStudies))
         backendSyncer.syncFacultiesAndCoursesOfStudies().let { resultType ->
+            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+            fragmentSettingsEventChannel.send(HideLoadingDialog)
             fragmentSettingsEventChannel.send(ShowMessageSnackBarEvent(resultType.messageRes))
         }
     }
@@ -198,9 +211,9 @@ class VmSettings @Inject constructor(
         class NavigateToCourseOfStudiesSelectionScreen(val courseOfStudiesIds: Array<String>) : FragmentSettingsEvent()
         class ShowMessageSnackBarEvent(val messageRes: Int) : FragmentSettingsEvent()
         object RecreateActivityEvent : FragmentSettingsEvent()
-        class NavigateToLanguageSelection(val currentLanguage: QuizAppLanguage) : FragmentSettingsEvent()
-        class NavigateToThemeSelection(val currentTheme: QuizAppTheme) : FragmentSettingsEvent()
-        class NavigateToShuffleTypeSelection(val shuffleType: QuestionnaireShuffleType) : FragmentSettingsEvent()
+        class NavigateToSelectionScreen(val selectionType: SelectionType) : FragmentSettingsEvent()
         object LogoutEvent : FragmentSettingsEvent()
+        class ShowLoadingDialog(@StringRes val messageRes: Int): FragmentSettingsEvent()
+        object HideLoadingDialog: FragmentSettingsEvent()
     }
 }

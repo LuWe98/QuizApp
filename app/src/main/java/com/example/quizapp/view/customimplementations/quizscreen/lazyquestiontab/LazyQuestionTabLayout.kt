@@ -91,17 +91,6 @@ class LazyQuestionTabLayout(
         attachedViewPagerRef = null
     }
 
-// TODO -> Lazy TabLayout nochmal anschauen
-//    private var lazyTabLayoutMediator : LazyTabLayoutMediator<*>? = null
-//
-//    fun <T: Any> getLazyTabLayoutMediator() = lazyTabLayoutMediator as T
-//
-//    inner class LazyTabLayoutMediator<T : Any>(
-//
-//    ) {
-//
-//    }
-
 
     private fun <T : Any> populateTabsFromPagerAdapter(provideTabAction: ((Int) -> T)) {
         clearTabList()

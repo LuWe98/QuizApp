@@ -2,12 +2,12 @@ package com.example.quizapp.view.fragments.adminscreens.managefaculties
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentAdminAddEditFacultyBinding
 import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.setUpdateStringTypeListener
+import com.example.quizapp.extensions.showSnackBar
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty
@@ -42,20 +42,20 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
 
 
         vmAddEdit.facultyAbbreviationStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.abbreviationCard.text = it
+            binding.abbreviationCard.text = if(it.isBlank()) "-" else it
         }
 
         vmAddEdit.facultyNameStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.nameCard.text = it
+            binding.nameCard.text = if(it.isBlank()) "-" else it
         }
 
         vmAddEdit.addEditFacultyEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringDialog(event.initialValue, event.updateType)
-                is ShowMessageSnackBar -> {
-
-                }
+                is ShowMessageSnackBar -> showSnackBar(event.messageRes)
                 NavigateBackEvent -> navigator.popBackStack()
+                HideLoadingDialog -> navigator.popLoadingDialog()
+                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
             }
         }
     }

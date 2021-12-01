@@ -14,7 +14,7 @@ import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.viewpager.adapter.VpaManageCourseOfStudies
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies
-import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.FragmentAdminManageCourseOfStudiesEvent.*
+import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -110,7 +110,7 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
             }
         }
 
-        vmAdmin.fragmentAdminManageCourseOfStudiesEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAdmin.manageCourseOfStudiesEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
                 is NavigateToManageCourseOfStudiesMoreOptionsEvent ->
                     navigator.navigateToSelectionDialog(SelectionType.CourseOfStudiesMoreOptionsSelection(event.courseOfStudies))
@@ -120,6 +120,8 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
                     navigator.navigateToConfirmationDialog(ConfirmationType.DeleteCourseOfStudiesConfirmation(event.courseOfStudies))
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
+                HideLoadingDialog -> navigator.popLoadingDialog()
+                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
             }
         }
     }

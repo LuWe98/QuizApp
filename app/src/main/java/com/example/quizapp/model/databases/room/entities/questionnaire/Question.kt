@@ -1,8 +1,8 @@
 package com.example.quizapp.model.databases.room.entities.questionnaire
 
 import androidx.room.*
+import com.example.quizapp.extensions.generateDiffItemCallback
 import com.example.quizapp.model.databases.room.entities.EntityMarker
-import com.example.quizapp.utils.DiffCallbackUtil
 import kotlinx.parcelize.Parcelize
 import org.bson.types.ObjectId
 
@@ -37,7 +37,7 @@ data class Question(
 ) : EntityMarker {
 
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<Question> { old, new ->  old.id == new.id}
+        val DIFF_CALLBACK = generateDiffItemCallback(Question::id)
 
         const val TABLE_NAME = "questionTable"
 

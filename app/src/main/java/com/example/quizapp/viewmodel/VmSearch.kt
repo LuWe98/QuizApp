@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
@@ -29,6 +30,10 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import  com.example.quizapp.extensions.combine
+import com.example.quizapp.model.menus.datawrappers.BrowseQuestionnaireMoreOptionsItem
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
+import kotlinx.coroutines.delay
 
 @HiltViewModel
 class VmSearch @Inject constructor(
@@ -85,7 +90,9 @@ class VmSearch @Inject constructor(
                 ascending = ascending
             )
         }
-    }.flatMapLatest(Pager<Int, BrowsableQuestionnaire>::flow::get).cachedIn(viewModelScope)
+    }.flatMapLatest(Pager<Int, BrowsableQuestionnaire>::flow::get)
+        .cachedIn(viewModelScope)
+        .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
 
 
     suspend fun getCourseOfStudiesNameWithIds(courseOfStudiesIds: List<String>) = localRepository.getCoursesOfStudiesNameWithIds(courseOfStudiesIds)
@@ -167,6 +174,66 @@ class VmSearch @Inject constructor(
         }
     }
 
+    fun onItemLongClicked(browsableQuestionnaire: BrowsableQuestionnaire) {
+        launch(IO) {
+            searchEventChannel.send(NavigateToSelectionScreen(SelectionType.BrowseQuestionnaireMoreOptionsSelection(browsableQuestionnaire)))
+        }
+    }
+
+    fun onItemClicked(browsableQuestionnaire: BrowsableQuestionnaire) = launch(IO) {
+        localRepository.findCompleteQuestionnaireWith(browsableQuestionnaire.questionnaireId)?.let {
+            searchEventChannel.send(NavigateToQuizScreen(it.questionnaire.id))
+            return@launch
+        }
+
+        downLoadQuestionnaire(browsableQuestionnaire.questionnaireId)
+    }
+
+    fun onMoreOptionsItemClickedUpdateReceived(
+        clickedItem: BrowseQuestionnaireMoreOptionsItem,
+        selectionType: SelectionType.BrowseQuestionnaireMoreOptionsSelection,
+    ) {
+        when (clickedItem) {
+            BrowseQuestionnaireMoreOptionsItem.DOWNLOAD -> onItemDownLoadButtonClicked(selectionType.browsableQuestionnaire.questionnaireId)
+            BrowseQuestionnaireMoreOptionsItem.OPEN -> onItemClicked(selectionType.browsableQuestionnaire)
+        }
+    }
+
+
+
+    private suspend fun downLoadQuestionnaire(questionnaireId: String) {
+        searchEventChannel.send(ShowLoadingDialog(R.string.downloadingQuestionnaire))
+
+        runCatching {
+            backendRepository.downloadQuestionnaire(questionnaireId)
+        }.also {
+            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+            searchEventChannel.send(HideLoadingDialog)
+        }.onSuccess { response ->
+            when (response.responseType) {
+                GetQuestionnaireResponseType.SUCCESSFUL -> {
+                    DataMapper.mapMongoQuestionnaireToRoomCompleteQuestionnaire(response.mongoQuestionnaire!!).let { completeQuestionnaire ->
+                        localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
+                        localRepository.deleteLocallyDeletedQuestionnaireWith(completeQuestionnaire.questionnaire.id)
+
+                        DataMapper.mapMongoQuestionnaireToRoomQuestionnaireCourseOfStudiesRelation(response.mongoQuestionnaire).let {
+                            localRepository.insert(it)
+                        }
+
+                        searchEventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, DOWNLOADED))
+                        searchEventChannel.send(NavigateToQuizScreen(questionnaireId))
+                    }
+                }
+                GetQuestionnaireResponseType.QUESTIONNAIRE_NOT_FOUND -> {
+                    searchEventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, NOT_DOWNLOADED))
+                }
+            }
+        }.onFailure {
+            searchEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDownloadQuestionnaire))
+            searchEventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, NOT_DOWNLOADED))
+        }
+    }
+
 
     sealed class SearchEvent {
         class NavigateToQuestionnaireFilterSelection(
@@ -177,6 +244,10 @@ class VmSearch @Inject constructor(
         object ClearSearchQueryEvent : SearchEvent()
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : SearchEvent()
         class ChangeItemDownloadStatusEvent(val questionnaireId: String, val status: DownloadStatus) : SearchEvent()
+        class NavigateToSelectionScreen(val selectionType: SelectionType) : SearchEvent()
+        class ShowLoadingDialog(@StringRes val messageRes: Int) : SearchEvent()
+        object HideLoadingDialog : SearchEvent()
+        class NavigateToQuizScreen(val questionnaireId: String): SearchEvent()
     }
 
     companion object {

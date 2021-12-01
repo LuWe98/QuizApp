@@ -9,28 +9,19 @@ import androidx.sqlite.db.SupportSQLiteQuery
 abstract class BaseDao<T>(private val tableName: String) {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insert(entities: List<T>): LongArray?
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insert(entities: Set<T>): LongArray?
+    abstract suspend fun insert(entities: Collection<T>): LongArray?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(entity: T): Long?
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun update(entities: List<T>): Int?
-
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun update(entities: Set<T>): Int?
+    abstract suspend fun update(entities: Collection<T>): Int?
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun update(entity: T): Int?
 
     @Delete
-    abstract suspend fun delete(entities: List<T>?)
-
-    @Delete
-    abstract suspend fun delete(entities: Set<T>?)
+    abstract suspend fun delete(entities: Collection<T>?)
 
     @Delete
     abstract suspend fun delete(entity: T)

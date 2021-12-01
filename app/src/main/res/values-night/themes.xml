@@ -8,7 +8,8 @@
     <style name="Theme.QuizApp.BottomSheetDialog.Resize" parent="Theme.QuizApp.BottomSheetDialog.Dark.Resize"/>
     <!-- Base DialogFragmentTheme -->
     <style name="Theme.QuizApp.DialogFragment" parent="Theme.QuizApp.DialogFragment.Dark"/>
-
+    <!-- Base DialogFragmentLoadingTheme -->
+    <style name="Theme.QuizApp.DialogFragment.Loading" parent="Theme.QuizApp.DialogFragment.Loading.Dark"/>
 
 
     <!-- Dark Base theme -->
@@ -108,5 +109,9 @@
         <item name="defaultTextColor">@color/darkDefaultTextColor</item>
         <item name="dominantTextColor">@color/darkDominantTextColor</item>
 
+    </style>
+
+    <!-- Light DialogFragmentLoadingTheme. -->
+    <style name="Theme.QuizApp.DialogFragment.Loading.Dark" parent="Theme.QuizApp.DialogFragment.Loading.Light">
     </style>
 </resources>

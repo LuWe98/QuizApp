@@ -7,12 +7,11 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminManageFacultiesBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.fragments.dialogs.DfCustomLoading
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.recyclerview.adapters.RvaFaculty
 import com.example.quizapp.viewmodel.VmAdminManageFaculties
-import com.example.quizapp.viewmodel.VmAdminManageFaculties.FragmentAdminManageFacultiesEvent.*
+import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -73,19 +72,12 @@ class FragmentAdminManageFaculties: BindingFragment<FragmentAdminManageFaculties
             when(event) {
                 NavigateBack -> navigator.popBackStack()
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
-                is NavigateToFacultiesMoreOptionsDialogEvent -> navigator.navigateToSelectionDialog(SelectionType.FacultyMoreOptionsSelection(event.faculty))
+                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
                 is NavigateToAddEditFacultyEvent -> navigator.navigateToAdminAddEditFaculty(event.faculty)
                 is NavigateToDeletionConfirmationEvent -> navigator.navigateToConfirmationDialog(ConfirmationType.DeleteFacultyConfirmation(event.faculty))
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
-                is ChangeProgressVisibilityEvent -> {
-                    if(event.visible) {
-                        showDialog<DfCustomLoading>("test").apply {
-                            isCancelable = false
-                        }
-                    } else {
-                        findDialog<DfCustomLoading>("test")?.dismiss()
-                    }
-                }
+                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
+                HideLoadingDialog -> navigator.popLoadingDialog()
             }
         }
     }

@@ -35,12 +35,15 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
 
             rvAdapter = RvaBrowsableQuestionnaires(vmSearch).apply {
                 onDownloadClick = vmSearch::onItemDownLoadButtonClicked
+                onItemClicked = vmSearch::onItemClicked
+                onLongClicked = vmSearch::onItemLongClicked
             }
 
             rv.apply {
                 setHasFixedSize(true)
                 layoutManager = LinearLayoutManager(requireContext())
                 adapter = rvAdapter
+                disableChangeAnimation()
             }
         }
     }
@@ -59,6 +62,9 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
         setFragmentResultListener(BsdfBrowseQuestionnaireFilterSelection.QUESTIONNAIRE_FILTER_RESULT_KEY) { key, bundle ->
             bundle.getParcelable<BrowseQuestionnaireFilterSelectionResult>(key)?.let(vmSearch::onQuestionnaireFilterUpdateReceived)
         }
+
+        setSelectionTypeWithParsedValueListener(vmSearch::onMoreOptionsItemClickedUpdateReceived)
+
 
         vmSearch.filteredPagedData.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitData(it)
@@ -81,6 +87,10 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
                 is ChangeItemDownloadStatusEvent -> rvAdapter.changeItemDownloadStatus(event.questionnaireId, event.status)
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
+                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
+                HideLoadingDialog -> navigator.popLoadingDialog()
+                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
+                is NavigateToQuizScreen -> navigator.navigateToQuizScreen(event.questionnaireId)
             }
         }
     }

@@ -34,7 +34,7 @@ class KtorClientExceptionHandler @Inject constructor(
     suspend fun handleException(throwable: Throwable) {
         when(throwable){
             is UserCredentialsChangedException, is UserDoesNotExistException -> {
-                preferencesRepository.clearPreferenceData()
+                preferencesRepository.clearPreferenceDataOnLogout()
             }
         }
     }

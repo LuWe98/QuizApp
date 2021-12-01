@@ -1,4 +1,4 @@
-package com.example.quizapp.model.menus
+package com.example.quizapp.model.menus.datawrappers
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -7,6 +7,7 @@ import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
+import com.example.quizapp.model.menus.SelectionTypeItemMarker
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

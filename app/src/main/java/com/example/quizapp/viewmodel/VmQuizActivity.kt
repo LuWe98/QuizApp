@@ -44,7 +44,7 @@ class VmQuizActivity @Inject constructor(
     fun onLogoutConfirmed() {
         launch(IO) {
             manualLogoutFlag = true
-            preferencesRepository.clearPreferenceData()
+            preferencesRepository.clearPreferenceDataOnLogout()
         }
     }
 

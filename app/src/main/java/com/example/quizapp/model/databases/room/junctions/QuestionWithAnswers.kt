@@ -3,9 +3,10 @@ package com.example.quizapp.model.databases.room.junctions
 import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.example.quizapp.extensions.div
+import com.example.quizapp.extensions.generateDiffItemCallback
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
-import com.example.quizapp.utils.DiffCallbackUtil
 import io.ktor.util.date.*
 import kotlinx.parcelize.Parcelize
 
@@ -32,7 +33,7 @@ data class QuestionWithAnswers(
     val shuffleSeedAdjusted get() = question.questionPosition + answers.size
 
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<QuestionWithAnswers> { old, new -> old.question.id == new.question.id }
+        val DIFF_CALLBACK = generateDiffItemCallback(QuestionWithAnswers::question / Question::id)
 
         fun createEmptyQuestionWithAnswers() = QuestionWithAnswers(
             Question(questionnaireId = "", questionText = "", isMultipleChoice = true, questionPosition = getTimeMillis().toInt()),

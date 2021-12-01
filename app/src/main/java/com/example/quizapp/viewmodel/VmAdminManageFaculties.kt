@@ -3,24 +3,24 @@ package com.example.quizapp.viewmodel
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.extensions.log
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.DeleteFacultyResponse.DeleteFacultyResponseType
-import com.example.quizapp.model.menus.FacultyMoreOptionsItem
-import com.example.quizapp.model.menus.FacultyMoreOptionsItem.DELETE
-import com.example.quizapp.model.menus.FacultyMoreOptionsItem.EDIT
+import com.example.quizapp.model.menus.datawrappers.FacultyMoreOptionsItem
+import com.example.quizapp.model.menus.datawrappers.FacultyMoreOptionsItem.DELETE
+import com.example.quizapp.model.menus.datawrappers.FacultyMoreOptionsItem.EDIT
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
-import com.example.quizapp.viewmodel.VmAdminManageFaculties.FragmentAdminManageFacultiesEvent.*
+import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -31,7 +31,7 @@ class VmAdminManageFaculties @Inject constructor(
     private val state: SavedStateHandle
 ) : ViewModel() {
 
-    private val fragmentAdminManageFacultiesEventChannel = Channel<FragmentAdminManageFacultiesEvent>()
+    private val fragmentAdminManageFacultiesEventChannel = Channel<ManageFacultiesEvent>()
 
     val fragmentAdminManageFacultiesEventChannelFlow = fragmentAdminManageFacultiesEventChannel.receiveAsFlow()
 
@@ -43,15 +43,15 @@ class VmAdminManageFaculties @Inject constructor(
     val searchQuery get() = searchQueryMutableStateFlow.value
 
 
-    val facultiesStateFlow = searchQueryMutableStateFlow.map {
-        localRepository.findFacultiesWithName(it)
+    val facultiesStateFlow = searchQueryMutableStateFlow.flatMapLatest {
+        localRepository.findFacultiesWithNameFlow(it)
     }.distinctUntilChanged()
 
 
 
     fun onFacultyItemClicked(faculty: Faculty) {
         launch {
-            fragmentAdminManageFacultiesEventChannel.send(NavigateToFacultiesMoreOptionsDialogEvent(faculty))
+            fragmentAdminManageFacultiesEventChannel.send(NavigateToSelectionScreen(SelectionType.FacultyMoreOptionsSelection(faculty)))
         }
     }
 
@@ -66,9 +66,13 @@ class VmAdminManageFaculties @Inject constructor(
     }
 
     fun onDeleteFacultyConfirmed(confirmation: ConfirmationType.DeleteFacultyConfirmation) = launch(IO) {
+        fragmentAdminManageFacultiesEventChannel.send(ShowLoadingDialog(R.string.deletingFaculty))
+
         runCatching {
-            fragmentAdminManageFacultiesEventChannel.send(ChangeProgressVisibilityEvent(true))
             backendRepository.deleteFaculty(confirmation.faculty.id)
+        }.also {
+            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+            fragmentAdminManageFacultiesEventChannel.send(HideLoadingDialog)
         }.onSuccess { response ->
             when(response.responseType) {
                 DeleteFacultyResponseType.SUCCESSFUL -> {
@@ -76,14 +80,12 @@ class VmAdminManageFaculties @Inject constructor(
                     fragmentAdminManageFacultiesEventChannel.send(ShowMessageSnackBar(R.string.deletedFaculty))
                 }
                 DeleteFacultyResponseType.NOT_ACKNOWLEDGED -> {
-
+                    fragmentAdminManageFacultiesEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDeleteFaculty))
                 }
             }
         }.onFailure {
-            log("FAILURE: $it")
+            fragmentAdminManageFacultiesEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDeleteFaculty))
         }
-
-        fragmentAdminManageFacultiesEventChannel.send(ChangeProgressVisibilityEvent(false))
     }
 
 
@@ -101,14 +103,15 @@ class VmAdminManageFaculties @Inject constructor(
     }
 
 
-    sealed class FragmentAdminManageFacultiesEvent {
-        object NavigateBack: FragmentAdminManageFacultiesEvent()
-        class NavigateToFacultiesMoreOptionsDialogEvent(val faculty: Faculty): FragmentAdminManageFacultiesEvent()
-        class ShowMessageSnackBar(@StringRes val messageRes: Int): FragmentAdminManageFacultiesEvent()
-        class ChangeProgressVisibilityEvent(val visible: Boolean): FragmentAdminManageFacultiesEvent()
-        class NavigateToAddEditFacultyEvent(val faculty: Faculty): FragmentAdminManageFacultiesEvent()
-        class NavigateToDeletionConfirmationEvent(val faculty: Faculty): FragmentAdminManageFacultiesEvent()
-        object ClearSearchQueryEvent: FragmentAdminManageFacultiesEvent()
+    sealed class ManageFacultiesEvent {
+        object NavigateBack: ManageFacultiesEvent()
+        class NavigateToSelectionScreen(val selectionType: SelectionType): ManageFacultiesEvent()
+        class ShowMessageSnackBar(@StringRes val messageRes: Int): ManageFacultiesEvent()
+        class NavigateToAddEditFacultyEvent(val faculty: Faculty): ManageFacultiesEvent()
+        class NavigateToDeletionConfirmationEvent(val faculty: Faculty): ManageFacultiesEvent()
+        object ClearSearchQueryEvent: ManageFacultiesEvent()
+        class ShowLoadingDialog(@StringRes val messageRes: Int): ManageFacultiesEvent()
+        object HideLoadingDialog: ManageFacultiesEvent()
     }
 
     companion object {

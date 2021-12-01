@@ -1,4 +1,4 @@
-package com.example.quizapp.view.fragments.dialogs.moreoptions
+package com.example.quizapp.view.fragments.dialogs.localquestionnairemoreoptions
 
 import android.os.Bundle
 import android.view.View

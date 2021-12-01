@@ -149,15 +149,16 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/facultyCard"
+                    android:id="@+id/includeCard"
                     android:background="@drawable/background_round_corners_7_5dp"
                     android:backgroundTint="?android:colorBackground"
                     android:paddingVertical="@dimen/grid_3"
-                    android:layout_marginTop="@dimen/grid_4"
                     android:layout_marginHorizontal="@dimen/grid_6"
+                    android:layout_marginTop="@dimen/grid_4"
                     app:layout_constraintTop_toBottomOf="@id/orderByCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
@@ -165,8 +166,8 @@
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        android:id="@+id/facultyFilterHeader"
-                        android:text="@string/filterFaculties"
+                        android:id="@+id/includeFilterHeader"
+                        android:text="General filters"
                         android:background="@drawable/background_round_corners_10dp"
                         android:backgroundTint="@color/transparent"
                         android:gravity="center_vertical"
@@ -177,89 +178,64 @@
                         android:fontFamily="@font/work_sans_medium"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.android.material.chip.ChipGroup
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:animateLayoutChanges="true"
-                        android:id="@+id/chipGroupFaculty"
-                        app:layout_constraintTop_toBottomOf="@id/facultyFilterHeader"
-                        android:layout_marginTop="@dimen/grid_1"
-                        android:layout_marginHorizontal="@dimen/grid_3"
-                        app:layout_constraintStart_toStartOf="@id/facultyFilterHeader"
-                        app:layout_constraintEnd_toEndOf="@id/facultyFilterHeader">
-
-                    <com.google.android.material.chip.Chip
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/addChipFaculty"
-                            app:chipMinHeight="30dp"
-                            style="@style/Style.QuizApp.AddChip"
-                            android:text="@string/add" />
-
-                </com.google.android.material.chip.ChipGroup>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/cosCard"
-                    android:background="@drawable/background_round_corners_7_5dp"
-                    android:backgroundTint="?android:colorBackground"
-                    android:layout_marginHorizontal="@dimen/grid_6"
-                    android:paddingVertical="@dimen/grid_3"
-                    android:layout_marginTop="@dimen/grid_4"
-                    app:layout_constraintTop_toBottomOf="@id/facultyCard"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:id="@+id/ivInclude"
+                        app:tint="?colorPrimary"
+                        app:srcCompat="@drawable/ic_hide"
+                        android:padding="5dp"
+                        android:elevation="@dimen/grid_2"
+                        android:layout_marginStart="@dimen/grid_2"
+                        app:layout_constraintStart_toStartOf="@id/tvHideCompleted"
+                        app:layout_constraintTop_toTopOf="@id/tvHideCompleted"
+                        app:layout_constraintBottom_toBottomOf="@id/tvHideCompleted" />
 
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:id="@+id/cosFilterHeader"
-                        android:text="@string/filterCourseOfStudies"
-                        android:background="@drawable/background_round_corners_10dp"
-                        android:backgroundTint="@color/transparent"
+                        android:layout_height="45dp"
+                        android:background="@drawable/ripple_round_corners_10_dp"
+                        android:text="Hide completed"
+                        android:id="@+id/tvHideCompleted"
                         android:gravity="center_vertical"
-                        android:paddingHorizontal="@dimen/grid_4"
-                        android:layout_marginHorizontal="@dimen/grid_2"
-                        android:textSize="17sp"
+                        app:autoSizeMinTextSize="12sp"
+                        app:autoSizeMaxTextSize="16sp"
+                        app:autoSizeTextType="uniform"
+                        android:maxLines="1"
                         android:textStyle="bold"
-                        android:fontFamily="@font/work_sans_medium"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textColor="?colorPrimary"
+                        android:fontFamily="@font/work_sans_regular"
+                        android:paddingHorizontal="@dimen/grid_12"
+                        android:layout_marginHorizontal="@dimen/grid_4"
+                        android:layout_marginTop="@dimen/grid_2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/includeFilterHeader" />
 
-                <com.google.android.material.chip.ChipGroup
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/chipGroupCos"
-                        app:layout_constraintTop_toBottomOf="@id/cosFilterHeader"
-                        android:layout_marginTop="@dimen/grid_1"
-                        android:animateLayoutChanges="true"
-                        android:layout_marginHorizontal="@dimen/grid_3"
-                        app:layout_constraintStart_toStartOf="@id/cosFilterHeader"
-                        app:layout_constraintEnd_toEndOf="@id/cosFilterHeader">
-
-                    <com.google.android.material.chip.Chip
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/addChipCos"
-                            style="@style/Style.QuizApp.AddChip"
-                            android:text="@string/add" />
-
-                </com.google.android.material.chip.ChipGroup>
-
+                <androidx.appcompat.widget.AppCompatCheckBox
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:id="@+id/hideCompletedCheckBox"
+                        android:scaleX="0.8"
+                        android:scaleY="0.8"
+                        android:buttonTint="?colorPrimary"
+                        android:clickable="false"
+                        android:layout_marginEnd="@dimen/grid_2"
+                        app:layout_constraintEnd_toEndOf="@id/tvHideCompleted"
+                        app:layout_constraintTop_toTopOf="@id/tvHideCompleted"
+                        app:layout_constraintBottom_toBottomOf="@id/tvHideCompleted" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/personCard"
+                    android:id="@+id/authorCard"
                     android:background="@drawable/background_round_corners_7_5dp"
                     android:backgroundTint="?android:colorBackground"
                     android:layout_marginHorizontal="@dimen/grid_6"
                     android:paddingVertical="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_4"
-                    app:layout_constraintTop_toBottomOf="@id/cosCard"
+                    app:layout_constraintTop_toBottomOf="@id/includeCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
 
@@ -300,6 +276,105 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/cosCard"
+                    android:background="@drawable/background_round_corners_7_5dp"
+                    android:backgroundTint="?android:colorBackground"
+                    android:layout_marginHorizontal="@dimen/grid_6"
+                    android:paddingVertical="@dimen/grid_3"
+                    android:layout_marginTop="@dimen/grid_4"
+                    app:layout_constraintTop_toBottomOf="@id/authorCard"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:id="@+id/cosFilterHeader"
+                        android:text="@string/filterCourseOfStudies"
+                        android:background="@drawable/background_round_corners_10dp"
+                        android:backgroundTint="@color/transparent"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="@dimen/grid_4"
+                        android:layout_marginHorizontal="@dimen/grid_2"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/work_sans_medium"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.chip.ChipGroup
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/chipGroupCos"
+                        app:layout_constraintTop_toBottomOf="@id/cosFilterHeader"
+                        android:layout_marginTop="@dimen/grid_1"
+                        android:animateLayoutChanges="true"
+                        android:layout_marginHorizontal="@dimen/grid_3"
+                        app:layout_constraintStart_toStartOf="@id/cosFilterHeader"
+                        app:layout_constraintEnd_toEndOf="@id/cosFilterHeader">
+
+                    <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/addChipCos"
+                            style="@style/Style.QuizApp.AddChip"
+                            android:text="@string/add" />
+
+                </com.google.android.material.chip.ChipGroup>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/facultyCard"
+                    android:background="@drawable/background_round_corners_7_5dp"
+                    android:backgroundTint="?android:colorBackground"
+                    android:paddingVertical="@dimen/grid_3"
+                    android:layout_marginTop="@dimen/grid_4"
+                    android:layout_marginHorizontal="@dimen/grid_6"
+                    app:layout_constraintTop_toBottomOf="@id/cosCard"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:id="@+id/facultyFilterHeader"
+                        android:text="@string/filterFaculties"
+                        android:background="@drawable/background_round_corners_10dp"
+                        android:backgroundTint="@color/transparent"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="@dimen/grid_4"
+                        android:layout_marginHorizontal="@dimen/grid_2"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/work_sans_medium"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.chip.ChipGroup
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
+                        android:id="@+id/chipGroupFaculty"
+                        app:layout_constraintTop_toBottomOf="@id/facultyFilterHeader"
+                        android:layout_marginTop="@dimen/grid_1"
+                        android:layout_marginHorizontal="@dimen/grid_3"
+                        app:layout_constraintStart_toStartOf="@id/facultyFilterHeader"
+                        app:layout_constraintEnd_toEndOf="@id/facultyFilterHeader">
+
+                    <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/addChipFaculty"
+                            app:chipMinHeight="30dp"
+                            style="@style/Style.QuizApp.AddChip"
+                            android:text="@string/add" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

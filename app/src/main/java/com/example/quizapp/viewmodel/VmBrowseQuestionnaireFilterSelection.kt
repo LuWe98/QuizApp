@@ -10,6 +10,7 @@ import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.datawrappers.BrowsableOrderBy
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.fragments.searchscreen.filterselection.BrowseQuestionnaireFilterSelectionResult
 import com.example.quizapp.view.fragments.searchscreen.filterselection.BsdfBrowseQuestionnaireFilterSelectionArgs
 import com.example.quizapp.viewmodel.VmBrowseQuestionnaireFilterSelection.FilterEvent.*
@@ -38,7 +39,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
 
 
 
-    private val selectedAuthorsMutableStateFlow = state.getMutableStateFlow(SELECTED_USERS_KEY, args.selectedAuthors.toSet())
+    private val selectedAuthorsMutableStateFlow = state.getMutableStateFlow(SELECTED_AUTHORS_KEY, args.selectedAuthors.toSet())
 
     val selectedAuthorsStateFlow = selectedAuthorsMutableStateFlow.asStateFlow()
 
@@ -101,7 +102,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     fun removeFilteredAuthor(author: AuthorInfo) {
         selectedAuthors.toMutableSet().apply {
             remove(author)
-            state.set(SELECTED_USERS_KEY, this)
+            state.set(SELECTED_AUTHORS_KEY, this)
             selectedAuthorsMutableStateFlow.value = this
         }
     }
@@ -109,7 +110,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
 
     fun onOrderByCardClicked() {
         launch(IO) {
-            searchFilterEventChannel.send(NavigateToSortBySelection(orderBy))
+            searchFilterEventChannel.send(NavigateToSelectionScreen(SelectionType.BrowsableOrderBySelection(orderBy)))
         }
     }
 
@@ -133,7 +134,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
 
     fun onAuthorAddButtonClicked() {
         launch(IO) {
-            searchFilterEventChannel.send(NavigateToUserSelectionScreen(selectedAuthors.toTypedArray()))
+            searchFilterEventChannel.send(NavigateToRemoteAuthorSelectionScreen(selectedAuthors.toTypedArray()))
         }
     }
 
@@ -144,7 +145,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
 
     fun onSelectedAuthorsUpdateReceived(selectedAuthors: Array<AuthorInfo>) {
         selectedAuthors.toSet().let {
-            state.set(SELECTED_USERS_KEY, it)
+            state.set(SELECTED_AUTHORS_KEY, it)
             selectedAuthorsMutableStateFlow.value = it
         }
     }
@@ -165,8 +166,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
 
     fun onApplyButtonClicked(){
         launch(IO) {
-            preferencesRepository.updateBrowsableOrderBy(orderBy)
-            preferencesRepository.updateBrowsableAscendingOrder(orderAscending)
+            preferencesRepository.updateRemoteFilters(orderBy, orderAscending)
             BrowseQuestionnaireFilterSelectionResult(
                 selectedCourseOfStudiesIds,
                 selectedFacultyIds,
@@ -178,15 +178,15 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     }
 
     sealed class FilterEvent {
-        class NavigateToSortBySelection(val browsableOrderBy: BrowsableOrderBy) : FilterEvent()
-        class NavigateToUserSelectionScreen(val selectedUsers: Array<AuthorInfo>) : FilterEvent()
+        class NavigateToSelectionScreen(val selectionType: SelectionType) : FilterEvent()
+        class NavigateToRemoteAuthorSelectionScreen(val selectedUsers: Array<AuthorInfo>) : FilterEvent()
         class NavigateToCourseOfStudiesSelectionScreen(val selectedCourseOfStudiesIds: Array<String>) : FilterEvent()
         class NavigateToFacultySelectionScreen(val selectedFacultyIds: Array<String>) : FilterEvent()
         class ApplyFilterPreferencesEvent(val resultBrowse: BrowseQuestionnaireFilterSelectionResult): FilterEvent()
     }
 
     companion object {
-        private const val SELECTED_USERS_KEY = "selectedUsersKeys"
+        private const val SELECTED_AUTHORS_KEY = "selectedUsersKeys"
         private const val SELECTED_COURSE_OF_STUDIES_ID_KEY = "selectedCourseOfStudiesKey"
         private const val SELECTED_FACULTY_ID_KEY = "selectedFacultyIdsKey"
         private const val SELECTED_ORDER_BY_KEY = "orderByKey"

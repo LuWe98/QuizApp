@@ -9,7 +9,6 @@ import com.example.quizapp.model.databases.room.dao.sync.*
 import com.example.quizapp.model.databases.room.entities.*
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
-import com.example.quizapp.model.databases.room.entities.faculty.Subject
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
@@ -17,12 +16,12 @@ import com.example.quizapp.model.databases.room.entities.relations.FacultyCourse
 import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.entities.sync.*
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
+import com.example.quizapp.model.datastore.datawrappers.LocalQuestionnaireOrderBy
 import com.example.quizapp.model.ktor.status.SyncStatus
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.reflect.KClass
 
-//TODO -> Schauen ob Set vllt sinnvoller ist als List zu, zurückgeben, da anscheinden performance besser ist!
 @Singleton
 class LocalRepository @Inject constructor(
     private val localDatabase: LocalDatabase,
@@ -31,7 +30,6 @@ class LocalRepository @Inject constructor(
     private val answerDao: AnswerDao,
     private val facultyDao: FacultyDao,
     private val courseOfStudiesDao: CourseOfStudiesDao,
-    private val subjectDao: SubjectDao,
     private val questionnaireCourseOfStudiesRelationDao: QuestionnaireCourseOfStudiesRelationDao,
     private val facultyCourseOfStudiesRelationDao: FacultyCourseOfStudiesRelationDao,
     private val locallyDeletedQuestionnaireDao: LocallyDeletedQuestionnaireDao,
@@ -40,22 +38,15 @@ class LocalRepository @Inject constructor(
 
     suspend inline fun <reified T : EntityMarker> insert(entity: T) = getBaseDaoWith(T::class).insert(entity)
 
-    suspend inline fun <reified T : EntityMarker> insert(entity: List<T>) = getBaseDaoWith(T::class).insert(entity)
-
-    suspend inline fun <reified T : EntityMarker> insert(entity: Set<T>) = getBaseDaoWith(T::class).insert(entity)
+    suspend inline fun <reified T : EntityMarker> insert(entity: Collection<T>) = getBaseDaoWith(T::class).insert(entity)
 
     suspend inline fun <reified T : EntityMarker> update(entity: T) = getBaseDaoWith(T::class).update(entity)
 
-    suspend inline fun <reified T : EntityMarker> update(entity: List<T>) = getBaseDaoWith(T::class).update(entity)
-
-    suspend inline fun <reified T : EntityMarker> update(entity: Set<T>) = getBaseDaoWith(T::class).update(entity)
+    suspend inline fun <reified T : EntityMarker> update(entity: Collection<T>) = getBaseDaoWith(T::class).update(entity)
 
     suspend inline fun <reified T : EntityMarker> delete(entity: T) = getBaseDaoWith(T::class).delete(entity)
 
-    suspend inline fun <reified T : EntityMarker> delete(entity: List<T>) = getBaseDaoWith(T::class).delete(entity)
-
-    suspend inline fun <reified T : EntityMarker> delete(entity: Set<T>) = getBaseDaoWith(T::class).delete(entity)
-
+    suspend inline fun <reified T : EntityMarker> delete(entity: Collection<T>) = getBaseDaoWith(T::class).delete(entity)
 
     @Suppress("UNCHECKED_CAST")
     fun <T : EntityMarker> getBaseDaoWith(entity: KClass<T>) = (when (entity) {
@@ -64,7 +55,6 @@ class LocalRepository @Inject constructor(
         Questionnaire::class -> questionnaireDao
         Faculty::class -> facultyDao
         CourseOfStudies::class -> courseOfStudiesDao
-        Subject::class -> subjectDao
         QuestionnaireCourseOfStudiesRelation::class -> questionnaireCourseOfStudiesRelationDao
         FacultyCourseOfStudiesRelation::class -> facultyCourseOfStudiesRelationDao
         LocallyDeletedQuestionnaire::class -> locallyDeletedQuestionnaireDao
@@ -107,11 +97,23 @@ class LocalRepository @Inject constructor(
 
     suspend fun getAllQuestionnaireIds() = questionnaireDao.getAllQuestionnaireIds()
 
-    fun getFilteredCompleteQuestionnaireFlow(searchQuery: String) = questionnaireDao.getFilteredCompleteQuestionnaireFlow(searchQuery)
-
-    fun findAllCompleteQuestionnairesNotForUserFlow(userId: String) = questionnaireDao.findAllCompleteQuestionnairesNotForUserFlow(userId)
-
-    fun findAllCompleteQuestionnairesForUserFlow(userId: String) = questionnaireDao.findAllCompleteQuestionnairesForUserFlow(userId)
+    fun getFilteredCompleteQuestionnaireFlow(
+        searchQuery: String,
+        orderBy: LocalQuestionnaireOrderBy,
+        ascending: Boolean,
+        authorIds: Set<String>,
+        cosIds: Set<String>,
+        facultyIds: Set<String>,
+        hideCompleted: Boolean
+    ) = questionnaireDao.getFilteredCompleteQuestionnaireFlow(
+        searchQuery = searchQuery,
+        orderBy = orderBy,
+        ascending = ascending,
+        authorIds = authorIds,
+        cosIds = cosIds,
+        facultyIds = facultyIds,
+        hideCompleted = hideCompleted
+    )
 
     suspend fun findCompleteQuestionnaireWith(questionnaireId: String) = questionnaireDao.findCompleteQuestionnaireWith(questionnaireId)
 
@@ -146,13 +148,18 @@ class LocalRepository @Inject constructor(
         }
     }
 
+    suspend fun getAuthorInfosWithName(searchQuery: String) = questionnaireDao.getAuthorInfosWithName(searchQuery)
+
+    suspend fun getAuthorInfosWithIds(authorIds: Set<String>) = questionnaireDao.getAuthorInfosWithIds(authorIds)
+
+    fun getAllLocalAuthorsFlow() = questionnaireDao.getAllLocalAuthorsFlow()
+
 
     //LOCALLY DELETED QUESTIONNAIRE
     suspend fun getLocallyDeletedQuestionnaireIds() = locallyDeletedQuestionnaireDao.getLocallyDeletedQuestionnaireIds()
 
     suspend fun deleteLocallyDeletedQuestionnaireWith(questionnaireId: String) =
         locallyDeletedQuestionnaireDao.deleteLocallyDeletedQuestionnaireWith(questionnaireId)
-
 
 
     //LOCALLY ANSWERED QUESTIONNAIRES
@@ -174,10 +181,10 @@ class LocalRepository @Inject constructor(
         }
     }
 
-    suspend fun isLocallyFilledQuestionnaireToUploadPresent(questionnaireId: String) = locallyFilledQuestionnaireToUploadDao.isLocallyFilledQuestionnaireToUploadPresent(questionnaireId) == 1
+    suspend fun isLocallyFilledQuestionnaireToUploadPresent(questionnaireId: String) =
+        locallyFilledQuestionnaireToUploadDao.isLocallyFilledQuestionnaireToUploadPresent(questionnaireId) == 1
 
     suspend fun getLocallyAnsweredQuestionnaire(questionnaireId: String) = locallyFilledQuestionnaireToUploadDao.getLocallyFilledQuestionnaireToUploadId(questionnaireId)
-
 
 
     //FACULTY
@@ -197,9 +204,7 @@ class LocalRepository @Inject constructor(
 
     suspend fun deleteFacultiesWith(facultyIds: List<String>) = facultyDao.deleteFacultiesWith(facultyIds)
 
-    suspend fun findFacultiesWithName(nameToSearch: String) = facultyDao.findFacultiesWithName(nameToSearch)
-
-
+    fun findFacultiesWithNameFlow(nameToSearch: String) = facultyDao.findFacultiesWithNameFlow(nameToSearch)
 
 
     //COURSE OF STUDIES
@@ -221,10 +226,10 @@ class LocalRepository @Inject constructor(
 
     suspend fun deleteCoursesOfStudiesWith(courseOfStudiesIds: List<String>) = courseOfStudiesDao.deleteCoursesOfStudiesWith(courseOfStudiesIds)
 
-    suspend fun getCoursesOfStudiesNotAssociatedWithFaculty(searchQuery: String) = courseOfStudiesDao.getCoursesOfStudiesNotAssociatedWithFaculty(searchQuery)
+    fun getCoursesOfStudiesNotAssociatedWithFacultyFlow(searchQuery: String) = courseOfStudiesDao.getCoursesOfStudiesNotAssociatedWithFacultyFlow(searchQuery)
 
-    suspend fun getCoursesOfStudiesAssociatedWithFaculty(facultyId: String, searchQuery: String) = courseOfStudiesDao.getCoursesOfStudiesAssociatedWithFaculty(facultyId, searchQuery)
-
+    fun getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId: String, searchQuery: String) =
+        courseOfStudiesDao.getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId, searchQuery)
 
 
     //QUESTIONNAIRE COURSE OF STUDIES RELATION
@@ -233,7 +238,6 @@ class LocalRepository @Inject constructor(
 
     suspend fun getQuestionnaireCourseOfStudiesRelationWithCosId(courseOfStudiesId: String) =
         questionnaireCourseOfStudiesRelationDao.getQuestionnaireCourseOfStudiesRelationWithCosId(courseOfStudiesId)
-
 
 
     //FACULTY COURSE OF STUDIES RELATION

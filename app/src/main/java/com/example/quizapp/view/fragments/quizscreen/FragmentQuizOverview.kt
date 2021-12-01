@@ -124,7 +124,6 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         //TODO -> noch durchmischeln lassen, da es noch nüt get -> Positionen der Fragen werden nicht richtig angezeigt
         vmQuiz.questionsWithAnswersFlow.collectWhenStarted(viewLifecycleOwner) { questionsWithAnswers ->
             rvAdapter.submitList(questionsWithAnswers){
-//                log("TEST")
 //                rvAdapter.notifyDataSetChanged()
             }
             binding.bottomSheet.tvQuestionsAmount.text = questionsWithAnswers.size.toString()

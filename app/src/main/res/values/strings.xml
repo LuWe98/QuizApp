@@ -107,7 +107,8 @@
 
     <string name="created">Created</string>
     <string name="downloaded">Downloaded</string>
-    <string name="download">download</string>
+    <string name="download">Download</string>
+    <string name="open">Open</string>
 
     <string name="save">Save</string>
     <string name="saveQuestionnaire">Save questionnaire</string>
@@ -172,7 +173,6 @@
     <string name="errorOccurredWhileRegisteringUser">Error occurred while registering User!</string>
     <string name="errorOccurredWhileLoggingInUser">Error occurred while logging in User!</string>
     <string name="errorFieldsContainWhitespaces">Some fields contain whitespaces!</string>
-    <string name="errorCouldNotDeleteUser">Could not delete User \'%1$s\'</string>
     <string name="errorCouldNotDownloadQuestionnaire">Could not download questionnaire!</string>
     <string name="errorSelectOneCorrectAnswer">No correct answer selected!</string>
     <string name="errorQuestionnaireHasNoTitle">Questionnaire has no title!</string>
@@ -201,7 +201,7 @@
     <string name="correctlyGivenQuestionAmount">Correctly given question amount</string>
     <string name="createdQuestionnaires">Created questionnaires</string>
     <string name="browseCreatedQuestionnaires">Browse created questionnaires</string>
-    <string name="findNotConnectedQuestionnaires">Find not connected questionnaires</string>
+    <string name="findNotConnectedQuestionnaires">Find unconnected questionnaires</string>
 
     <string name="userInfo">User info</string>
     <string name="user">User</string>
@@ -221,8 +221,27 @@
     <string name="warningCourseOfStudiesDeletetion">Are you sure you want to delete this course of studies?</string>
     <string name="warningUserDeletetion">Are you sure you want to delete this User?</string>
     <string name="deletedFaculty">Faculty deleted</string>
+    <string name="deletingFaculty">Deleting faculty…</string>
+    <string name="errorCouldNotDeleteFaculty">Could not delete faculty</string>
     <string name="deletedCourseOfStudies">Course of studies deleted</string>
+    <string name="deletingCourseOfStudies">Deleting course of studies…</string>
+    <string name="errorCouldNotDeleteCourseOfStudies">Could not delete course of studies</string>
     <string name="coursesOfStudiesWithoutFaculty">Courses of studies without Faculty</string>
+    <string name="deletingUser">Deleting user…</string>
+    <string name="savingUser">Saving user…</string>
+    <string name="errorCouldNotDeleteUser">Could not delete user</string>
+    <string name="savingFaculty">Saving faculty…</string>
+    <string name="successfullySavedFaculty">Successfully saved faculty</string>
+    <string name="successfullySavedCourseOfStudies">Successfully saved course of studies</string>
+    <string name="savingCourseOfStudies">Saving course of studies…</string>
+    <string name="errorCouldNotSaveFaculty">Could not save faculty</string>
+    <string name="errorFacultyAbbreviationAlreadyUsed">Faculty abbreviation is already used</string>
+    <string name="errorCouldNotSaveCourseOfStudies">Could not save course of studies</string>
+    <string name="errorCourseOfStudiesAbbreviationAlreadyUsed">Course of studies abbreviation already used</string>
+    <string name="errorFacultyNameAlreadyUsed">Faculty name already used</string>
+    <string name="errorCourseOfStudiesNameAlreadyUsed">Course of studies name already used</string>
+    <string name="errorNoFacultyAssigned">Please assign at least one faculty</string>
+
 
     <string name="questionCount">Question count</string>
     <string name="progressText">Progress</string>
@@ -232,6 +251,7 @@
     <string name="allQuestionnaires">All</string>
     <string name="ownQuestionnaires">Own</string>
     <string name="downloadedQuestionnaires">Downloaded</string>
+    <string name="downloadingQuestionnaire">Downloading questionnaire…</string>
 
     <!-- Quiz Screen-->
     <string name="showSolutions">Show solutions</string>
@@ -334,6 +354,11 @@
     <string name="syncedFacultyAndCourseOfStudiesData">Faculties and course of studies were synced!</string>
     <string name="facultyAndCourseOfStudiesDataAlreayUpToDate">Faculty and course of studies are already up to date</string>
     <string name="yourDataIsAlreadyUpToDate">Your data is already up to date!</string>
+    <string name="questionnaireDataSynced">Questionnaires synced</string>
+    <string name="syncingQuestionnaires">Syncing questionnaires</string>
+    <string name="syncingFacultiesAndCourseOfStudies">Syncing faculties and course of studies</string>
+    <string name="syncingUserData">Syncing user data</string>
+    <string name="errorCouldNotSyncQuestionnaires">Could not sync questionnaires</string>
 
     <!-- ALERT DIALOG -->
     <string name="logoutWarningTitle">Logout Warning</string>

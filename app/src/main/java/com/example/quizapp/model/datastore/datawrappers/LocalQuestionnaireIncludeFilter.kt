@@ -7,10 +7,10 @@ import com.example.quizapp.model.menus.SelectionTypeItemMarker
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-enum class HomeListFilter(
+enum class LocalQuestionnaireIncludeFilter(
     @StringRes override val textRes: Int,
     @DrawableRes override val iconRes: Int
-): SelectionTypeItemMarker<HomeListFilter> {
+): SelectionTypeItemMarker<LocalQuestionnaireIncludeFilter> {
 
     ALL_QUESTIONNAIRES(
         textRes = R.string.allQuestionnaires,

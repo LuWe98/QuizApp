@@ -4,10 +4,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.quizapp.extensions.generateDiffItemCallback
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.mongodb.documents.faculty.MongoFaculty
 import com.example.quizapp.model.databases.room.entities.EntityMarker
-import com.example.quizapp.utils.DiffCallbackUtil
 import io.ktor.util.date.*
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
@@ -37,7 +37,7 @@ data class Faculty(
     val asMongoFaculty: MongoFaculty get() = DataMapper.mapRoomFacultyToMongoFaculty(this)
 
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<Faculty> { old, new ->  old.id == new.id }
+        val DIFF_CALLBACK = generateDiffItemCallback(Faculty::id)
 
         const val TABLE_NAME = "facultyTable"
 

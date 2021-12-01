@@ -1,6 +1,7 @@
 package com.example.quizapp.view
 
 import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -13,7 +14,6 @@ import com.example.quizapp.extensions.initMaterialElevationScale
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
@@ -31,7 +31,6 @@ import com.example.quizapp.view.fragments.homescreen.FragmentHomeDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizResultDirections
-import com.example.quizapp.view.fragments.searchscreen.FragmentSearchDirections
 import com.example.quizapp.view.fragments.settingsscreen.FragmentSettingsDirections
 import java.lang.ref.WeakReference
 import javax.inject.Inject
@@ -70,8 +69,10 @@ class Navigator @Inject constructor(
         navController.popBackStack()
     }
 
+    //TODO -> Soll auf homescreen gepoppt werden oder nicht ?
     fun navigateToQuizScreen(questionnaireId: String) {
-        navController.navigate(MainNavGraphDirections.actionGlobalGoToQuizScreen(questionnaireId))
+        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentHome, false).build()
+        navController.navigate(MainNavGraphDirections.actionGlobalGoToQuizScreen(questionnaireId), navOptions)
     }
 
     fun navigateToQuizContainerScreen(questionPosition: Int = FIRST_QUESTION_POSITION, isShowSolutionScreen: Boolean = false) {
@@ -166,10 +167,9 @@ class Navigator @Inject constructor(
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfRemoteAuthorSelection(selectedAuthors))
     }
 
-    //TODO EINBAUEN DER REMOTE LOGIK
-    fun navigateToLocalAuthorSelection(selectedAuthors: Array<AuthorInfo>) {
-        if(currentDestinationId == R.id.bsdfRemoteAuthorSelection) return
-        navController.navigate(MainNavGraphDirections.actionGlobalBsdfRemoteAuthorSelection(selectedAuthors))
+    fun navigateToLocalAuthorSelection(selectedAuthorIds: Array<String>) {
+        if(currentDestinationId == R.id.bsdfLocalAuthorSelection) return
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfLocalAuthorSelection(selectedAuthorIds))
     }
 
     fun navigateToUpdateStringDialog(initialValue: String, updateStringType: UpdateStringType) {
@@ -234,8 +234,14 @@ class Navigator @Inject constructor(
 
 
 
+    fun navigateToLoadingDialog(@StringRes messageRes: Int){
+        if(currentDestinationId == R.id.dfLoading) return
+        navController.navigate(MainNavGraphDirections.actionGlobalDfLoading(messageRes))
+    }
 
-    fun navigateToBackdropFragment(){
-        navController.navigate(MainNavGraphDirections.actionGlobalBackdropFragment())
+    fun popLoadingDialog(){
+        if(navController.backQueue[navController.backQueue.size -1].destination.id == R.id.dfLoading) {
+            navController.popBackStack()
+        }
     }
 }

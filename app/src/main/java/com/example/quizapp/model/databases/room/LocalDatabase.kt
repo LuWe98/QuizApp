@@ -9,7 +9,6 @@ import com.example.quizapp.model.databases.room.dao.*
 import com.example.quizapp.model.databases.room.dao.sync.*
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
-import com.example.quizapp.model.databases.room.entities.faculty.Subject
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
@@ -32,7 +31,6 @@ import javax.inject.Singleton
         Answer::class,
         Faculty::class,
         CourseOfStudies::class,
-        Subject::class,
         QuestionnaireCourseOfStudiesRelation::class,
         FacultyCourseOfStudiesRelation::class,
         LocallyDeletedQuestionnaire::class,
@@ -49,7 +47,6 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun getAnswerDao(): AnswerDao
     abstract fun getFacultyDao(): FacultyDao
     abstract fun getCourseOfStudiesDao(): CourseOfStudiesDao
-    abstract fun getSubjectDao(): SubjectDao
     abstract fun getQuestionnaireCourseOfStudiesRelationDao(): QuestionnaireCourseOfStudiesRelationDao
     abstract fun getFacultyCourseOfStudiesRelationDao(): FacultyCourseOfStudiesRelationDao
     abstract fun getLocallyDeletedQuestionnaireDao(): LocallyDeletedQuestionnaireDao
@@ -63,5 +60,10 @@ abstract class LocalDatabase : RoomDatabase() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
         }
+    }
+
+    companion object {
+        const val PLACEHOLDER = "?"
+        const val PLACEHOLDER_SEPARATOR = ","
     }
 }

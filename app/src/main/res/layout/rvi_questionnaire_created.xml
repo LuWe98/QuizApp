@@ -5,99 +5,126 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         xmlns:tools="http://schemas.android.com/tools"
-        app:cardBackgroundColor="@color/white"
-        app:cardElevation="@dimen/defaultElevation"
+        app:cardBackgroundColor="?colorOnPrimary"
+        app:cardElevation="2dp"
         android:layout_marginTop="@dimen/grid_3"
         android:layout_marginHorizontal="@dimen/grid_2"
-        app:cardCornerRadius="7.5dp"
-        android:padding="@dimen/grid_2">
+        app:cardCornerRadius="7.5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/defaultMinQuestionnaireCardHeight"
-                android:id="@+id/clTop"
-                android:layout_margin="@dimen/grid_2"
-                app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/grid_2">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/progressIndicator"
+                app:indicatorSize="40dp"
+                app:indicatorColor="?colorAccent"
+                app:trackColor="@color/unselectedColor"
+                app:trackThickness="2.75dp"
+                app:trackCornerRadius="50dp"
+                tools:visibility="visible"
+                tools:progress="100"
+                android:layout_marginStart="@dimen/grid_2"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="22.5dp"
+                android:layout_height="22.5dp"
+                android:id="@+id/checkMarkIcon"
+                app:srcCompat="@drawable/ic_check"
+                android:tint="@color/green"
+                android:visibility="gone"
+                tools:visibility="visible"
+                app:layout_constraintTop_toTopOf="@id/progressIndicator"
+                app:layout_constraintStart_toStartOf="@id/progressIndicator"
+                app:layout_constraintEnd_toEndOf="@id/progressIndicator"
+                app:layout_constraintBottom_toBottomOf="@id/progressIndicator"/>
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:id="@+id/tvDateAndQuestionAmount"
+                tools:text="01.10.2021 - 24"
+                android:fontFamily="@font/work_sans_regular"
+                android:textSize="13sp"
+                app:layout_constraintStart_toEndOf="@id/progressIndicator"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="@dimen/grid_2"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="25sp"
+                android:layout_height="25sp"
+                android:src="@drawable/ic_question"
+                android:padding="6.5dp"
+                android:visibility="gone"
+                android:layout_marginStart="-4dp"
+                app:layout_constraintStart_toEndOf="@+id/tvDateAndQuestionAmount"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/appCompatImageView2" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvTitle"
+                android:gravity="center_vertical"
+                app:layout_constraintStart_toEndOf="@id/progressIndicator"
+                tools:text="Questionnaire Title"
+                android:textSize="18sp"
+                android:maxLines="1"
+                android:fontFamily="@font/work_sans_medium"
+                android:textStyle="bold"
+                android:layout_marginStart="@dimen/grid_2"
+                app:layout_constraintTop_toBottomOf="@+id/tvDateAndQuestionAmount"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:id="@+id/tvInfo"
+                tools:text="WIB - PROMOD 1"
+                android:fontFamily="@font/work_sans_regular"
+                android:gravity="center_vertical"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginStart="@dimen/grid_2"
+                app:layout_constraintStart_toEndOf="@+id/progressIndicator"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:id="@+id/syncProgress"
-                    app:indicatorSize="42.5dp"
-                    app:indicatorColor="?colorAccent"
-                    app:trackColor="@color/unselectedColor"
-                    app:trackThickness="5dp"
-                    android:indeterminateOnly="true"
-                    tools:visibility="visible"
-                    app:trackCornerRadius="45dp"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="@+id/btnSync"
-                    app:layout_constraintTop_toTopOf="@+id/btnSync"
-                    app:layout_constraintBottom_toBottomOf="@+id/btnSync"
-                    app:layout_constraintEnd_toEndOf="@+id/btnSync" />
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:id="@+id/btnSync"
+                tools:tint="@color/green"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_cloud_done"
+                android:padding="4dp"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:id="@+id/btnSync"
-                    app:srcCompat="@drawable/ic_cloud_done"
-                    android:layout_marginStart="@dimen/grid_2"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:tint="@color/white"
-                    android:padding="8dp"
-                    android:background="@drawable/shape_circle"
-                    android:backgroundTint="?colorAccent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:id="@+id/questionnaireTitle"
-                    android:gravity="center_vertical"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/btnMoreOptions"
-                    app:layout_constraintHeight_percent="0.50"
-                    tools:text="Questionnaire Title"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:layout_marginStart="@dimen/grid_3"
-                    app:layout_constraintStart_toEndOf="@+id/btnSync"
-                    app:layout_constraintBottom_toBottomOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:id="@+id/btnMoreOptions"
-                    android:background="?attr/actionBarItemBackground"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@drawable/ic_more"
-                    android:padding="10dp" />
-
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                    android:layout_width="0dp"
-                    android:layout_height="4dp"
-                    android:id="@+id/progressIndicator"
-                    android:max="100"
-                    app:indicatorColor="?colorAccent"
-                    app:trackColor="@color/unselectedColor"
-                    app:trackCornerRadius="45dp"
-                    tools:progress="50"
-                    android:progress="40"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/questionnaireTitle"
-                    app:layout_constraintStart_toEndOf="@+id/btnSync"
-                    app:layout_constraintTop_toBottomOf="@+id/syncProgress" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="22.5dp"
+                android:layout_height="22.5dp"
+                android:id="@+id/syncProgress"
+                app:indicatorSize="22.5dp"
+                app:indicatorColor="?colorAccent"
+                app:trackColor="@color/unselectedColor"
+                app:trackThickness="2dp"
+                app:trackCornerRadius="45dp"
+                tools:visibility="visible"
+                tools:progress="100"
+                android:indeterminate="true"
+                android:indeterminateOnly="true"
+                app:layout_constraintStart_toStartOf="@+id/btnSync"
+                app:layout_constraintTop_toTopOf="@+id/btnSync"
+                app:layout_constraintBottom_toBottomOf="@+id/btnSync"
+                app:layout_constraintEnd_toEndOf="@+id/btnSync" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

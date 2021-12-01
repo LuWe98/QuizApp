@@ -1,8 +1,9 @@
-package com.example.quizapp.model.menus
+package com.example.quizapp.model.menus.datawrappers
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.example.quizapp.R
+import com.example.quizapp.model.menus.SelectionTypeItemMarker
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

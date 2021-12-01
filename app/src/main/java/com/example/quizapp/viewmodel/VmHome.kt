@@ -5,10 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
-import com.example.quizapp.extensions.app
-import com.example.quizapp.extensions.getMutableStateFlow
-import com.example.quizapp.extensions.isConnectedToInternet
-import com.example.quizapp.extensions.launch
+import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.QuestionnaireVisibility.PRIVATE
@@ -34,6 +31,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import io.ktor.client.features.auth.*
 
 @HiltViewModel
 class VmHome @Inject constructor(
@@ -41,9 +40,9 @@ class VmHome @Inject constructor(
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
     private val backendSyncer: BackendSyncer,
-    preferencesRepository: PreferencesRepository,
-    application: Application,
-    private val state: SavedStateHandle
+    private val preferencesRepository: PreferencesRepository,
+    private val state: SavedStateHandle,
+    application: Application
 ) : AndroidViewModel(application) {
 
     private val fragmentHomeEventChannel = Channel<FragmentHomeEvent>()
@@ -52,7 +51,7 @@ class VmHome @Inject constructor(
 
     init {
         if (app.isConnectedToInternet) {
-            applicationScope.launch(IO) {
+            launch(IO, applicationScope) {
                 fragmentHomeEventChannel.send(ChangeProgressVisibility(true))
                 backendSyncer.syncData()
                 delay(500)
@@ -68,20 +67,41 @@ class VmHome @Inject constructor(
     val searchQuery get() = searchQueryMutableStateFlow.value
 
 
-//    private val userIdFlow = preferencesRepository.userIdFlow.flowOn(IO)
-//
-//    val allCachedQuestionnairesFlow = userIdFlow
-//        .flatMapLatest(localRepository::findAllCompleteQuestionnairesNotForUserFlow)
-//        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-//
-//    val allCreatedQuestionnairesFlow = userIdFlow
-//        .flatMapLatest(localRepository::findAllCompleteQuestionnairesForUserFlow)
-//        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    val locallyPresentAuthors = localRepository.getAllLocalAuthorsFlow()
+        .distinctUntilChanged()
+
+    fun onLocallyPresentAuthorsChanged(locallyPresentAuthors: List<AuthorInfo>) {
+        launch(IO) {
+            preferencesRepository.getLocalFilteredAuthorIds().let { savedIds ->
+                savedIds.filter { locallyPresentAuthors.none { author -> author.userId == it } }.let { notAvailableAuthorIds ->
+                    if (notAvailableAuthorIds.isNotEmpty()) {
+                        preferencesRepository.updateLocalFilteredAuthorIds(savedIds - notAvailableAuthorIds.toSet())
+                    }
+                }
+            }
+        }
+    }
 
 
-    val allCompleteQuestionnaireFlow = searchQueryMutableStateFlow.flatMapLatest { query ->
-        localRepository.getFilteredCompleteQuestionnaireFlow(query)
-    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    val completeQuestionnaireFlow = combine(
+        searchQueryMutableStateFlow,
+        preferencesRepository.localOrderByFlow,
+        preferencesRepository.localAscendingOrderFlow,
+        preferencesRepository.localFilteredAuthorIdsFlow,
+        preferencesRepository.localFilteredCosIdsFlow,
+        preferencesRepository.localFilteredFacultyIdsFlow,
+        preferencesRepository.localFilterHideCompletedFlow
+    ) { query, orderBy, ascending, authorIds, cosIds, facultyIds, hideCompleted ->
+        localRepository.getFilteredCompleteQuestionnaireFlow(
+            searchQuery = query,
+            authorIds = authorIds,
+            cosIds = cosIds,
+            facultyIds = facultyIds,
+            orderBy = orderBy,
+            ascending = ascending,
+            hideCompleted = hideCompleted
+        )
+    }.flatMapLatest { it }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
 
     fun onSwipeRefreshTriggered() = launch(IO) {
@@ -94,17 +114,17 @@ class VmHome @Inject constructor(
         searchQueryMutableStateFlow.value = newQuery
     }
 
-    fun onClearSearchQueryClicked(){
-        if(searchQuery.isNotBlank()) {
+    fun onClearSearchQueryClicked() {
+        if (searchQuery.isNotBlank()) {
             launch {
                 fragmentHomeEventChannel.send(ClearSearchQueryEvent)
             }
         }
     }
 
-    fun onFilterButtonClicked(){
+    fun onFilterButtonClicked() {
         launch(IO) {
-            fragmentHomeEventChannel.send(NavigateToLocalQuestionnairesFilterSelection())
+            fragmentHomeEventChannel.send(NavigateToLocalQuestionnairesFilterSelection)
         }
     }
 
@@ -196,7 +216,6 @@ class VmHome @Inject constructor(
         }
     }
 
-    //TODO -> Das ist der einzige kritische Punkt, da hier nur die antworten gelöscht werden, deswegen wird später der Fragebogen nicht automatisch rausgefiltert
     fun onDeleteFilledQuestionnaireConfirmed(event: ShowUndoDeleteAnswersOfQuestionnaireSnackBar) = launch(IO) {
         runCatching {
             backendRepository.insertFilledQuestionnaire(DataMapper.mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(event.completeQuestionnaire))
@@ -235,11 +254,11 @@ class VmHome @Inject constructor(
     sealed class FragmentHomeEvent {
         class ShowSnackBarMessageBar(val messageRes: Int) : FragmentHomeEvent()
         class ShowUndoDeleteCreatedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
-        class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire, ) : FragmentHomeEvent()
+        class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
         class ShowUndoDeleteAnswersOfQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
         class ChangeProgressVisibility(val visible: Boolean) : FragmentHomeEvent()
-        class NavigateToLocalQuestionnairesFilterSelection() : FragmentHomeEvent()
-        object ClearSearchQueryEvent: FragmentHomeEvent()
+        object NavigateToLocalQuestionnairesFilterSelection : FragmentHomeEvent()
+        object ClearSearchQueryEvent : FragmentHomeEvent()
     }
 
     companion object {

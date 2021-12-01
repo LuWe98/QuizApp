@@ -5,10 +5,7 @@ import android.view.View
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentAdminAddEditCourseOfStudiesBinding
-import com.example.quizapp.extensions.collectWhenStarted
-import com.example.quizapp.extensions.onClick
-import com.example.quizapp.extensions.setSelectionTypeListener
-import com.example.quizapp.extensions.setUpdateStringTypeListener
+import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.facultyselection.BsdfFacultySelection
@@ -53,11 +50,11 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
         setSelectionTypeListener(vmAddEdit::onDegreeResultReceived)
 
         vmAddEdit.cosAbbreviationStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.abbreviationCard.text = it
+            binding.abbreviationCard.text = if(it.isBlank()) "-" else it
         }
 
         vmAddEdit.cosNameStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.nameCard.text = it
+            binding.nameCard.text = if(it.isBlank()) "-" else it
         }
 
         vmAddEdit.cosFacultyIdsStateFlow.collectWhenStarted(viewLifecycleOwner) {
@@ -73,10 +70,10 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
                 is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringDialog(event.initialValue, event.updateType)
                 is NavigateToFacultySelectionScreen -> navigator.navigateToFacultySelection(event.selectedIds)
                 is NavigateToDegreeSelectionScreen -> navigator.navigateToSelectionDialog(SelectionType.DegreeSelection(event.currentDegree))
-                is ShowMessageSnackBar -> {
-
-                }
+                is ShowMessageSnackBar -> showSnackBar(event.messageRes)
                 NavigateBackEvent -> navigator.popBackStack()
+                HideLoadingDialog -> navigator.popLoadingDialog()
+                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
             }
         }
     }

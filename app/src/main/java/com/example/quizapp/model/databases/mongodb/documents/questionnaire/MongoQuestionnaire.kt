@@ -1,8 +1,8 @@
 package com.example.quizapp.model.databases.mongodb.documents.questionnaire
 
+import com.example.quizapp.extensions.generateDiffItemCallback
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
-import com.example.quizapp.utils.DiffCallbackUtil
 import io.ktor.util.date.*
 import kotlinx.serialization.Serializable
 import org.bson.codecs.pojo.annotations.BsonId
@@ -21,6 +21,6 @@ data class MongoQuestionnaire(
     var lastModifiedTimestamp: Long = getTimeMillis()
 ) {
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<MongoQuestionnaire> { old, new -> old.id == new.id}
+        val DIFF_CALLBACK = generateDiffItemCallback(MongoQuestionnaire::id)
     }
 }

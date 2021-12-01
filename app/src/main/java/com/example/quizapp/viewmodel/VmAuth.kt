@@ -63,7 +63,7 @@ class VmAuth @Inject constructor(
 
     fun onLoginButtonClicked() {
         launch(IO) {
-            if (currentLoginUserName.isEmpty() || currentLoginPassword.isEmpty()) {
+            if (currentLoginUserName.isBlank() || currentLoginPassword.isBlank()) {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
                 return@launch
             }
@@ -83,14 +83,13 @@ class VmAuth @Inject constructor(
                     ).let { user ->
                         if(user.id != preferencesRepository.getUserId()){
                             localRepository.deleteAllUserData()
+                            preferencesRepository.wipePreferenceData()
                         }
                         preferencesRepository.updateUserCredentials(user)
                         preferencesRepository.updateJwtToken(response.token)
                     }
-
                     fragmentEventChannel.send(NavigateToHomeScreen)
                 }
-
                 fragmentEventChannel.send(ShowMessageSnackBar(response.responseType.messageRes))
             }
         }
@@ -138,9 +137,9 @@ class VmAuth @Inject constructor(
 
     fun onRegisterButtonClicked() {
         launch(IO) {
-            if (currentRegisterUserName.isEmpty() ||
-                currentRegisterPassword.isEmpty() ||
-                currentRegisterPasswordConfirm.isEmpty()) {
+            if (currentRegisterUserName.isBlank() ||
+                currentRegisterPassword.isBlank() ||
+                currentRegisterPasswordConfirm.isBlank()) {
                 fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
                 return@launch
             }

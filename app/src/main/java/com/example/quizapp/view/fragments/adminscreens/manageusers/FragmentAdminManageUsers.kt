@@ -13,8 +13,9 @@ import com.example.quizapp.view.fragments.adminscreens.manageusers.filterselecti
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.recyclerview.adapters.RvaAdminUser
+import com.example.quizapp.viewmodel.VmAdminAddEditUser
 import com.example.quizapp.viewmodel.VmAdminManageUsers
-import com.example.quizapp.viewmodel.VmAdminManageUsers.FragmentAdminEvent.*
+import com.example.quizapp.viewmodel.VmAdminManageUsers.ManageUsersEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -76,16 +77,19 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
             }
         }
 
-        vmAdmin.fragmentAdminEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAdmin.manageUsersEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 is UpdateUserRoleEvent -> rvAdapter.updateUserRole(event.userId, event.newRole)
                 is HideUserEvent -> rvAdapter.hideUser(event.userId)
                 is ShowUserEvent -> rvAdapter.showUser(event.user)
-                is NavigateToUserMoreOptionsSelection -> navigator.navigateToSelectionDialog(SelectionType.UserMoreOptionsSelection(event.user))
+                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
                 is NavigateToChangeUserRoleDialogEvent -> navigator.navigateToChangeUserRoleDialog(event.user)
                 is NavigateToDeletionConfirmationEvent -> navigator.navigateToConfirmationDialog(ConfirmationType.DeleteUserConfirmation(event.user))
                 is NavigateToManageUserSelectionEvent -> navigator.navigateToAdminManageUsersFilterSelection(event.selectedRoles)
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
+                HideLoadingDialog -> navigator.popLoadingDialog()
+                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
+                is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes)
             }
         }
     }

@@ -9,7 +9,6 @@
         android:backgroundTint="?colorOnPrimary"
         android:paddingTop="@dimen/grid_4">
 
-
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -152,12 +151,12 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/facultyCard"
+                    android:id="@+id/authorCard"
                     android:background="@drawable/background_round_corners_7_5dp"
                     android:backgroundTint="?android:colorBackground"
+                    android:layout_marginHorizontal="@dimen/grid_6"
                     android:paddingVertical="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_4"
-                    android:layout_marginHorizontal="@dimen/grid_6"
                     app:layout_constraintTop_toBottomOf="@id/orderByCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
@@ -165,8 +164,8 @@
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        android:id="@+id/facultyFilterHeader"
-                        android:text="@string/filterFaculties"
+                        android:id="@+id/authorFilterHeader"
+                        android:text="@string/filterAuthors"
                         android:background="@drawable/background_round_corners_10dp"
                         android:backgroundTint="@color/transparent"
                         android:gravity="center_vertical"
@@ -180,19 +179,18 @@
                 <com.google.android.material.chip.ChipGroup
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:id="@+id/chipGroupAuthor"
                         android:animateLayoutChanges="true"
-                        android:id="@+id/chipGroupFaculty"
-                        app:layout_constraintTop_toBottomOf="@id/facultyFilterHeader"
+                        app:layout_constraintTop_toBottomOf="@id/authorFilterHeader"
                         android:layout_marginTop="@dimen/grid_1"
                         android:layout_marginHorizontal="@dimen/grid_3"
-                        app:layout_constraintStart_toStartOf="@id/facultyFilterHeader"
-                        app:layout_constraintEnd_toEndOf="@id/facultyFilterHeader">
+                        app:layout_constraintStart_toStartOf="@id/authorFilterHeader"
+                        app:layout_constraintEnd_toEndOf="@id/authorFilterHeader">
 
                     <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/addChipFaculty"
-                            app:chipMinHeight="30dp"
+                            android:id="@+id/addChipAuthor"
                             style="@style/Style.QuizApp.AddChip"
                             android:text="@string/add" />
 
@@ -209,7 +207,7 @@
                     android:layout_marginHorizontal="@dimen/grid_6"
                     android:paddingVertical="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_4"
-                    app:layout_constraintTop_toBottomOf="@id/facultyCard"
+                    app:layout_constraintTop_toBottomOf="@id/authorCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
 
@@ -253,12 +251,12 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/personCard"
+                    android:id="@+id/facultyCard"
                     android:background="@drawable/background_round_corners_7_5dp"
                     android:backgroundTint="?android:colorBackground"
-                    android:layout_marginHorizontal="@dimen/grid_6"
                     android:paddingVertical="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_4"
+                    android:layout_marginHorizontal="@dimen/grid_6"
                     app:layout_constraintTop_toBottomOf="@id/cosCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
@@ -266,8 +264,8 @@
                 <com.google.android.material.textview.MaterialTextView
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        android:id="@+id/authorFilterHeader"
-                        android:text="@string/filterAuthors"
+                        android:id="@+id/facultyFilterHeader"
+                        android:text="@string/filterFaculties"
                         android:background="@drawable/background_round_corners_10dp"
                         android:backgroundTint="@color/transparent"
                         android:gravity="center_vertical"
@@ -281,24 +279,26 @@
                 <com.google.android.material.chip.ChipGroup
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/chipGroupAuthor"
                         android:animateLayoutChanges="true"
-                        app:layout_constraintTop_toBottomOf="@id/authorFilterHeader"
+                        android:id="@+id/chipGroupFaculty"
+                        app:layout_constraintTop_toBottomOf="@id/facultyFilterHeader"
                         android:layout_marginTop="@dimen/grid_1"
                         android:layout_marginHorizontal="@dimen/grid_3"
-                        app:layout_constraintStart_toStartOf="@id/authorFilterHeader"
-                        app:layout_constraintEnd_toEndOf="@id/authorFilterHeader">
+                        app:layout_constraintStart_toStartOf="@id/facultyFilterHeader"
+                        app:layout_constraintEnd_toEndOf="@id/facultyFilterHeader">
 
                     <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/addChipAuthor"
+                            android:id="@+id/addChipFaculty"
+                            app:chipMinHeight="30dp"
                             style="@style/Style.QuizApp.AddChip"
                             android:text="@string/add" />
 
                 </com.google.android.material.chip.ChipGroup>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

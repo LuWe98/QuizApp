@@ -10,11 +10,14 @@ import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.CreateUserResponse.CreateUserResponseType
 import com.example.quizapp.view.fragments.adminscreens.manageusers.FragmentAdminAddEditUserArgs
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAdminAddEditUser.AddEditUserEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
@@ -32,7 +35,7 @@ class VmAdminAddEditUser @Inject constructor(
 
     private val args = FragmentAdminAddEditUserArgs.fromSavedStateHandle(state)
 
-    val pageTitleRes get() = if(args.user == null) R.string.addUser else R.string.editUser
+    val pageTitleRes get() = if (args.user == null) R.string.addUser else R.string.editUser
 
     private val parsedUserName get() = args.user?.userName ?: ""
 
@@ -62,11 +65,7 @@ class VmAdminAddEditUser @Inject constructor(
     private val userRole get() = userRoleMutableStateFlow.value
 
 
-
-
-
-
-    fun onUserNameCardClicked(){
+    fun onUserNameCardClicked() {
         launch(IO) {
             addEditUserEventChannel.send(NavigateToUpdateStringDialog(userName, UpdateStringType.USER_NAME))
         }
@@ -78,9 +77,9 @@ class VmAdminAddEditUser @Inject constructor(
         }
     }
 
-    fun onUserRoleCardClicked(){
+    fun onUserRoleCardClicked() {
         launch(IO) {
-            addEditUserEventChannel.send(NavigateToRoleSelection(userRole))
+            addEditUserEventChannel.send(NavigateToSelectionScreen(SelectionType.RoleSelection(userRole)))
         }
     }
 
@@ -105,33 +104,41 @@ class VmAdminAddEditUser @Inject constructor(
     }
 
 
-    fun onSaveButtonClicked(){
-        launch(IO) {
-            if(userName.isEmpty() || userPassword.isEmpty()) {
-                addEditUserEventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
-                return@launch
+    fun onSaveButtonClicked() = launch(IO) {
+        if (userName.isEmpty() || userPassword.isEmpty()) {
+            addEditUserEventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
+            return@launch
+        }
+
+        addEditUserEventChannel.send(ShowLoadingDialog(R.string.savingUser))
+
+        runCatching {
+            backendRepository.createUser(userName, userPassword, userRole)
+        }.also {
+            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+            addEditUserEventChannel.send(HideLoadingDialog)
+        }.onSuccess { response ->
+            if (response.responseType == CreateUserResponseType.CREATION_SUCCESSFUL) {
+                addEditUserEventChannel.send(NavigateBackEvent)
             }
 
-            runCatching {
-                backendRepository.createUser(userName, userPassword, userRole)
-            }.onSuccess { response ->
-                addEditUserEventChannel.send(ShowMessageSnackBar(response.responseType.messageRes))
-
-                if(response.responseType == CreateUserResponseType.CREATION_SUCCESSFUL) {
-                    addEditUserEventChannel.send(NavigateBackEvent)
-                }
-            }.onFailure {
-                addEditUserEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotCreateUser))
-            }
+            addEditUserEventChannel.send(ShowMessageSnackBar(
+                response.responseType.messageRes,
+                response.responseType == CreateUserResponseType.CREATION_SUCCESSFUL
+            ))
+        }.onFailure {
+            addEditUserEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotCreateUser))
         }
     }
 
 
     sealed class AddEditUserEvent {
-        class NavigateToUpdateStringDialog(val initialValue: String, val updateType: UpdateStringType): AddEditUserEvent()
-        class NavigateToRoleSelection(val currentRole: Role): AddEditUserEvent()
-        class ShowMessageSnackBar(@StringRes val messageRes: Int): AddEditUserEvent()
-        object NavigateBackEvent: AddEditUserEvent()
+        class NavigateToUpdateStringDialog(val initialValue: String, val updateType: UpdateStringType) : AddEditUserEvent()
+        class NavigateToSelectionScreen(val selectionType: SelectionType) : AddEditUserEvent()
+        class ShowMessageSnackBar(@StringRes val messageRes: Int, val attachToActivity: Boolean = false) : AddEditUserEvent()
+        object NavigateBackEvent : AddEditUserEvent()
+        class ShowLoadingDialog(@StringRes val messageRes: Int) : AddEditUserEvent()
+        object HideLoadingDialog : AddEditUserEvent()
     }
 
     companion object {

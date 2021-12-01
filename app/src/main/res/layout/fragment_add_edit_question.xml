@@ -112,7 +112,7 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/bottomWideButtonHeight"
             android:elevation="10dp"
             android:id="@+id/btnSave"
             app:layout_constraintBottom_toBottomOf="parent"

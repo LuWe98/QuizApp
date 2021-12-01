@@ -49,8 +49,8 @@ class VmCourseOfStudiesSelection @Inject constructor(
 
     fun isCourseOfStudySelected(courseOfStudiesId: String) = selectedCoursesOfStudiesIds.contains(courseOfStudiesId)
 
-    fun getCourseOfStudiesFlow(facultyId: String) = searchQueryMutableStateFlow.map { query ->
-        localRepository.getCoursesOfStudiesAssociatedWithFaculty(facultyId, query)
+    fun getCourseOfStudiesFlow(facultyId: String) = searchQueryMutableStateFlow.flatMapLatest { query ->
+        localRepository.getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId, query)
     }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
 

@@ -6,9 +6,7 @@ import android.view.WindowManager
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.DfUpdateStringValueBinding
-import com.example.quizapp.extensions.onClick
-import com.example.quizapp.extensions.onTextChanged
-import com.example.quizapp.extensions.showKeyboard
+import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingDialogFragment
 import com.example.quizapp.viewmodel.VmUpdateStringValueDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,8 +28,9 @@ class DfUpdateString : BindingDialogFragment<DfUpdateStringValueBinding>() {
         binding.apply {
             vmUpdate.updateType.apply {
                 editText.setText(vmUpdate.updatedText)
-                inputLayout.hint = getString(hintRes)
-                inputLayout.setStartIconDrawable(iconRes)
+                editText.hint = getString(hintRes)
+                editText. setCompoundDrawablesRelative(getDrawable(iconRes), null, null, null)
+                editText.setDrawableSize(50.dp)
                 tvTitle.setText(titleRes)
             }
 
@@ -43,12 +42,13 @@ class DfUpdateString : BindingDialogFragment<DfUpdateStringValueBinding>() {
     private fun initListeners(){
         binding.apply {
             editText.onTextChanged(vmUpdate::onEditTextChanged)
-            btnUpdate.onClick {
+            btnConfirm.onClick {
                 setFragmentResult(vmUpdate.updateType.resultKey, Bundle().apply {
-                    putString(vmUpdate.updateType.resultKey, vmUpdate.updatedText)
+                    putString(vmUpdate.updateType.resultKey, vmUpdate.updatedText.trim())
                 })
                 navigator.popBackStack()
             }
+            btnCancel.onClick(navigator::popBackStack)
         }
     }
 }

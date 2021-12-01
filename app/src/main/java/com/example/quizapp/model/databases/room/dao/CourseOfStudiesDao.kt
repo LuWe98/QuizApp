@@ -42,10 +42,17 @@ abstract class CourseOfStudiesDao : BaseDao<CourseOfStudies>(CourseOfStudies.TAB
     @Query("DELETE FROM courseOfStudiesTable WHERE courseOfStudiesId IN(:courseOfStudiesIds)")
     abstract suspend fun deleteCoursesOfStudiesWith(courseOfStudiesIds: List<String>)
 
-    @Query("SELECT c.* FROM courseOfStudiesTable as c LEFT JOIN facultyCourseOfStudiesRelationTable as r ON(c.courseOfStudiesId = r.courseOfStudiesId) WHERE r.courseOfStudiesId IS NULL AND c.name LIKE '%' || :searchQuery || '%'")
-    abstract suspend fun getCoursesOfStudiesNotAssociatedWithFaculty(searchQuery: String): List<CourseOfStudies>
+    @Query("SELECT c.* FROM courseOfStudiesTable as c " +
+            "LEFT JOIN facultyCourseOfStudiesRelationTable as r " +
+            "ON(c.courseOfStudiesId = r.courseOfStudiesId) " +
+            "WHERE r.courseOfStudiesId IS NULL " +
+            "AND c.name LIKE '%' || :searchQuery || '%'")
+    abstract fun getCoursesOfStudiesNotAssociatedWithFacultyFlow(searchQuery: String): Flow<List<CourseOfStudies>>
 
-    @Query("SELECT DISTINCT c.* FROM courseOfStudiesTable as c JOIN facultyCourseOfStudiesRelationTable as r ON(c.courseOfStudiesId = r.courseOfStudiesId) WHERE r.facultyId = :facultyId AND c.name LIKE '%' || :searchQuery || '%'")
-    abstract suspend fun getCoursesOfStudiesAssociatedWithFaculty(facultyId: String, searchQuery: String): List<CourseOfStudies>
+    @Query("SELECT DISTINCT c.* FROM courseOfStudiesTable as c " +
+            "JOIN facultyCourseOfStudiesRelationTable as r " +
+            "ON(c.courseOfStudiesId = r.courseOfStudiesId) " +
+            "WHERE r.facultyId = :facultyId AND c.name LIKE '%' || :searchQuery || '%'")
+    abstract fun getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId: String, searchQuery: String): Flow<List<CourseOfStudies>>
 
 }

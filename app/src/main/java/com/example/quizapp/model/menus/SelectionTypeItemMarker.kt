@@ -1,7 +1,7 @@
 package com.example.quizapp.model.menus
 
 import android.os.Parcelable
-import com.example.quizapp.utils.DiffCallbackUtil
+import com.example.quizapp.extensions.generateDiffItemCallback
 
 interface SelectionTypeItemMarker <T : Enum<T>> : Parcelable {
 
@@ -9,6 +9,6 @@ interface SelectionTypeItemMarker <T : Enum<T>> : Parcelable {
     val iconRes: Int
 
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<SelectionTypeItemMarker<*>> { old, new -> old == new }
+        val DIFF_CALLBACK = generateDiffItemCallback(SelectionTypeItemMarker<*>::textRes)
     }
 }

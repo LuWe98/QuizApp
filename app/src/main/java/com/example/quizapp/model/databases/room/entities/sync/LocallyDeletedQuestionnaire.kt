@@ -7,8 +7,6 @@ import com.example.quizapp.model.databases.room.entities.EntityMarker
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
-//TODO -> Diese Entity ist dazu da, dass wenn man fragebögen lokal löscht und kein inet hat, dass man bei einem neustart diese Fragebögen dann online nachlöschen kann
-//TODO -> Fragebögen, welche ihre ID hier drin haben, werden auch nicht online nachgeladen, wenn man die App startet
 @Entity(tableName = LocallyDeletedQuestionnaire.TABLE_NAME)
 @Parcelize
 @Serializable

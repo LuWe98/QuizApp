@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardBackgroundColor="?colorOnPrimary"
@@ -42,72 +43,71 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-        <com.google.android.material.textfield.TextInputLayout
+        <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/tilUserName"
+                android:layout_height="50dp"
+                android:drawableStart="@drawable/ic_person"
                 android:hint="@string/userName"
-                android:layout_marginTop="@dimen/grid_6"
+                android:textSize="16sp"
+                android:drawablePadding="@dimen/grid_3"
+                android:paddingHorizontal="@dimen/grid_3"
+                android:background="@drawable/background_round_corners_10dp"
+                android:backgroundTint="?android:colorBackground"
+                android:id="@+id/etUserName"
+                android:inputType="textMultiLine"
+                android:layout_marginTop="@dimen/grid_4"
                 android:layout_marginHorizontal="@dimen/grid_6"
-                app:startIconDrawable="@drawable/ic_person"
-                app:boxCornerRadiusBottomEnd="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopStart="10dp"
-                app:boxBackgroundColor="@color/transparent"
-                android:textColorHint="?colorControlNormal"
-                android:textColor="?android:editTextColor"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvText"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/etUserName"
-                    android:inputType="textMultiLine" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textview.MaterialTextView
+        <View
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="?colorPrimary"
-                android:text="@string/share"
-                android:id="@+id/btnShare"
+                app:layout_constraintTop_toBottomOf="@+id/etUserName"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="@dimen/grid_4"
+                android:background="?android:colorBackground" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="53dp"
+                android:text="@string/confirm"
+                android:background="?colorOnPrimary"
+                android:id="@+id/btnConfirm"
                 android:gravity="center"
-                android:textSize="17sp"
-                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textColor="?colorPrimary"
                 android:textStyle="bold"
                 app:layout_constraintVertical_bias="1"
-                android:layout_marginTop="@dimen/grid_8"
+                android:layout_marginTop="@dimen/grid_6"
                 android:fontFamily="@font/work_sans_medium"
-                app:layout_constraintTop_toBottomOf="@+id/tilUserName" />
+                android:layout_marginStart="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.5"
+                app:layout_constraintStart_toEndOf="@id/btnCancel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvText" />
 
-<!--        <com.google.android.material.button.MaterialButton-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/share"-->
-<!--                android:textAllCaps="false"-->
-<!--                android:id="@+id/btnShare"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/tilUserName"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                android:layout_marginVertical="@dimen/grid_4"-->
-<!--                android:layout_marginEnd="@dimen/grid_6" />-->
-
-<!--        <com.google.android.material.button.MaterialButton-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/cancel"-->
-<!--                android:textAllCaps="false"-->
-<!--                android:visibility="gone"-->
-<!--                style="@style/Widget.MaterialComponents.Button.TextButton"-->
-<!--                android:id="@+id/btnCancel"-->
-<!--                android:layout_marginEnd="@dimen/grid_1"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/tilUserName"-->
-<!--                android:layout_marginVertical="@dimen/grid_4"-->
-<!--                app:layout_constraintEnd_toStartOf="@+id/btnShare" />-->
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="53dp"
+                android:background="?colorOnPrimary"
+                android:text="@string/cancel"
+                android:id="@+id/btnCancel"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="?colorPrimary"
+                app:layout_constraintEnd_toStartOf="@id/btnConfirm"
+                app:layout_constraintVertical_bias="1"
+                android:layout_marginEnd="1dp"
+                android:layout_marginTop="@dimen/grid_6"
+                android:fontFamily="@font/work_sans_medium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_percent="0.5"
+                app:layout_constraintTop_toBottomOf="@+id/tvText" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

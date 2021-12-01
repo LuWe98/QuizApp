@@ -25,9 +25,7 @@ class FragmentAdminAddEditUser: BindingFragment<FragmentAdminAddEditUserBinding>
     }
 
     private fun initViews(){
-        binding.apply {
-            pageTitle.setText(vmAdmin.pageTitleRes)
-        }
+        binding.pageTitle.setText(vmAdmin.pageTitleRes)
     }
 
     private fun initListeners(){
@@ -48,11 +46,11 @@ class FragmentAdminAddEditUser: BindingFragment<FragmentAdminAddEditUserBinding>
         setSelectionTypeListener(vmAdmin::onUserRoleUpdateReceived)
 
         vmAdmin.userNameStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.nameCard.text = if(it.isEmpty()) "-" else it
+            binding.nameCard.text = if(it.isBlank()) "-" else it
         }
 
         vmAdmin.userPasswordStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.passwordCard.text = if(it.isEmpty()) "-" else it
+            binding.passwordCard.text = if(it.isBlank()) "-" else it
         }
 
         vmAdmin.userRoleStateFlow.collectWhenStarted(viewLifecycleOwner) {
@@ -62,9 +60,14 @@ class FragmentAdminAddEditUser: BindingFragment<FragmentAdminAddEditUserBinding>
         vmAdmin.addEditUserEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
                 is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringDialog(event.initialValue, event.updateType)
-                is ShowMessageSnackBar -> showSnackBar(event.messageRes, anchorView = binding.btnSave)
-                is NavigateToRoleSelection -> navigator.navigateToSelectionDialog(SelectionType.RoleSelection(event.currentRole))
+                is ShowMessageSnackBar -> showSnackBar(
+                    event.messageRes,
+                    anchorView = if(event.attachToActivity) null else binding.btnSave
+                )
+                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
+                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
                 NavigateBackEvent -> navigator.popBackStack()
+                HideLoadingDialog -> navigator.popLoadingDialog()
             }
         }
     }

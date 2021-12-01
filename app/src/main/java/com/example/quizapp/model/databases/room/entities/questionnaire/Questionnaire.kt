@@ -1,12 +1,12 @@
 package com.example.quizapp.model.databases.room.entities.questionnaire
 
 import androidx.room.*
+import com.example.quizapp.extensions.generateDiffItemCallback
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.room.entities.EntityMarker
-import com.example.quizapp.utils.DiffCallbackUtil
 import io.ktor.util.date.*
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Transient
@@ -14,9 +14,7 @@ import org.bson.types.ObjectId
 import java.text.SimpleDateFormat
 import java.util.*
 
-@Entity(
-    tableName = Questionnaire.TABLE_NAME
-)
+@Entity(tableName = Questionnaire.TABLE_NAME)
 @Parcelize
 data class Questionnaire(
     @PrimaryKey
@@ -38,7 +36,7 @@ data class Questionnaire(
 ) : EntityMarker {
 
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<Questionnaire> { old, new -> old.id == new.id }
+        val DIFF_CALLBACK = generateDiffItemCallback(Questionnaire::id)
 
         const val TABLE_NAME = "questionnaireTable"
 
@@ -57,23 +55,3 @@ data class Questionnaire(
     val timeStampAsDate get() = SimpleDateFormat.getDateInstance().format(Date(lastModifiedTimestamp)).toString()
 
 }
-
-
-/*
-foreignKeys = [
-        ForeignKey(
-            entity = Faculty::class,
-            parentColumns = ["facultyId"],
-            childColumns = ["facultyId"],
-            onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.SET_NULL
-        ),
-        ForeignKey(
-            entity = CourseOfStudies::class,
-            parentColumns = ["courseOfStudiesId"],
-            childColumns = ["courseOfStudiesId"],
-            onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.SET_NULL
-        )
-    ],
-*/

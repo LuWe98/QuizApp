@@ -115,10 +115,10 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
                 RecreateActivityEvent -> requireActivity().recreate()
                 LogoutEvent -> vmQuizActivity.onLogoutConfirmed()
                 is NavigateToCourseOfStudiesSelectionScreen -> navigator.navigateToCourseOfStudiesSelection(event.courseOfStudiesIds)
-                is NavigateToLanguageSelection -> navigator.navigateToSelectionDialog(LanguageSelection(event.currentLanguage))
-                is NavigateToThemeSelection -> navigator.navigateToSelectionDialog(ThemeSelection(event.currentTheme))
-                is NavigateToShuffleTypeSelection -> navigator.navigateToSelectionDialog(ShuffleTypeSelection(event.shuffleType))
+                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
                 is ShowMessageSnackBarEvent -> showSnackBar(textRes = event.messageRes)
+                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
+                HideLoadingDialog -> navigator.popLoadingDialog()
             }
         }
     }

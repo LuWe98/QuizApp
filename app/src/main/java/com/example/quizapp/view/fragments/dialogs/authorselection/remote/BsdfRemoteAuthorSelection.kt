@@ -9,21 +9,21 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfAuthorSelectionBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaAuthorSelection
+import com.example.quizapp.view.recyclerview.adapters.RvaAuthorSelectionRemote
 import com.example.quizapp.viewmodel.VmRemoteAuthorSelection
-import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.UserCreatorSelectionEvent.*
+import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BsdfRemoteAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSelectionBinding>() {
 
     companion object {
-        const val AUTHOR_SELECTION_RESULT_KEY = "authorSelectionResultKey"
+        const val AUTHOR_SELECTION_RESULT_KEY = "remoteAuthorSelectionResultKey"
     }
 
     private val vmAuthor: VmRemoteAuthorSelection by viewModels()
 
-    private lateinit var rvAdapter: RvaAuthorSelection
+    private lateinit var rvAdapter: RvaAuthorSelectionRemote
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,7 +37,7 @@ class BsdfRemoteAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSele
     private fun initViews(){
         binding.etSearchQuery.setText(vmAuthor.searchQuery)
 
-        rvAdapter = RvaAuthorSelection().apply {
+        rvAdapter = RvaAuthorSelectionRemote().apply {
             onItemClicked = vmAuthor::onAuthorClicked
             selectionPredicate = vmAuthor::isAuthorSelected
             selectionColor = getThemeColor(R.attr.colorOnBackground)

@@ -4,6 +4,8 @@ import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
+import com.example.quizapp.extensions.div
+import com.example.quizapp.extensions.generateDiffItemCallback
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
@@ -13,7 +15,6 @@ import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
-import com.example.quizapp.utils.DiffCallbackUtil
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -64,11 +65,15 @@ data class CompleteQuestionnaire(
 
     val areAllQuestionsAnswered get() = questionsAmount == answeredQuestionsAmount
 
+    val isAnyQuestionNotAnswered get() = !areAllQuestionsAnswered
+
     private val correctQuestionsAmount get() = questionsWithAnswers.filter(QuestionWithAnswers::isAnsweredCorrectly).size
 
     val correctQuestionsPercentage get() = (correctQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
 
     val areAllQuestionsCorrectlyAnswered get() = questionsWithAnswers.size == correctQuestionsAmount
+
+    val isAnyQuestionNotCorrectlyAnswered get() = !areAllQuestionsCorrectlyAnswered
 
     val asQuestionnaireIdWithTimestamp get() = questionnaire.asQuestionnaireIdWithTimeStamp
 
@@ -103,7 +108,7 @@ data class CompleteQuestionnaire(
 
 
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<CompleteQuestionnaire> { old, new -> old.questionnaire.id == new.questionnaire.id }
+        val DIFF_CALLBACK = generateDiffItemCallback(CompleteQuestionnaire::questionnaire / Questionnaire::id)
     }
 
     data class QuizStatisticNumbers(

@@ -8,6 +8,7 @@ import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.datawrappers.ManageUsersOrderBy
 import com.example.quizapp.view.fragments.adminscreens.manageusers.filterselection.BsdfManageUsersFilterSelectionArgs
+import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.viewmodel.VmManageUsersFilterSelection.ManageUsersFilterSelectionEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -58,7 +59,7 @@ class VmManageUsersFilterSelection @Inject constructor(
 
     fun onOrderByCardClicked() {
         launch {
-            manageUsersFilterSelectionEventChannel.send(NavigateToOrderByTypeSelectionDialog(selectedOrderBy))
+            manageUsersFilterSelectionEventChannel.send(NavigateToSelectionScreen(SelectionType.ManageUsersOrderBySelection(selectedOrderBy)))
         }
     }
 
@@ -94,7 +95,7 @@ class VmManageUsersFilterSelection @Inject constructor(
     }
 
     sealed class ManageUsersFilterSelectionEvent {
-        class NavigateToOrderByTypeSelectionDialog(val currentOrderBy: ManageUsersOrderBy): ManageUsersFilterSelectionEvent()
+        class NavigateToSelectionScreen(val selectionType: SelectionType): ManageUsersFilterSelectionEvent()
         class ApplySelectionEvent(val selectedRoles: Array<Role>): ManageUsersFilterSelectionEvent()
     }
 

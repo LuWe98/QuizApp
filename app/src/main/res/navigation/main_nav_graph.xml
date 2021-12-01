@@ -25,7 +25,7 @@
     <!--DIALOGS-->
     <dialog
             android:id="@+id/bsdfQuestionnaireMoreOptions"
-            android:name="com.example.quizapp.view.fragments.dialogs.moreoptions.BsdfQuestionnaireMoreOptions"
+            android:name="com.example.quizapp.view.fragments.dialogs.localquestionnairemoreoptions.BsdfQuestionnaireMoreOptions"
             android:label="BsdfQuestionnaireMoreOptions"
             tools:layout="@layout/bsdf_questionnaire_more_options">
 
@@ -345,19 +345,8 @@
             android:id="@+id/action_global_bsdfRemoteAuthorSelection"
             app:destination="@id/bsdfRemoteAuthorSelection" />
 
-    <!-- BACKDROP TEST -->
-    <fragment
-            android:id="@+id/backdropFragment"
-            android:name="com.example.quizapp.view.fragments.backdroptest.BackdropFragment"
-            android:label="BackdropFragment"
-            tools:layout="@layout/fragment_backdrop" />
 
-    <action
-            android:id="@+id/action_global_backdropFragment"
-            app:destination="@id/backdropFragment" />
-
-
-    <!-- SELECTION TEST -->
+    <!-- SELECTION -->
     <dialog
             android:id="@+id/bsdfSelection"
             android:name="com.example.quizapp.view.fragments.dialogs.selection.BsdfSelection"
@@ -424,20 +413,46 @@
             app:destination="@id/bsdfBrowseQuestionnaireFilterSelection" />
 
 
-
-
     <!-- LOCAL SEARCH FILTER SCREEN -->
     <dialog
             android:id="@+id/bsdfLocalQuestionnaireFilterSelection"
             android:name="com.example.quizapp.view.fragments.homescreen.filterselection.BsdfLocalQuestionnaireFilterSelection"
             android:label="BsdfLocalQuestionnaireFilterSelection"
-            tools:layout="@layout/bsdf_local_questionnaire_filter_selection">
-
-    </dialog>
+            tools:layout="@layout/bsdf_local_questionnaire_filter_selection" />
 
     <action
             android:id="@+id/action_global_bsdfLocalQuestionnaireFilterSelection"
             app:destination="@id/bsdfLocalQuestionnaireFilterSelection" />
 
+
+    <dialog
+            android:id="@+id/bsdfLocalAuthorSelection"
+            android:name="com.example.quizapp.view.fragments.dialogs.authorselection.local.BsdfLocalAuthorSelection"
+            android:label="BsdfLocalAuthorSelection"
+            tools:layout="@layout/bsdf_author_selection">
+        <argument
+                android:name="selectedAuthorIds"
+                app:argType="string[]" />
+    </dialog>
+
+
+    <action
+            android:id="@+id/action_global_bsdfLocalAuthorSelection"
+            app:destination="@id/bsdfLocalAuthorSelection" />
+
+
+    <dialog
+            android:id="@+id/dfLoading"
+            android:name="com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading"
+            android:label="DfLoading"
+            tools:layout="@layout/df_loading">
+        <argument
+                app:argType="integer"
+                android:name="messageRes" />
+    </dialog>
+
+    <action
+            android:id="@+id/action_global_dfLoading"
+            app:destination="@id/dfLoading" />
 
 </navigation>

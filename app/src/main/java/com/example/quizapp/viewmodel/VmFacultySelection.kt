@@ -10,10 +10,7 @@ import com.example.quizapp.viewmodel.VmFacultySelection.FacultySelectionEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,8 +43,8 @@ class VmFacultySelection @Inject constructor(
 
 
 
-    val facultyFlow = searchQueryMutableStateFlow.map {
-        localRepository.findFacultiesWithName(it)
+    val facultyFlow = searchQueryMutableStateFlow.flatMapLatest {
+        localRepository.findFacultiesWithNameFlow(it)
     }.distinctUntilChanged()
 
 

@@ -134,15 +134,15 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
 
         vmAddEdit.coursesOfStudiesStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.infoCard.cosDropDown.text = it.map(CourseOfStudies::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: ""
+            binding.infoCard.cosDropDown.text = it.map(CourseOfStudies::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: "-"
         }
 
         vmAddEdit.questionnaireTitleStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.infoCard.titleCard.text = it
+            binding.infoCard.titleCard.text = if(it.isBlank()) "-" else it
         }
 
         vmAddEdit.questionnaireSubjectStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.infoCard.subjectCard.text = it
+            binding.infoCard.subjectCard.text = if(it.isBlank()) "-" else it
         }
 
         vmAddEdit.questionsWithAnswersStateFlow.collectWhenStarted(viewLifecycleOwner) {

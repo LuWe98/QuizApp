@@ -1,9 +1,10 @@
 package com.example.quizapp.view.fragments.dialogs.selection
 
+import android.content.Context
 import android.os.Parcelable
-import androidx.annotation.StringRes
 import com.example.quizapp.R
 import com.example.quizapp.model.databases.Degree
+import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
@@ -11,13 +12,12 @@ import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
 import com.example.quizapp.model.datastore.datawrappers.*
 import com.example.quizapp.model.menus.*
+import com.example.quizapp.model.menus.datawrappers.*
 import kotlinx.parcelize.Parcelize
 
 sealed class SelectionType(
-    @StringRes val titleRes: Int,
     val resultKey: String,
-    val recyclerViewList: List<SelectionTypeItemMarker<*>>,
-    vararg val additionalTitleResources: String
+    val recyclerViewList: List<SelectionTypeItemMarker<*>>
 ) : Parcelable {
 
     companion object {
@@ -31,10 +31,13 @@ sealed class SelectionType(
         const val SELECTION_USER_MORE_OPTIONS_RESULT_KEY = "userMoreOptionsSelectionResultKey"
         const val SELECTION_COS_MORE_OPTIONS_RESULT_KEY = "cosMoreOptionsSelectionResultKey"
         const val SELECTION_FACULTY_MORE_OPTIONS_RESULT_KEY = "facultyMoreOptionsSelectionResultKey"
-        const val SELECTION_QUESTIONNAIRE_MORE_OPTIONS_RESULT_KEY = "questionnaireMoreOptionsSelectionResultKey"
         const val SELECTION_BROWSABLE_ORDER_BY_RESULT_KEY = "orderByBrowseQuestionnairesSelectionResultKey"
         const val SELECTION_LOCAL_QUESTIONNAIRE_ORDER_BY_RESULT_KEY = "orderByLocalQuestionnairesSelectionResultKey"
         const val SELECTION_MANAGE_USERS_ORDER_BY_RESULT_KEY = "orderByManageUsersSelectionResultKey"
+
+        const val SELECTION_QUESTIONNAIRE_MORE_OPTIONS_RESULT_KEY = "questionnaireMoreOptionsSelectionResultKey"
+        const val SELECTION_BROWSE_QUESTIONNAIRE_MORE_OPTIONS_RESULT_KEY = "browseQuestionnaireMoreOptionsSelectionResultKey"
+
 
         inline fun <reified ResultType : SelectionTypeItemMarker<ResultType>> getResultKeyWithResultClass() = when (ResultType::class) {
             Role::class -> SELECTION_ROLE_RESULT_KEY
@@ -49,113 +52,117 @@ sealed class SelectionType(
             BrowsableOrderBy::class -> SELECTION_BROWSABLE_ORDER_BY_RESULT_KEY
             LocalQuestionnaireOrderBy::class -> SELECTION_LOCAL_QUESTIONNAIRE_ORDER_BY_RESULT_KEY
             ManageUsersOrderBy::class -> SELECTION_MANAGE_USERS_ORDER_BY_RESULT_KEY
+            BrowseQuestionnaireMoreOptionsItem::class -> SELECTION_BROWSE_QUESTIONNAIRE_MORE_OPTIONS_RESULT_KEY
             else -> throw IllegalArgumentException("Cant get result key with '${ResultType::class.simpleName}'")
         }
     }
 
     @Parcelize
     data class RoleSelection(val currentRole: Role? = null) : SelectionType(
-        titleRes = R.string.roleSelection,
         resultKey = SELECTION_ROLE_RESULT_KEY,
         recyclerViewList = Role.values().toList()
     )
 
     @Parcelize
     data class DegreeSelection(val currentDegree: Degree? = null) : SelectionType(
-        titleRes = R.string.degreeSelection,
         resultKey = SELECTION_DEGREE_RESULT_KEY,
         recyclerViewList = Degree.values().toList()
     )
 
     @Parcelize
     data class ShuffleTypeSelection(val currentShuffleType: QuestionnaireShuffleType) : SelectionType(
-        titleRes = R.string.shuffleTypeSelection,
         resultKey = SELECTION_SHUFFLE_TYPE_RESULT_KEY,
         recyclerViewList = QuestionnaireShuffleType.values().toList()
     )
 
     @Parcelize
     data class LanguageSelection(val currentLanguage: QuizAppLanguage) : SelectionType(
-        titleRes = R.string.languageSelection,
         resultKey = SELECTION_LANGUAGE_RESULT_KEY,
         recyclerViewList = QuizAppLanguage.values().toList()
     )
 
     @Parcelize
     data class ThemeSelection(val currentTheme: QuizAppTheme) : SelectionType(
-        titleRes = R.string.themeSelection,
         resultKey = SELECTION_THEME_RESULT_KEY,
         recyclerViewList = QuizAppTheme.values().toList()
     )
 
     @Parcelize
     data class UserMoreOptionsSelection(val user: User) : SelectionType(
-        titleRes = R.string._ph,
         resultKey = SELECTION_USER_MORE_OPTIONS_RESULT_KEY,
         recyclerViewList = UserMoreOptionsItem.values().toList(),
-        additionalTitleResources = arrayOf(user.userName)
     )
 
     @Parcelize
     data class CourseOfStudiesMoreOptionsSelection(val courseOfStudies: CourseOfStudies) : SelectionType(
-        titleRes = R.string._ph,
         resultKey = SELECTION_COS_MORE_OPTIONS_RESULT_KEY,
         recyclerViewList = CosMoreOptionsItem.values().toList(),
-        additionalTitleResources = arrayOf(courseOfStudies.name)
     )
 
     @Parcelize
     data class FacultyMoreOptionsSelection(val faculty: Faculty) : SelectionType(
-        titleRes = R.string._ph,
         resultKey = SELECTION_FACULTY_MORE_OPTIONS_RESULT_KEY,
         recyclerViewList = FacultyMoreOptionsItem.values().toList(),
-        additionalTitleResources = arrayOf(faculty.name)
     )
 
     @Parcelize
     data class BrowsableOrderBySelection(val currentValue: BrowsableOrderBy) : SelectionType(
-        titleRes = R.string.orderByTypeSelection,
         resultKey = SELECTION_BROWSABLE_ORDER_BY_RESULT_KEY,
         recyclerViewList = BrowsableOrderBy.values().toList()
     )
 
     @Parcelize
     data class LocalQuestionnaireOrderBySelection(val currentValue: LocalQuestionnaireOrderBy) : SelectionType(
-        titleRes = R.string.orderByTypeSelection,
         resultKey = SELECTION_LOCAL_QUESTIONNAIRE_ORDER_BY_RESULT_KEY,
         recyclerViewList = LocalQuestionnaireOrderBy.values().toList()
     )
 
     @Parcelize
     data class ManageUsersOrderBySelection(val currentValue: ManageUsersOrderBy) : SelectionType(
-        titleRes = R.string.orderByTypeSelection,
         resultKey = SELECTION_MANAGE_USERS_ORDER_BY_RESULT_KEY,
         recyclerViewList = ManageUsersOrderBy.values().toList()
     )
 
 
-
-    //TODO -> Noch anschauen bisschen
     @Parcelize
     data class QuestionnaireMoreOptionsSelection(val questionnaire: Questionnaire, val user: User) : SelectionType(
-        titleRes = R.string._ph,
         resultKey = SELECTION_QUESTIONNAIRE_MORE_OPTIONS_RESULT_KEY,
         recyclerViewList = QuestionnaireMoreOptionsItem.getMenuList(questionnaire, user),
-        additionalTitleResources = arrayOf(questionnaire.title)
     )
 
 
-    fun isItemSelected(item: SelectionTypeItemMarker<*>) = run {
-        when (this) {
-            is RoleSelection -> currentRole == item
-            is ThemeSelection -> currentTheme == item
-            is DegreeSelection -> currentDegree == item
-            is ShuffleTypeSelection -> currentShuffleType == item
-            is LanguageSelection -> currentLanguage == item
-            is BrowsableOrderBySelection -> currentValue == item
-            is ManageUsersOrderBySelection -> currentValue == item
-            is LocalQuestionnaireOrderBySelection -> currentValue == item
-            else -> false
-        }
+    @Parcelize
+    data class BrowseQuestionnaireMoreOptionsSelection(val browsableQuestionnaire: BrowsableQuestionnaire): SelectionType(
+        resultKey = SELECTION_BROWSE_QUESTIONNAIRE_MORE_OPTIONS_RESULT_KEY,
+        recyclerViewList = BrowseQuestionnaireMoreOptionsItem.values().toList()
+    )
+
+
+    fun isItemSelected(item: SelectionTypeItemMarker<*>) = when (this) {
+        is RoleSelection -> currentRole == item
+        is ThemeSelection -> currentTheme == item
+        is DegreeSelection -> currentDegree == item
+        is ShuffleTypeSelection -> currentShuffleType == item
+        is LanguageSelection -> currentLanguage == item
+        is BrowsableOrderBySelection -> currentValue == item
+        is ManageUsersOrderBySelection -> currentValue == item
+        is LocalQuestionnaireOrderBySelection -> currentValue == item
+        else -> false
+    }
+
+    fun getTitle(context: Context) = when (this) {
+        is UserMoreOptionsSelection -> context.getString(R.string._ph, user.userName)
+        is CourseOfStudiesMoreOptionsSelection -> context.getString(R.string._ph, courseOfStudies.name)
+        is FacultyMoreOptionsSelection -> context.getString(R.string._ph, faculty.name)
+        is QuestionnaireMoreOptionsSelection -> context.getString(R.string._ph, questionnaire.title)
+        is BrowseQuestionnaireMoreOptionsSelection -> context.getString(R.string._ph, browsableQuestionnaire.title)
+        is BrowsableOrderBySelection -> context.getString(R.string.orderByTypeSelection)
+        is DegreeSelection -> context.getString(R.string.degreeSelection)
+        is LanguageSelection -> context.getString(R.string.languageSelection)
+        is LocalQuestionnaireOrderBySelection -> context.getString(R.string.orderByTypeSelection)
+        is ManageUsersOrderBySelection -> context.getString(R.string.orderByTypeSelection)
+        is RoleSelection -> context.getString(R.string.roleSelection)
+        is ShuffleTypeSelection -> context.getString(R.string.shuffleTypeSelection)
+        is ThemeSelection -> context.getString(R.string.themeSelection)
     }
 }

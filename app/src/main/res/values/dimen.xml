@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="defaultElevation">4dp</dimen>
+    <dimen name="defaultElevation">2dp</dimen>
     <dimen name="defaultBackgroundCardCornerRadius">15dp</dimen>
 
     <dimen name="grid_0_5">2dp</dimen>
@@ -21,4 +21,7 @@
     <dimen name="defaultMinQuestionnaireCardHeight">75dp</dimen>
 
     <dimen name="maxHeaderTextSize">18sp</dimen>
+
+    <dimen name="searchBarHeight">50dp</dimen>
+    <dimen name="bottomWideButtonHeight">60dp</dimen>
 </resources>

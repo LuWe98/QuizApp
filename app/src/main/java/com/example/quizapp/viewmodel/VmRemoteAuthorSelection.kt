@@ -10,8 +10,8 @@ import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
 import com.example.quizapp.view.fragments.dialogs.authorselection.remote.BsdfRemoteAuthorSelectionArgs
-import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.UserCreatorSelectionEvent.ClearSearchQueryEvent
-import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.UserCreatorSelectionEvent.SendResultEvent
+import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent.ClearSearchQueryEvent
+import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent.SendResultEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
@@ -28,7 +28,7 @@ class VmRemoteAuthorSelection @Inject constructor(
 
     private val args = BsdfRemoteAuthorSelectionArgs.fromSavedStateHandle(state)
 
-    private val userCreatorSelectionEventChannel = Channel<UserCreatorSelectionEvent>()
+    private val userCreatorSelectionEventChannel = Channel<RemoteAuthorSelectionEvent>()
 
     val userCreatorSelectionEventChannelFlow = userCreatorSelectionEventChannel.receiveAsFlow()
 
@@ -91,9 +91,9 @@ class VmRemoteAuthorSelection @Inject constructor(
         }
     }
 
-    sealed class UserCreatorSelectionEvent {
-        class SendResultEvent(val selectedAuthors: Array<AuthorInfo>) : UserCreatorSelectionEvent()
-        object ClearSearchQueryEvent: UserCreatorSelectionEvent()
+    sealed class RemoteAuthorSelectionEvent {
+        class SendResultEvent(val selectedAuthors: Array<AuthorInfo>) : RemoteAuthorSelectionEvent()
+        object ClearSearchQueryEvent: RemoteAuthorSelectionEvent()
     }
 
     companion object {

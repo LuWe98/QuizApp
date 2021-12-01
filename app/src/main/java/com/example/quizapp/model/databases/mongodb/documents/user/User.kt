@@ -1,7 +1,7 @@
 package com.example.quizapp.model.databases.mongodb.documents.user
 
 import android.os.Parcelable
-import com.example.quizapp.utils.DiffCallbackUtil
+import com.example.quizapp.extensions.generateDiffItemCallback
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import org.bson.codecs.pojo.annotations.BsonId
@@ -24,6 +24,6 @@ data class User(
     val asAuthorInfo get() = AuthorInfo(id, userName)
 
     companion object {
-        val DIFF_CALLBACK = DiffCallbackUtil.createDiffUtil<User> { old, new -> old.id == new.id }
+        val DIFF_CALLBACK = generateDiffItemCallback(User::id)
     }
 }

@@ -6,12 +6,12 @@ import androidx.lifecycle.ViewModel
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.faculty.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertFacultyResponse.*
 import com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminAddEditFacultiesArgs
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +19,7 @@ import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import org.bson.types.ObjectId
@@ -89,47 +90,40 @@ class VmAdminAddEditFaculty @Inject constructor(
     }
 
 
-    //TODO -> Save machen -> TimeStamp durch client
     fun onSaveButtonClicked() {
         launch(IO, applicationScope) {
-            if (facultyAbbreviation.isEmpty()) {
-
-                return@launch
-            }
-
-            if (facultyName.isEmpty()) {
-
+            if (facultyAbbreviation.isBlank() || facultyName.isBlank()) {
+                addEditFacultyEventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
                 return@launch
             }
 
             val updatedFaculty = Faculty(
                 id = parsedFacultyId,
-                abbreviation = facultyAbbreviation,
-                name = facultyName,
-                lastModifiedTimestamp = getTimeMillis()
+                abbreviation = facultyAbbreviation.uppercase(),
+                name = facultyName
             )
 
+            addEditFacultyEventChannel.send(ShowLoadingDialog(R.string.savingFaculty))
+
             runCatching {
-                DataMapper.mapRoomFacultyToMongoFaculty(updatedFaculty).let { mongoFaculty ->
+                updatedFaculty.asMongoFaculty.let { mongoFaculty ->
                     backendRepository.insertFaculty(mongoFaculty)
                 }
+            }.also {
+                delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+                addEditFacultyEventChannel.send(HideLoadingDialog)
             }.onSuccess { response ->
-                when(response.responseType) {
-                    InsertFacultyResponseType.SUCCESSFUL -> {
-                        if(args.faculty == null) {
-                            localRepository.insert(updatedFaculty)
-                        } else {
-                            localRepository.update(updatedFaculty)
-                        }
-
-                        addEditFacultyEventChannel.send(NavigateBackEvent)
+                if(response.responseType == InsertFacultyResponseType.SUCCESSFUL) {
+                    if(args.faculty == null) {
+                        localRepository.insert(updatedFaculty)
+                    } else {
+                        localRepository.update(updatedFaculty)
                     }
-                    InsertFacultyResponseType.NOT_ACKNOWLEDGED -> {
-
-                    }
+                    addEditFacultyEventChannel.send(NavigateBackEvent)
                 }
+                addEditFacultyEventChannel.send(ShowMessageSnackBar(response.responseType.messageRes))
             }.onFailure {
-
+                addEditFacultyEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotSaveFaculty))
             }
         }
     }
@@ -138,6 +132,8 @@ class VmAdminAddEditFaculty @Inject constructor(
         class NavigateToUpdateStringDialog(val initialValue: String, val updateType: UpdateStringType) : AddEditFacultyEvent()
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : AddEditFacultyEvent()
         object NavigateBackEvent : AddEditFacultyEvent()
+        class ShowLoadingDialog(@StringRes val messageRes: Int): AddEditFacultyEvent()
+        object HideLoadingDialog: AddEditFacultyEvent()
     }
 
 

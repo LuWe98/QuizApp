@@ -8,6 +8,8 @@
     <style name="Theme.QuizApp.BottomSheetDialog.Resize" parent="Theme.QuizApp.BottomSheetDialog.Light.Resize"/>
     <!-- Base DialogFragmentTheme -->
     <style name="Theme.QuizApp.DialogFragment" parent="Theme.QuizApp.DialogFragment.Light"/>
+    <!-- Base DialogFragmentLoadingTheme -->
+    <style name="Theme.QuizApp.DialogFragment.Loading" parent="Theme.QuizApp.DialogFragment.Loading.Light"/>
 
 
     <!-- Light Base theme -->
@@ -133,5 +135,12 @@
         <item name="android:windowMinWidthMajor">87.5%</item>
 
         <item name="android:windowAnimationStyle">@style/Style.QuizApp.DialogFragment.Animation</item>
+    </style>
+
+
+    <!-- Light DialogFragmentLoadingTheme. -->
+    <style name="Theme.QuizApp.DialogFragment.Loading.Light" parent="Theme.QuizApp.DialogFragment.Light">
+        <item name="android:windowMinWidthMinor">85%</item>
+        <item name="android:windowMinWidthMajor">85%</item>
     </style>
 </resources>
