@@ -59,6 +59,8 @@ data class CompleteQuestionnaire(
 
     val questionsAmount get() = questionsWithAnswers.size
 
+    val hasQuestions get() = questionsAmount != 0
+
     private val answeredQuestionsAmount get() = questionsWithAnswers.filter(QuestionWithAnswers::isAnswered).size
 
     val answeredQuestionsPercentage get() = (answeredQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
@@ -124,5 +126,7 @@ data class CompleteQuestionnaire(
         val correctQuestionsPercentage = (correctQuestionsAmount * 100f / questionsAmount).toInt()
         val incorrectQuestionsPercentage = if (answeredQuestionsPercentage == 100) 100 - correctQuestionsPercentage else (incorrectQuestionsAmount * 100f / questionsAmount).toInt()
         val incorrectQuestionsPercentageDiff get() = 100 - correctQuestionsPercentage
+
+        val hasQuestions get() = questionsAmount != 0
     }
 }

@@ -46,7 +46,7 @@ class RvaBrowsableQuestionnaires(
             btnDownload.onClick {
                 getItem(vh)?.let {
                     if(it.downloadStatus == DownloadStatus.NOT_DOWNLOADED){
-                        onDownloadClick?.invoke(it.questionnaireId)
+                        onDownloadClick?.invoke(it.id)
                     }
                 }
             }
@@ -92,7 +92,7 @@ class RvaBrowsableQuestionnaires(
     }
 
     fun changeItemDownloadStatus(questionnaireId: String, newStatus: DownloadStatus){
-        snapshot().indexOfFirst { it?.questionnaireId == questionnaireId }.let { index ->
+        snapshot().indexOfFirst { it?.id == questionnaireId }.let { index ->
             if(index == RecyclerView.NO_POSITION) return@let
             snapshot()[index]?.downloadStatus = newStatus
             notifyItemChanged(index)

@@ -25,7 +25,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:id="@+id/btnMoreOptions"
-            android:backgroundTint="?colorControlActivated"
+            android:background="?attr/actionBarItemBackground"
             app:srcCompat="@drawable/ic_more"
             android:padding="6dp"
             android:elevation="10dp"

@@ -22,7 +22,7 @@ import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
-import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.FragmentAddEditEvent.*
+import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.AddEditQuestionnaireEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.http.cio.*
 import io.ktor.util.date.*
@@ -71,9 +71,13 @@ class VmAddEditQuestionnaire @Inject constructor(
             ?: emptyList()
 
 
-    private val fragmentAddEditEventChannel = Channel<FragmentAddEditEvent>()
 
-    val fragmentAddEditEventChannelFlow = fragmentAddEditEventChannel.receiveAsFlow()
+    private val addEditQuestionnaireEventChannel = Channel<AddEditQuestionnaireEvent>()
+
+    val addEditQuestionnaireEventChannelFlow = addEditQuestionnaireEventChannel.receiveAsFlow()
+
+
+
 
     private var questionnaireTitleMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_TITLE_KEY, parsedQuestionnaireTitle)
 
@@ -125,13 +129,13 @@ class VmAddEditQuestionnaire @Inject constructor(
 
     fun onCourseOfStudiesButtonClicked() {
         launch(IO) {
-            fragmentAddEditEventChannel.send(NavigateToCourseOfStudiesSelector(coursesOfStudiesIdsMutableStateFlow.value.toTypedArray()))
+            addEditQuestionnaireEventChannel.send(NavigateToCourseOfStudiesSelector(coursesOfStudiesIdsMutableStateFlow.value.toTypedArray()))
         }
     }
 
     fun onTitleCardClicked() {
         launch {
-            fragmentAddEditEventChannel.send(
+            addEditQuestionnaireEventChannel.send(
                 NavigateToUpdateStringDialog(
                     questionnaireTitle,
                     UpdateStringType.QUESTIONNAIRE_TITLE
@@ -142,7 +146,7 @@ class VmAddEditQuestionnaire @Inject constructor(
 
     fun onSubjectCardClicked() {
         launch {
-            fragmentAddEditEventChannel.send(
+            addEditQuestionnaireEventChannel.send(
                 NavigateToUpdateStringDialog(
                     questionnaireSubject,
                     UpdateStringType.QUESTIONNAIRE_SUBJECT
@@ -168,21 +172,21 @@ class VmAddEditQuestionnaire @Inject constructor(
 
     fun onAddQuestionButtonClicked() {
         launch(IO) {
-            fragmentAddEditEventChannel.send(NavigateToAddEditQuestionScreenEvent(questionsWithAnswers.size))
+            addEditQuestionnaireEventChannel.send(NavigateToAddEditQuestionScreenEvent(questionsWithAnswers.size))
         }
     }
 
     fun onQuestionItemClicked(position: Int) {
         launch(IO) {
-            fragmentAddEditEventChannel.send(NavigateToAddEditQuestionScreenEvent(position, questionsWithAnswers[position]))
+            addEditQuestionnaireEventChannel.send(NavigateToAddEditQuestionScreenEvent(position, questionsWithAnswers[position]))
         }
     }
 
-    fun onQuestionItemDelete(position: Int) {
+    private fun onQuestionItemDelete(position: Int) {
         launch(IO) {
             questionsWithAnswers.toMutableList().apply {
                 removeAt(position).let {
-                    fragmentAddEditEventChannel.send(ShowQuestionDeletedSnackBarEvent(position, it))
+                    addEditQuestionnaireEventChannel.send(ShowQuestionDeletedSnackBarEvent(position, it))
                 }
                 setQuestionWithAnswers(this)
             }
@@ -207,6 +211,12 @@ class VmAddEditQuestionnaire @Inject constructor(
                 add(event.questionPosition, event.questionWithAnswers)
                 setQuestionWithAnswers(this)
             }
+        }
+    }
+
+    fun onMoreOptionsClicked(){
+        launch(IO) {
+            addEditQuestionnaireEventChannel.send(ShowPopupMenu)
         }
     }
 
@@ -246,7 +256,7 @@ class VmAddEditQuestionnaire @Inject constructor(
 
             localRepository.insertCompleteQuestionnaire(CompleteQuestionnaire(questionnaire, questionsWithAnswersMapped.toMutableList(), emptyList()))
             localRepository.insert(courseOfStudiesIds.map { cosId -> QuestionnaireCourseOfStudiesRelation(parsedQuestionnaireId, cosId) })
-            fragmentAddEditEventChannel.send(NavigateBackEvent)
+            addEditQuestionnaireEventChannel.send(NavigateBackEvent)
 
             runCatching {
                 localRepository.findCompleteQuestionnaireWith(parsedQuestionnaireId)!!.let(DataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
@@ -262,12 +272,12 @@ class VmAddEditQuestionnaire @Inject constructor(
 
     private suspend fun isInputValid(): Boolean {
         if (questionnaireTitle.isEmpty()) {
-            fragmentAddEditEventChannel.send(ShowMessageSnackBarEvent(R.string.errorQuestionnaireHasNoTitle))
+            addEditQuestionnaireEventChannel.send(ShowMessageSnackBarEvent(R.string.errorQuestionnaireHasNoTitle))
             return false
         }
 
         if (questionnaireSubject.isEmpty()) {
-            fragmentAddEditEventChannel.send(ShowMessageSnackBarEvent(R.string.errorQuestionnaireHasNoSubject))
+            addEditQuestionnaireEventChannel.send(ShowMessageSnackBarEvent(R.string.errorQuestionnaireHasNoSubject))
             return false
         }
 
@@ -275,13 +285,14 @@ class VmAddEditQuestionnaire @Inject constructor(
     }
 
 
-    sealed class FragmentAddEditEvent {
-        object NavigateBackEvent : FragmentAddEditEvent()
-        class NavigateToCourseOfStudiesSelector(val courseOfStudiesIds: Array<String>) : FragmentAddEditEvent()
-        class NavigateToUpdateStringDialog(val initialValue: String, val updateType: UpdateStringType) : FragmentAddEditEvent()
-        class NavigateToAddEditQuestionScreenEvent(val position: Int, val questionWithAnswers: QuestionWithAnswers? = null) : FragmentAddEditEvent()
-        class ShowMessageSnackBarEvent(@StringRes val messageRes: Int) : FragmentAddEditEvent()
-        class ShowQuestionDeletedSnackBarEvent(val questionPosition: Int, val questionWithAnswers: QuestionWithAnswers) : FragmentAddEditEvent()
+    sealed class AddEditQuestionnaireEvent {
+        object NavigateBackEvent : AddEditQuestionnaireEvent()
+        class NavigateToCourseOfStudiesSelector(val courseOfStudiesIds: Array<String>) : AddEditQuestionnaireEvent()
+        class NavigateToUpdateStringDialog(val initialValue: String, val updateType: UpdateStringType) : AddEditQuestionnaireEvent()
+        class NavigateToAddEditQuestionScreenEvent(val position: Int, val questionWithAnswers: QuestionWithAnswers? = null) : AddEditQuestionnaireEvent()
+        class ShowMessageSnackBarEvent(@StringRes val messageRes: Int) : AddEditQuestionnaireEvent()
+        class ShowQuestionDeletedSnackBarEvent(val questionPosition: Int, val questionWithAnswers: QuestionWithAnswers) : AddEditQuestionnaireEvent()
+        object ShowPopupMenu: AddEditQuestionnaireEvent()
     }
 
     companion object {

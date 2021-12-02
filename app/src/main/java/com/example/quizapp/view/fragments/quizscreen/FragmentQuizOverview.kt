@@ -144,14 +144,16 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
         vmQuiz.questionStatisticsFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.apply {
+                val visibilityToggle = it.areAllQuestionsAnswered && it.hasQuestions
+
                 tvQuestionsAnswered.text = it.answeredQuestionsPercentage.toString()
-                ivResultIcon.isVisible = it.areAllQuestionsAnswered
+                ivResultIcon.isVisible = visibilityToggle
                 ivResultIcon.setImageDrawable(if (it.correctQuestionsPercentage > 80) R.drawable.ic_check else R.drawable.ic_cross)
                 ivResultIcon.setDrawableTintWithRes(if (it.correctQuestionsPercentage > 80) R.color.green else R.color.red)
 
-                tvQuestionsAnswered.isVisible = !it.areAllQuestionsAnswered
-                tvQuestionsAnsweredLabel.isVisible = !it.areAllQuestionsAnswered
-                tvQuestionsAnsweredPercentage.isVisible = !it.areAllQuestionsAnswered
+                tvQuestionsAnswered.isVisible = !visibilityToggle
+                tvQuestionsAnsweredLabel.isVisible = !visibilityToggle
+                tvQuestionsAnsweredPercentage.isVisible = !visibilityToggle
 
                 progress.setProgressWithAnimation(it.answeredQuestionsPercentage, (it.answeredQuestionsPercentage * 3.5f).toLong())
                 progressCorrect.setProgressWithAnimation(if (it.areAllQuestionsAnswered) it.correctQuestionsPercentage else 0, 350)
@@ -159,7 +161,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
 
                 statisticsCard.apply {
-                    allQuestions.setProgressWithAnimation(100, 350)
+                    allQuestions.setProgressWithAnimation(if(it.hasQuestions) 100 else 0, 350)
                     allQuestionsNumber.text = it.questionsAmount.toString()
                     answeredQuestions.setProgressWithAnimation(it.answeredQuestionsPercentage, (it.answeredQuestionsPercentage * 3.5f).toLong())
                     answeredQuestionsAmount.text = it.answeredQuestionsAmount.toString()
@@ -214,7 +216,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
     }
 
     override fun onMenuItemClick(item: MenuItem?) = item?.let {
-        when (item.itemId) {
+        when (it.itemId) {
             R.id.menu_item_quiz_delete_given_answers -> vmQuiz.onMenuItemClearGivenAnswersClicked()
             R.id.menu_item_quiz_show_solutions -> vmQuiz.onMenuItemShowSolutionClicked()
             R.id.menu_item_quiz_shuffle_type_none -> vmQuiz.onMenuItemOrderSelected(NONE)

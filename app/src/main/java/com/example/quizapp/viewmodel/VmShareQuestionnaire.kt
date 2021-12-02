@@ -1,20 +1,22 @@
 package com.example.quizapp.viewmodel
 
 import android.app.Application
+import androidx.annotation.StringRes
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
-import com.example.quizapp.QuizApplication
 import com.example.quizapp.R
+import com.example.quizapp.extensions.app
+import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.ShareQuestionnaireWithUserResponse.ShareQuestionnaireWithUserResponseType.*
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.dialogs.sharequestionnaire.DfShareQuestionnaireArgs
-import com.example.quizapp.viewmodel.VmShareQuestionnaire.DfShareQuestionnaireEvent.*
+import com.example.quizapp.viewmodel.VmShareQuestionnaire.ShareQuestionnaireEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,11 +29,9 @@ class VmShareQuestionnaire @Inject constructor(
 
     private val args = DfShareQuestionnaireArgs.fromSavedStateHandle(state)
 
-    val app get() = getApplication<QuizApplication>()
+    private val shareQuestionnaireEventChannel = Channel<ShareQuestionnaireEvent>()
 
-    private val dfShareQuestionnaireEventChannel = Channel<DfShareQuestionnaireEvent>()
-
-    val dfShareQuestionnaireEventChannelFlow = dfShareQuestionnaireEventChannel.receiveAsFlow()
+    val shareQuestionnaireEventChannelFlow = shareQuestionnaireEventChannel.receiveAsFlow()
 
     private var _userName = state.get<String>(USER_NAME_KEY) ?: ""
         set(value) {
@@ -42,32 +42,19 @@ class VmShareQuestionnaire @Inject constructor(
     val userName get() = _userName
 
 
-    fun onShareButtonClicked() = applicationScope.launch(IO) {
+    fun onShareButtonClicked() = launch(IO, applicationScope) {
+        shareQuestionnaireEventChannel.send(ShowLoadingDialog(R.string.sharingQuestionnaire))
+
         runCatching {
-            //TODO -> Wird noch über inputfeld geregelt ob canEdit oder nicht
             backendRepository.shareQuestionnaireWithUser(args.questionnaireId, userName, false)
-        }.onFailure {
-            dfShareQuestionnaireEventChannel.send(NavigateBackEvent)
-            dfShareQuestionnaireEventChannel.send(ShowMessageSnackBar(app.getString(R.string.errorCouldNotShare)))
+        }.also {
+            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+            shareQuestionnaireEventChannel.send(HideLoadingDialog)
+            shareQuestionnaireEventChannel.send(NavigateBackEvent)
         }.onSuccess { response ->
-            dfShareQuestionnaireEventChannel.send(NavigateBackEvent)
-            when(response.responseType){
-                SUCCESSFUL -> {
-                    dfShareQuestionnaireEventChannel.send(ShowMessageSnackBar(app.getString(R.string.sharedWithUser, userName)))
-                }
-                USER_DOES_NOT_EXIST -> {
-                    dfShareQuestionnaireEventChannel.send(ShowMessageSnackBar(app.getString(R.string.errorUserDoesNotExist)))
-                }
-                NOT_ACKNOWLEDGED -> {
-                    dfShareQuestionnaireEventChannel.send(ShowMessageSnackBar( app.getString(R.string.errorCouldNotShare)))
-                }
-                ALREADY_SHARED_WITH_USER -> {
-
-                }
-                QUESTIONNAIRE_DOES_NOT_EXIST -> {
-
-                }
-            }
+            shareQuestionnaireEventChannel.send(ShowMessageSnackBar(response.responseType.getMessage(userName, app)))
+        }.onFailure {
+            shareQuestionnaireEventChannel.send(ShowMessageSnackBar(app.getString(R.string.errorCouldNotShare)))
         }
     }
 
@@ -75,9 +62,11 @@ class VmShareQuestionnaire @Inject constructor(
         _userName = newText.trim()
     }
 
-    sealed class DfShareQuestionnaireEvent {
-        object NavigateBackEvent: DfShareQuestionnaireEvent()
-        class ShowMessageSnackBar(val message: String): DfShareQuestionnaireEvent()
+    sealed class ShareQuestionnaireEvent {
+        object NavigateBackEvent: ShareQuestionnaireEvent()
+        class ShowMessageSnackBar(val message: String): ShareQuestionnaireEvent()
+        class ShowLoadingDialog(@StringRes val messageRes: Int): ShareQuestionnaireEvent()
+        object HideLoadingDialog: ShareQuestionnaireEvent()
     }
 
     companion object {

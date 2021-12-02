@@ -49,7 +49,7 @@
                         android:layout_height="35dp"
                         android:id="@+id/btnMoreOptions"
                         android:src="@drawable/ic_more"
-                        app:backgroundTint="?colorControlActivated"
+                        android:background="?attr/actionBarItemBackground"
                         android:padding="6dp"
                         android:elevation="10dp"
                         android:layout_gravity="end"

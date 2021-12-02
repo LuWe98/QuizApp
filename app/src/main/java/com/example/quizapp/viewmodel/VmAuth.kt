@@ -11,10 +11,12 @@ import com.example.quizapp.model.ktor.responses.LoginUserResponse.*
 import com.example.quizapp.model.ktor.responses.RegisterUserResponse.*
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.viewmodel.VmAuth.FragmentAuthEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
@@ -68,10 +70,13 @@ class VmAuth @Inject constructor(
                 return@launch
             }
 
+            fragmentEventChannel.send(ShowLoadingDialog(R.string.loggingIn))
+
             runCatching {
                 backendRepository.loginUser(currentLoginUserName, currentLoginPassword)
-            }.onFailure {
-                fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileLoggingInUser))
+            }.also {
+                delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+                fragmentEventChannel.send(HideLoadingDialog)
             }.onSuccess { response ->
                 if (response.responseType == LoginUserResponseType.LOGIN_SUCCESSFUL) {
                     User(
@@ -91,6 +96,8 @@ class VmAuth @Inject constructor(
                     fragmentEventChannel.send(NavigateToHomeScreen)
                 }
                 fragmentEventChannel.send(ShowMessageSnackBar(response.responseType.messageRes))
+            }.onFailure {
+                fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileLoggingInUser))
             }
         }
     }
@@ -149,10 +156,13 @@ class VmAuth @Inject constructor(
                 return@launch
             }
 
+            fragmentEventChannel.send(ShowLoadingDialog(R.string.registering))
+
             runCatching {
                 backendRepository.registerUser(currentRegisterUserName, currentRegisterPassword)
-            }.onFailure {
-                fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileRegisteringUser))
+            }.also {
+                delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+                fragmentEventChannel.send(HideLoadingDialog)
             }.onSuccess { response ->
                 if (response.responseType == RegisterUserResponseType.REGISTER_SUCCESSFUL) {
                     fragmentEventChannel.send(SetLoginCredentials(currentRegisterUserName, currentRegisterPassword))
@@ -160,6 +170,8 @@ class VmAuth @Inject constructor(
                 }
 
                 fragmentEventChannel.send(ShowMessageSnackBar(response.responseType.messageRes))
+            }.onFailure {
+                fragmentEventChannel.send(ShowMessageSnackBar(R.string.errorOccurredWhileRegisteringUser))
             }
         }
     }
@@ -183,8 +195,9 @@ class VmAuth @Inject constructor(
         object ShowLoginScreen : FragmentAuthEvent()
         data class ShowMessageSnackBar(@StringRes val stringRes: Int) : FragmentAuthEvent()
         data class SetLoginCredentials(val email: String, val password: String) : FragmentAuthEvent()
+        class ShowLoadingDialog(@StringRes val messageRes: Int): FragmentAuthEvent()
+        object HideLoadingDialog: FragmentAuthEvent()
     }
-
 
     companion object {
         private const val LOGIN_USERNAME = "loginUserEmail"

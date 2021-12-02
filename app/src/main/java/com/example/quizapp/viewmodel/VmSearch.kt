@@ -181,12 +181,12 @@ class VmSearch @Inject constructor(
     }
 
     fun onItemClicked(browsableQuestionnaire: BrowsableQuestionnaire) = launch(IO) {
-        localRepository.findCompleteQuestionnaireWith(browsableQuestionnaire.questionnaireId)?.let {
+        localRepository.findCompleteQuestionnaireWith(browsableQuestionnaire.id)?.let {
             searchEventChannel.send(NavigateToQuizScreen(it.questionnaire.id))
             return@launch
         }
 
-        downLoadQuestionnaire(browsableQuestionnaire.questionnaireId)
+        downLoadQuestionnaire(browsableQuestionnaire.id)
     }
 
     fun onMoreOptionsItemClickedUpdateReceived(
@@ -194,7 +194,7 @@ class VmSearch @Inject constructor(
         selectionType: SelectionType.BrowseQuestionnaireMoreOptionsSelection,
     ) {
         when (clickedItem) {
-            BrowseQuestionnaireMoreOptionsItem.DOWNLOAD -> onItemDownLoadButtonClicked(selectionType.browsableQuestionnaire.questionnaireId)
+            BrowseQuestionnaireMoreOptionsItem.DOWNLOAD -> onItemDownLoadButtonClicked(selectionType.browsableQuestionnaire.id)
             BrowseQuestionnaireMoreOptionsItem.OPEN -> onItemClicked(selectionType.browsableQuestionnaire)
         }
     }

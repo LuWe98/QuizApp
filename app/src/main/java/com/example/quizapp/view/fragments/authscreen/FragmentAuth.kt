@@ -58,6 +58,8 @@ class FragmentAuth : BindingFragment<FragmentAuthBinding>() {
                     viewPager.isVisible = true
                     tvAppLogo.isVisible = true
                 }
+                HideLoadingDialog -> navigator.popLoadingDialog()
+                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
             }
         }
     }

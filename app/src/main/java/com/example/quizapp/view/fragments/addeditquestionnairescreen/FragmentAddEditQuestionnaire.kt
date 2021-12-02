@@ -1,8 +1,10 @@
 package com.example.quizapp.view.fragments.addeditquestionnairescreen
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
+import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.setFragmentResultListener
@@ -13,18 +15,19 @@ import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
+import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.view.recyclerview.adapters.RvaAddEditQuestion
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire
-import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.FragmentAddEditEvent.*
+import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.AddEditQuestionnaireEvent.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.pow
 
 @AndroidEntryPoint
-class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnaireBinding>() {
+class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnaireBinding>(), PopupMenu.OnMenuItemClickListener {
 
     private val vmAddEdit: VmAddEditQuestionnaire by hiltNavDestinationViewModels(R.id.fragmentAddEditQuestionnaire)
 
@@ -108,6 +111,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
         binding.apply {
             btnSave.onClick(vmAddEdit::onSaveButtonClicked)
             btnBack.onClick(navigator::popBackStack)
+            btnMoreOptions.onClick(vmAddEdit::onMoreOptionsClicked)
 
             infoCard.apply {
                 cosDropDown.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
@@ -166,7 +170,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
             }
         }
 
-        vmAddEdit.fragmentAddEditEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAddEdit.addEditQuestionnaireEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 NavigateBackEvent -> navigator.popBackStack()
                 is NavigateToCourseOfStudiesSelector -> navigator.navigateToCourseOfStudiesSelection(event.courseOfStudiesIds)
@@ -179,7 +183,20 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
                     actionTextRes = R.string.undo,
                     actionClickEvent = { vmAddEdit.onUndoDeleteQuestionClicked(event) }
                 )
+                ShowPopupMenu -> {
+                    PopupMenu(requireContext(), binding.btnMoreOptions).apply {
+                        inflate(R.menu.add_edit_questionnaire_popup_menu)
+                        setOnMenuItemClickListener(this@FragmentAddEditQuestionnaire)
+                        show()
+                    }
+                }
             }
         }
+    }
+
+    //TODO -> Clicks implementieren
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+
+        return true
     }
 }

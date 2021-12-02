@@ -107,16 +107,16 @@ abstract class QuestionnaireDao : BaseDao<Questionnaire>(Questionnaire.TABLE_NAM
         val queryBuilder = StringBuilder(
             "SELECT DISTINCT q.*, COUNT(*) as questionCount " +
                     "FROM questionnaireTable as q " +
-                    "JOIN questionnaireCourseOfStudiesRelationTable as qc " +
+                    "LEFT JOIN questionnaireCourseOfStudiesRelationTable as qc " +
                     "ON(q.questionnaireId = qc.questionnaireId) " +
-                    "JOIN courseOfStudiesTable as c " +
+                    "LEFT JOIN courseOfStudiesTable as c " +
                     "ON(qc.courseOfStudiesId = c.courseOfStudiesId) " +
-                    "JOIN facultyCourseOfStudiesRelationTable as fc " +
+                    "LEFT JOIN facultyCourseOfStudiesRelationTable as fc " +
                     "ON(fc.courseOfStudiesId = c.courseOfStudiesId) " +
-                    "JOIN facultyTable as f " +
+                    "LEFT JOIN facultyTable as f " +
                     "ON(fc.facultyId = f.facultyId) " +
-                    "JOIN questionTable as qt " +
-                    "ON(qt.questionnaireId = q.questionnaireId) " +
+                    "LEFT JOIN questionTable as qt " +
+                    "ON(q.questionnaireId = qt.questionnaireId) " +
                     "WHERE q.title LIKE $PLACEHOLDER"
         )
 

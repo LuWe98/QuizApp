@@ -15,7 +15,7 @@ import java.util.*
 @Parcelize
 @Serializable
 data class BrowsableQuestionnaire(
-    val questionnaireId: String,
+    val id: String,
     val title: String,
     val authorInfo: AuthorInfo,
     val facultyIds: List<String>,
@@ -29,7 +29,7 @@ data class BrowsableQuestionnaire(
     val timeStampAsDate get() = SimpleDateFormat.getDateInstance().format(Date(lastModifiedTimestamp)).toString()
 
     companion object {
-        val DIFF_CALLBACK = generateDiffItemCallback(BrowsableQuestionnaire::questionnaireId)
+        val DIFF_CALLBACK = generateDiffItemCallback(BrowsableQuestionnaire::id)
     }
 
 }

@@ -22,5 +22,7 @@ data class MongoQuestionnaire(
 ) {
     companion object {
         val DIFF_CALLBACK = generateDiffItemCallback(MongoQuestionnaire::id)
+
+        val a = ObjectId("dsfdf")
     }
 }

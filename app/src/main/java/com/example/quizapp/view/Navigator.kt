@@ -71,8 +71,8 @@ class Navigator @Inject constructor(
 
     //TODO -> Soll auf homescreen gepoppt werden oder nicht ?
     fun navigateToQuizScreen(questionnaireId: String) {
-        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentHome, false).build()
-        navController.navigate(MainNavGraphDirections.actionGlobalGoToQuizScreen(questionnaireId), navOptions)
+        //val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentHome, false).build()
+        navController.navigate(MainNavGraphDirections.actionGlobalGoToQuizScreen(questionnaireId))
     }
 
     fun navigateToQuizContainerScreen(questionPosition: Int = FIRST_QUESTION_POSITION, isShowSolutionScreen: Boolean = false) {

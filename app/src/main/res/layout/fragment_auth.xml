@@ -15,9 +15,9 @@
             android:gravity="center"
             android:textSize="100sp"
             tools:visibility="visible"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:fontFamily="@font/rampart_one_regular"
-            app:layout_constraintVertical_bias="0.15"
+            app:layout_constraintVertical_bias="0.135"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,11 +28,12 @@
             android:layout_height="0dp"
             android:layout_width="0dp"
             tools:visibility="visible"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:id="@+id/viewPager"
             android:layout_marginTop="@dimen/grid_4"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvAppLogo" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

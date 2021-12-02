@@ -58,7 +58,7 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
         }
 
         vmAddEdit.cosFacultyIdsStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.facultiesCard.text = it.map(Faculty::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: ""
+            binding.facultiesCard.text = it.map(Faculty::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: "-"
         }
 
         vmAddEdit.cosDegreeStateFlow.collectWhenStarted(viewLifecycleOwner) {

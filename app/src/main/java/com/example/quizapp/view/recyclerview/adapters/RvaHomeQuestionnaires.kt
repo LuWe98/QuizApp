@@ -63,7 +63,7 @@ class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuest
 
             progressIndicator.progress = item.answeredQuestionsPercentage
 
-            item.areAllQuestionsCorrectlyAnswered.let {
+            (item.areAllQuestionsCorrectlyAnswered && item.hasQuestions).let {
                 checkMarkIcon.isVisible = it
                 progressIndicator.setIndicatorColor(if(it) getColor(R.color.green) else getThemeColor(R.attr.colorAccent))
             }

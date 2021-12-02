@@ -151,24 +151,18 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSubjectApi(ktorClient: HttpClient) = SubjectApi(ktorClient)
-
-    @Provides
-    @Singleton
     fun provideBackendRepository(
         userApi: UserApi,
         questionnaireApi: QuestionnaireApi,
         filledQuestionnaireApi: FilledQuestionnaireApi,
         facultyApi: FacultyApi,
-        courseOfStudiesApi: CourseOfStudiesApi,
-        subjectApi: SubjectApi
+        courseOfStudiesApi: CourseOfStudiesApi
     ) = BackendRepository(
         userApi,
         questionnaireApi,
         filledQuestionnaireApi,
         facultyApi,
-        courseOfStudiesApi,
-        subjectApi
+        courseOfStudiesApi
     )
 
 

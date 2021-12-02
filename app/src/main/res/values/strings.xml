@@ -109,6 +109,8 @@
     <string name="downloaded">Downloaded</string>
     <string name="download">Download</string>
     <string name="open">Open</string>
+    <string name="registering">Registering…</string>
+    <string name="loggingIn">Logging in…</string>
 
     <string name="save">Save</string>
     <string name="saveQuestionnaire">Save questionnaire</string>
@@ -152,12 +154,15 @@
     <string name="saveUser">Save user</string>
 
     <string name="shareQuestionnaire">Share questionnaire</string>
-
     <string name="shareQuestionnaireText">Enter the Username of the person you want to share this questionnaire with:</string>
+    <string name="sharingQuestionnaire">Sharing questionnaire…</string>
 
     <string name="sharedWithUser">%1$s can now see this questionnaire</string>
     <string name="errorCouldNotShare">Error occurred while sharing questionnaire</string>
     <string name="errorUserDoesNotExist">User with this Username does not exist</string>
+    <string name="errorUserCanAlreadySeeQuestionnaire">User can already see this questionnaire</string>
+    <string name="errorUserIsOwnerOfThisQuestionnaire">User is the owner of this questionnaire</string>
+    <string name="errorQuestionnaireDoesNotExist">Questionnaire does not exist</string>
 
     <!-- Response Message Items -->
     <string name="errorUserAlreadyExists">User already Exists!</string>

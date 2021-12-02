@@ -23,6 +23,10 @@ import kotlin.math.min
 
 //TODO -> CHANGE USERNAME AND PASSWORD IMPLEMENTIEREN
 //TODO -> SHARE QUESTIONNAIRE VLLT MIT LISTE IN EINEM FRAGEBOGEN ÜBERARBEITEN, in der Liste stehen alle User mit denen der geteilt wurde, man kann den dann auch bearbeiten
+//TODO -> THEME COLORS
+//TODO -> RVI_LAYOUTS
+//TODO -> RAW QUERY FÜR MAINSCREEN ANSCHAUEN
+//TODO -> REINLADEN VON EXCEL DATEIEN IM ADD EDIT QUESTIONNAIRE SCREEN
 
 @AndroidEntryPoint
 class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDestinationChangedListener {

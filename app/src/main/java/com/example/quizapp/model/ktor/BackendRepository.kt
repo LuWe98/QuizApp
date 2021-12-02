@@ -25,8 +25,7 @@ class BackendRepository @Inject constructor(
     private val questionnaireApi: QuestionnaireApi,
     private val filledQuestionnaireApi: FilledQuestionnaireApi,
     private val facultyApi: FacultyApi,
-    private val courseOfStudiesApi: CourseOfStudiesApi,
-    private val subjectApi: SubjectApi
+    private val courseOfStudiesApi: CourseOfStudiesApi
 ) {
 
 
@@ -52,8 +51,6 @@ class BackendRepository @Inject constructor(
     ) = userApi.getPagedUsersAdmin(limit, page, searchString, roles, orderBy, ascending)
 
     suspend fun deleteUser(userId: String) = userApi.deleteUser(userId)
-
-    suspend fun deleteUsers(userIds: List<String>) = userApi.deleteUsers(userIds)
 
     suspend fun syncUserData(userId: String) = userApi.syncUserData(userId)
 
