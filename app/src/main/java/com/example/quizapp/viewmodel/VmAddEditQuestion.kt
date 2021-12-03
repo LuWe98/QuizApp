@@ -10,6 +10,7 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
+import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestion
 import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestionArgs
 import com.example.quizapp.viewmodel.VmAddEditQuestion.FragmentAddEditQuestionEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,9 +26,7 @@ class VmAddEditQuestion @Inject constructor(
 
     private val args = FragmentAddEditQuestionArgs.fromSavedStateHandle(state)
 
-    private val parsedQuestion
-        get() = args.questionWithAnswers?.question
-            ?: Question(questionnaireId = "")
+    private val parsedQuestion get() = args.questionWithAnswers?.question ?: Question()
 
     private val parsedAnswers get() = args.questionWithAnswers?.answers?.sortedBy(Answer::answerPosition) ?: listOf()
 

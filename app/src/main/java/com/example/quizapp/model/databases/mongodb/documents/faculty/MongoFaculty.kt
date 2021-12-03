@@ -9,10 +9,10 @@ import org.bson.types.ObjectId
 
 @Serializable
 data class MongoFaculty(
-    @BsonId var id: String = ObjectId().toHexString(),
-    var abbreviation: String,
-    var name: String,
-    var lastModifiedTimestamp : Long = getTimeMillis()
+    @BsonId val id: String = ObjectId().toHexString(),
+    val abbreviation: String,
+    val name: String,
+    val lastModifiedTimestamp : Long = getTimeMillis()
 ) {
 
     val asRoomFaculty : Faculty get() = DataMapper.mapMongoFacultyToRoomFaculty(this)

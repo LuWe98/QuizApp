@@ -25,13 +25,13 @@ import org.bson.types.ObjectId
 data class Faculty(
     @PrimaryKey
     @ColumnInfo(name = ID_COLUMN)
-    var id: String = ObjectId().toHexString(),
+    val id: String = ObjectId().toHexString(),
     @ColumnInfo(name = ABBREVIATION_COLUMN)
-    var abbreviation: String,
+    val abbreviation: String,
     @ColumnInfo(name = NAME_COLUMN)
-    var name: String,
+    val name: String,
     @ColumnInfo(name = LAST_MODIFIED_TIMESTAMP_COLUMN)
-    var lastModifiedTimestamp : Long = getTimeMillis()
+    val lastModifiedTimestamp : Long = getTimeMillis()
 ) : EntityMarker {
 
     val asMongoFaculty: MongoFaculty get() = DataMapper.mapRoomFacultyToMongoFaculty(this)

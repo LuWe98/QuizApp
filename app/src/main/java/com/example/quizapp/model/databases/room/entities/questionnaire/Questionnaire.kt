@@ -19,20 +19,20 @@ import java.util.*
 data class Questionnaire(
     @PrimaryKey
     @ColumnInfo(name = ID_COLUMN)
-    var id: String = ObjectId().toHexString(),
+    val id: String = ObjectId().toHexString(),
     @ColumnInfo(name = TITLE_COLUMN)
-    var title: String,
+    val title: String,
     @Embedded
-    var authorInfo: AuthorInfo,
+    val authorInfo: AuthorInfo,
     @ColumnInfo(name = SUBJECT_COLUMN)
-    var subject: String,
+    val subject: String,
     @Transient
     @ColumnInfo(name = SYNC_STATUS_COLUMN)
-    var syncStatus: SyncStatus = SyncStatus.UNSYNCED,
+    val syncStatus: SyncStatus = SyncStatus.UNSYNCED,
     @ColumnInfo(name = VISIBILITY_COLUMN)
-    var visibility: QuestionnaireVisibility = QuestionnaireVisibility.PRIVATE,
+    val visibility: QuestionnaireVisibility = QuestionnaireVisibility.PRIVATE,
     @ColumnInfo(name = LAST_MODIFIED_TIMESTAMP_COLUMN)
-    var lastModifiedTimestamp: Long = getTimeMillis(),
+    val lastModifiedTimestamp: Long = getTimeMillis(),
 ) : EntityMarker {
 
     companion object {
@@ -48,6 +48,8 @@ data class Questionnaire(
         const val SYNC_STATUS_COLUMN = "syncStatus"
         const val VISIBILITY_COLUMN = "visibility"
         const val LAST_MODIFIED_TIMESTAMP_COLUMN = "lastModifiedTimestamp"
+
+        const val UNKNOWN_QUESTIONNAIRE_ID = ""
     }
 
     val asQuestionnaireIdWithTimeStamp get() = QuestionnaireIdWithTimestamp(id, lastModifiedTimestamp)

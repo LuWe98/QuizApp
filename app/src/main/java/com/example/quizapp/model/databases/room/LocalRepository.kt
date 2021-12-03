@@ -136,7 +136,7 @@ class LocalRepository @Inject constructor(
     suspend fun unsyncAllSyncingQuestionnaires() {
         findAllSyncingQuestionnaires().let { questionnaires ->
             if (questionnaires.isEmpty()) return@let
-            questionnaireDao.update(questionnaires.onEach { it.syncStatus = SyncStatus.UNSYNCED })
+            questionnaireDao.update(questionnaires.map { it.copy(syncStatus = SyncStatus.UNSYNCED) })
         }
     }
 

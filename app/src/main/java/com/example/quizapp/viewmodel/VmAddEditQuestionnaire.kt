@@ -71,12 +71,9 @@ class VmAddEditQuestionnaire @Inject constructor(
             ?: emptyList()
 
 
-
     private val addEditQuestionnaireEventChannel = Channel<AddEditQuestionnaireEvent>()
 
     val addEditQuestionnaireEventChannelFlow = addEditQuestionnaireEventChannel.receiveAsFlow()
-
-
 
 
     private var questionnaireTitleMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_TITLE_KEY, parsedQuestionnaireTitle)
@@ -214,37 +211,35 @@ class VmAddEditQuestionnaire @Inject constructor(
         }
     }
 
-    fun onMoreOptionsClicked(){
+    fun onMoreOptionsClicked() {
         launch(IO) {
             addEditQuestionnaireEventChannel.send(ShowPopupMenu)
         }
     }
 
 
-    fun onSaveButtonClicked() {
-        launch(IO, applicationScope) {
-            if (!isInputValid()) return@launch
+    fun onSaveButtonClicked() = launch(IO, applicationScope) {
+        if (!isInputValid()) return@launch
 
-            val questionnaire = Questionnaire(
-                id = parsedQuestionnaireId,
-                title = questionnaireTitle,
-                authorInfo = preferencesRepository.user.asAuthorInfo,
-                subject = questionnaireSubject,
-                syncStatus = SYNCING
-            )
+        val questionnaire = Questionnaire(
+            id = parsedQuestionnaireId,
+            title = questionnaireTitle,
+            authorInfo = preferencesRepository.user.asAuthorInfo,
+            subject = questionnaireSubject,
+            syncStatus = SYNCING
+        )
 
-            val questionsWithAnswersMapped = questionsWithAnswers.onEachIndexed { questionIndex, qwa ->
-                val questionId = if (args.copy) ObjectId().toHexString() else qwa.question.id
+        val questionsWithAnswersMapped = questionsWithAnswers.mapIndexed { questionIndex, qwa ->
+            val questionId = if (args.copy) ObjectId().toHexString() else qwa.question.id
+            val setIsSelectedToFalse = (!qwa.question.isMultipleChoice && qwa.selectedAnswerIds.size > 1) || args.copy
 
-                qwa.question.apply {
-                    id = questionId
-                    questionnaireId = parsedQuestionnaireId
+            qwa.apply {
+                question = qwa.question.copy(
+                    id = questionId,
+                    questionnaireId = parsedQuestionnaireId,
                     questionPosition = questionIndex
-                }
-
-                val setIsSelectedToFalse = (!qwa.question.isMultipleChoice && qwa.selectedAnswerIds.size > 1) || args.copy
-
-                qwa.answers = qwa.answers.mapIndexed { answerIndex, answer ->
+                )
+                answers = qwa.answers.mapIndexed { answerIndex, answer ->
                     answer.copy(
                         id = if (args.copy) ObjectId().toHexString() else answer.id,
                         questionId = questionId,
@@ -253,20 +248,26 @@ class VmAddEditQuestionnaire @Inject constructor(
                     )
                 }
             }
+        }
 
-            localRepository.insertCompleteQuestionnaire(CompleteQuestionnaire(questionnaire, questionsWithAnswersMapped.toMutableList(), emptyList()))
-            localRepository.insert(courseOfStudiesIds.map { cosId -> QuestionnaireCourseOfStudiesRelation(parsedQuestionnaireId, cosId) })
-            addEditQuestionnaireEventChannel.send(NavigateBackEvent)
+        val completeQuestionnaire = CompleteQuestionnaire(
+            questionnaire,
+            questionsWithAnswersMapped,
+            emptyList()
+        )
 
-            runCatching {
-                localRepository.findCompleteQuestionnaireWith(parsedQuestionnaireId)!!.let(DataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
-                    backendRepository.insertQuestionnaire(it)
-                }
-            }.onFailure {
-                localRepository.update(questionnaire.apply { syncStatus = UNSYNCED })
-            }.onSuccess {
-                localRepository.update(questionnaire.apply { syncStatus = if (it.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) SYNCED else UNSYNCED })
+        localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
+        localRepository.insert(courseOfStudiesIds.map { cosId -> QuestionnaireCourseOfStudiesRelation(parsedQuestionnaireId, cosId) })
+        addEditQuestionnaireEventChannel.send(NavigateBackEvent)
+
+        runCatching {
+            localRepository.findCompleteQuestionnaireWith(parsedQuestionnaireId)!!.let(DataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
+                backendRepository.insertQuestionnaire(it)
             }
+        }.onSuccess {
+            localRepository.update(questionnaire.copy(syncStatus = if (it.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) SYNCED else UNSYNCED))
+        }.onFailure {
+            localRepository.update(questionnaire.copy(syncStatus = UNSYNCED))
         }
     }
 
@@ -292,7 +293,7 @@ class VmAddEditQuestionnaire @Inject constructor(
         class NavigateToAddEditQuestionScreenEvent(val position: Int, val questionWithAnswers: QuestionWithAnswers? = null) : AddEditQuestionnaireEvent()
         class ShowMessageSnackBarEvent(@StringRes val messageRes: Int) : AddEditQuestionnaireEvent()
         class ShowQuestionDeletedSnackBarEvent(val questionPosition: Int, val questionWithAnswers: QuestionWithAnswers) : AddEditQuestionnaireEvent()
-        object ShowPopupMenu: AddEditQuestionnaireEvent()
+        object ShowPopupMenu : AddEditQuestionnaireEvent()
     }
 
     companion object {

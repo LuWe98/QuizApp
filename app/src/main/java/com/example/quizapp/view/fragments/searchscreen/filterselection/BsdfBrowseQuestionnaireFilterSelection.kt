@@ -52,7 +52,7 @@ class BsdfBrowseQuestionnaireFilterSelection : BindingBottomSheetDialogFragment<
         setFragmentResultListener(BsdfRemoteAuthorSelection.AUTHOR_SELECTION_RESULT_KEY) { key, bundle ->
             bundle.apply {
                 classLoader = AuthorInfo::class.java.classLoader
-                getParcelableArray(key)?.let { vmFilter.onSelectedAuthorsUpdateReceived(it as Array<AuthorInfo>) }
+                getTypedParcelableArray<AuthorInfo>(key)?.let(vmFilter::onSelectedAuthorsUpdateReceived)
             }
         }
 

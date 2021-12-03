@@ -13,6 +13,8 @@ plugins {
 android {
     compileSdk = 31
 
+    ndkVersion = "21.4.7075529"
+
     defaultConfig {
         applicationId = "com.hfu.quizapp"
         minSdk = 23
@@ -21,6 +23,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         externalNativeBuild {
             ndkBuild {
                 cppFlags += ""
@@ -38,11 +41,16 @@ android {
         }
     }
 
-    externalNativeBuild {
-        ndkBuild {
-            path = file("src/main/jni/Android.mk")
-        }
-    }
+    //TODO -> Hier noch schauen wie das geht
+//    externalNativeBuild {
+//        ndkBuild {
+//            path = file("src/main/jni/Android.mk")
+//        }
+//        cmake {
+//            path = file("src/main/jni/CMakeLists.txt")
+//            version = "3.10.2"
+//        }
+//    }
 
     buildFeatures {
         viewBinding = true
@@ -124,8 +132,9 @@ dependencies {
     val hiltVersion: String by project
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
+    val hiltViewModelVersion: String by project
+    implementation("androidx.hilt:hilt-lifecycle-viewmodel:$hiltViewModelVersion")
     val hiltAndroidXVersion: String by project
-    implementation("androidx.hilt:hilt-lifecycle-viewmodel:$hiltAndroidXVersion")
     kapt("androidx.hilt:hilt-compiler:$hiltAndroidXVersion")
     val hiltFragmentVersion: String by project
     implementation("androidx.hilt:hilt-navigation-fragment:$hiltFragmentVersion")
@@ -134,8 +143,8 @@ dependencies {
     //Paging 3
     val pagingMainVersion: String by project
     implementation("androidx.paging:paging-runtime-ktx:$pagingMainVersion")
-    val paging3BetaVersion: String by project
-    implementation("androidx.room:room-paging:$paging3BetaVersion")
+    val pagingRoomVersion: String by project
+    implementation("androidx.room:room-paging:$pagingRoomVersion")
 
 
     //Coroutines
@@ -143,12 +152,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion")
 
-    
+
     //Preference-Datastore
     val preferenceDatastoreVersion: String by project
     implementation("androidx.datastore:datastore-preferences:$preferenceDatastoreVersion")
 
-    
+
     //Ktor
     val ktorVersion: String by project
     implementation("io.ktor:ktor-client-core:$ktorVersion")

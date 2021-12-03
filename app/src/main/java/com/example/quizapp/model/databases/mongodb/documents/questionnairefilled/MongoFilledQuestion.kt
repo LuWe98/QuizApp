@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MongoFilledQuestion(
-    var questionId : String,
-    var selectedAnswerIds : List<String> = emptyList()
+    val questionId : String,
+    val selectedAnswerIds : List<String> = emptyList()
 )

@@ -25,17 +25,17 @@ import org.bson.types.ObjectId
 data class Answer(
     @PrimaryKey
     @ColumnInfo(name = ID_COLUMN)
-    var id: String = ObjectId().toHexString(),
+    val id: String = ObjectId().toHexString(),
     @ColumnInfo(name = QUESTION_ID_COLUMN)
-    var questionId: String = "",
+    val questionId: String = ObjectId().toHexString(),
     @ColumnInfo(name = TEXT_COLUMN)
-    var answerText: String = "",
+    val answerText: String = EMPTY_ANSWER_TEST,
     @ColumnInfo(name = IS_ANSWER_CORRECT_COLUMN)
-    var isAnswerCorrect: Boolean = false,
+    val isAnswerCorrect: Boolean = false,
     @ColumnInfo(name = IS_ANSWER_SELECTED_COLUMN)
-    var isAnswerSelected: Boolean = false,
+    val isAnswerSelected: Boolean = false,
     @ColumnInfo(name = POSITION_COLUMN)
-    var answerPosition: Int = 0
+    val answerPosition: Int = 0
 ) : EntityMarker {
 
     companion object {
@@ -49,6 +49,9 @@ data class Answer(
         const val IS_ANSWER_CORRECT_COLUMN = "isAnswerCorrect"
         const val IS_ANSWER_SELECTED_COLUMN = "isAnswerSelected"
         const val POSITION_COLUMN = "answerPosition"
+
+
+        const val EMPTY_ANSWER_TEST = ""
     }
 
 }

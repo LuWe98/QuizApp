@@ -64,38 +64,34 @@ object DataMapper {
 
     fun mapRoomQuestionnaireToMongoQuestionnaire(
         completeQuestionnaire: CompleteQuestionnaire
-    ): MongoQuestionnaire {
-        return MongoQuestionnaire(
-            id = completeQuestionnaire.questionnaire.id,
-            title = completeQuestionnaire.questionnaire.title,
-            authorInfo = completeQuestionnaire.questionnaire.authorInfo,
-            facultyIds = completeQuestionnaire.allFaculties.map(Faculty::id),
-            courseOfStudiesIds = completeQuestionnaire.allCoursesOfStudies.map(CourseOfStudies::id),
-            subject = completeQuestionnaire.questionnaire.subject,
-            questionnaireVisibility = completeQuestionnaire.questionnaire.visibility,
-            lastModifiedTimestamp = completeQuestionnaire.questionnaire.lastModifiedTimestamp
-        ).apply {
-            questions = completeQuestionnaire.questionsWithAnswers.map { qwa ->
-                qwa.question.let { question ->
-                    MongoQuestion(
-                        id = question.id,
-                        questionText = question.questionText,
-                        isMultipleChoice = question.isMultipleChoice,
-                        questionPosition = question.questionPosition
-                    ).apply {
-                        answers = qwa.answers.map { answer ->
-                            MongoAnswer(
-                                id = answer.id,
-                                answerText = answer.answerText,
-                                answerPosition = answer.answerPosition,
-                                isAnswerCorrect = answer.isAnswerCorrect
-                            )
-                        }
+    ) = MongoQuestionnaire(
+        id = completeQuestionnaire.questionnaire.id,
+        title = completeQuestionnaire.questionnaire.title,
+        authorInfo = completeQuestionnaire.questionnaire.authorInfo,
+        facultyIds = completeQuestionnaire.allFaculties.map(Faculty::id),
+        courseOfStudiesIds = completeQuestionnaire.allCoursesOfStudies.map(CourseOfStudies::id),
+        subject = completeQuestionnaire.questionnaire.subject,
+        questionnaireVisibility = completeQuestionnaire.questionnaire.visibility,
+        lastModifiedTimestamp = completeQuestionnaire.questionnaire.lastModifiedTimestamp,
+        questions = completeQuestionnaire.questionsWithAnswers.map { qwa ->
+            qwa.question.let { question ->
+                MongoQuestion(
+                    id = question.id,
+                    questionText = question.questionText,
+                    isMultipleChoice = question.isMultipleChoice,
+                    questionPosition = question.questionPosition,
+                    answers = qwa.answers.map { answer ->
+                        MongoAnswer(
+                            id = answer.id,
+                            answerText = answer.answerText,
+                            answerPosition = answer.answerPosition,
+                            isAnswerCorrect = answer.isAnswerCorrect
+                        )
                     }
-                }
+                )
             }
         }
-    }
+    )
 
     fun mapMongoQuestionnaireToRoomQuestionnaireCourseOfStudiesRelation(mongoQuestionnaire: MongoQuestionnaire) =
         mongoQuestionnaire.courseOfStudiesIds.distinct().map { courseOfStudiesId ->
@@ -106,18 +102,14 @@ object DataMapper {
         completeCompleteQuestionnaire: CompleteQuestionnaire
     ) = MongoFilledQuestionnaire(
         questionnaireId = completeCompleteQuestionnaire.questionnaire.id,
-        userId = completeCompleteQuestionnaire.questionnaire.authorInfo.userId
-    ).apply {
+        userId = completeCompleteQuestionnaire.questionnaire.authorInfo.userId,
         questions = completeCompleteQuestionnaire.questionsWithAnswers.filter(QuestionWithAnswers::isAnswered).map { qwa ->
-            qwa.question.let { question ->
-                MongoFilledQuestion(
-                    questionId = question.questionnaireId
-                ).apply {
-                    selectedAnswerIds = qwa.selectedAnswerIds
-                }
-            }
+            MongoFilledQuestion(
+                questionId = qwa.question.questionnaireId,
+                selectedAnswerIds = qwa.selectedAnswerIds
+            )
         }
-    }
+    )
 
     fun mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(
         completeCompleteQuestionnaire: CompleteQuestionnaire
@@ -131,7 +123,7 @@ object DataMapper {
     )
 
 
-    fun mapMongoFacultyToRoomFaculty(mongoFaculty: MongoFaculty) : Faculty = Faculty(
+    fun mapMongoFacultyToRoomFaculty(mongoFaculty: MongoFaculty): Faculty = Faculty(
         id = mongoFaculty.id,
         abbreviation = mongoFaculty.abbreviation,
         name = mongoFaculty.name,

@@ -1,5 +1,6 @@
 package com.example.quizapp.model.ktor.backendsyncer
 
+import com.example.quizapp.extensions.log
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
 import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
@@ -188,23 +189,20 @@ class BackendSyncer @Inject constructor(
     private fun mapToCompleteQuestionnaire(
         syncedQuestionnaires: List<CompleteQuestionnaire>,
         response: SyncQuestionnairesResponse
-    ) = response.mongoQuestionnaires.map(DataMapper::mapMongoQuestionnaireToRoomCompleteQuestionnaire).onEach { q ->
-        response.mongoFilledQuestionnaires.firstOrNull { it.questionnaireId == q.questionnaire.id }?.let { remoteFilledQuestionnaire ->
-            q.questionsWithAnswers = q.questionsWithAnswers.map { qwa ->
-                selectAnswers(qwa, remoteFilledQuestionnaire.allSelectedAnswerIds)
-            }.toMutableList()
-        } ?: syncedQuestionnaires.firstOrNull { it.questionnaire.id == q.questionnaire.id }?.let { locallySyncedQuestionnaire ->
-            q.questionsWithAnswers = q.questionsWithAnswers.map { qwa ->
-                selectAnswers(qwa, locallySyncedQuestionnaire.allSelectedAnswerIds)
-            }.toMutableList()
-        }
-    }
+    ) = response.mongoQuestionnaires.map(DataMapper::mapMongoQuestionnaireToRoomCompleteQuestionnaire).onEach { cQ ->
+        val selectedAnswerIds = response.mongoFilledQuestionnaires.firstOrNull { it.questionnaireId == cQ.questionnaire.id }?.allSelectedAnswerIds
+            ?: syncedQuestionnaires.firstOrNull { it.questionnaire.id == cQ.questionnaire.id }?.allSelectedAnswerIds
 
-    private fun selectAnswers(qwa: QuestionWithAnswers, selectedAnswerIds: List<String>) = qwa.apply {
-        if (!question.isMultipleChoice && answers.count { it.id in selectedAnswerIds } > 1) {
-            answers.onEach { it.isAnswerSelected = false }
-        } else {
-            answers.onEach { it.isAnswerSelected = it.id in selectedAnswerIds }
+        selectedAnswerIds?.let {
+            cQ.questionsWithAnswers = cQ.questionsWithAnswers.map { qwa ->
+                qwa.apply {
+                    answers = if (!question.isMultipleChoice && answers.count { it.id in selectedAnswerIds } > 1) {
+                        answers.map { it.copy(isAnswerSelected = false) }
+                    } else {
+                        answers.map {  it.copy(isAnswerSelected = it.id in selectedAnswerIds) }
+                    }
+                }
+            }
         }
     }
 
@@ -215,7 +213,7 @@ class BackendSyncer @Inject constructor(
     ) = syncedCompleteQuestionnaires
         .filter { response.questionnaireIdsToUnsync.any { id -> id == it.questionnaire.id } }
         .map(CompleteQuestionnaire::questionnaire)
-        .onEach { it.syncStatus = SyncStatus.UNSYNCED }
+        .map{ it.copy(syncStatus = SyncStatus.UNSYNCED) }
 
 
     private suspend fun uploadUnsyncedQuestionnaires(

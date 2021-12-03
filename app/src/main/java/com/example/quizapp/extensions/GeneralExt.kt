@@ -1,6 +1,7 @@
 package com.example.quizapp.extensions
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import androidx.recyclerview.widget.DiffUtil
 import kotlin.reflect.KProperty1
 
@@ -17,6 +18,9 @@ inline fun <reified T, reified P> generateDiffItemCallback(crossinline idProvide
     override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem == newItem
     override fun areItemsTheSame(oldItem: T, newItem: T) = idProvider.invoke(oldItem) == idProvider.invoke(newItem)
 }
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified T> Bundle.getTypedParcelableArray(key: String) = getParcelableArray(key) as Array<T>?
 
 //operator fun <A, B, C> ((A) -> B).div(getter : (B) -> C) : (A) -> C = { getter(this(it)) }
 //

@@ -9,9 +9,9 @@ import org.bson.types.ObjectId
 @Parcelize
 @Serializable
 data class MongoQuestion(
-    @BsonId var id : String = ObjectId().toHexString(),
-    var questionText : String = "",
-    var isMultipleChoice: Boolean = true,
-    var questionPosition : Int = 0,
-    var answers : List<MongoAnswer> = emptyList()
+    @BsonId val id : String = ObjectId().toHexString(),
+    val questionText : String,
+    val isMultipleChoice: Boolean,
+    val questionPosition : Int,
+    val answers : List<MongoAnswer> = emptyList()
 ): Parcelable

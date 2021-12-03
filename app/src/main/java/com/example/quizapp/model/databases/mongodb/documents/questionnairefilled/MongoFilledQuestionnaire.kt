@@ -5,9 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MongoFilledQuestionnaire(
-    var questionnaireId : String,
-    var userId : String,
-    var questions : List<MongoFilledQuestion> = emptyList()
+    val questionnaireId : String,
+    val userId : String,
+    val questions : List<MongoFilledQuestion> = emptyList()
 ) {
 
     val allSelectedAnswerIds get() = questions.flatMap { it.selectedAnswerIds }

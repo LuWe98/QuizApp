@@ -9,19 +9,20 @@ import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.QuestionnaireVisibility.PRIVATE
+import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
 import com.example.quizapp.model.ktor.responses.ChangeQuestionnaireVisibilityResponse.ChangeQuestionnaireVisibilityResponseType
 import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireResponse.DeleteFilledQuestionnaireResponseType
 import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.DeleteQuestionnaireResponseType
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.InsertFilledQuestionnaireResponseType
 import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.InsertQuestionnairesResponseType
-import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
+import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -31,8 +32,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
-import io.ktor.client.features.auth.*
 
 @HiltViewModel
 class VmHome @Inject constructor(
@@ -81,7 +80,6 @@ class VmHome @Inject constructor(
             }
         }
     }
-
 
     val completeQuestionnaireFlow = combine(
         searchQueryMutableStateFlow,
@@ -132,7 +130,7 @@ class VmHome @Inject constructor(
     fun onCreatedItemSyncButtonClicked(questionnaireId: String) {
         applicationScope.launch(IO) {
             val completeQuestionnaire = localRepository.findCompleteQuestionnaireWith(questionnaireId)!!
-            localRepository.update(completeQuestionnaire.questionnaire.apply { syncStatus = SyncStatus.SYNCING })
+            localRepository.update(completeQuestionnaire.questionnaire.copy(syncStatus = SYNCING))
 
             val result = try {
                 backendRepository.insertQuestionnaire(completeQuestionnaire)
@@ -141,10 +139,10 @@ class VmHome @Inject constructor(
             }
 
             if (result != null && result.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) {
-                localRepository.update(completeQuestionnaire.questionnaire.apply { syncStatus = SyncStatus.SYNCED })
+                localRepository.update(completeQuestionnaire.questionnaire.copy(syncStatus = SYNCED))
                 fragmentHomeEventChannel.send(ShowSnackBarMessageBar(R.string.syncSuccessful))
             } else {
-                localRepository.update(completeQuestionnaire.questionnaire.apply { syncStatus = SyncStatus.UNSYNCED })
+                localRepository.update(completeQuestionnaire.questionnaire.copy(syncStatus = UNSYNCED))
                 fragmentHomeEventChannel.send(ShowSnackBarMessageBar(R.string.syncUnsuccessful))
             }
         }

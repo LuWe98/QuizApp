@@ -10,9 +10,9 @@ import org.bson.types.ObjectId
 @Serializable
 @Parcelize
 data class User(
-    @BsonId var id: String = ObjectId().toHexString(),
-    var userName: String,
-    var password: String,
+    @BsonId val id: String = ObjectId().toHexString(),
+    val userName: String,
+    val password: String,
     var role: Role,
     var lastModifiedTimestamp : Long
 ) : Parcelable {
