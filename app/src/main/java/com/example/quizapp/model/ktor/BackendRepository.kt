@@ -16,6 +16,7 @@ import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
 import com.example.quizapp.model.datastore.datawrappers.BrowsableOrderBy
 import com.example.quizapp.model.datastore.datawrappers.ManageUsersOrderBy
+import com.example.quizapp.model.ktor.responses.ChangePasswordResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -55,6 +56,8 @@ class BackendRepository @Inject constructor(
     suspend fun syncUserData(userId: String) = userApi.syncUserData(userId)
 
     suspend fun createUser(userName: String, password: String, role: Role) = userApi.createUser(userName, password, role)
+
+    suspend fun updateUserPassword(newPassword: String) = userApi.updateUserPassword(newPassword)
 
 
 

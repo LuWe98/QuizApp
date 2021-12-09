@@ -44,13 +44,4 @@
             app:icon="@drawable/ic_course_of_studies"
             app:title="@string/manageCoursesOfStudies"
             app:layout_constraintTop_toBottomOf="@+id/btnAdminFaculty" />
-
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnFindNotAssociatedQuestionnaires"
-            app:icon="@drawable/ic_question_mark"
-            app:title="@string/findNotConnectedQuestionnaires"
-            app:layout_constraintTop_toBottomOf="@+id/btnAdminCourseOfStudies" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

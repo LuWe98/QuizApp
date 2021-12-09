@@ -14,7 +14,6 @@ import com.example.quizapp.extensions.setImageDrawable
 import com.example.quizapp.extensions.setSelectionTypeListener
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.viewmodel.VmManageUsersFilterSelection
 import com.example.quizapp.viewmodel.VmManageUsersFilterSelection.ManageUsersFilterSelectionEvent.*
 import com.google.android.material.chip.Chip
@@ -71,7 +70,7 @@ class BsdfManageUsersFilterSelection: BindingBottomSheetDialogFragment<BsdfManag
 
         vmFilter.selectedOrderAscendingStateFlow.collectWhenStarted(viewLifecycleOwner) { ascending ->
             binding.apply {
-                tvOrderAscending.setText(if(ascending) R.string.ascending else R.string.descending)
+                tvOrderAscending.setText(if(ascending) R.string.orderAscending else R.string.orderDescending)
                 ivOrderAscending.animate()
                     .rotation(if(ascending) 0f else 180f)
                     .setDuration(300)

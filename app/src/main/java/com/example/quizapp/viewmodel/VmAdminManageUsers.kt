@@ -7,6 +7,7 @@ import androidx.paging.*
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.extensions.log
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.datastore.PreferencesRepository

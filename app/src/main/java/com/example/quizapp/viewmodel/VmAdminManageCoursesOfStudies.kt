@@ -1,9 +1,9 @@
 package com.example.quizapp.viewmodel
 
-import android.app.Application
+import android.content.Context
 import androidx.annotation.StringRes
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
@@ -32,9 +32,8 @@ import javax.inject.Inject
 class VmAdminManageCoursesOfStudies @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
-    application: Application,
     private val state: SavedStateHandle
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     private val manageCourseOfStudiesEventChannel = Channel<ManageCourseOfStudiesEvent>()
 
@@ -49,12 +48,12 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
 
 
 
-    val getFacultiesWithPlaceholder = runBlocking(IO) {
+    fun getFacultiesWithPlaceholder(context: Context) = runBlocking(IO) {
         localRepository.allFacultiesFlow.first().toMutableList().apply {
             add(Faculty(
                 id = NO_FACULTY_ID,
                 abbreviation = NO_ABBREVIATION,
-                name = application.getString(R.string.coursesOfStudiesWithoutFaculty)
+                name = context.getString(R.string.coursesOfStudiesWithoutFaculty)
             ))
         }.toList()
     }
@@ -123,7 +122,6 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
             }
         }
     }
-
 
 
     sealed class ManageCourseOfStudiesEvent {

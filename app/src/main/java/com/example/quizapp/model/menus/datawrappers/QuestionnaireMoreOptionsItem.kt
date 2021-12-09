@@ -22,7 +22,7 @@ enum class QuestionnaireMoreOptionsItem(
     ),
     SHARE(
         iconRes = R.drawable.ic_share,
-        textRes = R.string.shareQuestionnaireWithUser
+        textRes = R.string.share
     ),
     COPY(
         iconRes = R.drawable.ic_copy,

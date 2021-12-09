@@ -1,5 +1,390 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- ENTITY STRINGS-->
+    <string name="title">Titel</string>
+
+    <string name="name">Name</string>
+    <string name="abbreviation">Abkürzung</string>
+
+    <string name="questionnaire">Fragebogen</string>
+    <string name="questionnaires">Fragebogen</string>
+
+    <string name="questions">Fragen</string>
+    <string name="multipleChoice">Multiple choice</string>
+    <string name="singleChoice">Single choice</string>
+
+    <string name="answers">Antworten</string>
+
+    <string name="faculty">Fakultät</string>
+    <string name="faculties">Fakultäten</string>
+
+    <string name="courseOfStudies">Studiengang</string>
+    <string name="coursesOfStudiesWithoutFaculty">Studiengang ohne Fakultät</string>
+
+    <string name="degree">Abschluss</string>
+    <string name="degreeBachelor">Bachelor</string>
+    <string name="degreeMaster">Master</string>
+
+    <string name="subject">Fach</string>
+
+    <string name="user">User</string>
+    <string name="userName">Username</string>
+    <string name="author">Author</string>
+    <string name="authorName">Authorname</string>
+
+
+
+    <!-- ADD EDIT STRINGS -->
+    <string name="add">Hinzufügen</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="update">Update</string>
+    <string name="save">Speichern</string>
+    <string name="delete">Löschen</string>
+
+
+
+    <!-- ADD EDIT QUESTIONNAIRE STRINGS -->
+    <string name="addQuestionnaire">Fragebogen hizufügen</string>
+    <string name="editQuestionnaire">Fragebogen bearbeiten</string>
+    <string name="copyQuestionnaire">Fragebogen kopieren</string>
+    <string name="saveQuestionnaire">Fragebogen speichern</string>
+
+    <string name="addQuestion">Frage hinzufügen</string>
+    <string name="editQuestion">Frage bearbeiten</string>
+    <string name="saveQuestion">Frage speichern</string>
+    <string name="clickToWriteYourQuestion">Klicken um die Frage zu schreiben!</string>
+
+    <string name="answerText">Antworttext</string>
+    <string name="clickToWriteCourAnswer">Klicken um die Antwort zu schreiben!</string>
+
+    <string name="errorSelectOneCorrectAnswer">Es wurde keine richtige Antwort ausgewählt!</string>
+    <string name="errorQuestionnaireHasNoTitle">Der Fragebogen hat keinen Titel!</string>
+    <string name="errorQuestionnaireHasNoSubject">Der Fragebogen hat kein Fach!</string>
+    <string name="errorQuestionHasNoAnswers">Die Frage besitzt noch keine Antworten!</string>
+    <string name="errorAnswersDoNotHaveText">Manche Antworten besitzen noch keinen Text!</string>
+    <string name="errorQuestionHasNoText">Die Frage besitzt noch keinen Text!</string>
+
+
+
+    <!-- ADD EDIT FACULTY STRINGS -->
+    <string name="addFaculty">Fakultät hinzufügen</string>
+    <string name="editFaculty">Fakultät bearbeiten</string>
+    <string name="saveFaculty">Fakultät speichern</string>
+
+
+
+    <!-- ADD EDIT COURSE OF STUDIES STRINGS -->
+    <string name="addCourseOfStudies">Studiengang hinzufügen</string>
+    <string name="editCourseOfStudies">Studiengang bearbeiten</string>
+    <string name="saveCourseOfStudies">Studiengang speichern</string>
+
+
+
+    <!-- ADD EDIT USERS STRINGS -->
+    <string name="addUser">User hinzufügen</string>
+    <string name="editUser">User bearbeiten</string>
+    <string name="saveUser">User speichern</string>
+
+    <string name="info">Info</string>
+    <string name="questionDistribution">Fragentyp - Verteilung</string>
+
+
+
+    <!-- UPDATE STRING VALUES TEXT -->
+    <string name="updateQuestionnaireTitle">Titel aktualisieren</string>
+    <string name="updateQuestionnaireSubject">Fach aktualisieren</string>
+    <string name="updateAnswerText">Antworttext aktualisieren</string>
+    <string name="updateFacultyAbbreviation">Kürzel aktualisieren</string>
+    <string name="updateFacultyName">Name aktualisieren</string>
+    <string name="updateCourseOfStudiesAbbreviation">Kürzel aktualisiere</string>
+    <string name="updateCourseOfStudiesName">Name aktualisieren</string>
+    <string name="updateUserName">Username aktualisieren</string>
+    <string name="updatePassword">Passwort aktualisieren</string>
+
+
+
+    <!-- USER AUTH STRING-->
+    <string name="role">Rolle</string>
+    <string name="password">Passwort</string>
+    <string name="changePassword">Passwort ändern</string>
+    <string name="confirmPassword">Password bestätigen</string>
+    <string name="login">Einloggen</string>
+    <string name="register">Registrieren</string>
+    <string name="registerHere">Hier registrieren</string>
+    <string name="alreadyGotAccount">Du hast schon einen Account? Einloggen</string>
+    <string name="errorPasswordsDoNotMatch">Passwort stimmt nicht überein</string>
+    <string name="errorOccurredWhileRegisteringUser">Es ist ein Fehler bei der Registrierung aufgetretetn!</string>
+    <string name="errorOccurredWhileLoggingInUser">Es ist ein Fehler beim Einloggen aufgetreten!</string>
+    <string name="errorUserAlreadyExists">Username bereits vergeben!</string>
+    <string name="userLoggedInSuccessfully">Erfolgreich eingeloggt!</string>
+    <string name="errorUserNameOrPassWordWrong">Username oder Passwort ist falsch!</string>
+    <string name="userRegisteredSuccessfully">Erfolgreich registriert!</string>
+    <string name="userRegistrationFailed">Registrierung fehlgeschlagen</string>
+    <string name="errorLoggedOutBecauseCredentialsChanged">Credentials haben sich geändert! Bitte erneut einloggen…</string>
+
+
+
+    <!-- SNACK BAR TEXT -->
+    <string name="undo">Rückgängig</string>
+    <string name="pleaseAnswerAllQuestionsText">Es müssen erst alle Fragen beantwortet werden!</string>
+
+    <string name="questionsDeleted">Fragen gelöscht</string>
+    <string name="questionDeleted">Frage gelöscht</string>
+    <string name="questionnaireDeleted">Fragebogen gelöscht</string>
+    <string name="questionnaireDownloaded">Fragebogen heruntergeladen</string>
+
+    <string name="answersDeleted">Antworten gelöscht</string>
+    <string name="answerDeleted">Antwort gelöscht</string>
+
+    <string name="deletedFaculty">Fakultät gelöscht</string>
+    <string name="errorCouldNotDeleteFaculty">Fakultät konnte nicht gelöscht werden</string>
+    <string name="successfullySavedFaculty">Fakultät gespeichert</string>
+    <string name="errorCouldNotSaveFaculty">Fakultät konnte nicht gespeichert werden</string>
+    <string name="errorFacultyNameAlreadyUsed">Fakultätname bereits vergeben</string>
+    <string name="errorFacultyAbbreviationAlreadyUsed">Fakultätskürzel bereits vergeben</string>
+
+    <string name="deletedCourseOfStudies">Studiengang gelöscht</string>
+    <string name="errorCouldNotDeleteCourseOfStudies">Studiengang konnte nicht gelöscht werden</string>
+    <string name="successfullySavedCourseOfStudies">Studiengang gespeichert</string>
+    <string name="errorCouldNotSaveCourseOfStudies">Studiengang konnte nicht gespeichert werden</string>
+    <string name="errorCourseOfStudiesNameAlreadyUsed">Studiengangsname bereits vergeben</string>
+    <string name="errorCourseOfStudiesAbbreviationAlreadyUsed">Studiengangkürzel bereits vergeben</string>
+    <string name="errorNoFacultyAssigned">Dem Studiengang muss mindestens eine Fakultät zugeordnet werden</string>
+
+    <string name="userDeleted">User gelöscht</string>
+    <string name="userWasCreated">User wurde erstellt!</string>
+    <string name="errorCouldNotCreateUser">User konnte nicht erstellt werden!</string>
+    <string name="errorCouldNotDeleteUser">User konnte nicht gelöscht werden</string>
+
+    <string name="shuffleTypeChanged">Mischtyp geändert</string>
+
+    <string name="syncUnsuccessful">Daten konnten nicht synchronisiert werden!</string>
+    <string name="syncSuccessful">Fragebogen synchronisiert!</string>
+    <string name="errorCouldNotSyncUserData">Userdaten konnten nicht synchronisiert werden</string>
+    <string name="errorYourUserDoesNotExistAnymore">Userdaten existieren nicht mehr!/nDu wurdest ausgeloggt!</string>
+    <string name="userDataUpdated">Userdaten aktualisiert</string>
+    <string name="userDataIsAlreadyUpToDate">Userdaten bereits auf dem neusten Stand</string>
+    <string name="errorCouldNotSyncFacultyAndCosData">Fakultäten und Studiengänge konnten nicht synchronisiert werden</string>
+    <string name="onlyFacultiesCouldBeSynced">Fakultäten wurden synchronisiert</string>
+    <string name="syncedFacultyAndCourseOfStudiesData">Fakultäten und Studiengänge wurden synchronisiert!</string>
+    <string name="facultyAndCourseOfStudiesDataAlreadyUpToDate">Fakultäten und Studiengänge sind bereits auf dem neusten Stand</string>
+    <string name="yourDataIsAlreadyUpToDate">Daten bereits auf dem neusten Stand!</string>
+    <string name="questionnaireDataSynced">Fragebögen wurden synchronisiert</string>
+    <string name="errorCouldNotSyncQuestionnaires">Fragebögen konnten nicht synchronisiert werden</string>
+
+    <string name="loggedOut">ausgeloggt</string>
+
+
+    <!-- SEARCH FIELD TEXT -->
+    <string name="search">Suche</string>
+    <string name="apply">Übernehmen</string>
+
+    <string name="filterFaculties">Filter Fakultäten</string>
+    <string name="filterCourseOfStudies">Filter Studiengänge</string>
+    <string name="filterAuthors">Filter Authoren</string>
+
+    <string name="onlineSearch">Online Suche</string>
+    <string name="onlineSearchFilters">Online Suchfilter</string>
+    <string name="localSearchFilters">Lokale Suchfilter</string>
+    <string name="userSearchFilters">User Suchfilter</string>
+    <string name="searchForQuestionnaires">Nach Fragebögen suchen…</string>
+    <string name="searchForFaculties">Nach Fakultäten suchen…</string>
+    <string name="searchForCourseOfStudies">Nach Studiengängen suchen…</string>
+    <string name="searchForUsers">Nach Usern suchen…</string>
+    <string name="searchForAuthors">Nach Authoren suchen…</string>
+    <string name="selectedRoles">Ausgewählte Rollen</string>
+    <string name="orderByQuestionCount">Fragenanzahl</string>
+    <string name="orderByProgress">Fortschritt</string>
+    <string name="orderAscending">Aufsteigend</string>
+    <string name="orderDescending">Ansteigend</string>
+
+
+
+    <!-- LOADING DIALOG STRINGS -->
+    <string name="registering">Am registrieren…</string>
+    <string name="loggingIn">Am einloggen…</string>
+    <string name="deletingFaculty">Fakultät wird gelöscht…</string>
+    <string name="deletingCourseOfStudies">Studiengang wird gelöscht…</string>
+    <string name="deletingUser">User wird gelöscht…</string>
+    <string name="savingUser">User wird gespeichert…</string>
+    <string name="savingFaculty">Fakultät wird gespeichert…</string>
+    <string name="savingCourseOfStudies">Studiengang wird gespeichert…</string>
+    <string name="downloadingQuestionnaire">Fragebogen wird heruntergeldaden…</string>
+    <string name="syncingQuestionnaires">Fragebogen wird synchronisiert…</string>
+    <string name="syncingFacultiesAndCourseOfStudies">Fakultäten und Studiengänge werden synchronisiert…</string>
+    <string name="syncingUserData">Userdaten werden synchronisiert…</string>
+    <string name="sharingQuestionnaire">Fragebogen wird geteilt…</string>
+    <string name="changingPassword">Ändere Passwort…</string>
+
+
+
+    <!-- SELECTION STRINGS -->
+    <string name="courseOfStudiesSelection">Studiengang Selektion</string>
+    <string name="facultySelection">Fakultät Selektion</string>
+    <string name="authorSelection">Author Selektion</string>
+    <string name="orderByTypeSelection">Sortieren nach</string>
+    <string name="themeSelection">Theme Selektion</string>
+    <string name="languageSelection">Sprachauswahl</string>
+    <string name="shuffleTypeSelection">Mischtyp Selektion</string>
+    <string name="roleSelection">Rollenauswahl</string>
+    <string name="degreeSelection">Abschlussauswahl</string>
+
+    <string name="download">Download</string>
+    <string name="open">Öffnen</string>
     <string name="copy">Kopieren</string>
+    <string name="setQuestionnaireToPublic">Veröffentlichen</string>
+    <string name="setQuestionnaireToPrivate">Privat setzen</string>
+    <string name="deleteGivenAnswers">Gegebene Antworten löschen</string>
+
+    <string name="changedVisibilityToPublic">Fragebogen veröffentlicht</string>
+    <string name="changedVisibilityToPrivate">Fragebogen auf Privat gesetzt</string>
+    <string name="errorCouldNotChangeVisibility">Fragebogen Sichtbarkeit könnte nicht aktualisiert werden</string>
+
+    <string name="changeUserRole">Rolle ändern</string>
+    <string name="updateRole">Rolle aktualisieren</string>
+    <string name="changeRoleForUser">Rolle aktualisieren für:\n%1$s</string>
+    <string name="browseCreatedQuestionnaires">Erstellte Fragebögen durchsuchen</string>
+
+
+
+    <!-- SHARE QUESTIONNAIRE STRINGS -->
+    <string name="share">Teilen</string>
+    <string name="shareQuestionnaire">Fragebogen teilen</string>
+    <string name="shareQuestionnaireText">Geben Sie den Usernamen des Users ein mit welchem Sie diesen Fragebogen teilen möchten:</string>
+    <string name="sharedWithUser">%1$s kann jetzt den Fragebogen sehen!</string>
+    <string name="errorCouldNotShare">Beim Teilen ist ein Fehler aufgetreten!</string>
+    <string name="errorUserDoesNotExist">Es existiert kein User mit diesem Usernamen</string>
+    <string name="errorUserCanAlreadySeeQuestionnaire">Der User konnte den Fragebogen bereits sehen</string>
+    <string name="errorUserIsOwnerOfThisQuestionnaire">Der User ist der Ersteller des Fragebogens</string>
+    <string name="errorQuestionnaireDoesNotExist">Fragebogen existiert nicht mehr</string>
+
+
+    <!-- CHANGE PASSWORD STRINGS -->
+    <string name="changePasswordText">Schreiben Sie ihr aktuelles und das neue Passwort in die unten stehenden Felder.</string>
+    <string name="currentPassword">Aktuelles Passwort</string>
+    <string name="newPassword">Neues Passwort</string>
+    <string name="errorCurrentPasswordIsWrong">Aktuelles Passwort ist falsch</string>
+    <string name="errorCouldNotChangePassword">Das Passwort konnte nicht geändert werden</string>
+    <string name="passwordChangedSuccessfully">Das Passwort wurde geändert</string>
+
+
+    <!-- GENERAL ERROR STRINGS -->
+    <string name="errorSomeFieldsAreEmpty">Es sind nicht alle Felder ausgefüllt</string>
+
+    <string name="errorCouldNotDownloadQuestionnaire">Fragebogen konnte nicht heruntergeladen werden!</string>
+    <string name="errorQuestionnaireCouldNotBeFound">Fragebogen konnte nicht gefunden werden!</string>
+
+
+
+    <!-- SETTINGS-->
+    <string name="settings">Einstellungen</string>
+    <string name="systemDefault">Systemeinstellung</string>
+
+    <string name="userInfo">Userinfo</string>
+    <string name="logout">Ausloggen</string>
+
+    <string name="preference">Präferenzen</string>
+
+    <string name="theme">Theme</string>
+    <string name="light">Hell</string>
+    <string name="dark">Dunkel</string>
+
+    <string name="language">Sprache</string>
+    <string name="english">Englisch</string>
+    <string name="german">Deutsch</string>
+
+    <string name="shuffleType">Mischtyp</string>
+    <string name="shuffleTypeNone">Keiner</string>
+    <string name="shuffleTypeQuestions">Fragen</string>
+    <string name="shuffleTypeAnswers">Antworten</string>
+    <string name="shuffleTypeQuestionsAndAnswers">Fragen und Antworten</string>
+    <string name="shuffleTypeQuestionsAndAnswersAbbr">Q &amp; A</string>
+
+    <string name="preselectedCourseOfStudies">Studiengang vorauswählen</string>
+
+
+    <string name="synchronization">Synchronisation</string>
+    <string name="syncUserData">Userdaten synchronisiren</string>
+    <string name="syncQuestionnaires">Fragebögen synchronisiren</string>
+    <string name="syncCoursesOfStudiesAndFaculties">Fakultäten und Studiengänge synchronisiren</string>
+
+
+    <string name="adminSettings">Admin-Einstellungen</string>
+    <string name="manageUsers">User verwalten</string>
+    <string name="manageFaculties">Fakultäten verwalten</string>
+    <string name="manageCoursesOfStudies">Studiengänge verwalten</string>
+
+
+
+    <!-- CONFIRMATION DIALOG -->
+    <string name="cancel">Abbrechen</string>
+    <string name="confirm">Bestätigen</string>
+
+    <string name="deletionConfirmationTile">Löschung bestätigen</string>
+    <string name="warningFacultyDeletion">Soll die Fakultät wirklich gelöscht werden?</string>
+    <string name="warningCourseOfStudiesDeletion">Soll der Studiengäng wirklich gelöscht werden?</string>
+    <string name="warningUserDeletion">Soll der User wirklich gelöscht werden?</string>
+    <string name="logoutWarningTitle">Logout Warnung</string>
+    <string name="logoutWarning">Ein Logout wird alle lokalen Daten löschen…\nUnsynchronisierte Daten werden dadurch verloren gehen.</string>
+
+
+
+
+    <!-- QUIZ SCREEN STRINGS -->
+    <string name="showSolutions">Lösungen anzeigen</string>
+    <string name="showSolution">Lösung anzeigen</string>
+    <string name="lastUpdated">Letzter Aktualisierungszeitpunkt</string>
+    <string name="correctlyAnswered">Richtig beantwortet</string>
+    <string name="incorrectlyAnswered">Falsch beantwortet</string>
+    <string name="totalQuestions">Fragen</string>
+    <string name="answeredQuestions">Beantwortete Fragen</string>
+    <string name="percentSign">%</string>
+    <string name="answered">beantwortet</string>
+    <string name="performance">Performance</string>
+    <string name="outOfAnswered">%1$s / %2$s beantwortet</string>
+
+    <string name="submit">Absenden</string>
+    <string name="quizResult">QUIZ RESULTAT</string>
+    <string name="yourScore">DEIN ERGEBNIS</string>
+    <string name="retakeQuiz">Nochmal versuchen</string>
+    <string name="outOf">%1$s / %2$s</string>
+
+    <string name="multipleChoiceQuestionInfo">Diese Frage ist multiple choice</string>
+    <string name="singleChoiceQuestionInfo">Diese Frage ist single choice</string>
+
+
+
+
+    <!-- CSV LOADING STRINGS -->
+    <string name="csvLoadConfirmation">CSV - Laden</string>
+    <string name="confirmationLoadCsvFileData">Wenn eine CSV File reingeladen wird, werden alle aktuellen Daten überschrieben.</string>
+    <string name="loadingCsvData">CSV werden reingeladen…</string>
+    <string name="errorWrongFileTypeSelected">Falscher Dateityp ausgewählt. Es werden nur CSV Dateien unterstützt!</string>
+    <string name="errorCouldNotOpenFileException">Datei konnte nicht geöffnet werden!</string>
+    <string name="errorUnknownRowAnnotation">Zeilenbezeichnung %1$s in Zeile %2$s wurde nicht erkannt</string>
+    <string name="errorRowCouldNotBeMapped">Zeile %1$s konnte nicht gemappt werden</string>
+    <string name="errorDocumentIsEmpty">Das Dokument ist leer</string>
+    <string name="errorCouldNotCreateQuestionnaireFromCsv">Fragebogen konnte nicht aus der CSV erstellt werden</string>
+    <string name="errorMissingQuestionnaireHeader">Fragebogen Zeile fehlt</string>
+    <string name="errorMissingQuestionHeaderForRow">Fragen Header fehlt für Zeile %1$s</string>
+    <string name="errorEmptyColumnInRow">Zeile %1$s hat eine leere Spalte!</string>
+    <string name="errorNoCorrectAnswerSelectedForQuestion">Für die Frage in Zeile %1$s wurde keine korrekte Antwort ausgewählt!</string>
+    <string name="errorQuestionIsSingleChoiceAndHasMultipleCorrectAnswers">Frage in Zeile %1$s is single choice aber besitzt mehrere richtige Antworten</string>
+    <string name="successfullyLoadedCsvData">CSV Daten wurden erfolgreich geladen</string>
+
+
+
+    <!-- TRANSITION STRINGS-->
+    <string name="questionClickedTransitionName">questionClickedTransitionName</string>
+
+
+
+    <!-- VOICE SEARCH STRINGS -->
+    <string name="voiceSearchStartTalking">Sprechen Sie los…</string>
+    <string name="voiceSearchIDidNotGetThat">Das habe ich nicht verstanden, versuche es nochmal…</string>
+    <string name="voiceSearchTimeout">Zeitüberschreitung…</string>
+    <string name="voiceSearchAudioError">Fehler bei der Audioaufnahme</string>
+    <string name="voiceSearchInsufficientPermission">Unzureichende Berechtihungen!</string>
+    <string name="voiceSearchSpeechRecognizerNotAvailable">Speech Recognizer ist nicht verfügbar!</string>
 
 </resources>

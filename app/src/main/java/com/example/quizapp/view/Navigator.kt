@@ -10,6 +10,7 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.NavHostFragment
 import com.example.quizapp.MainNavGraphDirections
 import com.example.quizapp.R
+import com.example.quizapp.SettingsNavGraphDirections
 import com.example.quizapp.extensions.initMaterialElevationScale
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
@@ -101,6 +102,10 @@ class Navigator @Inject constructor(
 
     fun navigateToSettingsScreen(){
         navController.navigate(MainNavGraphDirections.actionGlobalSettingsNavGraph())
+    }
+
+    fun navigateToChangePasswordScreen(){
+        navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToDfChangePassword())
     }
 
     fun navigateToLoginScreen() {

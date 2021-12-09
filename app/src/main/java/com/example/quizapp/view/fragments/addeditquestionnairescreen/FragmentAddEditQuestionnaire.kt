@@ -15,7 +15,7 @@ import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.questionnaire.Question
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
-import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
+import com.example.quizapp.utils.CsvDocumentFilePicker
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
@@ -24,10 +24,14 @@ import com.example.quizapp.viewmodel.VmAddEditQuestionnaire
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.AddEditQuestionnaireEvent.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlin.math.pow
 
 @AndroidEntryPoint
 class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnaireBinding>(), PopupMenu.OnMenuItemClickListener {
+
+    @Inject
+    lateinit var picker: CsvDocumentFilePicker
 
     private val vmAddEdit: VmAddEditQuestionnaire by hiltNavDestinationViewModels(R.id.fragmentAddEditQuestionnaire)
 
@@ -136,17 +140,19 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
         setUpdateStringTypeListener(UpdateStringType.QUESTIONNAIRE_SUBJECT, vmAddEdit::onSubjectUpdated)
 
+        setConfirmationTypeListener(vmAddEdit::onCsvLoadingConfirmationReceived)
+
 
         vmAddEdit.coursesOfStudiesStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.infoCard.cosDropDown.text = it.map(CourseOfStudies::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: "-"
         }
 
         vmAddEdit.questionnaireTitleStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.infoCard.titleCard.text = if(it.isBlank()) "-" else it
+            binding.infoCard.titleCard.text = if (it.isBlank()) "-" else it
         }
 
         vmAddEdit.questionnaireSubjectStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.infoCard.subjectCard.text = if(it.isBlank()) "-" else it
+            binding.infoCard.subjectCard.text = if (it.isBlank()) "-" else it
         }
 
         vmAddEdit.questionsWithAnswersStateFlow.collectWhenStarted(viewLifecycleOwner) {
@@ -177,6 +183,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
                 is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringDialog(event.initialValue, event.updateType)
                 is NavigateToAddEditQuestionScreenEvent -> navigator.navigateToAddEditQuestionScreen(event.position, event.questionWithAnswers)
                 is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes, anchorView = binding.btnSave)
+                is ShowMessageSnackBarWithStringEvent -> showSnackBar(event.message, anchorView = binding.btnSave)
                 is ShowQuestionDeletedSnackBarEvent -> showSnackBar(
                     textRes = R.string.questionDeleted,
                     anchorView = binding.btnSave,
@@ -190,13 +197,24 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
                         show()
                     }
                 }
+                HideLoadingDialog -> navigator.popLoadingDialog()
+                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
+                StartCsvDocumentFilePicker -> picker.startFilePicker(
+                    vmAddEdit::onValidCsvFileSelected,
+                    vmAddEdit::onCsvFilePickerResultReceived
+                )
+                is NavigateToConfirmationDialog -> navigator.navigateToConfirmationDialog(event.type)
             }
         }
     }
 
     //TODO -> Clicks implementieren
     override fun onMenuItemClick(item: MenuItem?): Boolean {
-
-        return true
+        return item?.let {
+            when (it.itemId) {
+                R.id.menu_item_add_edit_questionnaire_load_csv -> vmAddEdit.onLoadCsvFilePopupMenuItemClicked()
+            }
+            true
+        } ?: false
     }
 }

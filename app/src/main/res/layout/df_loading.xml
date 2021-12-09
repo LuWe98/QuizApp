@@ -9,8 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/grid_6">
+            android:layout_height="wrap_content">
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:layout_width="90dp"
@@ -32,18 +31,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:id="@+id/tvTitle"
-                android:text="Loading..."
+                tools:text="Loading..."
                 android:background="@drawable/background_round_corners_10dp"
                 android:backgroundTint="@color/transparent"
                 android:gravity="center"
-                app:autoSizeMaxTextSize="17sp"
+                app:autoSizeMaxTextSize="16sp"
                 app:autoSizeMinTextSize="10sp"
                 app:autoSizeTextType="uniform"
                 app:autoSizeStepGranularity="0.25sp"
                 android:maxLines="3"
                 android:textStyle="bold"
-                android:layout_marginVertical="@dimen/grid_4"
-                android:layout_marginHorizontal="@dimen/grid_8"
+                android:layout_marginVertical="@dimen/grid_6"
+                android:layout_marginHorizontal="@dimen/grid_4"
                 android:fontFamily="@font/work_sans_medium"
                 app:layout_constraintTop_toBottomOf="@id/progress"
                 app:layout_constraintStart_toStartOf="parent"

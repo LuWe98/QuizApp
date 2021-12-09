@@ -73,44 +73,16 @@ class KtorClientAuth @Inject constructor(
     private fun updateUserRole(token: String?) {
         if (token == null) return
 
-        runCatching {
-            applicationScope.launch(IO) {
-                JWT.decode(token).getClaim(CLAIM_USER_ROLE).asString().let { roleString ->
-                    preferencesRepository.updateUserRole(Role.valueOf(roleString))
-                }
-            }
-        }
-    }
-
-/*
-    fun registerBasicAuth(auth: Auth) {
-        auth.basic {
-            realm = Constants.REALM
-
-            credentials {
-                preferencesRepository.user.asBasicAuthCredentials
-            }
-
-            sendWithoutRequest { request ->
-                shouldSendWithoutRequest(request.url).also { shouldSendWithoutRequest ->
-                    if (shouldSendWithoutRequest) {
-                        auth.providers.clear()
-                        registerBasicAuth(auth)
+        applicationScope.launch(IO) {
+            JWT.decode(token).getClaim(CLAIM_USER_ROLE).asString().let { roleString ->
+                if(roleString.isNotBlank()) {
+                    runCatching {
+                        Role.valueOf(roleString)
+                    }.onSuccess { role ->
+                        preferencesRepository.updateUserRole(role)
                     }
                 }
             }
         }
     }
-
-    private fun shouldSendWithoutRequest(url: URLBuilder) = url.encodedPath !in URLS_TO_IGNORE
-
-    companion object {
-        private val URLS_TO_IGNORE = listOf(
-            "user/register",
-            "user/login"
-        )
-    }
-
- */
-
 }

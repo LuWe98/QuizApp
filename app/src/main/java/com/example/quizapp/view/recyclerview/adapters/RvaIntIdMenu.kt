@@ -23,12 +23,12 @@ class RvaIntIdMenu : BindingListAdapter<MenuIntIdItem, RviMenuBinding>(MenuIntId
         }
     }
 
-    override fun bindViews(binding: RviMenuBinding, intIdItem: MenuIntIdItem, position: Int) {
+    override fun bindViews(binding: RviMenuBinding, item: MenuIntIdItem, position: Int) {
         binding.apply {
-            title.text = context.getString(intIdItem.titleRes)
-            icon.setImageDrawable(intIdItem.iconRes)
+            title.text = context.getString(item.titleRes)
+            icon.setImageDrawable(item.iconRes)
 
-            if(selectionPredicate.invoke(intIdItem) && selectionColor != null){
+            if(selectionPredicate.invoke(item) && selectionColor != null){
                 root.setCardBackgroundColor(selectionColor!!)
             } else {
                 root.setCardBackgroundColor(getColor(R.color.transparent))

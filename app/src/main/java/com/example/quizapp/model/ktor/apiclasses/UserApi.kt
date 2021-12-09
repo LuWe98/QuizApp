@@ -50,6 +50,11 @@ class UserApi @Inject constructor(
             body = GetPagedAuthorsRequest(limit, page, searchString)
         }
 
+    suspend fun updateUserPassword(newPassword: String) : ChangePasswordResponse =
+        client.post(UserPaths.CHANGE_PASSWORD) {
+            body = ChangePasswordRequest(newPassword)
+        }
+
 
 
     //ADMIN

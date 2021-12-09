@@ -1,14 +1,14 @@
 package com.example.quizapp.viewmodel
 
+import android.app.Application
 import androidx.annotation.StringRes
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.AddEditNavGraphArgs
 import com.example.quizapp.R
-import com.example.quizapp.extensions.div
-import com.example.quizapp.extensions.getMutableStateFlow
-import com.example.quizapp.extensions.launch
+import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
@@ -21,6 +21,10 @@ import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus.*
+import com.example.quizapp.utils.CsvDocumentFilePicker
+import com.example.quizapp.utils.CsvDocumentFilePicker.*
+import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.AddEditQuestionnaireEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +33,7 @@ import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import org.bson.types.ObjectId
@@ -41,8 +46,9 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val localRepository: LocalRepository,
     private val preferencesRepository: PreferencesRepository,
     private val backendRepository: BackendRepository,
-    private val state: SavedStateHandle
-) : ViewModel() {
+    private val state: SavedStateHandle,
+    application: Application
+) : AndroidViewModel(application) {
 
     private val args = AddEditNavGraphArgs.fromSavedStateHandle(state)
 
@@ -286,14 +292,48 @@ class VmAddEditQuestionnaire @Inject constructor(
     }
 
 
+    fun onLoadCsvFilePopupMenuItemClicked() = launch(IO)  {
+        addEditQuestionnaireEventChannel.send(NavigateToConfirmationDialog(ConfirmationType.LoadCsvFileConfirmation))
+    }
+
+    fun onCsvLoadingConfirmationReceived(result: ConfirmationType.LoadCsvFileConfirmation) = launch(IO)  {
+        addEditQuestionnaireEventChannel.send(StartCsvDocumentFilePicker)
+    }
+
+    fun onValidCsvFileSelected() = launch(IO) {
+        addEditQuestionnaireEventChannel.send(ShowLoadingDialog(R.string.loadingCsvData))
+    }
+
+    fun onCsvFilePickerResultReceived(result: CsvDocumentFilePickerResult) = launch(IO) {
+        delay(DfLoading.LOADING_DIALOG_LONG_DISMISS_DELAY)
+        addEditQuestionnaireEventChannel.send(HideLoadingDialog)
+
+        when(result) {
+            is CsvDocumentFilePickerResult.Success -> {
+                onTitleUpdated(result.questionnaire.title)
+                onSubjectUpdated(result.questionnaire.subject)
+                setQuestionWithAnswers(result.qwa)
+                addEditQuestionnaireEventChannel.send(ShowMessageSnackBarEvent(R.string.successfullyLoadedCsvData))
+            }
+            is CsvDocumentFilePickerResult.Error -> {
+                addEditQuestionnaireEventChannel.send(ShowMessageSnackBarWithStringEvent(result.type.getErrorMessage(app)))
+            }
+        }
+    }
+
     sealed class AddEditQuestionnaireEvent {
         object NavigateBackEvent : AddEditQuestionnaireEvent()
         class NavigateToCourseOfStudiesSelector(val courseOfStudiesIds: Array<String>) : AddEditQuestionnaireEvent()
         class NavigateToUpdateStringDialog(val initialValue: String, val updateType: UpdateStringType) : AddEditQuestionnaireEvent()
         class NavigateToAddEditQuestionScreenEvent(val position: Int, val questionWithAnswers: QuestionWithAnswers? = null) : AddEditQuestionnaireEvent()
         class ShowMessageSnackBarEvent(@StringRes val messageRes: Int) : AddEditQuestionnaireEvent()
+        class ShowMessageSnackBarWithStringEvent(val message: String) : AddEditQuestionnaireEvent()
         class ShowQuestionDeletedSnackBarEvent(val questionPosition: Int, val questionWithAnswers: QuestionWithAnswers) : AddEditQuestionnaireEvent()
-        object ShowPopupMenu : AddEditQuestionnaireEvent()
+        object ShowPopupMenu: AddEditQuestionnaireEvent()
+        object StartCsvDocumentFilePicker: AddEditQuestionnaireEvent()
+        class ShowLoadingDialog(@StringRes val messageRes: Int): AddEditQuestionnaireEvent()
+        object HideLoadingDialog: AddEditQuestionnaireEvent()
+        class NavigateToConfirmationDialog(val type: ConfirmationType): AddEditQuestionnaireEvent()
     }
 
     companion object {

@@ -151,6 +151,9 @@
             <action
                     android:id="@+id/action_fragmentSettings_to_fragmentAdminManageFaculties"
                     app:destination="@id/admin_faculty_nav_graph" />
+            <action
+                    android:id="@+id/action_fragmentSettings_to_dfChangePassword"
+                    app:destination="@id/dfChangePassword" />
         </fragment>
 
         <navigation
@@ -250,6 +253,11 @@
                         app:argType="com.example.quizapp.model.databases.mongodb.documents.user.Role[]" />
             </dialog>
         </navigation>
+        <dialog
+                android:id="@+id/dfChangePassword"
+                android:name="com.example.quizapp.view.fragments.dialogs.changepassword.DfChangePassword"
+                android:label="DfChangePassword"
+                tools:layout="@layout/df_change_password"/>
     </navigation>
 
 

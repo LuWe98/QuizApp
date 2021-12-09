@@ -17,6 +17,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.datawrappers.QuizAppLanguage
@@ -26,7 +27,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import java.io.BufferedReader
 import java.io.IOException
+import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(Constants.DATASTORE_NAME)
@@ -123,3 +127,11 @@ val Context.isConnectedToInternet
             else -> false
         }
     }
+
+fun DocumentFile.reader(context: Context) = BufferedReader(
+    InputStreamReader(
+        context.contentResolver.openInputStream(uri), StandardCharsets.UTF_8
+    )
+)
+
+fun DocumentFile.readLines(context: Context) = reader(context).readLines()

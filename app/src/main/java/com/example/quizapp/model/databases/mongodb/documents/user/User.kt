@@ -12,7 +12,7 @@ import org.bson.types.ObjectId
 data class User(
     @BsonId val id: String = ObjectId().toHexString(),
     val userName: String,
-    val password: String,
+    val password: String = "",
     var role: Role,
     var lastModifiedTimestamp : Long
 ) : Parcelable {

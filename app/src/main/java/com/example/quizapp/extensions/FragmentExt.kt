@@ -1,14 +1,18 @@
 package com.example.quizapp.extensions
 
+import android.app.Activity
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -118,6 +122,25 @@ inline fun Fragment.showSnackBar(
 
 
 fun Fragment.isPermissionGranted(permission: String) = requireContext().isPermissionGranted(permission)
+
+fun Fragment.askForPermission(action: (Boolean) -> (Unit)) = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+    action.invoke(granted)
+}
+
+fun Fragment.startDocumentFilePickerResult(action: (DocumentFile?) -> Unit) = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    if(result.resultCode == Activity.RESULT_OK) {
+        result.data?.let { intent ->
+            if (DocumentFile.isDocumentUri(requireContext(), intent.data)) {
+                DocumentFile.fromSingleUri(requireContext(), intent.data!!)?.let { documentFile ->
+                    action.invoke(if(!documentFile.isFile) null else documentFile)
+                    return@registerForActivityResult
+                }
+            }
+            action.invoke(null)
+        }
+    }
+}
+
 
 fun Fragment.getDrawable(@DrawableRes id: Int) = AppCompatResources.getDrawable(requireContext(), id)
 
@@ -282,7 +305,6 @@ inline fun <reified ResultType: ConfirmationType> Fragment.setConfirmationTypeLi
         }
     }
 }
-
 
 
 

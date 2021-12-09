@@ -11,7 +11,6 @@ import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType.*
 import com.example.quizapp.viewmodel.VmQuizActivity
 import com.example.quizapp.viewmodel.VmSettings
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
@@ -49,9 +48,9 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
             userLayout.apply {
                 btnLogout.onClick(vmSettings::onLogoutClicked)
-                btnChangePassword.onClick { }
-                btnRole.onClick { }
-                btnUserName.onClick { }
+                btnChangePassword.onClick(navigator::navigateToChangePasswordScreen)
+//                btnRole.onClick { }
+//                btnUserName.onClick { }
             }
 
             synchronizationLayout.apply {

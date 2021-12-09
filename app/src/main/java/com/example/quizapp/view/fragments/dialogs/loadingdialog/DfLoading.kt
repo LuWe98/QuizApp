@@ -13,6 +13,7 @@ class DfLoading: BindingDialogFragment<DfLoadingBinding>() {
 
     companion object {
         const val LOADING_DIALOG_DISMISS_DELAY = 350L
+        const val LOADING_DIALOG_LONG_DISMISS_DELAY = 500L
     }
 
     private val args: DfLoadingArgs by navArgs()

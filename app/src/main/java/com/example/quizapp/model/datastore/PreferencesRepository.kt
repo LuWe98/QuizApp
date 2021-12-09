@@ -364,6 +364,8 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
     suspend fun getUserId() = userIdFlow.first()
 
+    suspend fun getUserPassword() = userFlow.first().password
+
     suspend fun getOwnAuthorInfo() = userFlow.first().asAuthorInfo
 
     suspend fun updateUserCredentials(user: User) {
@@ -381,6 +383,13 @@ class PreferencesRepository @Inject constructor(context: Context) {
         dataStore.edit { preferences ->
             cachedUser?.apply { role = newRole }
             preferences[USER_ROLE_KEY] = newRole.name.encrypt()
+        }
+    }
+
+    suspend fun updateUserPassword(newPassword: String) {
+        dataStore.edit { preferences ->
+            cachedUser = cachedUser?.copy(password = newPassword)
+            preferences[USER_PASSWORD_KEY] = newPassword.encrypt()
         }
     }
 }

@@ -10,12 +10,18 @@ import androidx.navigation.NavDestination
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.collectWhenStarted
+import com.example.quizapp.extensions.launch
+import com.example.quizapp.extensions.log
 import com.example.quizapp.extensions.showSnackBar
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.datastore.datawrappers.ManageUsersOrderBy
+import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmQuizActivity
 import com.example.quizapp.viewmodel.VmQuizActivity.MainViewModelEvent.NavigateToLoginScreenEvent
 import com.example.quizapp.viewmodel.VmQuizActivity.MainViewModelEvent.ShowMessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.IO
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.math.max
@@ -37,6 +43,9 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 
     private val vmQuizActivity: VmQuizActivity by viewModels()
 
+    @Inject
+    lateinit var backendRepository: BackendRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -44,6 +53,22 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 
         navigator.addOnDestinationChangedListener(this)
         registerObservers()
+
+        launch(IO) {
+            runCatching {
+                backendRepository.getPagedUsersAdmin(
+                    page = 1,
+                    searchString = "",
+                    roles = Role.values().toSet(),
+                    orderBy = ManageUsersOrderBy.USER_NAME,
+                    ascending = true
+                )
+            }.onFailure {
+                log("Failure: $it")
+            }.onSuccess {
+                log("SUCCESS")
+            }
+        }
     }
 
 
@@ -68,9 +93,7 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
     }
 
 
-    override fun recreate() {
-        playFadeOutAnim()
-    }
+    override fun recreate() = playFadeOutAnim()
 
     private fun playFadeInAnim(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) return

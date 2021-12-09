@@ -9,6 +9,6 @@ enum class SyncFacultyAndCourseOfStudiesResultType(
     FACULTY_SYNCED(R.string.onlyFacultiesCouldBeSynced),
     FACULTY_ALREADY_UP_TO_DATE(R.string.yourDataIsAlreadyUpToDate),
     BOTH_SYNCED(R.string.syncedFacultyAndCourseOfStudiesData),
-    BOTH_ALREADY_UP_TO_DATE(R.string.facultyAndCourseOfStudiesDataAlreayUpToDate),
+    BOTH_ALREADY_UP_TO_DATE(R.string.facultyAndCourseOfStudiesDataAlreadyUpToDate),
     SYNC_UNSUCCESSFUL(R.string.errorCouldNotSyncFacultyAndCosData)
 }

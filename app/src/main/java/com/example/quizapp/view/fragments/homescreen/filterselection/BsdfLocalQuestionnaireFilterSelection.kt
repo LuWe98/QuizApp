@@ -14,7 +14,6 @@ import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFrag
 import com.example.quizapp.view.fragments.dialogs.authorselection.local.BsdfLocalAuthorSelection
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
 import com.example.quizapp.view.fragments.dialogs.facultyselection.BsdfFacultySelection
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.viewmodel.VmLocalQuestionnaireFilterSelection
 import com.example.quizapp.viewmodel.VmLocalQuestionnaireFilterSelection.LocalQuestionnaireFilterSelectionEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,7 +68,7 @@ class BsdfLocalQuestionnaireFilterSelection: BindingBottomSheetDialogFragment<Bs
 
         vmFilter.selectedOrderAscendingStateFlow.collectWhenStarted(viewLifecycleOwner) { ascending ->
             binding.apply {
-                tvOrderAscending.setText(if(ascending) R.string.ascending else R.string.descending)
+                tvOrderAscending.setText(if(ascending) R.string.orderAscending else R.string.orderDescending)
                 ivOrderAscending.clearAnimation()
                 ivOrderAscending.animate()
                     .rotation(if(ascending) 0f else 180f)

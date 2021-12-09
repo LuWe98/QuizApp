@@ -17,7 +17,7 @@ enum class LocalQuestionnaireOrderBy(
         iconRes = R.drawable.ic_title
     ),
     PROGRESS(
-        textRes = R.string.progressText,
+        textRes = R.string.orderByProgress,
         iconRes = R.drawable.ic_bar_chart
     ),
     AUTHOR_NAME(
@@ -25,7 +25,7 @@ enum class LocalQuestionnaireOrderBy(
         iconRes = R.drawable.ic_person
     ),
     QUESTION_COUNT(
-        textRes = R.string.questionCount,
+        textRes = R.string.orderByQuestionCount,
         iconRes = R.drawable.ic_question_mark
     ),
     LAST_UPDATED(

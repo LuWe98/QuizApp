@@ -17,43 +17,52 @@ sealed class ConfirmationType(
 ): Parcelable {
 
     companion object {
-        const val DELETE_USER_CONFIRMATION_RESULT_KEY = "deleteUserConfirmationResultKey"
-        const val DELETE_FACULTY_CONFIRMATION_RESULT_KEY = "deleteFacultyConfirmationResultKey"
-        const val DELETE_COURSE_OF_STUDIES_CONFIRMATION_RESULT_KEY = "deleteCourseOfStudiesResultKey"
-        const val LOGOUT_CONFIRMATION_RESULT_KEY = "logoutConfirmationResultKey"
+        const val CONFIRMATION_RESULT_KEY_DELETE_USER = "deleteUserConfirmationResultKey"
+        const val CONFIRMATION_RESULT_KEY_DELETE_FACULTY = "deleteFacultyConfirmationResultKey"
+        const val CONFIRMATION_RESULT_KEY_DELETE_COURSE_OF_STUDIES = "deleteCourseOfStudiesResultKey"
+        const val CONFIRMATION_RESULT_KEY_LOGOUT = "logoutConfirmationResultKey"
+        const val CONFIRMATION_RESULT_KEY_LOAD_CSV_FILE = "loadCsvFileDataConfirmationResultKey"
 
         inline fun <reified ResultType: ConfirmationType> getResultKeyWithResultType() = when(ResultType::class) {
-            DeleteUserConfirmation::class -> DELETE_USER_CONFIRMATION_RESULT_KEY
-            DeleteFacultyConfirmation::class -> DELETE_FACULTY_CONFIRMATION_RESULT_KEY
-            DeleteCourseOfStudiesConfirmation::class -> DELETE_COURSE_OF_STUDIES_CONFIRMATION_RESULT_KEY
-            LogoutConfirmation::class -> LOGOUT_CONFIRMATION_RESULT_KEY
-            else -> throw IllegalStateException("Result key not configured for class '${ResultType::class.simpleName}")
+            DeleteUserConfirmation::class -> CONFIRMATION_RESULT_KEY_DELETE_USER
+            DeleteFacultyConfirmation::class -> CONFIRMATION_RESULT_KEY_DELETE_FACULTY
+            DeleteCourseOfStudiesConfirmation::class -> CONFIRMATION_RESULT_KEY_DELETE_COURSE_OF_STUDIES
+            LogoutConfirmation::class -> CONFIRMATION_RESULT_KEY_LOGOUT
+            LoadCsvFileConfirmation::class -> CONFIRMATION_RESULT_KEY_LOAD_CSV_FILE
+            else -> throw IllegalStateException("Result key not configured for class '${ResultType::class.simpleName}'")
         }
     }
 
     @Parcelize
     data class DeleteUserConfirmation(val user: User): ConfirmationType(
-        resultKey = DELETE_USER_CONFIRMATION_RESULT_KEY,
-        textRes = R.string.warningUserDeletetion
+        resultKey = CONFIRMATION_RESULT_KEY_DELETE_USER,
+        textRes = R.string.warningUserDeletion
     )
 
     @Parcelize
     data class DeleteFacultyConfirmation(val faculty: Faculty): ConfirmationType(
-        resultKey = DELETE_FACULTY_CONFIRMATION_RESULT_KEY,
-        textRes = R.string.warningFacultyDeletetion
+        resultKey = CONFIRMATION_RESULT_KEY_DELETE_FACULTY,
+        textRes = R.string.warningFacultyDeletion
     )
 
     @Parcelize
     data class DeleteCourseOfStudiesConfirmation(val courseOfStudies: CourseOfStudies): ConfirmationType(
-        resultKey = DELETE_COURSE_OF_STUDIES_CONFIRMATION_RESULT_KEY,
-        textRes = R.string.warningCourseOfStudiesDeletetion
+        resultKey = CONFIRMATION_RESULT_KEY_DELETE_COURSE_OF_STUDIES,
+        textRes = R.string.warningCourseOfStudiesDeletion
     )
 
     @Parcelize
     object LogoutConfirmation: ConfirmationType(
-        resultKey = LOGOUT_CONFIRMATION_RESULT_KEY,
+        resultKey = CONFIRMATION_RESULT_KEY_LOGOUT,
         titleRes = R.string.logoutWarningTitle,
         textRes = R.string.logoutWarning,
         positiveButtonRes = R.string.logout
+    )
+
+    @Parcelize
+    object LoadCsvFileConfirmation: ConfirmationType(
+        resultKey = CONFIRMATION_RESULT_KEY_LOAD_CSV_FILE,
+        textRes = R.string.confirmationLoadCsvFileData,
+        titleRes = R.string.csvLoadConfirmation
     )
 }

@@ -19,7 +19,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/appBarLayout"
-                android:background="?colorOnPrimary"
+                android:background="@drawable/background_round_corners_top_15dp"
+                android:backgroundTint="?colorOnPrimary"
                 app:liftOnScroll="true"
                 app:liftOnScrollTargetViewId="@id/nestedScrollView">
 
@@ -37,11 +38,12 @@
                         android:id="@+id/btnBack"
                         android:background="?attr/actionBarItemBackground"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:srcCompat="@drawable/ic_arrow_back"
                         android:padding="6dp"
                         android:elevation="10dp"
-                        android:layout_marginTop="@dimen/grid_3"
+                        android:layout_marginVertical="@dimen/grid_3"
                         android:layout_marginStart="@dimen/grid_1_5" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -76,6 +78,23 @@
                         app:layout_constraintTop_toTopOf="@+id/btnBack"
                         app:layout_constraintBottom_toBottomOf="@+id/btnBack" />
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="100dp"
+                android:clipToPadding="false"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/topLayout"
+                android:id="@+id/nestedScrollView">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
                 <com.google.android.material.progressindicator.CircularProgressIndicator
                         android:layout_width="150dp"
                         android:layout_height="150dp"
@@ -86,11 +105,10 @@
                         app:trackThickness="10dp"
                         app:trackCornerRadius="5dp"
                         tools:progress="60"
-                        android:layout_marginVertical="@dimen/grid_8"
+                        android:layout_marginTop="@dimen/grid_6"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvTitle"
-                        app:layout_constraintBottom_toBottomOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"/>
 
                 <com.google.android.material.progressindicator.CircularProgressIndicator
                         android:layout_width="150dp"
@@ -174,23 +192,6 @@
                         app:layout_constraintStart_toStartOf="@+id/tvQuestionsAnswered"
                         app:layout_constraintEnd_toEndOf="@+id/tvQuestionsAnswered"
                         app:layout_constraintTop_toBottomOf="@+id/tvQuestionsAnswered" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-
-        <androidx.core.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="100dp"
-                android:clipToPadding="false"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/topLayout"
-                android:id="@+id/nestedScrollView">
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
 
                 <include
                         android:layout_width="match_parent"
@@ -198,7 +199,8 @@
                         layout="@layout/fragment_quiz_overview_statistics_card"
                         android:id="@+id/statisticsCard"
                         android:layout_marginHorizontal="@dimen/grid_4"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_marginTop="@dimen/grid_12"
+                        app:layout_constraintTop_toBottomOf="@id/progress" />
 
                 <include
                         android:layout_width="match_parent"

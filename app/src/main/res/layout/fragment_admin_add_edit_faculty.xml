@@ -97,7 +97,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
                                 android:id="@+id/tvInfo"
-                                android:text="Info"
+                                android:text="@string/info"
                                 android:layout_marginStart="@dimen/grid_3"
                                 android:textStyle="bold"
                                 android:fontFamily="@font/work_sans_medium"

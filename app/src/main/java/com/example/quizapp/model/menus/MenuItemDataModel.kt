@@ -46,7 +46,7 @@ object MenuItemDataModel {
             MenuIntIdItem(
                 id = SHARE_QUESTIONNAIRE_ITEM_ID,
                 iconRes = R.drawable.ic_share,
-                titleRes = R.string.shareQuestionnaireWithUser
+                titleRes = R.string.share
             ),
             MenuIntIdItem(
                 id = COPY_QUESTIONNAIRE_ITEM_ID,

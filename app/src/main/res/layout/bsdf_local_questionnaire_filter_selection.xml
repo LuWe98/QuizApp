@@ -133,7 +133,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:background="@drawable/ripple_round_corners_10_dp"
-                        android:text="@string/ascending"
+                        android:text="@string/orderAscending"
                         android:id="@+id/tvOrderAscending"
                         android:gravity="center_vertical"
                         android:textSize="16sp"

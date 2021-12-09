@@ -34,7 +34,8 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
     private fun initViews() {
         binding.etSearchQuery.setText(vmAdmin.searchQuery)
 
-        val facultyList = vmAdmin.getFacultiesWithPlaceholder
+        val facultyList = vmAdmin.getFacultiesWithPlaceholder(requireContext())
+
         vpAdapter = VpaManageCourseOfStudies(this, facultyList)
 
         binding.viewPager.apply {
