@@ -10,29 +10,21 @@ import androidx.navigation.NavDestination
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.collectWhenStarted
-import com.example.quizapp.extensions.launch
-import com.example.quizapp.extensions.log
 import com.example.quizapp.extensions.showSnackBar
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
-import com.example.quizapp.model.datastore.datawrappers.ManageUsersOrderBy
-import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.viewmodel.VmQuizActivity
 import com.example.quizapp.viewmodel.VmQuizActivity.MainViewModelEvent.NavigateToLoginScreenEvent
 import com.example.quizapp.viewmodel.VmQuizActivity.MainViewModelEvent.ShowMessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers.IO
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.math.max
 import kotlin.math.min
 
-//TODO -> CHANGE USERNAME AND PASSWORD IMPLEMENTIEREN
 //TODO -> SHARE QUESTIONNAIRE VLLT MIT LISTE IN EINEM FRAGEBOGEN ÜBERARBEITEN, in der Liste stehen alle User mit denen der geteilt wurde, man kann den dann auch bearbeiten
 //TODO -> THEME COLORS
 //TODO -> RVI_LAYOUTS
 //TODO -> RAW QUERY FÜR MAINSCREEN ANSCHAUEN
-//TODO -> REINLADEN VON EXCEL DATEIEN IM ADD EDIT QUESTIONNAIRE SCREEN
 
 @AndroidEntryPoint
 class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDestinationChangedListener {
@@ -44,31 +36,16 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
     private val vmQuizActivity: VmQuizActivity by viewModels()
 
     @Inject
-    lateinit var backendRepository: BackendRepository
+    lateinit var navigationDispatcher: NavigatorDispatcher
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         playFadeInAnim(savedInstanceState)
 
-        navigator.addOnDestinationChangedListener(this)
+        navController.addOnDestinationChangedListener(this)
         registerObservers()
-
-        launch(IO) {
-            runCatching {
-                backendRepository.getPagedUsersAdmin(
-                    page = 1,
-                    searchString = "",
-                    roles = Role.values().toSet(),
-                    orderBy = ManageUsersOrderBy.USER_NAME,
-                    ascending = true
-                )
-            }.onFailure {
-                log("Failure: $it")
-            }.onSuccess {
-                log("SUCCESS")
-            }
-        }
     }
 
 
@@ -81,12 +58,16 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 
     private fun registerObservers() {
         vmQuizActivity.userFlow.collectWhenStarted(this) {
-            vmQuizActivity.onUserDataChanged(it, navigator.currentDestinationId)
+            vmQuizActivity.onUserDataChanged(it, navController.currentDestination?.id)
+        }
+
+        navigationDispatcher.navigationEventChannelFlow.collectWhenStarted(this) {
+            it.invoke(navController, navHostFragment)
         }
 
         vmQuizActivity.mainViewModelEventChannelFlow.collectWhenStarted(this) { event ->
             when (event) {
-                NavigateToLoginScreenEvent -> navigator.navigateToLoginScreen()
+                NavigateToLoginScreenEvent -> navigator.navigateToAuthScreen()
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
             }
         }

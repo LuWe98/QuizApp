@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentAdminAddEditFacultyBinding
-import com.example.quizapp.extensions.collectWhenStarted
-import com.example.quizapp.extensions.onClick
-import com.example.quizapp.extensions.setUpdateStringTypeListener
-import com.example.quizapp.extensions.showSnackBar
+import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty
@@ -20,6 +17,8 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
     private val vmAddEdit: VmAdminAddEditFaculty by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initMaterialZAxisAnimationForReceiver()
+
         super.onViewCreated(view, savedInstanceState)
         binding.pageTitle.setText(vmAddEdit.pageTitleRes)
         initListeners()

@@ -6,13 +6,12 @@ import androidx.lifecycle.ViewModel
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.extensions.log
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.Degree
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
-import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.Faculty
+import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertCourseOfStudiesResponse.*
 import com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.FragmentAdminAddEditCourseOfStudiesArgs

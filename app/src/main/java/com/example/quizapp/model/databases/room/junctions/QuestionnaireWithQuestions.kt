@@ -4,8 +4,8 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.example.quizapp.extensions.div
 import com.example.quizapp.extensions.generateDiffItemCallback
-import com.example.quizapp.model.databases.room.entities.questionnaire.Question
-import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
+import com.example.quizapp.model.databases.room.entities.Question
+import com.example.quizapp.model.databases.room.entities.Questionnaire
 
 data class QuestionnaireWithQuestions(
     @Embedded

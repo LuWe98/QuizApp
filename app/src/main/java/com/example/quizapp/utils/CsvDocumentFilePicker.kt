@@ -9,9 +9,9 @@ import androidx.fragment.app.Fragment
 import com.example.quizapp.R
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
-import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
-import com.example.quizapp.model.databases.room.entities.questionnaire.Question
-import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
+import com.example.quizapp.model.databases.room.entities.Answer
+import com.example.quizapp.model.databases.room.entities.Question
+import com.example.quizapp.model.databases.room.entities.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.utils.CsvDocumentFilePicker.CsvDocumentFilePickerErrorType.*
 import dagger.hilt.android.scopes.FragmentScoped

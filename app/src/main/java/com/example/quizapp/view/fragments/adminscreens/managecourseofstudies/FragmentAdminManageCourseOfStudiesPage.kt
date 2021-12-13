@@ -8,7 +8,7 @@ import com.example.quizapp.databinding.FragmentAdminManageCourseOfStudiesPageBin
 import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaCourseOfStudies
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies

@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfCourseOfStudiesSelectionPageBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaCourseOfStudiesSelection
 import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection

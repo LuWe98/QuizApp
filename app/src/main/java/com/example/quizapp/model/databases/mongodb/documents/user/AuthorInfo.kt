@@ -3,7 +3,7 @@ package com.example.quizapp.model.databases.mongodb.documents.user
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import com.example.quizapp.extensions.generateDiffItemCallback
-import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
+import com.example.quizapp.model.databases.room.entities.Questionnaire
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 

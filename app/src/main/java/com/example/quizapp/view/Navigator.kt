@@ -10,13 +10,13 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.NavHostFragment
 import com.example.quizapp.MainNavGraphDirections
 import com.example.quizapp.R
-import com.example.quizapp.SettingsNavGraphDirections
 import com.example.quizapp.extensions.initMaterialElevationScale
+import com.example.quizapp.extensions.initMaterialZAxisAnimationForCaller
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
-import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
+import com.example.quizapp.model.databases.room.entities.Faculty
+import com.example.quizapp.model.databases.room.entities.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
@@ -33,29 +33,29 @@ import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirecti
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizResultDirections
 import com.example.quizapp.view.fragments.settingsscreen.FragmentSettingsDirections
-import java.lang.ref.WeakReference
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ActivityRetainedScoped
 class Navigator @Inject constructor(
-    private val navHostWeakReference: WeakReference<NavHostFragment>
+    private val activity: QuizActivity
 ) {
 
     companion object {
         const val FIRST_QUESTION_POSITION = 0
     }
 
-    private val naHostFragment get() = navHostWeakReference.get()!!
-    val navController get() = naHostFragment.navController
+    private val navHostFragment get() = activity.supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
 
-    val currentFragment: Fragment get() = naHostFragment.childFragmentManager.fragments.first()
-    val currentDestination get() = navController.currentDestination
+    private val navController get() = navHostFragment.navController
+
+    private val currentFragment: Fragment get() = navHostFragment.childFragmentManager.fragments.first()
+    private val currentDestination get() = navController.currentDestination
     val currentDestinationId get() = currentDestination?.id
-    val currentBackStackEntry get() = navController.currentBackStackEntry
-    val currentSaveStateHandle get() = currentBackStackEntry!!.savedStateHandle
-    val previousBackStackEntry get() = navController.previousBackStackEntry
-    val previousSaveStateHandle get() = previousBackStackEntry!!.savedStateHandle
+    private val currentBackStackEntry get() = navController.currentBackStackEntry
+    private val currentSaveStateHandle get() = currentBackStackEntry!!.savedStateHandle
+    private val previousBackStackEntry get() = navController.previousBackStackEntry
+    private val previousSaveStateHandle get() = previousBackStackEntry!!.savedStateHandle
 
 
     fun addOnDestinationChangedListener(listener: NavController.OnDestinationChangedListener) {
@@ -66,26 +66,55 @@ class Navigator @Inject constructor(
         navController.navigate(id)
     }
 
-    fun popBackStack() {
-        navController.popBackStack()
+    fun popBackStack() = navController.popBackStack()
+
+    fun navigateToAuthScreen() {
+        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentHome, true).build()
+        navController.navigate(MainNavGraphDirections.actionGlobalGoToAuthScreen(), navOptions)
     }
 
-    //TODO -> Soll auf homescreen gepoppt werden oder nicht ?
+    fun navigateToHomeScreen() {
+        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentAuth, true).build()
+        navController.navigate(FragmentAuthDirections.actionFragmentAuthToFragmentHome(), navOptions)
+    }
+
+    fun navigateToSettingsScreen() {
+        currentFragment.initMaterialZAxisAnimationForCaller()
+        navController.navigate(MainNavGraphDirections.actionGlobalSettingsNavGraph())
+    }
+
+    fun navigateToSearchScreen() {
+        navController.navigate(MainNavGraphDirections.actionGlobalFragmentSearch())
+    }
+
+    fun navigateToAddEditQuestionnaireScreen(completeQuestionnaire: CompleteQuestionnaire? = null, copy: Boolean = false) {
+        navController.navigate(MainNavGraphDirections.actionGlobalAddEditQuestionnaireNavGraph(completeQuestionnaire, copy))
+    }
+
+    fun navigateToAddEditQuestionScreen(questionPosition: Int, questionWithAnswers: QuestionWithAnswers? = null) {
+        currentFragment.initMaterialZAxisAnimationForCaller()
+        navController.navigate(FragmentAddEditQuestionnaireDirections.actionFragmentAddEditQuestionnaireToFragmentAddEditQuestion(questionPosition, questionWithAnswers))
+    }
+
+
+    //QUIZ SCREENS
     fun navigateToQuizScreen(questionnaireId: String) {
         //val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentHome, false).build()
         navController.navigate(MainNavGraphDirections.actionGlobalGoToQuizScreen(questionnaireId))
     }
 
     fun navigateToQuizContainerScreen(questionPosition: Int = FIRST_QUESTION_POSITION, isShowSolutionScreen: Boolean = false) {
+        currentFragment.initMaterialZAxisAnimationForCaller()
         navController.navigate(FragmentQuizOverviewDirections.actionFragmentQuizOverviewToFragmentQuizContainer(questionPosition, isShowSolutionScreen))
     }
 
     fun navigateToQuizResultScreen() {
+        currentFragment.initMaterialZAxisAnimationForCaller()
         val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentQuizOverview, false).build()
         navController.navigate(FragmentQuizQuestionsContainerDirections.actionFragmentQuizContainerToFragmentQuizResult(), navOptions)
     }
 
-    fun navigateToQuizContainerScreenFromResultScreen(showSolutions: Boolean){
+    fun navigateToQuizContainerScreenFromResultScreen(showSolutions: Boolean) {
         val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentQuizOverview, false).build()
         navController.navigate(FragmentQuizResultDirections.actionFragmentQuizResultToFragmentQuizContainer(FIRST_QUESTION_POSITION, showSolutions), navOptions)
     }
@@ -100,152 +129,131 @@ class Navigator @Inject constructor(
     }
 
 
-    fun navigateToSettingsScreen(){
-        navController.navigate(MainNavGraphDirections.actionGlobalSettingsNavGraph())
-    }
-
-    fun navigateToChangePasswordScreen(){
-        navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToDfChangePassword())
-    }
-
-    fun navigateToLoginScreen() {
-        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentHome, true).build()
-        navController.navigate(MainNavGraphDirections.actionGlobalGoToAuthScreen(), navOptions)
-    }
-
-
-    fun navigateToHomeScreen() {
-        val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentAuth, true).build()
-        navController.navigate(FragmentAuthDirections.actionFragmentAuthToFragmentHome(), navOptions)
-    }
-
-    fun navigateToLocalQuestionnaireFilterSelection(){
-        if(currentDestinationId == R.id.bsdfLocalQuestionnaireFilterSelection) return
-        navController.navigate(FragmentHomeDirections.actionGlobalBsdfLocalQuestionnaireFilterSelection())
-    }
-
-
-    fun navigateToSearchScreen() {
-        navController.navigate(MainNavGraphDirections.actionGlobalFragmentSearch())
-    }
-
-    fun navigateToQuestionnaireFilterDialog(
-        selectedCosIds: Array<String>,
-        selectedFacultyIds: Array<String>,
-        selectedAuthors: Array<AuthorInfo>
-    ) {
-        if(currentDestinationId == R.id.bsdfBrowseQuestionnaireFilterSelection) return
-        navController.navigate(MainNavGraphDirections.actionGlobalBsdfBrowseQuestionnaireFilterSelection(selectedCosIds, selectedFacultyIds, selectedAuthors))
-    }
-
-    fun navigateToQuestionnaireMoreOptions(questionnaire: Questionnaire){
-        navController.navigate(MainNavGraphDirections.actionGlobalBsdfQuestionnaireMoreOptions(questionnaire))
-    }
-
-
-    fun navigateToShareQuestionnaireDialog(questionnaireId: String) {
-        navController.navigate(MainNavGraphDirections.actionGlobalDfShareQuestionnaire(questionnaireId))
-    }
-
-
-    fun navigateToAddEditQuestionnaireScreen(completeQuestionnaire: CompleteQuestionnaire? = null, copy: Boolean = false) {
-        navController.navigate(MainNavGraphDirections.actionGlobalAddEditQuestionnaireNavGraph(completeQuestionnaire, copy))
-    }
-
-    fun navigateToAddEditQuestionScreen(questionPosition: Int, questionWithAnswers: QuestionWithAnswers? = null) {
-        navController.navigate(FragmentAddEditQuestionnaireDirections.actionFragmentAddEditQuestionnaireToFragmentAddEditQuestion(questionPosition, questionWithAnswers))
-    }
-
-
-    fun navigateToCourseOfStudiesSelection(selectedCourseOfStudiesIds: Array<String>){
-        if(currentDestinationId == R.id.bsdfCourseOfStudiesSelection) return
+    //SELECTION DESTINATIONS
+    fun navigateToCourseOfStudiesSelection(selectedCourseOfStudiesIds: Array<String>) {
+        if (currentDestinationId == R.id.bsdfCourseOfStudiesSelection) return
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfCourseOfStudiesSelection(selectedCourseOfStudiesIds))
     }
 
     fun navigateToFacultySelection(selectedFacultyIds: Array<String>) {
-        if(currentDestinationId == R.id.bsdfFacultySelection) return
+        if (currentDestinationId == R.id.bsdfFacultySelection) return
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfFacultySelection(selectedFacultyIds))
     }
 
     fun navigateToRemoteAuthorSelection(selectedAuthors: Array<AuthorInfo>) {
-        if(currentDestinationId == R.id.bsdfRemoteAuthorSelection) return
+        if (currentDestinationId == R.id.bsdfRemoteAuthorSelection) return
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfRemoteAuthorSelection(selectedAuthors))
     }
 
     fun navigateToLocalAuthorSelection(selectedAuthorIds: Array<String>) {
-        if(currentDestinationId == R.id.bsdfLocalAuthorSelection) return
+        if (currentDestinationId == R.id.bsdfLocalAuthorSelection) return
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfLocalAuthorSelection(selectedAuthorIds))
     }
 
-    fun navigateToUpdateStringDialog(initialValue: String, updateStringType: UpdateStringType) {
-        if(currentDestinationId == R.id.dfUpdateStringValue) return
-        navController.navigate(MainNavGraphDirections.actionGlobalDfUpdateStringValue(updateStringType, initialValue))
-    }
-
     fun navigateToSelectionDialog(selectionType: SelectionType) {
-        if(currentDestinationId == R.id.bsdfSelection) return
+        if (currentDestinationId == R.id.bsdfSelection) return
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfSelection(selectionType))
     }
 
+    fun navigateToLocalQuestionnaireFilterSelection() {
+        if (currentDestinationId == R.id.bsdfLocalQuestionnaireFilterSelection) return
+        navController.navigate(FragmentHomeDirections.actionGlobalBsdfLocalQuestionnaireFilterSelection())
+    }
+
+    fun navigateToRemoteQuestionnaireFilterSelection(selectedAuthors: Array<AuthorInfo>) {
+        if (currentDestinationId == R.id.bsdfBrowseQuestionnaireFilterSelection) return
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfBrowseQuestionnaireFilterSelection(selectedAuthors))
+    }
+
+
+    //STRING PICKER DIALOG
+    fun navigateToUpdateStringDialog(initialValue: String, updateStringType: UpdateStringType) {
+        if (currentDestinationId == R.id.dfUpdateStringValue) return
+        navController.navigate(MainNavGraphDirections.actionGlobalDfUpdateStringValue(updateStringType, initialValue))
+    }
+
+
+    //CONFIRMATION DIALOG
     fun navigateToConfirmationDialog(confirmationType: ConfirmationType) {
-        if(currentDestinationId == R.id.dfConfirmation) return
+        if (currentDestinationId == R.id.dfConfirmation) return
         navController.navigate(MainNavGraphDirections.actionGlobalDfConfirmation(confirmationType))
     }
 
 
+    //DIALOGS
+    fun navigateToShareQuestionnaireDialog(questionnaireId: String) {
+        navController.navigate(MainNavGraphDirections.actionGlobalDfShareQuestionnaire(questionnaireId))
+    }
+
+    fun navigateToChangePasswordScreen() {
+        navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToDfChangePassword())
+    }
 
 
+    //BOTTOM SHEETS
+    fun navigateToQuestionnaireMoreOptions(questionnaire: Questionnaire) {
+        navController.navigate(MainNavGraphDirections.actionGlobalBsdfQuestionnaireMoreOptions(questionnaire))
+    }
 
-    //ADMIN SCREENS
-    fun navigateToAdminManageUsersScreen(){
+
+    //USER ADMIN SCREENS
+    fun navigateToAdminManageUsersScreen() {
+        currentFragment.initMaterialZAxisAnimationForCaller()
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToFragmentAdminManageUsers())
     }
 
-    fun navigateToChangeUserRoleDialog(user: User){
+    fun navigateToChangeUserRoleDialog(user: User) {
         val navOptions = NavOptions.Builder().setPopUpTo(R.id.fragmentAdminManageUsers, false).build()
         navController.navigate(FragmentAdminManageUsersDirections.actionFragmentAdminManageUsersToBsdfUserRoleChange(user), navOptions)
     }
 
     fun navigateToAdminAddEditUser(user: User? = null) {
+        currentFragment.initMaterialZAxisAnimationForCaller()
         navController.navigate(FragmentAdminManageUsersDirections.actionFragmentAdminManageUsersToFragmentAdminAddEditUser(user))
     }
 
-    fun navigateToAdminManageUsersFilterSelection(selectedRoles: Array<Role>){
-        if(currentDestinationId == R.id.bsdfManageUsersFilterSelection) return
+    fun navigateToAdminManageUsersFilterSelection(selectedRoles: Array<Role>) {
+        if (currentDestinationId == R.id.bsdfManageUsersFilterSelection) return
         navController.navigate(FragmentAdminManageUsersDirections.actionFragmentAdminManageUsersToBsdfManageUsersFilterSelection(selectedRoles))
     }
 
 
-
-
+    //FACULTY ADMIN SCREENS
     fun navigateToAdminManageFacultiesScreen() {
+        currentFragment.initMaterialZAxisAnimationForCaller()
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToFragmentAdminManageFaculties())
     }
 
     fun navigateToAdminAddEditFaculty(faculty: Faculty? = null) {
+        currentFragment.initMaterialZAxisAnimationForCaller()
         navController.navigate(FragmentAdminManageFacultiesDirections.actionFragmentAdminManageFacultiesToFragmentAdminAddEditFaculties(faculty))
     }
 
 
-
-
+    //COURSE OF STUDIES SCREENS
     fun navigateToAdminManageCourseOfStudiesScreen() {
+        currentFragment.initMaterialZAxisAnimationForCaller()
         navController.navigate(FragmentSettingsDirections.actionFragmentSettingsToFragmentAdminManageCourseOfStudies())
     }
 
-    fun navigateToAdminAddEditCourseOfStudies(courseOfStudiesWithFaculties: CourseOfStudiesWithFaculties? = null){
-        navController.navigate(FragmentAdminManageCourseOfStudiesDirections.actionFragmentAdminManageCourseOfStudiesToFragmentAdminAddEditCourseOfStudies(courseOfStudiesWithFaculties))
+    fun navigateToAdminAddEditCourseOfStudies(courseOfStudiesWithFaculties: CourseOfStudiesWithFaculties? = null) {
+        currentFragment.initMaterialZAxisAnimationForCaller()
+        navController.navigate(
+            FragmentAdminManageCourseOfStudiesDirections.actionFragmentAdminManageCourseOfStudiesToFragmentAdminAddEditCourseOfStudies(
+                courseOfStudiesWithFaculties
+            )
+        )
     }
 
 
-
-    fun navigateToLoadingDialog(@StringRes messageRes: Int){
-        if(currentDestinationId == R.id.dfLoading) return
+    //LOADING DIALOG
+    fun navigateToLoadingDialog(@StringRes messageRes: Int) {
+        if (currentDestinationId == R.id.dfLoading) return
         navController.navigate(MainNavGraphDirections.actionGlobalDfLoading(messageRes))
     }
 
-    fun popLoadingDialog(){
-        if(navController.backQueue[navController.backQueue.size -1].destination.id == R.id.dfLoading) {
+    fun popLoadingDialog() {
+        if (navController.backQueue[navController.backQueue.size - 1].destination.id == R.id.dfLoading) {
             navController.popBackStack()
         }
     }

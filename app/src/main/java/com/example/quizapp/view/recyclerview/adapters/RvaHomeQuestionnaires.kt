@@ -2,14 +2,14 @@ package com.example.quizapp.view.recyclerview.adapters
 
 import androidx.core.view.isVisible
 import com.example.quizapp.R
-import com.example.quizapp.databinding.RviQuestionnaireCreatedBinding
+import com.example.quizapp.databinding.RviQuestionnaireBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
+import com.example.quizapp.model.databases.room.entities.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
-class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuestionnaireCreatedBinding>(CompleteQuestionnaire.DIFF_CALLBACK) {
+class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuestionnaireBinding>(CompleteQuestionnaire.DIFF_CALLBACK) {
 
     var onItemClick: ((String) -> (Unit))? = null
 
@@ -17,7 +17,7 @@ class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuest
 
     var onSyncClick: ((String) -> (Unit))? = null
 
-    override fun initListeners(binding: RviQuestionnaireCreatedBinding, vh: BindingListAdapterViewHolder) {
+    override fun initListeners(binding: RviQuestionnaireBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
             root.onClick {
                 getItem(vh).let {
@@ -41,20 +41,23 @@ class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuest
         }
     }
 
-    override fun bindViews(binding: RviQuestionnaireCreatedBinding, item: CompleteQuestionnaire, position: Int) {
+    override fun bindViews(binding: RviQuestionnaireBinding, item: CompleteQuestionnaire, position: Int) {
         binding.apply {
             tvTitle.text = item.questionnaire.title
-            tvDateAndQuestionAmount.text = context.getString(
-                R.string.authorNameDateAndQuestionAmount,
-                item.questionnaire.authorInfo.userName,
-                item.questionnaire.timeStampAsDate,
-                item.questionsAmount.toString()
-            )
-            tvInfo.text = context.getString(R.string.cosAndSubject,
-                item.courseOfStudiesAbbreviations,
-                item.questionnaire.subject)
+            tvDateAndQuestionAmount.text = item.questionnaire.authorInfo.userName
+            tvCos.text = item.courseOfStudiesAbbreviations
+            tvSubject.text = item.questionnaire.subject
 
-            syncProgress.isVisible = item.questionnaire.syncStatus == SyncStatus.SYNCING
+//            tvDateAndQuestionAmount.text = context.getString(
+//                R.string.authorNameDateAndQuestionAmount,
+//                item.questionnaire.authorInfo.userName,
+//                item.questionnaire.timeStampAsDate,
+//                item.questionsAmount.toString()
+//            )
+//            tvInfo.text = context.getString(R.string.cosAndSubject,
+//                item.courseOfStudiesAbbreviations,
+//                item.questionnaire.subject)
+//            syncProgress.isVisible = item.questionnaire.syncStatus == SyncStatus.SYNCING
 
             (item.questionnaire.syncStatus == SyncStatus.SYNCED).let { isSynced ->
                 btnSync.setImageDrawable(if (isSynced) R.drawable.ic_cloud_done else R.drawable.ic_cloud_upload)

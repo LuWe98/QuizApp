@@ -57,6 +57,8 @@
     <string name="answerText">Antworttext</string>
     <string name="clickToWriteCourAnswer">Klicken um die Antwort zu schreiben!</string>
 
+    <string name="shouldPublishQuestionnaire">Fragebogen veröffentlichen?</string>
+
     <string name="errorSelectOneCorrectAnswer">Es wurde keine richtige Antwort ausgewählt!</string>
     <string name="errorQuestionnaireHasNoTitle">Der Fragebogen hat keinen Titel!</string>
     <string name="errorQuestionnaireHasNoSubject">Der Fragebogen hat kein Fach!</string>
@@ -163,7 +165,7 @@
     <string name="errorCouldNotSyncUserData">Userdaten konnten nicht synchronisiert werden</string>
     <string name="errorYourUserDoesNotExistAnymore">Userdaten existieren nicht mehr!/nDu wurdest ausgeloggt!</string>
     <string name="userDataUpdated">Userdaten aktualisiert</string>
-    <string name="userDataIsAlreadyUpToDate">Userdaten bereits auf dem neusten Stand</string>
+    <string name="userDataIsAlreadyUpToDate">Userdaten sind bereits auf dem neusten Stand</string>
     <string name="errorCouldNotSyncFacultyAndCosData">Fakultäten und Studiengänge konnten nicht synchronisiert werden</string>
     <string name="onlyFacultiesCouldBeSynced">Fakultäten wurden synchronisiert</string>
     <string name="syncedFacultyAndCourseOfStudiesData">Fakultäten und Studiengänge wurden synchronisiert!</string>

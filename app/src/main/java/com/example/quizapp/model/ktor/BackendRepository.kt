@@ -5,18 +5,17 @@ import com.example.quizapp.model.databases.dto.CourseOfStudiesIdWithTimeStamp
 import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
 import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.apiclasses.*
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
 import com.example.quizapp.model.databases.QuestionnaireVisibility
-import com.example.quizapp.model.databases.mongodb.documents.faculty.MongoCourseOfStudies
-import com.example.quizapp.model.databases.mongodb.documents.faculty.MongoFaculty
-import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.MongoCourseOfStudies
+import com.example.quizapp.model.databases.mongodb.documents.MongoFaculty
+import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
-import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.model.datastore.datawrappers.BrowsableOrderBy
+import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
 import com.example.quizapp.model.datastore.datawrappers.ManageUsersOrderBy
-import com.example.quizapp.model.ktor.responses.ChangePasswordResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -87,7 +86,7 @@ class BackendRepository @Inject constructor(
         facultyIds: List<String>,
         courseOfStudiesIds: List<String>,
         authorIds: List<String>,
-        browsableOrderBy: BrowsableOrderBy,
+        remoteQuestionnaireOrderBy: RemoteQuestionnaireOrderBy,
         ascending: Boolean
     ) = questionnaireApi.getPagedQuestionnaires(
         limit = limit,
@@ -97,7 +96,7 @@ class BackendRepository @Inject constructor(
         facultyIds = facultyIds,
         courseOfStudiesIds = courseOfStudiesIds,
         authorIds = authorIds,
-        browsableOrderBy = browsableOrderBy,
+        remoteQuestionnaireOrderBy = remoteQuestionnaireOrderBy,
         ascending = ascending
     )
 

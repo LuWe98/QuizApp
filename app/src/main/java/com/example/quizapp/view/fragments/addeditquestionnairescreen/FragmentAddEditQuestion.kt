@@ -27,6 +27,11 @@ class FragmentAddEditQuestion: BindingFragment<FragmentAddEditQuestionBinding>()
 
     private lateinit var rvAdapter: RvaAddEditAnswer
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initMaterialZAxisAnimationForReceiver()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()

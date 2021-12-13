@@ -1,58 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        xmlns:tools="http://schemas.android.com/tools"
         app:cardBackgroundColor="@color/white"
-        app:cardElevation="@dimen/defaultElevation"
-        android:layout_marginTop="@dimen/grid_3"
-        app:cardCornerRadius="7.5dp">
+        app:cardElevation="0dp"
+        android:layout_marginTop="@dimen/grid_2"
+        app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_margin="@dimen/grid_2">
+            android:layout_height="60dp">
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:id="@+id/checkMarkIcon"
-                app:srcCompat="@drawable/ic_person"
-                android:tint="?colorAccent"
-                android:padding="2.5dp"
-                android:layout_marginStart="@dimen/grid_1"
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/startCard"
+                android:background="@drawable/background_round_corners_45dp"
+                android:backgroundTint="?android:colorBackground"
+                android:paddingHorizontal="@dimen/grid_2"
+                android:layout_marginStart="@dimen/grid_2"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    app:srcCompat="@drawable/ic_person"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:padding="3.5dp"
+                    android:id="@+id/roleIcon" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="match_parent"
                 android:id="@+id/tvName"
-                android:gravity="bottom"
-                app:layout_constraintStart_toEndOf="@+id/checkMarkIcon"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintHeight_percent="0.525"
-                tools:text="@string/userName"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_marginStart="@dimen/grid_2"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvRole"
-                android:gravity="top"
+                android:gravity="center_vertical"
+                android:lines="1"
+                android:ellipsize="end"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/checkMarkIcon"
-                tools:text="USER"
-                android:textColor="@color/black"
-                android:textSize="13sp"
-                android:layout_marginStart="@dimen/grid_2"
-                app:layout_constraintTop_toBottomOf="@+id/tvName"
-                app:layout_constraintEnd_toEndOf="@+id/tvName" />
+                app:layout_constraintStart_toEndOf="@+id/startCard"
+                tools:text="Luca"
+                app:autoSizeMaxTextSize="15sp"
+                app:autoSizeMinTextSize="12sp"
+                android:maxLines="1"
+                app:autoSizeStepGranularity="0.25sp"
+                app:autoSizeTextType="uniform"
+                android:fontFamily="@font/work_sans_regular"
+                android:layout_marginStart="@dimen/grid_3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/startCard"
+                app:layout_constraintBottom_toBottomOf="@+id/startCard" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

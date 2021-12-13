@@ -8,8 +8,8 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfLocalQuestionnaireFilterSelectionBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.fragments.dialogs.authorselection.local.BsdfLocalAuthorSelection
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection

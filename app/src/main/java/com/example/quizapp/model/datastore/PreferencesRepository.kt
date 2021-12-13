@@ -32,11 +32,13 @@ class PreferencesRepository @Inject constructor(context: Context) {
         private val SHUFFLE_TYPE_KEY = stringPreferencesKey("shuffleTypePreference")
         private val SHUFFLE_SEED_KEY = longPreferencesKey("shuffleSeedKey")
 
-        private val BROWSABLE_ORDER_BY_KEY = stringPreferencesKey("sortByPreferenceKey")
-        private val BROWSABLE_ASCENDING_ORDER_KEY = booleanPreferencesKey("browsableAscendingKey")
-
         private val MANAGE_USER_ORDER_BY_KEY = stringPreferencesKey("userOrderByKey")
         private val MANAGE_USER_ASCENDING_ORDER_KEY = booleanPreferencesKey("userOrderAscendingKey")
+
+        private val BROWSABLE_ORDER_BY_KEY = stringPreferencesKey("sortByPreferenceKey")
+        private val BROWSABLE_ASCENDING_ORDER_KEY = booleanPreferencesKey("browsableAscendingKey")
+        private val BROWSABLE_QUESTIONNAIRE_FILTER_COS_IDS = stringSetPreferencesKey("browsableQuestionnairesFilterCosIdsKey")
+        private val BROWSABLE_QUESTIONNAIRE_FILTER_FACULTY_IDS = stringSetPreferencesKey("browsableQuestionnairesFilterFacultyIdsKey")
 
         private val LOCAL_QUESTIONNAIRE_ORDER_BY_KEY = stringPreferencesKey("localQuestionnaireOrderByKey")
         private val LOCAL_QUESTIONNAIRE_ASCENDING_ORDER_KEY = booleanPreferencesKey("localQuestionnaireAscendingOrderKey")
@@ -82,7 +84,7 @@ class PreferencesRepository @Inject constructor(context: Context) {
             preferences[LANGUAGE_KEY] = QuizAppLanguage.ENGLISH.name
             preferences[THEME_KEY] = QuizAppTheme.LIGHT.name
             preferences[SHUFFLE_TYPE_KEY] = QuestionnaireShuffleType.NONE.name
-            preferences[BROWSABLE_ORDER_BY_KEY] = BrowsableOrderBy.TITLE.name
+            preferences[BROWSABLE_ORDER_BY_KEY] = RemoteQuestionnaireOrderBy.TITLE.name
             preferences[BROWSABLE_ASCENDING_ORDER_KEY] = true
             preferences[MANAGE_USER_ORDER_BY_KEY] = ManageUsersOrderBy.USER_NAME.name
             preferences[MANAGE_USER_ASCENDING_ORDER_KEY] = true
@@ -152,7 +154,7 @@ class PreferencesRepository @Inject constructor(context: Context) {
 
     //BROWSE QUESTIONNAIRE FILTERS
     val browsableOrderByFlow = dataFlow.map { preferences ->
-        preferences[BROWSABLE_ORDER_BY_KEY]?.let { BrowsableOrderBy.valueOf(it) } ?: BrowsableOrderBy.TITLE
+        preferences[BROWSABLE_ORDER_BY_KEY]?.let { RemoteQuestionnaireOrderBy.valueOf(it) } ?: RemoteQuestionnaireOrderBy.TITLE
     }
 
     suspend fun getBrowsableOrderBy() = browsableOrderByFlow.first()
@@ -165,15 +167,38 @@ class PreferencesRepository @Inject constructor(context: Context) {
     suspend fun getBrowsableAscendingOrder() = browsableAscendingOrderFlow.first()
 
 
+    val browsableCosIdsFlow = dataFlow.map { preferences ->
+        preferences[BROWSABLE_QUESTIONNAIRE_FILTER_COS_IDS] ?: preferredCourseOfStudiesIdFlow.first()
+    }
+
+    suspend fun getBrowsableCosIds() = browsableCosIdsFlow.first()
+
+
+    val browsableFacultyIdsFlow = dataFlow.map { preferences ->
+        preferences[BROWSABLE_QUESTIONNAIRE_FILTER_FACULTY_IDS] ?: emptySet()
+    }
+
+    suspend fun getBrowsableFacultyIds() = browsableFacultyIdsFlow.first()
+
+
     suspend fun updateRemoteFilters(
-        browsableOrderBy: BrowsableOrderBy,
-        ascending: Boolean
-    ) {
+        remoteQuestionnaireOrderBy: RemoteQuestionnaireOrderBy,
+        ascending: Boolean,
+        cosIds: Collection<String>,
+        facultyIds: Collection<String>,
+
+        ) {
         dataStore.edit { preferences ->
-            preferences[BROWSABLE_ORDER_BY_KEY] = browsableOrderBy.name
+            preferences[BROWSABLE_ORDER_BY_KEY] = remoteQuestionnaireOrderBy.name
             preferences[BROWSABLE_ASCENDING_ORDER_KEY] = ascending
+            preferences[BROWSABLE_QUESTIONNAIRE_FILTER_COS_IDS] = cosIds.toSet()
+            preferences[BROWSABLE_QUESTIONNAIRE_FILTER_FACULTY_IDS] = facultyIds.toSet()
         }
     }
+
+
+
+
 
 
     //LOCAL QUESTIONNAIRE FILTERS

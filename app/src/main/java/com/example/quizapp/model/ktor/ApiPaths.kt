@@ -30,9 +30,6 @@ sealed class ApiPaths {
         const val DELETE = "/admin/courseOfStudies/delete"
     }
 
-    object SubjectPaths : ApiPaths() {
-
-    }
 
     object QuestionnairePaths : ApiPaths() {
         const val SYNC = "/questionnaire/sync"

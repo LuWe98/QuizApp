@@ -4,9 +4,9 @@ import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
-import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.Faculty
+import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

@@ -1,6 +1,6 @@
 package com.example.quizapp.model.ktor.requests
 
-import com.example.quizapp.model.datastore.datawrappers.BrowsableOrderBy
+import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -12,6 +12,6 @@ data class GetPagedQuestionnairesRequest(
     val facultyIds: List<String>,
     val courseOfStudiesIds: List<String>,
     val authorIds: List<String>,
-    val browsableOrderBy: BrowsableOrderBy,
+    val remoteQuestionnaireOrderBy: RemoteQuestionnaireOrderBy,
     val ascending: Boolean
 )

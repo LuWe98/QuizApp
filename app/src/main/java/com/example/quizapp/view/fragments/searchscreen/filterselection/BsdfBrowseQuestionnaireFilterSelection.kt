@@ -9,8 +9,8 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfBrowseQuestionnaireFilterSelectionBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.fragments.dialogs.authorselection.remote.BsdfRemoteAuthorSelection
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
@@ -118,7 +118,7 @@ class BsdfBrowseQuestionnaireFilterSelection : BindingBottomSheetDialogFragment<
                 is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
                 is ApplyFilterPreferencesEvent -> {
                     setFragmentResult(QUESTIONNAIRE_FILTER_RESULT_KEY, Bundle().apply {
-                        putParcelable(QUESTIONNAIRE_FILTER_RESULT_KEY, event.resultBrowse)
+                        putParcelableArray(QUESTIONNAIRE_FILTER_RESULT_KEY, event.selectedAuthors)
                     })
                     navigator.popBackStack()
                 }

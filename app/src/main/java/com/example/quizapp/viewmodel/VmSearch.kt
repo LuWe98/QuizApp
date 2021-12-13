@@ -17,20 +17,18 @@ import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.model.datastore.datawrappers.BrowsableOrderBy
+import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
 import com.example.quizapp.model.ktor.responses.GetQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.status.DownloadStatus
 import com.example.quizapp.model.ktor.status.DownloadStatus.*
-import com.example.quizapp.view.fragments.searchscreen.filterselection.BrowseQuestionnaireFilterSelectionResult
 import com.example.quizapp.viewmodel.VmSearch.SearchEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import  com.example.quizapp.extensions.combine
-import com.example.quizapp.model.menus.datawrappers.BrowseQuestionnaireMoreOptionsItem
+import com.example.quizapp.model.selection.datawrappers.BrowseQuestionnaireMoreOptionsItem
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import kotlinx.coroutines.delay
@@ -39,7 +37,7 @@ import kotlinx.coroutines.delay
 class VmSearch @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
-    private val preferencesRepository: PreferencesRepository,
+    preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
 ) : ViewModel() {
 
@@ -55,24 +53,24 @@ class VmSearch @Inject constructor(
 
     private val selectedAuthorsMutableStateFlow = state.getMutableStateFlow(SELECTED_AUTHORS_KEY, emptySet<AuthorInfo>())
 
-    private val selectedFacultyIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_FACULTY_ID_KEY, emptySet<String>())
-
-    private val selectedCourseOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_COURSE_OF_STUDIES_ID_KEY, runBlocking(IO) {
-        if (preferencesRepository.usePreferredCourseOfStudiesForSearch()) {
-            preferencesRepository.getPreferredCourseOfStudiesId()
-        } else {
-            emptySet()
-        }
-    })
+//    private val selectedFacultyIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_FACULTY_ID_KEY, emptySet<String>())
+//
+//    private val selectedCourseOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_COURSE_OF_STUDIES_ID_KEY, runBlocking(IO) {
+//        if (preferencesRepository.usePreferredCourseOfStudiesForSearch()) {
+//            preferencesRepository.getPreferredCourseOfStudiesId()
+//        } else {
+//            emptySet()
+//        }
+//    })
 
     val filteredPagedData = combine(
         preferencesRepository.browsableOrderByFlow,
         preferencesRepository.browsableAscendingOrderFlow,
         searchQueryMutableStateFlow,
         selectedAuthorsMutableStateFlow,
-        selectedCourseOfStudiesIdsMutableStateFlow,
-        selectedFacultyIdsMutableStateFlow,
-    ) { browsableOrderBy: BrowsableOrderBy,
+        preferencesRepository.browsableCosIdsFlow,
+        preferencesRepository.browsableFacultyIdsFlow,
+    ) { remoteQuestionnaireOrderBy: RemoteQuestionnaireOrderBy,
         ascending: Boolean,
         searchQuery: String,
         authors: Set<AuthorInfo>,
@@ -86,7 +84,7 @@ class VmSearch @Inject constructor(
                 facultyIds = facultyIds.toList(),
                 courseOfStudiesIds = cosIds.toList(),
                 authorIds = authors.map(AuthorInfo::userId),
-                browsableOrderBy = browsableOrderBy,
+                remoteQuestionnaireOrderBy = remoteQuestionnaireOrderBy,
                 ascending = ascending
             )
         }
@@ -113,30 +111,16 @@ class VmSearch @Inject constructor(
     fun onFilterButtonClicked() {
         launch(IO) {
             searchEventChannel.send(
-                NavigateToQuestionnaireFilterSelection(
-                    selectedCourseOfStudiesIdsMutableStateFlow.value.toTypedArray(),
-                    selectedFacultyIdsMutableStateFlow.value.toTypedArray(),
-                    selectedAuthorsMutableStateFlow.value.toTypedArray()
-                )
+                NavigateToQuestionnaireFilterSelection(selectedAuthorsMutableStateFlow.value.toTypedArray())
             )
         }
     }
 
-    fun onQuestionnaireFilterUpdateReceived(newFilterBrowse: BrowseQuestionnaireFilterSelectionResult) {
+    fun onQuestionnaireFilterUpdateReceived(selectedAuthors: Array<AuthorInfo>) {
         launch(IO) {
-            newFilterBrowse.selectedAuthors.toSet().let {
+            selectedAuthors.toSet().let {
                 state.set(SELECTED_AUTHORS_KEY, it)
                 selectedAuthorsMutableStateFlow.value = it
-            }
-
-            newFilterBrowse.selectedFacultyIds.toSet().let {
-                state.set(SELECTED_FACULTY_ID_KEY, it)
-                selectedFacultyIdsMutableStateFlow.value = it
-            }
-
-            newFilterBrowse.selectedCosIds.toSet().let {
-                state.set(SELECTED_COURSE_OF_STUDIES_ID_KEY, it)
-                selectedCourseOfStudiesIdsMutableStateFlow.value = it
             }
         }
     }
@@ -236,11 +220,7 @@ class VmSearch @Inject constructor(
 
 
     sealed class SearchEvent {
-        class NavigateToQuestionnaireFilterSelection(
-            val selectedCosIds: Array<String>,
-            val selectedFaculties: Array<String>,
-            val selectedAuthors: Array<AuthorInfo>
-        ) : SearchEvent()
+        class NavigateToQuestionnaireFilterSelection(val selectedAuthors: Array<AuthorInfo>) : SearchEvent()
         object ClearSearchQueryEvent : SearchEvent()
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : SearchEvent()
         class ChangeItemDownloadStatusEvent(val questionnaireId: String, val status: DownloadStatus) : SearchEvent()
@@ -253,7 +233,5 @@ class VmSearch @Inject constructor(
     companion object {
         private const val SEARCH_QUERY_KEY = "searchQueryKey"
         private const val SELECTED_AUTHORS_KEY = "selectedUsersKeys"
-        private const val SELECTED_COURSE_OF_STUDIES_ID_KEY = "selectedCourseOfStudiesKey"
-        private const val SELECTED_FACULTY_ID_KEY = "selectedFacultyIdsKey"
     }
 }

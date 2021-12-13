@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.quizapp.model.databases.dto.CourseOfStudiesIdWithTimeStamp
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 import kotlinx.coroutines.flow.Flow
 

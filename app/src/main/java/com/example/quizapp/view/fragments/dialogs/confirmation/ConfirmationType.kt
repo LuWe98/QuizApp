@@ -4,8 +4,8 @@ import android.os.Parcelable
 import androidx.annotation.StringRes
 import com.example.quizapp.R
 import com.example.quizapp.model.databases.mongodb.documents.user.User
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.Faculty
 import kotlinx.parcelize.Parcelize
 
 sealed class ConfirmationType(

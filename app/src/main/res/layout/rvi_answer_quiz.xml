@@ -17,8 +17,8 @@
             android:layout_margin="@dimen/grid_2">
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:id="@+id/ivRing"
                 app:srcCompat="@drawable/shape_ring"
                 app:layout_constraintStart_toStartOf="parent"
@@ -27,8 +27,8 @@
                 android:layout_marginStart="@dimen/grid_1" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="17.5dp"
-                android:layout_height="17.5dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:id="@+id/ivSelectedIcon"
                 app:srcCompat="@drawable/ic_check"
                 android:tint="?colorAccent"

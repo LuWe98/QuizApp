@@ -4,7 +4,7 @@ import androidx.core.view.isVisible
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviAnswerAddEditNewBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
+import com.example.quizapp.model.databases.room.entities.Answer
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 import com.example.quizapp.viewmodel.VmAddEditQuestion
 

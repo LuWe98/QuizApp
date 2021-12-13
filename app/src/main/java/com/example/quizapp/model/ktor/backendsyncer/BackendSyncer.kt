@@ -1,15 +1,13 @@
 package com.example.quizapp.model.ktor.backendsyncer
 
-import com.example.quizapp.extensions.log
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
-import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
-import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
-import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.*

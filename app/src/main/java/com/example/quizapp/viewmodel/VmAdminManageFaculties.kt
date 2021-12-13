@@ -7,12 +7,12 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.DeleteFacultyResponse.DeleteFacultyResponseType
-import com.example.quizapp.model.menus.datawrappers.FacultyMoreOptionsItem
-import com.example.quizapp.model.menus.datawrappers.FacultyMoreOptionsItem.DELETE
-import com.example.quizapp.model.menus.datawrappers.FacultyMoreOptionsItem.EDIT
+import com.example.quizapp.model.selection.datawrappers.FacultyMoreOptionsItem
+import com.example.quizapp.model.selection.datawrappers.FacultyMoreOptionsItem.DELETE
+import com.example.quizapp.model.selection.datawrappers.FacultyMoreOptionsItem.EDIT
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.dialogs.selection.SelectionType

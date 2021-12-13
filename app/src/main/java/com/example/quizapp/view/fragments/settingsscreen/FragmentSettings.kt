@@ -25,6 +25,8 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initMaterialZAxisAnimationForReceiver()
+
         initListeners()
         initObservers()
     }
@@ -49,8 +51,6 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
             userLayout.apply {
                 btnLogout.onClick(vmSettings::onLogoutClicked)
                 btnChangePassword.onClick(navigator::navigateToChangePasswordScreen)
-//                btnRole.onClick { }
-//                btnUserName.onClick { }
             }
 
             synchronizationLayout.apply {
@@ -106,7 +106,7 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
         vmSettings.fragmentSettingsEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                NavigateToLoginScreen -> navigator.navigateToLoginScreen()
+                NavigateToLoginScreen -> navigator.navigateToAuthScreen()
                 OnLogoutClickedEvent -> navigator.navigateToConfirmationDialog(ConfirmationType.LogoutConfirmation)
                 NavigateToAdminManageUsersScreenEvent -> navigator.navigateToAdminManageUsersScreen()
                 NavigateToAdminManageCoursesOfStudiesScreenEvent -> navigator.navigateToAdminManageCourseOfStudiesScreen()

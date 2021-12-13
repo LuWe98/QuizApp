@@ -5,8 +5,8 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.example.quizapp.extensions.div
 import com.example.quizapp.extensions.generateDiffItemCallback
-import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
-import com.example.quizapp.model.databases.room.entities.questionnaire.Question
+import com.example.quizapp.model.databases.room.entities.Answer
+import com.example.quizapp.model.databases.room.entities.Question
 import io.ktor.util.date.*
 import kotlinx.parcelize.Parcelize
 

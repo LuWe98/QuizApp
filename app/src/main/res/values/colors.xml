@@ -13,6 +13,8 @@
 <!--    <color name="green">#078F45</color>-->
 <!--    <color name="red">#ff24</color>-->
 
+    <color name="niceLightGrey">#FAFAFA</color>
+
 
     <color name="niceWhite">#fcfbfc</color>
     <color name="whiteBackground">#f6f6f6</color>
@@ -46,7 +48,7 @@
     <color name="lightColorSecondaryVariant">#FF018786</color>
     <color name="lightColorOnSecondary">@color/black</color>
     <color name="lightColorAccent">#add8e6</color>
-    <color name="lightBackgroundColor">#f6f6f6</color>
+    <color name="lightBackgroundColor">#FAFAFA</color>
 <!--    <color name="lightBackgroundColor">#f6f6f6</color>-->
 
     <color name="lightColorControlActivated">#89000000</color>

@@ -4,7 +4,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.R
-import com.example.quizapp.databinding.RviUserNewBinding
+import com.example.quizapp.databinding.RviUserBinding
 import com.example.quizapp.extensions.context
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.onLongClick
@@ -13,11 +13,11 @@ import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.view.recyclerview.impl.BindingPagingDataAdapter
 
-class RvaAdminUser : BindingPagingDataAdapter<User, RviUserNewBinding>(User.DIFF_CALLBACK) {
+class RvaAdminUser : BindingPagingDataAdapter<User, RviUserBinding>(User.DIFF_CALLBACK) {
 
     var onItemClicked: ((User) -> Unit)? = null
 
-    override fun initListeners(binding: RviUserNewBinding, vh: BindingPagingDataAdapterViewHolder) {
+    override fun initListeners(binding: RviUserBinding, vh: BindingPagingDataAdapterViewHolder) {
         binding.apply {
             root.onClick {
                 getItem(vh)?.let {
@@ -33,7 +33,7 @@ class RvaAdminUser : BindingPagingDataAdapter<User, RviUserNewBinding>(User.DIFF
         }
     }
 
-    override fun bindViews(binding: RviUserNewBinding, item: User, position: Int) {
+    override fun bindViews(binding: RviUserBinding, item: User, position: Int) {
         binding.apply {
             if(item.lastModifiedTimestamp == UNKNOWN_TIMESTAMP) hideLayout(this)
             else showLayout(this)
@@ -47,7 +47,7 @@ class RvaAdminUser : BindingPagingDataAdapter<User, RviUserNewBinding>(User.DIFF
         }
     }
 
-    private fun hideLayout(binding: RviUserNewBinding) = binding.apply {
+    private fun hideLayout(binding: RviUserBinding) = binding.apply {
         root.isVisible = false
         root.updateLayoutParams<RecyclerView.LayoutParams> {
             height = 0
@@ -55,7 +55,7 @@ class RvaAdminUser : BindingPagingDataAdapter<User, RviUserNewBinding>(User.DIFF
         }
     }
 
-    private fun showLayout(binding: RviUserNewBinding) = binding.apply {
+    private fun showLayout(binding: RviUserBinding) = binding.apply {
         root.isVisible = true
         root.updateLayoutParams<RecyclerView.LayoutParams> {
             height = RecyclerView.LayoutParams.WRAP_CONTENT

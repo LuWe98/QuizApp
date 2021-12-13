@@ -1,12 +1,12 @@
 package com.example.quizapp.view.recyclerview.adapters
 
 import com.example.quizapp.R
-import com.example.quizapp.databinding.RviUserNewBinding
+import com.example.quizapp.databinding.RviUserBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
-class RvaAuthorSelectionLocal : BindingListAdapter<AuthorInfo, RviUserNewBinding>(AuthorInfo.DIFF_CALLBACK) {
+class RvaAuthorSelectionLocal : BindingListAdapter<AuthorInfo, RviUserBinding>(AuthorInfo.DIFF_CALLBACK) {
 
     var onItemClicked: ((AuthorInfo) -> Unit)? = null
 
@@ -14,7 +14,7 @@ class RvaAuthorSelectionLocal : BindingListAdapter<AuthorInfo, RviUserNewBinding
 
     var selectionColor: Int? = null
 
-    override fun initListeners(binding: RviUserNewBinding, vh: BindingListAdapterViewHolder) {
+    override fun initListeners(binding: RviUserBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
             root.onClick {
                 onItemClicked?.invoke(getItem(vh).copy())
@@ -26,7 +26,7 @@ class RvaAuthorSelectionLocal : BindingListAdapter<AuthorInfo, RviUserNewBinding
         }
     }
 
-    override fun bindViews(binding: RviUserNewBinding, item: AuthorInfo, position: Int) {
+    override fun bindViews(binding: RviUserBinding, item: AuthorInfo, position: Int) {
         binding.apply {
             roleIcon.setImageDrawable(R.drawable.ic_person)
             tvName.text = item.userName

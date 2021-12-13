@@ -7,7 +7,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminManageCourseOfStudiesBinding
 import com.example.quizapp.databinding.TabLayoutViewFacultyBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
@@ -26,6 +26,8 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initMaterialZAxisAnimationForReceiver()
+
         initViews()
         initListeners()
         initObservers()

@@ -3,7 +3,7 @@ package com.example.quizapp.view.recyclerview.adapters
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviCourseOfStudiesBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
 class RvaFacultySelection : BindingListAdapter<Faculty, RviCourseOfStudiesBinding>(Faculty.DIFF_CALLBACK) {

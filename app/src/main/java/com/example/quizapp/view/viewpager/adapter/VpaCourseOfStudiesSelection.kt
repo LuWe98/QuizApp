@@ -2,7 +2,7 @@ package com.example.quizapp.view.viewpager.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.FragmentCourseOfStudiesSelectionPage
 
 class VpaCourseOfStudiesSelection(fragment: Fragment, faculties: List<Faculty>) : FragmentStateAdapter(fragment) {

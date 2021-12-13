@@ -37,7 +37,9 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initMaterialZAxisAnimationForReceiver()
         binding.bottomView.isVisible = !vmContainer.isShowSolutionScreen
+
         initVpaAdapter()
         initViewPager()
         initClickListeners()

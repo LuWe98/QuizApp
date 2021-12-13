@@ -2,7 +2,6 @@ package com.example.quizapp.extensions
 
 import android.app.Activity
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.View
@@ -22,7 +21,7 @@ import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.transition.Slide
 import com.example.quizapp.R
-import com.example.quizapp.model.menus.SelectionTypeItemMarker
+import com.example.quizapp.model.selection.SelectionTypeItemMarker
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
@@ -31,6 +30,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialFadeThrough
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -75,14 +75,13 @@ fun Fragment.showSnackBar(
     anchorView: View? = null,
     animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
     duration: Int = Snackbar.LENGTH_LONG
-) =
-    Snackbar.make(viewToAttachTo, text, duration).apply {
-        setAnchorView(anchorView)
-        this.animationMode = animationMode
-        show()
-    }.also {
-        bindingActivity.currentSnackBar = it
-    }
+) = Snackbar.make(viewToAttachTo, text, duration).apply {
+    setAnchorView(anchorView)
+    this.animationMode = animationMode
+    show()
+}.also {
+    bindingActivity.currentSnackBar = it
+}
 
 @MainThread
 fun Fragment.showSnackBar(
@@ -91,8 +90,7 @@ fun Fragment.showSnackBar(
     anchorView: View? = null,
     animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
     duration: Int = Snackbar.LENGTH_LONG
-) =
-    showSnackBar(getString(textRes), viewToAttachTo, anchorView, animationMode, duration)
+) = showSnackBar(getString(textRes), viewToAttachTo, anchorView, animationMode, duration)
 
 @MainThread
 inline fun Fragment.showSnackBar(
@@ -128,11 +126,11 @@ fun Fragment.askForPermission(action: (Boolean) -> (Unit)) = registerForActivity
 }
 
 fun Fragment.startDocumentFilePickerResult(action: (DocumentFile?) -> Unit) = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-    if(result.resultCode == Activity.RESULT_OK) {
+    if (result.resultCode == Activity.RESULT_OK) {
         result.data?.let { intent ->
             if (DocumentFile.isDocumentUri(requireContext(), intent.data)) {
                 DocumentFile.fromSingleUri(requireContext(), intent.data!!)?.let { documentFile ->
-                    action.invoke(if(!documentFile.isFile) null else documentFile)
+                    action.invoke(if (!documentFile.isFile) null else documentFile)
                     return@registerForActivityResult
                 }
             }
@@ -282,7 +280,7 @@ inline fun <reified ResultType : SelectionTypeItemMarker<ResultType>, reified Se
  * Possible update types can be seen in the [UpdateStringType] enum class.
  * It supports user String input which will be returned after confirmation with the given resultKey
  */
-inline fun Fragment.setUpdateStringTypeListener(type: UpdateStringType, crossinline  action: (String) -> (Unit)) {
+inline fun Fragment.setUpdateStringTypeListener(type: UpdateStringType, crossinline action: (String) -> (Unit)) {
     setFragmentResultListener(type.resultKey) { key, bundle ->
         bundle.getString(key)?.let {
             action.invoke(it)
@@ -296,7 +294,7 @@ inline fun Fragment.setUpdateStringTypeListener(type: UpdateStringType, crossinl
  * Possible SelectionTypes can be seen in the [ConfirmationType] sealed class.
  * It supports confirmation of the user with one positive and one negative button.
  */
-inline fun <reified ResultType: ConfirmationType> Fragment.setConfirmationTypeListener(crossinline action: (ResultType) -> (Unit)) {
+inline fun <reified ResultType : ConfirmationType> Fragment.setConfirmationTypeListener(crossinline action: (ResultType) -> (Unit)) {
     ConfirmationType.getResultKeyWithResultType<ResultType>().let { resultKey ->
         setFragmentResultListener(resultKey) { _, bundle ->
             bundle.getParcelable<ResultType>(resultKey)?.let {
@@ -305,7 +303,6 @@ inline fun <reified ResultType: ConfirmationType> Fragment.setConfirmationTypeLi
         }
     }
 }
-
 
 
 
@@ -375,5 +372,25 @@ fun Fragment.initMaterialElevationScale(animationDuration: Long = resources.getI
 
     enterTransition = MaterialElevationScale(true).apply {
         duration = animationDuration
+    }
+}
+
+
+
+fun Fragment.initMaterialZAxisAnimationForCaller() {
+    exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+        duration = resources.getInteger(R.integer.defaultAnimDuration).toLong()
+    }
+    reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+        duration = resources.getInteger(R.integer.defaultAnimDuration).toLong()
+    }
+}
+
+fun Fragment.initMaterialZAxisAnimationForReceiver(){
+    enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
+        duration = resources.getInteger(R.integer.defaultAnimDuration).toLong()
+    }
+    returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
+        duration = resources.getInteger(R.integer.defaultAnimDuration).toLong()
     }
 }

@@ -3,12 +3,12 @@ package com.example.quizapp.model.ktor.apiclasses
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
 import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestionnaire
-import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
+import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.ktor.requests.*
 import com.example.quizapp.model.ktor.responses.*
 import com.example.quizapp.model.ktor.ApiPaths.QuestionnairePaths
-import com.example.quizapp.model.datastore.datawrappers.BrowsableOrderBy
+import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject
@@ -50,7 +50,7 @@ class QuestionnaireApi @Inject constructor(
         facultyIds: List<String>,
         courseOfStudiesIds: List<String>,
         authorIds: List<String>,
-        browsableOrderBy: BrowsableOrderBy,
+        remoteQuestionnaireOrderBy: RemoteQuestionnaireOrderBy,
         ascending: Boolean
     ) : List<BrowsableQuestionnaire> =
         client.post(QuestionnairePaths.PAGED){
@@ -62,7 +62,7 @@ class QuestionnaireApi @Inject constructor(
                 facultyIds = facultyIds,
                 courseOfStudiesIds = courseOfStudiesIds,
                 authorIds = authorIds,
-                browsableOrderBy = browsableOrderBy,
+                remoteQuestionnaireOrderBy = remoteQuestionnaireOrderBy,
                 ascending = ascending
             )
         }

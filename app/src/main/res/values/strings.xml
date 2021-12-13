@@ -67,6 +67,8 @@
     <string name="answerText">Answer text</string>
     <string name="clickToWriteCourAnswer">Click to type your answer!</string>
 
+    <string name="shouldPublishQuestionnaire">Publish questionnaire?</string>
+
     <string name="errorSelectOneCorrectAnswer">No correct answer selected!</string>
     <string name="errorQuestionnaireHasNoTitle">Questionnaire has no title!</string>
     <string name="errorQuestionnaireHasNoSubject">Questionnaire has no subject!</string>

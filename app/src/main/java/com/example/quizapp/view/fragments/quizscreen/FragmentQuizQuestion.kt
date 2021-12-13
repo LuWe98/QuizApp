@@ -9,7 +9,7 @@ import com.example.quizapp.databinding.FragmentQuizQuestionBinding
 import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
-import com.example.quizapp.model.databases.room.entities.questionnaire.Question
+import com.example.quizapp.model.databases.room.entities.Question
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType.SHUFFLED_ANSWERS
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType.SHUFFLED_QUESTIONS_AND_ANSWERS
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment

@@ -105,7 +105,7 @@
                         app:trackThickness="10dp"
                         app:trackCornerRadius="5dp"
                         tools:progress="60"
-                        android:layout_marginTop="@dimen/grid_6"
+                        android:layout_marginTop="@dimen/grid_4"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
@@ -199,7 +199,7 @@
                         layout="@layout/fragment_quiz_overview_statistics_card"
                         android:id="@+id/statisticsCard"
                         android:layout_marginHorizontal="@dimen/grid_4"
-                        android:layout_marginTop="@dimen/grid_12"
+                        android:layout_marginTop="@dimen/grid_8"
                         app:layout_constraintTop_toBottomOf="@id/progress" />
 
                 <include

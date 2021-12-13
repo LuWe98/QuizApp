@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentSearchBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.searchscreen.filterselection.BsdfBrowseQuestionnaireFilterSelection
-import com.example.quizapp.view.fragments.searchscreen.filterselection.BrowseQuestionnaireFilterSelectionResult
 import com.example.quizapp.view.recyclerview.adapters.RvaBrowsableQuestionnaires
 import com.example.quizapp.viewmodel.VmSearch
 import com.example.quizapp.viewmodel.VmSearch.SearchEvent.*
@@ -24,6 +24,8 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initMaterialZAxisAnimationForReceiver()
+
         initViews()
         initListeners()
         initObservers()
@@ -60,7 +62,7 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
 
     private fun initObservers() {
         setFragmentResultListener(BsdfBrowseQuestionnaireFilterSelection.QUESTIONNAIRE_FILTER_RESULT_KEY) { key, bundle ->
-            bundle.getParcelable<BrowseQuestionnaireFilterSelectionResult>(key)?.let(vmSearch::onQuestionnaireFilterUpdateReceived)
+            bundle.getTypedParcelableArray<AuthorInfo>(key)?.let(vmSearch::onQuestionnaireFilterUpdateReceived)
         }
 
         setSelectionTypeWithParsedValueListener(vmSearch::onMoreOptionsItemClickedUpdateReceived)
@@ -79,11 +81,7 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
 
         vmSearch.searchEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                is NavigateToQuestionnaireFilterSelection -> navigator.navigateToQuestionnaireFilterDialog(
-                    event.selectedCosIds,
-                    event.selectedFaculties,
-                    event.selectedAuthors
-                )
+                is NavigateToQuestionnaireFilterSelection -> navigator.navigateToRemoteQuestionnaireFilterSelection(event.selectedAuthors)
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
                 is ChangeItemDownloadStatusEvent -> rvAdapter.changeItemDownloadStatus(event.questionnaireId, event.status)
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)

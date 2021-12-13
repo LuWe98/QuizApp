@@ -2,7 +2,7 @@ package com.example.quizapp.model.databases.room.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
 
 @Dao
 abstract class FacultyCourseOfStudiesRelationDao : BaseDao<FacultyCourseOfStudiesRelation>(FacultyCourseOfStudiesRelation.TABLE_NAME) {

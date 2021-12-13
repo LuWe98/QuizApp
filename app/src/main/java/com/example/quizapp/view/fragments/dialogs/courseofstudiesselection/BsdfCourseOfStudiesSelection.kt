@@ -8,7 +8,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfCourseOfStudiesSelectionBinding
 import com.example.quizapp.databinding.TabLayoutViewFacultyBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.viewpager.adapter.VpaCourseOfStudiesSelection
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer

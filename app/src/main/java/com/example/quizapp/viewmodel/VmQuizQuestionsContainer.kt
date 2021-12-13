@@ -5,8 +5,8 @@ import androidx.lifecycle.*
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
-import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
+import com.example.quizapp.model.databases.room.entities.Answer
+import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType

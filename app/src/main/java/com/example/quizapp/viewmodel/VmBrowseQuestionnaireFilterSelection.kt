@@ -6,12 +6,11 @@ import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.datastore.datawrappers.BrowsableOrderBy
+import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
 import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
-import com.example.quizapp.view.fragments.searchscreen.filterselection.BrowseQuestionnaireFilterSelectionResult
 import com.example.quizapp.view.fragments.searchscreen.filterselection.BsdfBrowseQuestionnaireFilterSelectionArgs
 import com.example.quizapp.viewmodel.VmBrowseQuestionnaireFilterSelection.FilterEvent.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,7 +46,9 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
 
 
 
-    private val selectedCourseOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_COURSE_OF_STUDIES_ID_KEY, args.selectedCourseOfStudiesIds.toSet())
+    private val selectedCourseOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_COURSE_OF_STUDIES_ID_KEY, runBlocking(IO) {
+        preferencesRepository.getBrowsableCosIds()
+    })
 
     val selectedCourseOfStudiesStateFlow = selectedCourseOfStudiesIdsMutableStateFlow.map {
         localRepository.getCoursesOfStudiesWithIds(it)
@@ -57,7 +58,9 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
 
 
 
-    private val selectedFacultyIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_FACULTY_ID_KEY, args.selectedFacultyIds.toSet())
+    private val selectedFacultyIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_FACULTY_ID_KEY, runBlocking(IO) {
+        preferencesRepository.getBrowsableFacultyIds()
+    })
 
     val selectedFacultyStateFlow = selectedFacultyIdsMutableStateFlow.map {
         localRepository.getFacultiesWithIds(it.toList())
@@ -138,9 +141,9 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
         }
     }
 
-    fun onSortByUpdateReceived(browsableOrderBy: BrowsableOrderBy) {
-        state.set(SELECTED_ORDER_BY_KEY, browsableOrderBy)
-        orderByMutableStateFlow.value = browsableOrderBy
+    fun onSortByUpdateReceived(remoteQuestionnaireOrderBy: RemoteQuestionnaireOrderBy) {
+        state.set(SELECTED_ORDER_BY_KEY, remoteQuestionnaireOrderBy)
+        orderByMutableStateFlow.value = remoteQuestionnaireOrderBy
     }
 
     fun onSelectedAuthorsUpdateReceived(selectedAuthors: Array<AuthorInfo>) {
@@ -166,14 +169,14 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
 
     fun onApplyButtonClicked(){
         launch(IO) {
-            preferencesRepository.updateRemoteFilters(orderBy, orderAscending)
-            BrowseQuestionnaireFilterSelectionResult(
+            preferencesRepository.updateRemoteFilters(
+                orderBy,
+                orderAscending,
                 selectedCourseOfStudiesIds,
-                selectedFacultyIds,
-                selectedAuthors
-            ).let {
-                searchFilterEventChannel.send(ApplyFilterPreferencesEvent(it))
-            }
+                selectedFacultyIds
+            )
+
+            searchFilterEventChannel.send(ApplyFilterPreferencesEvent(selectedAuthors.toTypedArray()))
         }
     }
 
@@ -182,7 +185,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
         class NavigateToRemoteAuthorSelectionScreen(val selectedUsers: Array<AuthorInfo>) : FilterEvent()
         class NavigateToCourseOfStudiesSelectionScreen(val selectedCourseOfStudiesIds: Array<String>) : FilterEvent()
         class NavigateToFacultySelectionScreen(val selectedFacultyIds: Array<String>) : FilterEvent()
-        class ApplyFilterPreferencesEvent(val resultBrowse: BrowseQuestionnaireFilterSelectionResult): FilterEvent()
+        class ApplyFilterPreferencesEvent(val selectedAuthors: Array<AuthorInfo>): FilterEvent()
     }
 
     companion object {

@@ -13,7 +13,7 @@ data class User(
     @BsonId val id: String = ObjectId().toHexString(),
     val userName: String,
     val password: String = "",
-    var role: Role,
+    var role: Role = Role.USER,
     var lastModifiedTimestamp : Long
 ) : Parcelable {
 

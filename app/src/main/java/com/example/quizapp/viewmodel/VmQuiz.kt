@@ -10,8 +10,8 @@ import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
-import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
+import com.example.quizapp.model.databases.room.entities.Answer
+import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.datastore.PreferencesRepository

@@ -7,14 +7,14 @@ import androidx.room.Relation
 import com.example.quizapp.extensions.div
 import com.example.quizapp.extensions.generateDiffItemCallback
 import com.example.quizapp.model.databases.DataMapper
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestionnaire
-import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
-import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
-import com.example.quizapp.model.databases.room.entities.questionnaire.Question
-import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
-import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
+import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.Faculty
+import com.example.quizapp.model.databases.room.entities.Answer
+import com.example.quizapp.model.databases.room.entities.Question
+import com.example.quizapp.model.databases.room.entities.Questionnaire
+import com.example.quizapp.model.databases.room.entities.QuestionnaireCourseOfStudiesRelation
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -57,7 +57,7 @@ data class CompleteQuestionnaire(
 
     fun isQuestionAnsweredCorrectly(questionId: String): Boolean = getQuestionWithAnswers(questionId).isAnsweredCorrectly
 
-    val questionsAmount get() = questionsWithAnswers.size
+    private val questionsAmount get() = questionsWithAnswers.size
 
     val hasQuestions get() = questionsAmount != 0
 

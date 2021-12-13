@@ -45,6 +45,8 @@ class ItemBottomTextDropDownLayout constructor(
             }
             typedArray.recycle()
         }
+
+        setBackgroundResource(R.drawable.ripple_round_corners_15_dp)
     }
 
     var title = ""

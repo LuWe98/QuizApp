@@ -9,13 +9,13 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.DeleteCourseOfStudiesResponse.DeleteCourseOfStudiesResponseType
-import com.example.quizapp.model.menus.datawrappers.CosMoreOptionsItem
-import com.example.quizapp.model.menus.datawrappers.CosMoreOptionsItem.*
+import com.example.quizapp.model.selection.datawrappers.CosMoreOptionsItem
+import com.example.quizapp.model.selection.datawrappers.CosMoreOptionsItem.*
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
@@ -50,11 +50,13 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
 
     fun getFacultiesWithPlaceholder(context: Context) = runBlocking(IO) {
         localRepository.allFacultiesFlow.first().toMutableList().apply {
-            add(Faculty(
+            add(
+                Faculty(
                 id = NO_FACULTY_ID,
                 abbreviation = NO_ABBREVIATION,
                 name = context.getString(R.string.coursesOfStudiesWithoutFaculty)
-            ))
+            )
+            )
         }.toList()
     }
 

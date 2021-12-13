@@ -1,23 +1,22 @@
 package com.example.quizapp.model.databases
 
-import com.example.quizapp.model.databases.mongodb.documents.faculty.MongoCourseOfStudies
-import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestion
-import com.example.quizapp.model.databases.mongodb.documents.questionnairefilled.MongoFilledQuestionnaire
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoAnswer
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestion
-import com.example.quizapp.model.databases.mongodb.documents.questionnaire.MongoQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.MongoCourseOfStudies
+import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestion
+import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.MongoAnswer
+import com.example.quizapp.model.databases.mongodb.documents.MongoQuestion
+import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.databases.mongodb.documents.faculty.MongoFaculty
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
-import com.example.quizapp.model.databases.room.entities.questionnaire.Answer
-import com.example.quizapp.model.databases.room.entities.questionnaire.Question
-import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
-import com.example.quizapp.model.databases.room.entities.relations.FacultyCourseOfStudiesRelation
-import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
+import com.example.quizapp.model.databases.mongodb.documents.MongoFaculty
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.Faculty
+import com.example.quizapp.model.databases.room.entities.Answer
+import com.example.quizapp.model.databases.room.entities.Question
+import com.example.quizapp.model.databases.room.entities.Questionnaire
+import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.QuestionnaireCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
-import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 
 /**
  * DataMapper for ROOM and MONGO Entities/Documents

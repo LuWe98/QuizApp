@@ -6,7 +6,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentAdminAddEditCourseOfStudiesBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
+import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.fragments.dialogs.facultyselection.BsdfFacultySelection
 import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
@@ -22,6 +22,8 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initMaterialZAxisAnimationForReceiver()
+
         binding.pageTitle.setText(vmAddEdit.pageTitleRes)
         initListeners()
         initObservers()

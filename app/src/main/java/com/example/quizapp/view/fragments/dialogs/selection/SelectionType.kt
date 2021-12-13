@@ -7,12 +7,12 @@ import com.example.quizapp.model.databases.Degree
 import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.databases.mongodb.documents.user.User
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.faculty.Faculty
-import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.Faculty
+import com.example.quizapp.model.databases.room.entities.Questionnaire
 import com.example.quizapp.model.datastore.datawrappers.*
-import com.example.quizapp.model.menus.*
-import com.example.quizapp.model.menus.datawrappers.*
+import com.example.quizapp.model.selection.*
+import com.example.quizapp.model.selection.datawrappers.*
 import kotlinx.parcelize.Parcelize
 
 sealed class SelectionType(
@@ -49,7 +49,7 @@ sealed class SelectionType(
             CosMoreOptionsItem::class -> SELECTION_COS_MORE_OPTIONS_RESULT_KEY
             FacultyMoreOptionsItem::class -> SELECTION_FACULTY_MORE_OPTIONS_RESULT_KEY
             QuestionnaireMoreOptionsItem::class -> SELECTION_QUESTIONNAIRE_MORE_OPTIONS_RESULT_KEY
-            BrowsableOrderBy::class -> SELECTION_BROWSABLE_ORDER_BY_RESULT_KEY
+            RemoteQuestionnaireOrderBy::class -> SELECTION_BROWSABLE_ORDER_BY_RESULT_KEY
             LocalQuestionnaireOrderBy::class -> SELECTION_LOCAL_QUESTIONNAIRE_ORDER_BY_RESULT_KEY
             ManageUsersOrderBy::class -> SELECTION_MANAGE_USERS_ORDER_BY_RESULT_KEY
             BrowseQuestionnaireMoreOptionsItem::class -> SELECTION_BROWSE_QUESTIONNAIRE_MORE_OPTIONS_RESULT_KEY
@@ -106,9 +106,9 @@ sealed class SelectionType(
     )
 
     @Parcelize
-    data class BrowsableOrderBySelection(val currentValue: BrowsableOrderBy) : SelectionType(
+    data class BrowsableOrderBySelection(val currentValue: RemoteQuestionnaireOrderBy) : SelectionType(
         resultKey = SELECTION_BROWSABLE_ORDER_BY_RESULT_KEY,
-        recyclerViewList = BrowsableOrderBy.values().toList()
+        recyclerViewList = RemoteQuestionnaireOrderBy.values().toList()
     )
 
     @Parcelize

@@ -4,24 +4,24 @@ import android.app.Application
 import androidx.annotation.StringRes
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.AddEditNavGraphArgs
 import com.example.quizapp.R
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.DataMapper
+import com.example.quizapp.model.databases.QuestionnaireVisibility.*
+import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.questionnaire.Question
-import com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire
-import com.example.quizapp.model.databases.room.entities.relations.QuestionnaireCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.Question
+import com.example.quizapp.model.databases.room.entities.Questionnaire
+import com.example.quizapp.model.databases.room.entities.QuestionnaireCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus.*
-import com.example.quizapp.utils.CsvDocumentFilePicker
 import com.example.quizapp.utils.CsvDocumentFilePicker.*
 import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
@@ -65,6 +65,8 @@ class VmAddEditQuestionnaire @Inject constructor(
 
     private val parsedQuestionnaireSubject get() = args.completeQuestionnaire?.questionnaire?.subject ?: ""
 
+    private val parsedQuestionnaireVisibility get() = args.completeQuestionnaire?.questionnaire?.visibility ?: PRIVATE
+
     private val parsedCourseOfStudiesIds
         get() = args.completeQuestionnaire?.allCoursesOfStudies
             ?.map(CourseOfStudies::id)?.toMutableSet()
@@ -77,9 +79,11 @@ class VmAddEditQuestionnaire @Inject constructor(
             ?: emptyList()
 
 
+
     private val addEditQuestionnaireEventChannel = Channel<AddEditQuestionnaireEvent>()
 
     val addEditQuestionnaireEventChannelFlow = addEditQuestionnaireEventChannel.receiveAsFlow()
+
 
 
     private var questionnaireTitleMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_TITLE_KEY, parsedQuestionnaireTitle)
@@ -88,11 +92,14 @@ class VmAddEditQuestionnaire @Inject constructor(
 
     private val questionnaireTitle get() = questionnaireTitleStateFlow.value
 
+
+
     private var questionnaireSubjectMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_SUBJECT_KEY, parsedQuestionnaireSubject)
 
     val questionnaireSubjectStateFlow get() = questionnaireSubjectMutableStateFlow.asStateFlow()
 
     private val questionnaireSubject get() = questionnaireSubjectStateFlow.value
+
 
 
     private var coursesOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(COURSES_OF_STUDIES_IDS_KEY, parsedCourseOfStudiesIds)
@@ -104,11 +111,25 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val courseOfStudiesIds get() = coursesOfStudiesIdsMutableStateFlow.value
 
 
+
     private val questionsWithAnswersMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_QUESTIONS_KEY, parsedQuestionsWithAnswers)
 
     val questionsWithAnswersStateFlow = questionsWithAnswersMutableStateFlow.asStateFlow()
 
     private val questionsWithAnswers get() = questionsWithAnswersMutableStateFlow.value
+
+
+
+    private val publishQuestionMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_PUBLISH_KEY, parsedQuestionnaireVisibility == PUBLIC)
+
+    val  publishQuestionStateFlow = publishQuestionMutableStateFlow.asStateFlow()
+
+    private val publishQuestionnaire get() = publishQuestionMutableStateFlow.value
+
+
+    val userRoleFlow = preferencesRepository.userFlow.map(User::role::get).stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+
 
 
     private fun setCoursesOfStudiesIds(courseOfStudiesIds: List<String>) {
@@ -157,6 +178,13 @@ class VmAddEditQuestionnaire @Inject constructor(
             )
         }
     }
+
+    fun onPublishCardClicked(){
+        state.set(QUESTIONNAIRE_PUBLISH_KEY, !publishQuestionnaire)
+        publishQuestionMutableStateFlow.value = !publishQuestionnaire
+    }
+
+
 
     fun onTitleUpdated(newTitle: String) {
         questionnaireTitleMutableStateFlow.value = newTitle
@@ -232,7 +260,8 @@ class VmAddEditQuestionnaire @Inject constructor(
             title = questionnaireTitle,
             authorInfo = preferencesRepository.user.asAuthorInfo,
             subject = questionnaireSubject,
-            syncStatus = SYNCING
+            syncStatus = SYNCING,
+            visibility = if(publishQuestionnaire) PUBLIC else PRIVATE
         )
 
         val questionsWithAnswersMapped = questionsWithAnswers.mapIndexed { questionIndex, qwa ->
@@ -341,5 +370,6 @@ class VmAddEditQuestionnaire @Inject constructor(
         private const val QUESTIONNAIRE_SUBJECT_KEY = "questionnaireSubjectKey"
         private const val QUESTIONNAIRE_QUESTIONS_KEY = "questionsWithAnswersKey"
         private const val COURSES_OF_STUDIES_IDS_KEY = "coursesOfStudiesIdsKey"
+        private const val QUESTIONNAIRE_PUBLISH_KEY = "questionnairePublishKey"
     }
 }

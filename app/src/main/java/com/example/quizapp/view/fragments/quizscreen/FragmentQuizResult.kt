@@ -25,6 +25,8 @@ class FragmentQuizResult: BindingFragment<FragmentQuizResultBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initMaterialZAxisAnimationForReceiver()
+
         initViews()
         initClickListeners()
         registerObservers()

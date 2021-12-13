@@ -1,7 +1,7 @@
 package com.example.quizapp.model.ktor.apiclasses
 
 import com.example.quizapp.model.databases.dto.CourseOfStudiesIdWithTimeStamp
-import com.example.quizapp.model.databases.mongodb.documents.faculty.MongoCourseOfStudies
+import com.example.quizapp.model.databases.mongodb.documents.MongoCourseOfStudies
 import com.example.quizapp.model.ktor.requests.DeleteCourseOfStudiesRequest
 import com.example.quizapp.model.ktor.requests.InsertCourseOfStudiesRequest
 import com.example.quizapp.model.ktor.requests.SyncCoursesOfStudiesRequest

@@ -6,7 +6,5 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class BrowseQuestionnaireFilterSelectionResult(
-    val selectedCosIds: Set<String>,
-    val selectedFacultyIds: Set<String>,
     val selectedAuthors: Set<AuthorInfo>
 ): Parcelable

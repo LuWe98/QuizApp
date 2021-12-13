@@ -31,7 +31,7 @@
 
         <argument
                 android:name="questionnaire"
-                app:argType="com.example.quizapp.model.databases.room.entities.questionnaire.Questionnaire" />
+                app:argType="com.example.quizapp.model.databases.room.entities.Questionnaire" />
 
     </dialog>
 
@@ -174,7 +174,7 @@
                     android:label="FragmentAdminAddEditFaculties"
                     tools:layout="@layout/fragment_admin_add_edit_faculty">
                 <argument
-                        app:argType="com.example.quizapp.model.databases.room.entities.faculty.Faculty"
+                        app:argType="com.example.quizapp.model.databases.room.entities.Faculty"
                         android:name="faculty"
                         app:nullable="true" />
             </fragment>
@@ -403,14 +403,6 @@
             android:name="com.example.quizapp.view.fragments.searchscreen.filterselection.BsdfBrowseQuestionnaireFilterSelection"
             android:label="BsdfBrowseQuestionnaireFilterSelection"
             tools:layout="@layout/bsdf_browse_questionnaire_filter_selection">
-        <argument
-                android:name="selectedCourseOfStudiesIds"
-                app:argType="string[]" />
-
-        <argument
-                android:name="selectedFacultyIds"
-                app:argType="string[]" />
-
         <argument
                 android:name="selectedAuthors"
                 app:argType="com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo[]" />

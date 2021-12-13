@@ -107,9 +107,9 @@
             <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    tools:listitem="@layout/rvi_user_new"
-                    android:paddingHorizontal="@dimen/grid_6"
-                    android:paddingTop="@dimen/grid_2"
+                    tools:listitem="@layout/rvi_user"
+                    android:paddingHorizontal="@dimen/grid_4"
+                    android:paddingTop="@dimen/grid_1"
                     android:clipToPadding="false"
                     android:paddingBottom="150dp"
                     android:id="@+id/rv" />

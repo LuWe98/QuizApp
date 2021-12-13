@@ -11,8 +11,8 @@ import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.QuestionnaireVisibility.PRIVATE
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.databases.room.entities.sync.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.databases.room.entities.sync.LocallyFilledQuestionnaireToUpload
+import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository

@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.menus.MenuIntIdItem
-import com.example.quizapp.model.menus.MenuItemDataModel
+import com.example.quizapp.model.selection.MenuIntIdItem
+import com.example.quizapp.model.selection.MenuItemDataModel
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire

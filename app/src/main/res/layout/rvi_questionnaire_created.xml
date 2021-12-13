@@ -23,6 +23,7 @@
                 app:indicatorSize="40dp"
                 app:indicatorColor="?colorAccent"
                 app:trackColor="@color/unselectedColor"
+                tools:indicatorColor="@color/green"
                 app:trackThickness="2.75dp"
                 app:trackCornerRadius="50dp"
                 tools:visibility="visible"

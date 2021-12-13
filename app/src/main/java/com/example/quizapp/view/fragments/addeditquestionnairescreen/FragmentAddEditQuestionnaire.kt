@@ -6,14 +6,16 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddEditQuestionnaireBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.room.entities.faculty.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.questionnaire.Question
+import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.Question
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.utils.CsvDocumentFilePicker
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
@@ -39,6 +41,11 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
     private lateinit var bottomSheetBehaviour: BottomSheetBehavior<FrameLayout>
     private lateinit var bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initMaterialZAxisAnimationForReceiver()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -121,6 +128,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
                 cosDropDown.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
                 titleCard.onClick(vmAddEdit::onTitleCardClicked)
                 subjectCard.onClick(vmAddEdit::onSubjectCardClicked)
+                publishLayout.onClick(vmAddEdit::onPublishCardClicked)
             }
 
             bottomSheet.apply {
@@ -154,6 +162,15 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
         vmAddEdit.questionnaireSubjectStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.infoCard.subjectCard.text = if (it.isBlank()) "-" else it
         }
+
+        vmAddEdit.publishQuestionStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.infoCard.publishCheckBox.isChecked = it
+        }
+
+        vmAddEdit.userRoleFlow.collectWhenStarted(viewLifecycleOwner) { role ->
+            binding.infoCard.publishLayout.isVisible = role != Role.USER
+        }
+
 
         vmAddEdit.questionsWithAnswersStateFlow.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitList(it)

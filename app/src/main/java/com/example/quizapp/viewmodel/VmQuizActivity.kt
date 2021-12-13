@@ -9,6 +9,8 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.client.KtorClientAuth
+import com.example.quizapp.view.Navigator
+import com.example.quizapp.view.QuizActivity
 import com.example.quizapp.viewmodel.VmQuizActivity.MainViewModelEvent.NavigateToLoginScreenEvent
 import com.example.quizapp.viewmodel.VmQuizActivity.MainViewModelEvent.ShowMessageSnackBar
 import dagger.hilt.android.lifecycle.HiltViewModel
