@@ -13,7 +13,6 @@ import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmQuiz
 import com.example.quizapp.viewmodel.VmQuizResult
-import com.example.quizapp.viewmodel.VmQuizResult.FragmentQuizResultEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -48,11 +47,6 @@ class FragmentQuizResult: BindingFragment<FragmentQuizResultBinding>() {
 
     private fun registerObservers(){
         vmQuiz.questionStatisticsFlow.collectWhenStarted(viewLifecycleOwner) {
-            if(vmQuizResult.retryQuiz && !it.areAllQuestionsAnswered) {
-                navigator.navigateToQuizContainerScreenFromResultScreen(false)
-                return@collectWhenStarted
-            }
-
             binding.apply {
                 progressCorrect.setProgressWithAnimation(it.correctQuestionsPercentage)
                 progressIncorrect.setProgressWithAnimation(it.incorrectQuestionsPercentageDiff)
@@ -78,10 +72,9 @@ class FragmentQuizResult: BindingFragment<FragmentQuizResultBinding>() {
             }
         }
 
-        vmQuizResult.fragmentQuizResultEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmQuizResult.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event){
-                NavigateBackEvent -> navigator.popBackStack()
-                ShowSolutionsEvent -> navigator.navigateToQuizContainerScreenFromResultScreen(true)
+
             }
         }
     }

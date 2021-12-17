@@ -2,36 +2,33 @@ package com.example.quizapp.viewmodel
 
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.CreateUserResponse.CreateUserResponseType
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
+import com.example.quizapp.view.fragments.resultdispatcher.UpdateStringValueResult
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.manageusers.FragmentAdminAddEditUserArgs
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.viewmodel.VmAdminAddEditUser.*
 import com.example.quizapp.viewmodel.VmAdminAddEditUser.AddEditUserEvent.*
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class VmAdminAddEditUser @Inject constructor(
     private val backendRepository: BackendRepository,
     private val state: SavedStateHandle
-) : ViewModel() {
-
-    private val addEditUserEventChannel = Channel<AddEditUserEvent>()
-
-    val addEditUserEventChannelFlow = addEditUserEventChannel.receiveAsFlow()
-
+) : BaseViewModel<AddEditUserEvent>() {
 
     private val args = FragmentAdminAddEditUserArgs.fromSavedStateHandle(state)
 
@@ -65,80 +62,74 @@ class VmAdminAddEditUser @Inject constructor(
     private val userRole get() = userRoleMutableStateFlow.value
 
 
-    fun onUserNameCardClicked() {
-        launch(IO) {
-            addEditUserEventChannel.send(NavigateToUpdateStringDialog(userName, UpdateStringType.USER_NAME))
-        }
+    fun onUserNameCardClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringValueResult.AddEditUserNameUpdateResult(userName)))
     }
 
-    fun onUserPasswordCardClicked() {
-        launch(IO) {
-            addEditUserEventChannel.send(NavigateToUpdateStringDialog(userPassword, UpdateStringType.USER_PASSWORD))
-        }
+    fun onUserPasswordCardClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringValueResult.AddEditUserPasswordUpdateResult(userPassword)))
     }
 
-    fun onUserRoleCardClicked() {
-        launch(IO) {
-            addEditUserEventChannel.send(NavigateToSelectionScreen(SelectionType.RoleSelection(userRole)))
-        }
+    fun onUserRoleCardClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.RoleSelection(userRole)))
     }
 
 
-    fun onUserNameUpdateReceived(newUserName: String) {
-        newUserName.trim().let { trimmed ->
+    fun onUserNameUpdateResultReceived(result: UpdateStringValueResult.AddEditUserNameUpdateResult) {
+        result.stringValue.trim().let { trimmed ->
             state.set(USER_NAME_KEY, trimmed)
             userNameMutableStateFlow.value = trimmed
         }
     }
 
-    fun onUserPasswordUpdateReceived(newPassword: String) {
-        newPassword.trim().let { trimmed ->
+    fun onUserPasswordUpdateResultReceived(result: UpdateStringValueResult.AddEditUserPasswordUpdateResult) {
+        result.stringValue.trim().let { trimmed ->
             state.set(USER_PASSWORD_KEY, trimmed)
             userPasswordMutableStateFlow.value = trimmed
         }
     }
 
-    fun onUserRoleUpdateReceived(newRole: Role) {
-        state.set(USER_ROLE_KEY, newRole)
-        userRoleMutableStateFlow.value = newRole
+    fun onUserRoleSelectionResultReceived(result: SelectionResult.RoleSelectionResult) {
+        state.set(USER_ROLE_KEY, result.selectedItem)
+        userRoleMutableStateFlow.value =  result.selectedItem
     }
 
+    fun onBackButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(NavigateBack)
+    }
 
     fun onSaveButtonClicked() = launch(IO) {
         if (userName.isEmpty() || userPassword.isEmpty()) {
-            addEditUserEventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
+            eventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
             return@launch
         }
 
-        addEditUserEventChannel.send(ShowLoadingDialog(R.string.savingUser))
+        navigationDispatcher.dispatch(ToLoadingDialog(R.string.savingUser))
 
         runCatching {
             backendRepository.createUser(userName, userPassword, userRole)
         }.also {
             delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            addEditUserEventChannel.send(HideLoadingDialog)
+            navigationDispatcher.dispatch(PopLoadingDialog)
         }.onSuccess { response ->
             if (response.responseType == CreateUserResponseType.CREATION_SUCCESSFUL) {
-                addEditUserEventChannel.send(NavigateBackEvent)
+                navigationDispatcher.dispatch(NavigateBack)
             }
 
-            addEditUserEventChannel.send(ShowMessageSnackBar(
-                response.responseType.messageRes,
-                response.responseType == CreateUserResponseType.CREATION_SUCCESSFUL
-            ))
+            eventChannel.send(
+                ShowMessageSnackBar(
+                    response.responseType.messageRes,
+                    response.responseType == CreateUserResponseType.CREATION_SUCCESSFUL
+                )
+            )
         }.onFailure {
-            addEditUserEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotCreateUser))
+            eventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotCreateUser))
         }
     }
 
 
-    sealed class AddEditUserEvent {
-        class NavigateToUpdateStringDialog(val initialValue: String, val updateType: UpdateStringType) : AddEditUserEvent()
-        class NavigateToSelectionScreen(val selectionType: SelectionType) : AddEditUserEvent()
+    sealed class AddEditUserEvent: ViewModelEventMarker {
         class ShowMessageSnackBar(@StringRes val messageRes: Int, val attachToActivity: Boolean = false) : AddEditUserEvent()
-        object NavigateBackEvent : AddEditUserEvent()
-        class ShowLoadingDialog(@StringRes val messageRes: Int) : AddEditUserEvent()
-        object HideLoadingDialog : AddEditUserEvent()
     }
 
     companion object {

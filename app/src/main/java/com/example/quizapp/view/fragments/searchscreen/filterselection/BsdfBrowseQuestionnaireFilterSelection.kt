@@ -2,8 +2,6 @@ package com.example.quizapp.view.fragments.searchscreen.filterselection
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfBrowseQuestionnaireFilterSelectionBinding
@@ -11,20 +9,13 @@ import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
+import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.fragments.dialogs.authorselection.remote.BsdfRemoteAuthorSelection
-import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
-import com.example.quizapp.view.fragments.dialogs.facultyselection.BsdfFacultySelection
 import com.example.quizapp.viewmodel.VmBrowseQuestionnaireFilterSelection
-import com.example.quizapp.viewmodel.VmBrowseQuestionnaireFilterSelection.FilterEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BsdfBrowseQuestionnaireFilterSelection : BindingBottomSheetDialogFragment<BsdfBrowseQuestionnaireFilterSelectionBinding>() {
-
-    companion object {
-        const val QUESTIONNAIRE_FILTER_RESULT_KEY = "questionnaireFilterResultKey"
-    }
 
     private val vmFilter: VmBrowseQuestionnaireFilterSelection by viewModels()
 
@@ -48,22 +39,14 @@ class BsdfBrowseQuestionnaireFilterSelection : BindingBottomSheetDialogFragment<
     }
 
     private fun initObservers() {
-        setFragmentResultListener(BsdfRemoteAuthorSelection.AUTHOR_SELECTION_RESULT_KEY) { key, bundle ->
-            bundle.apply {
-                classLoader = AuthorInfo::class.java.classLoader
-                getTypedParcelableArray<AuthorInfo>(key)?.let(vmFilter::onSelectedAuthorsUpdateReceived)
-            }
-        }
 
-        setFragmentResultListener(BsdfFacultySelection.FACULTY_SELECTION_RESULT_KEY) { key, bundle ->
-            bundle.getStringArray(key)?.let(vmFilter::onSelectedFacultyUpdateReceived)
-        }
+        setFragmentResultEventListener(vmFilter::onAuthorsSelectionResultReceived)
 
-        setFragmentResultListener(BsdfCourseOfStudiesSelection.COURSE_OF_STUDIES_RESULT_KEY) { key, bundle ->
-            bundle.getStringArray(key)?.let(vmFilter::onSelectedCourseOfStudiesUpdateReceived)
-        }
+        setFragmentResultEventListener(vmFilter::onFacultiesSelectionResultReceived)
 
-        setSelectionTypeListener(vmFilter::onSortByUpdateReceived)
+        setFragmentResultEventListener(vmFilter::onCourseOfStudiesSelectionResultReceived)
+
+        setFragmentResultEventListener(vmFilter::onRemoteOrderBySelectionResultReceived)
 
         vmFilter.orderByStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.apply {
@@ -108,21 +91,6 @@ class BsdfBrowseQuestionnaireFilterSelection : BindingBottomSheetDialogFragment<
                 Faculty::abbreviation,
                 vmFilter::removeFilteredFaculty
             ) { showToast(it.name) }
-        }
-
-        vmFilter.searchFilterEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
-            when (event) {
-                is NavigateToCourseOfStudiesSelectionScreen -> navigator.navigateToCourseOfStudiesSelection(event.selectedCourseOfStudiesIds)
-                is NavigateToFacultySelectionScreen -> navigator.navigateToFacultySelection(event.selectedFacultyIds)
-                is NavigateToRemoteAuthorSelectionScreen -> navigator.navigateToRemoteAuthorSelection(event.selectedUsers)
-                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
-                is ApplyFilterPreferencesEvent -> {
-                    setFragmentResult(QUESTIONNAIRE_FILTER_RESULT_KEY, Bundle().apply {
-                        putParcelableArray(QUESTIONNAIRE_FILTER_RESULT_KEY, event.selectedAuthors)
-                    })
-                    navigator.popBackStack()
-                }
-            }
         }
     }
 }

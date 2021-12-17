@@ -5,7 +5,6 @@ import com.example.quizapp.extensions.div
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.room.dao.*
-import com.example.quizapp.model.databases.room.dao.sync.*
 import com.example.quizapp.model.databases.room.entities.*
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
@@ -14,7 +13,6 @@ import com.example.quizapp.model.databases.room.entities.Question
 import com.example.quizapp.model.databases.room.entities.Questionnaire
 import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.entities.QuestionnaireCourseOfStudiesRelation
-import com.example.quizapp.model.databases.room.entities.sync.*
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.datawrappers.LocalQuestionnaireOrderBy
 import com.example.quizapp.model.ktor.status.SyncStatus

@@ -3,7 +3,6 @@ package com.example.quizapp.view.fragments.dialogs.stringupdatedialog
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.DfUpdateStringValueBinding
 import com.example.quizapp.extensions.*
@@ -26,8 +25,9 @@ class DfUpdateString : BindingDialogFragment<DfUpdateStringValueBinding>() {
         dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         binding.apply {
-            vmUpdate.updateType.apply {
-                editText.setText(vmUpdate.updatedText)
+            editText.setText(vmUpdate.updatedText)
+
+            vmUpdate.resultType.apply {
                 editText.hint = getString(hintRes)
                 editText. setCompoundDrawablesRelative(getDrawable(iconRes), null, null, null)
                 editText.setDrawableSize(50.dp)
@@ -42,13 +42,8 @@ class DfUpdateString : BindingDialogFragment<DfUpdateStringValueBinding>() {
     private fun initListeners(){
         binding.apply {
             editText.onTextChanged(vmUpdate::onEditTextChanged)
-            btnConfirm.onClick {
-                setFragmentResult(vmUpdate.updateType.resultKey, Bundle().apply {
-                    putString(vmUpdate.updateType.resultKey, vmUpdate.updatedText.trim())
-                })
-                navigator.popBackStack()
-            }
-            btnCancel.onClick(navigator::popBackStack)
+            btnConfirm.onClick(vmUpdate::onConfirmButtonClicked)
+            btnCancel.onClick(vmUpdate::onCancelButtonClicked)
         }
     }
 }

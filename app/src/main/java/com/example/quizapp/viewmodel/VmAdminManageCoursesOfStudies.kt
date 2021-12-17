@@ -3,7 +3,6 @@ package com.example.quizapp.viewmodel
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
@@ -11,18 +10,22 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
-import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.DeleteCourseOfStudiesResponse.DeleteCourseOfStudiesResponseType
-import com.example.quizapp.model.selection.datawrappers.CosMoreOptionsItem
-import com.example.quizapp.model.selection.datawrappers.CosMoreOptionsItem.*
-import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.CosMoreOptionsItem.DELETE
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.CosMoreOptionsItem.EDIT
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
-import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent.*
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent
+import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent.ClearSearchQueryEvent
+import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent.ShowMessageSnackBar
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
@@ -33,12 +36,7 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle
-) : ViewModel() {
-
-    private val manageCourseOfStudiesEventChannel = Channel<ManageCourseOfStudiesEvent>()
-
-    val manageCourseOfStudiesEventChannelFlow = manageCourseOfStudiesEventChannel.receiveAsFlow()
-
+) : BaseViewModel<ManageCourseOfStudiesEvent>() {
 
     private val searchQueryMutableStateFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
@@ -47,15 +45,14 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
     val searchQuery get() = searchQueryMutableStateFlow.value
 
 
-
     fun getFacultiesWithPlaceholder(context: Context) = runBlocking(IO) {
         localRepository.allFacultiesFlow.first().toMutableList().apply {
             add(
                 Faculty(
-                id = NO_FACULTY_ID,
-                abbreviation = NO_ABBREVIATION,
-                name = context.getString(R.string.coursesOfStudiesWithoutFaculty)
-            )
+                    id = NO_FACULTY_ID,
+                    abbreviation = NO_ABBREVIATION,
+                    name = context.getString(R.string.coursesOfStudiesWithoutFaculty)
+                )
             )
         }.toList()
     }
@@ -70,44 +67,44 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
 
-    fun onItemClicked(courseOfStudies: CourseOfStudies) {
-        launch(IO) {
-            manageCourseOfStudiesEventChannel.send(NavigateToManageCourseOfStudiesMoreOptionsEvent(courseOfStudies))
-        }
+    fun onItemClicked(courseOfStudies: CourseOfStudies) = launch(IO) {
+        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.CourseOfStudiesMoreOptionsSelection(courseOfStudies)))
     }
 
-    fun onDeleteCourseOfStudiesConfirmed(confirmation: ConfirmationType.DeleteCourseOfStudiesConfirmation) = launch(IO) {
-        manageCourseOfStudiesEventChannel.send(ShowLoadingDialog(R.string.deletingCourseOfStudies))
+    fun onDeleteCourseOfStudiesConfirmationRequestReceived(result: ConfirmationResult.DeleteCourseOfStudiesResult) = launch(IO) {
+        if(!result.confirmed) return@launch
+
+        navigationDispatcher.dispatch(ToLoadingDialog(R.string.deletingCourseOfStudies))
 
         runCatching {
-            backendRepository.deleteCourseOfStudies(confirmation.courseOfStudies.id)
+            backendRepository.deleteCourseOfStudies(result.courseOfStudies.id)
         }.also {
             delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            manageCourseOfStudiesEventChannel.send(HideLoadingDialog)
+            navigationDispatcher.dispatch(PopLoadingDialog)
         }.onSuccess { response ->
             when (response.responseType) {
                 DeleteCourseOfStudiesResponseType.SUCCESSFUL -> {
-                    localRepository.delete(confirmation.courseOfStudies)
-                    manageCourseOfStudiesEventChannel.send(ShowMessageSnackBar(R.string.deletedCourseOfStudies))
+                    localRepository.delete(result.courseOfStudies)
+                    eventChannel.send(ShowMessageSnackBar(R.string.deletedCourseOfStudies))
                 }
                 DeleteCourseOfStudiesResponseType.NOT_ACKNOWLEDGED -> {
-                    manageCourseOfStudiesEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDeleteCourseOfStudies))
+                    eventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDeleteCourseOfStudies))
                 }
             }
         }.onFailure {
-            manageCourseOfStudiesEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDeleteCourseOfStudies))
+            eventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDeleteCourseOfStudies))
         }
     }
 
-    fun onMoreOptionsItemSelected(item: CosMoreOptionsItem, type: SelectionType.CourseOfStudiesMoreOptionsSelection) {
-        launch(IO) {
-            when(item) {
-                EDIT -> {
-                    localRepository.getCourseOfStudiesWithFaculties(type.courseOfStudies.id).let {
-                        manageCourseOfStudiesEventChannel.send(NavigateToAddEditCourseOfStudiesEvent(it))
-                    }
+    fun onCosMoreOptionsSelectionResultReceived(result: SelectionResult.CourseOfStudiesMoreOptionsResult) = launch(IO) {
+        when (result.selectedItem) {
+            EDIT -> {
+                localRepository.getCourseOfStudiesWithFaculties(result.calledOnCourseOfStudies.id).let {
+                    navigationDispatcher.dispatch(FromManageCourseOfStudiesToAddEditCourseOfStudies(it))
                 }
-                DELETE -> manageCourseOfStudiesEventChannel.send(NavigateToConfirmDeletionEvent(type.courseOfStudies))
+            }
+            DELETE -> {
+                navigationDispatcher.dispatch(ToConfirmationDialog(ConfirmationRequestType.DeleteCourseOfStudiesConfirmationRequest(result.calledOnCourseOfStudies)))
             }
         }
     }
@@ -117,23 +114,24 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
         searchQueryMutableStateFlow.value = newQuery
     }
 
-    fun onClearSearchQueryClicked(){
-        if(searchQuery.isNotBlank()) {
-            launch {
-                manageCourseOfStudiesEventChannel.send(ClearSearchQueryEvent)
-            }
+    fun onClearSearchQueryClicked() = launch(IO) {
+        if (searchQuery.isNotBlank()) {
+            eventChannel.send(ClearSearchQueryEvent)
         }
     }
 
+    fun onBackButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(NavigateBack)
+    }
 
-    sealed class ManageCourseOfStudiesEvent {
-        class NavigateToManageCourseOfStudiesMoreOptionsEvent(val courseOfStudies: CourseOfStudies) : ManageCourseOfStudiesEvent()
+    fun onAddCourseOfStudiesButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(FromManageCourseOfStudiesToAddEditCourseOfStudies())
+    }
+
+
+    sealed class ManageCourseOfStudiesEvent: ViewModelEventMarker {
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : ManageCourseOfStudiesEvent()
-        class NavigateToConfirmDeletionEvent(val courseOfStudies: CourseOfStudies): ManageCourseOfStudiesEvent()
-        class NavigateToAddEditCourseOfStudiesEvent(val courseOfStudies: CourseOfStudiesWithFaculties): ManageCourseOfStudiesEvent()
-        object ClearSearchQueryEvent: ManageCourseOfStudiesEvent()
-        class ShowLoadingDialog(@StringRes val messageRes: Int): ManageCourseOfStudiesEvent()
-        object HideLoadingDialog: ManageCourseOfStudiesEvent()
+        object ClearSearchQueryEvent : ManageCourseOfStudiesEvent()
     }
 
     companion object {

@@ -2,7 +2,6 @@ package com.example.quizapp.viewmodel
 
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
@@ -10,18 +9,24 @@ import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.DeleteFacultyResponse.DeleteFacultyResponseType
-import com.example.quizapp.model.selection.datawrappers.FacultyMoreOptionsItem
-import com.example.quizapp.model.selection.datawrappers.FacultyMoreOptionsItem.DELETE
-import com.example.quizapp.model.selection.datawrappers.FacultyMoreOptionsItem.EDIT
-import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.FacultyMoreOptionsItem.DELETE
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.FacultyMoreOptionsItem.EDIT
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
-import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent.*
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent
+import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent.ClearSearchQueryEvent
+import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent.ShowMessageSnackBar
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,12 +34,7 @@ class VmAdminManageFaculties @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle
-) : ViewModel() {
-
-    private val fragmentAdminManageFacultiesEventChannel = Channel<ManageFacultiesEvent>()
-
-    val fragmentAdminManageFacultiesEventChannelFlow = fragmentAdminManageFacultiesEventChannel.receiveAsFlow()
-
+) : BaseViewModel<ManageFacultiesEvent>() {
 
     private val searchQueryMutableStateFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
@@ -48,43 +48,40 @@ class VmAdminManageFaculties @Inject constructor(
     }.distinctUntilChanged()
 
 
-
-    fun onFacultyItemClicked(faculty: Faculty) {
-        launch {
-            fragmentAdminManageFacultiesEventChannel.send(NavigateToSelectionScreen(SelectionType.FacultyMoreOptionsSelection(faculty)))
-        }
+    fun onFacultyItemClicked(faculty: Faculty) = launch(IO) {
+        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.FacultyMoreOptionsSelection(faculty)))
     }
 
 
-    fun onMoreOptionsItemSelected(item: FacultyMoreOptionsItem, type: SelectionType.FacultyMoreOptionsSelection) {
-        launch(IO) {
-            when(item) {
-                EDIT -> fragmentAdminManageFacultiesEventChannel.send(NavigateToAddEditFacultyEvent(type.faculty))
-                DELETE -> fragmentAdminManageFacultiesEventChannel.send(NavigateToDeletionConfirmationEvent(type.faculty))
-            }
+    fun onFacultyMoreOptionsSelectionResultReceived(result: SelectionResult.FacultyMoreOptionsSelectionResult) = launch(IO) {
+        when (result.selectedItem) {
+            EDIT -> navigationDispatcher.dispatch(FromManageFacultiesToAddEditFaulty(result.calledOnFaculty))
+            DELETE -> navigationDispatcher.dispatch(ToConfirmationDialog(ConfirmationRequestType.DeleteFacultyConfirmationRequest(result.calledOnFaculty)))
         }
     }
 
-    fun onDeleteFacultyConfirmed(confirmation: ConfirmationType.DeleteFacultyConfirmation) = launch(IO) {
-        fragmentAdminManageFacultiesEventChannel.send(ShowLoadingDialog(R.string.deletingFaculty))
+    fun onDeleteFacultyConfirmationResultReceived(result: ConfirmationResult.DeleteFacultyConfirmationResult) = launch(IO) {
+        if(!result.confirmed) return@launch
+
+        navigationDispatcher.dispatch(ToLoadingDialog(R.string.deletingFaculty))
 
         runCatching {
-            backendRepository.deleteFaculty(confirmation.faculty.id)
+            backendRepository.deleteFaculty(result.faculty.id)
         }.also {
             delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            fragmentAdminManageFacultiesEventChannel.send(HideLoadingDialog)
+            navigationDispatcher.dispatch(PopLoadingDialog)
         }.onSuccess { response ->
-            when(response.responseType) {
+            when (response.responseType) {
                 DeleteFacultyResponseType.SUCCESSFUL -> {
-                    localRepository.delete(confirmation.faculty)
-                    fragmentAdminManageFacultiesEventChannel.send(ShowMessageSnackBar(R.string.deletedFaculty))
+                    localRepository.delete(result.faculty)
+                    eventChannel.send(ShowMessageSnackBar(R.string.deletedFaculty))
                 }
                 DeleteFacultyResponseType.NOT_ACKNOWLEDGED -> {
-                    fragmentAdminManageFacultiesEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDeleteFaculty))
+                    eventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDeleteFaculty))
                 }
             }
         }.onFailure {
-            fragmentAdminManageFacultiesEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDeleteFaculty))
+            eventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotDeleteFaculty))
         }
     }
 
@@ -94,24 +91,24 @@ class VmAdminManageFaculties @Inject constructor(
         searchQueryMutableStateFlow.value = newQuery
     }
 
-    fun onDeleteSearchClicked(){
-        if(searchQuery.isNotBlank()){
-            launch {
-                fragmentAdminManageFacultiesEventChannel.send(ClearSearchQueryEvent)
-            }
+    fun onDeleteSearchClicked() = launch(IO) {
+        if (searchQuery.isNotBlank()) {
+            eventChannel.send(ClearSearchQueryEvent)
         }
     }
 
+    fun onBackButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(NavigateBack)
+    }
 
-    sealed class ManageFacultiesEvent {
-        object NavigateBack: ManageFacultiesEvent()
-        class NavigateToSelectionScreen(val selectionType: SelectionType): ManageFacultiesEvent()
-        class ShowMessageSnackBar(@StringRes val messageRes: Int): ManageFacultiesEvent()
-        class NavigateToAddEditFacultyEvent(val faculty: Faculty): ManageFacultiesEvent()
-        class NavigateToDeletionConfirmationEvent(val faculty: Faculty): ManageFacultiesEvent()
-        object ClearSearchQueryEvent: ManageFacultiesEvent()
-        class ShowLoadingDialog(@StringRes val messageRes: Int): ManageFacultiesEvent()
-        object HideLoadingDialog: ManageFacultiesEvent()
+    fun onAddFacultyButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(FromManageFacultiesToAddEditFaulty())
+    }
+
+
+    sealed class ManageFacultiesEvent: ViewModelEventMarker {
+        class ShowMessageSnackBar(@StringRes val messageRes: Int) : ManageFacultiesEvent()
+        object ClearSearchQueryEvent : ManageFacultiesEvent()
     }
 
     companion object {

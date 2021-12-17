@@ -17,10 +17,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class BsdfRemoteAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSelectionBinding>() {
 
-    companion object {
-        const val AUTHOR_SELECTION_RESULT_KEY = "remoteAuthorSelectionResultKey"
-    }
-
     private val vmAuthor: VmRemoteAuthorSelection by viewModels()
 
     private lateinit var rvAdapter: RvaAuthorSelectionRemote
@@ -74,14 +70,8 @@ class BsdfRemoteAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSele
             }
         }
 
-        vmAuthor.userCreatorSelectionEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAuthor.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                is SendResultEvent -> {
-                    setFragmentResult(AUTHOR_SELECTION_RESULT_KEY, Bundle().apply {
-                        putParcelableArray(AUTHOR_SELECTION_RESULT_KEY, event.selectedAuthors)
-                    })
-                    navigator.popBackStack()
-                }
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
             }
         }

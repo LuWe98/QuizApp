@@ -2,7 +2,6 @@ package com.example.quizapp.di
 
 import android.content.Context
 import com.example.quizapp.view.Navigator
-import com.example.quizapp.view.NavigatorDispatcher
 import com.example.quizapp.view.QuizActivity
 import dagger.Module
 import dagger.Provides
@@ -19,8 +18,5 @@ object ActivityModule {
 
     @Provides
     fun provideNavigator(quizActivity: QuizActivity) = Navigator(quizActivity)
-
-    @Provides
-    fun provideNavigationDispatcher() = NavigatorDispatcher()
 
 }

@@ -2,19 +2,14 @@ package com.example.quizapp.view.fragments.adminscreens.manageusers
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.setFragmentResultListener
-import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminManageUsersBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.extensions.collectWhenStarted
+import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.fragments.adminscreens.manageusers.filterselection.BsdfManageUsersFilterSelection
-import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.recyclerview.adapters.RvaAdminUser
-import com.example.quizapp.viewmodel.VmAdminAddEditUser
 import com.example.quizapp.viewmodel.VmAdminManageUsers
 import com.example.quizapp.viewmodel.VmAdminManageUsers.ManageUsersEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,20 +49,21 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
 
     private fun initListeners(){
         binding.apply {
-            btnBack.onClick(navigator::popBackStack)
+            btnBack.onClick(vmAdmin::onBackButtonClicked)
             etSearchQuery.onTextChanged(vmAdmin::onSearchQueryChanged)
-            fabAdd.onClick(navigator::navigateToAdminAddEditUser)
+            fabAdd.onClick(vmAdmin::onAddUserButtonClicked)
             btnSearch.onClick(vmAdmin::onClearSearchQueryClicked)
             btnFilter.onClick(vmAdmin::onFilterButtonClicked)
         }
     }
 
     private fun initObservers() {
-        setSelectionTypeWithParsedValueListener(vmAdmin::onMoreOptionsItemSelected)
 
-        setConfirmationTypeListener(vmAdmin::onDeleteUserConfirmed)
+        setFragmentResultEventListener(vmAdmin::onUserMoreOptionsSelectionResultReceived)
 
-        setFragmentResultListener(BsdfManageUsersFilterSelection.SELECTED_ROLES_RESULT_KEY, vmAdmin::onFilterUpdateReceived)
+        setFragmentResultEventListener(vmAdmin::onDeleteUserConfirmationResultReceived)
+
+        setFragmentResultEventListener(vmAdmin::onMangeUsersFilterUpdateReceived)
 
         vmAdmin.filteredPagedDataStateFlow.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitData(lifecycle, it)
@@ -80,18 +76,12 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
             }
         }
 
-        vmAdmin.manageUsersEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAdmin.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 is UpdateUserRoleEvent -> rvAdapter.updateUserRole(event.userId, event.newRole)
                 is HideUserEvent -> rvAdapter.hideUser(event.userId)
                 is ShowUserEvent -> rvAdapter.showUser(event.user)
-                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
-                is NavigateToChangeUserRoleDialogEvent -> navigator.navigateToChangeUserRoleDialog(event.user)
-                is NavigateToDeletionConfirmationEvent -> navigator.navigateToConfirmationDialog(ConfirmationType.DeleteUserConfirmation(event.user))
-                is NavigateToManageUserSelectionEvent -> navigator.navigateToAdminManageUsersFilterSelection(event.selectedRoles)
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
-                HideLoadingDialog -> navigator.popLoadingDialog()
-                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
                 is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes)
             }
         }

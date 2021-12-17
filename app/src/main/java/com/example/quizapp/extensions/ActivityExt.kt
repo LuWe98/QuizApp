@@ -11,6 +11,9 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
+import com.example.quizapp.R
+import com.example.quizapp.view.QuizActivity
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
@@ -124,3 +127,10 @@ inline fun BindingActivity<*>.showSnackBar(
 }.also {
     currentSnackBar = it
 }
+
+
+val QuizActivity.navHostFragment get() : NavHostFragment = supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
+
+val QuizActivity.navController get() = navHostFragment.navController
+
+val NavHostFragment.currentFragment get() : Fragment = childFragmentManager.fragments.first()

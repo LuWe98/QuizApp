@@ -303,13 +303,18 @@
             android:name="com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateString"
             android:label="BsdfUpdateStringValue"
             tools:layout="@layout/df_update_string_value">
+
         <argument
-                android:name="updateType"
-                app:argType="com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType" />
-        <argument
-                android:name="initialValue"
-                app:argType="string" />
+            android:name="resultType"
+            app:argType="com.example.quizapp.view.fragments.resultdispatcher.UpdateStringValueResult"/>
     </dialog>
+
+<!--    <argument-->
+<!--            android:name="updateType"-->
+<!--            app:argType="com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringType" />-->
+<!--    <argument-->
+<!--            android:name="initialValue"-->
+<!--            app:argType="string" />-->
 
 
     <!--GLOBAL ACTIONS-->
@@ -361,7 +366,7 @@
             android:label="BsdfSelection"
             tools:layout="@layout/bsdf_selection">
         <argument
-                app:argType="com.example.quizapp.view.fragments.dialogs.selection.SelectionType"
+                app:argType="com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType"
                 android:name="selectionType" />
     </dialog>
 
@@ -377,7 +382,7 @@
             android:label="DfConfirmation"
             tools:layout="@layout/df_confirmation">
         <argument
-                app:argType="com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType"
+                app:argType="com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType"
                 android:name="confirmationType" />
     </dialog>
 

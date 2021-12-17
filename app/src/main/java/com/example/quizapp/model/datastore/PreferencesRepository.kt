@@ -22,7 +22,9 @@ import javax.inject.Singleton
 import kotlin.random.Random
 
 @Singleton
-class PreferencesRepository @Inject constructor(context: Context) {
+class PreferencesRepository @Inject constructor(
+    context: Context
+) {
 
     private val dataStore: DataStore<Preferences> = context.dataStore
 

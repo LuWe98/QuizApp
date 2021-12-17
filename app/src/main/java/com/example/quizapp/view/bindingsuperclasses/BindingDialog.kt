@@ -7,6 +7,7 @@ import androidx.viewbinding.ViewBinding
 import com.example.quizapp.R
 import com.example.quizapp.extensions.log
 import com.example.quizapp.utils.BindingUtils.getBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 abstract class BindingDialog<VB : ViewBinding>(context: Context, theme: Int = R.style.Theme_QuizApp_DialogFragment) : Dialog(context, theme) {
 

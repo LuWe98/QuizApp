@@ -2,7 +2,6 @@ package com.example.quizapp.view.fragments.homescreen.filterselection
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfLocalQuestionnaireFilterSelectionBinding
@@ -10,12 +9,9 @@ import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
+import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.fragments.dialogs.authorselection.local.BsdfLocalAuthorSelection
-import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
-import com.example.quizapp.view.fragments.dialogs.facultyselection.BsdfFacultySelection
 import com.example.quizapp.viewmodel.VmLocalQuestionnaireFilterSelection
-import com.example.quizapp.viewmodel.VmLocalQuestionnaireFilterSelection.LocalQuestionnaireFilterSelectionEvent.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,19 +40,14 @@ class BsdfLocalQuestionnaireFilterSelection: BindingBottomSheetDialogFragment<Bs
     }
 
     private fun initObservers(){
-        setSelectionTypeListener(vmFilter::onOrderByUpdateReceived)
 
-        setFragmentResultListener(BsdfLocalAuthorSelection.AUTHOR_SELECTION_RESULT_KEY) { key, bundle ->
-            bundle.getStringArray(key)?.let(vmFilter::onSelectedAuthorsUpdateReceived)
-        }
+        setFragmentResultEventListener(vmFilter::onLocalOrderBySelectionResultReceived)
 
-        setFragmentResultListener(BsdfFacultySelection.FACULTY_SELECTION_RESULT_KEY) { key, bundle ->
-            bundle.getStringArray(key)?.let(vmFilter::onSelectedFacultiesUpdateReceived)
-        }
+        setFragmentResultEventListener(vmFilter::onAuthorsSelectionResultReceived)
 
-        setFragmentResultListener(BsdfCourseOfStudiesSelection.COURSE_OF_STUDIES_RESULT_KEY) { key, bundle ->
-            bundle.getStringArray(key)?.let(vmFilter::onSelectedCourseOfStudiesUpdateReceived)
-        }
+        setFragmentResultEventListener(vmFilter::onCourseOfStudiesSelectionResultReceived)
+
+        setFragmentResultEventListener(vmFilter::onFacultiesSelectionResultReceived)
 
 
         vmFilter.selectedOrderByStateFlow.collectWhenStarted(viewLifecycleOwner) {
@@ -106,16 +97,6 @@ class BsdfLocalQuestionnaireFilterSelection: BindingBottomSheetDialogFragment<Bs
 
         vmFilter.selectedHideCompletedStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.hideCompletedCheckBox.isChecked = it
-        }
-
-        vmFilter.localQuestionnaireFilterSelectionEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
-            when(event) {
-                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
-                is NavigateToLocalAuthorSelectionScreen -> navigator.navigateToLocalAuthorSelection(event.selectedAuthorIds)
-                is NavigateToCourseOfStudiesSelectionScreen -> navigator.navigateToCourseOfStudiesSelection(event.selectedCourseOfStudiesIds)
-                is NavigateToFacultySelectionScreen -> navigator.navigateToFacultySelection(event.selectedFacultyIds)
-                NavigateBackEvent -> navigator.popBackStack()
-            }
         }
     }
 }

@@ -1,30 +1,30 @@
 package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.FragmentResult.FacultySelectionResult
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.fragments.dialogs.facultyselection.BsdfFacultySelectionArgs
-import com.example.quizapp.viewmodel.VmFacultySelection.FacultySelectionEvent.*
+import com.example.quizapp.viewmodel.VmFacultySelection.FacultySelectionEvent
+import com.example.quizapp.viewmodel.VmFacultySelection.FacultySelectionEvent.ClearSearchQueryEvent
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
 
 @HiltViewModel
 class VmFacultySelection @Inject constructor(
     localRepository: LocalRepository,
     private val state: SavedStateHandle
-) : ViewModel() {
+) : BaseViewModel<FacultySelectionEvent>() {
 
     private val args = BsdfFacultySelectionArgs.fromSavedStateHandle(state)
-
-    private val facultySelectionEventChannel = Channel<FacultySelectionEvent>()
-
-    val facultySelectionEventChannelFlow = facultySelectionEventChannel.receiveAsFlow()
-
 
 
     private val selectedFacultyIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_FACULTIES_KEY, args.selectedFacultyIds.toMutableSet())
@@ -34,13 +34,11 @@ class VmFacultySelection @Inject constructor(
     private val selectedFacultyIds get() = selectedFacultyIdsMutableStateFlow.value
 
 
-
     private val searchQueryMutableStateFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
     val searchQueryStateFlow = searchQueryMutableStateFlow.asStateFlow()
 
     val searchQuery get() = searchQueryMutableStateFlow.value
-
 
 
     val facultyFlow = searchQueryMutableStateFlow.flatMapLatest {
@@ -69,24 +67,20 @@ class VmFacultySelection @Inject constructor(
         searchQueryMutableStateFlow.value = newQuery
     }
 
-    fun onDeleteSearchClicked(){
-        if(searchQuery.isNotBlank()){
-            launch {
-                facultySelectionEventChannel.send(ClearSearchQueryEvent)
-            }
+    fun onDeleteSearchClicked() = launch(IO) {
+        if (searchQuery.isNotBlank()) {
+            eventChannel.send(ClearSearchQueryEvent)
         }
     }
 
-    fun onConfirmButtonClicked() {
-        launch(IO) {
-            facultySelectionEventChannel.send(ConfirmationEvent(selectedFacultyIds.toTypedArray()))
-        }
+    fun onConfirmButtonClicked() = launch(IO) {
+        fragmentResultDispatcher.dispatch(FacultySelectionResult(selectedFacultyIds.toList()))
+        navigationDispatcher.dispatch(NavigateBack)
     }
 
 
-    sealed class FacultySelectionEvent {
-        class ConfirmationEvent(val facultyIds: Array<String>) : FacultySelectionEvent()
-        object ClearSearchQueryEvent: FacultySelectionEvent()
+    sealed class FacultySelectionEvent: ViewModelEventMarker {
+        object ClearSearchQueryEvent : FacultySelectionEvent()
     }
 
     companion object {

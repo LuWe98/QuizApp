@@ -2,20 +2,21 @@ package com.example.quizapp.viewmodel
 
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.client.KtorClientAuth
 import com.example.quizapp.model.ktor.responses.ChangePasswordResponse
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
+import com.example.quizapp.viewmodel.VmChangePassword.*
 import com.example.quizapp.viewmodel.VmChangePassword.ChangePasswordEvent.*
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,11 +25,7 @@ class VmChangePassword @Inject constructor(
     private val backendRepository: BackendRepository,
     private val auth: KtorClientAuth,
     private val state: SavedStateHandle
-): ViewModel() {
-
-    private val changePasswordEventChannel = Channel<ChangePasswordEvent>()
-
-    val changePasswordEventChannelFlow = changePasswordEventChannel.receiveAsFlow()
+): BaseViewModel<ChangePasswordEvent>() {
 
     private var _currentPw = state.get<String>(CURRENT_PW_KEY) ?: ""
         set(value) {
@@ -55,44 +52,45 @@ class VmChangePassword @Inject constructor(
         _newPw = newPw
     }
 
+    fun onCancelButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(NavigateBack)
+    }
+
     fun onConfirmButtonClicked() = launch(IO) {
         if(currentPw != preferencesRepository.getUserPassword()) {
-            changePasswordEventChannel.send(ShowMessageSnackBar(R.string.errorCurrentPasswordIsWrong))
+            eventChannel.send(ShowMessageSnackBar(R.string.errorCurrentPasswordIsWrong))
             return@launch
         }
 
         if(newPw.isBlank()) {
-            changePasswordEventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
+            eventChannel.send(ShowMessageSnackBar(R.string.errorSomeFieldsAreEmpty))
             return@launch
         }
 
-        changePasswordEventChannel.send(ShowLoadingDialog(R.string.changingPassword))
+        navigationDispatcher.dispatch(ToLoadingDialog(R.string.changingPassword))
 
         runCatching {
             backendRepository.updateUserPassword(newPw)
         }.also {
             delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            changePasswordEventChannel.send(HideLoadingDialog)
+            navigationDispatcher.dispatch(PopLoadingDialog)
         }.onSuccess { response ->
             if(response.responseType == ChangePasswordResponse.ChangePasswordResponseType.SUCCESSFUL) {
                 preferencesRepository.updateUserPassword(newPw)
                 preferencesRepository.updateJwtToken(response.newToken)
                 auth.resetJwtAuth()
 
-                changePasswordEventChannel.send(NavigateBackEvent)
+                navigationDispatcher.dispatch(NavigateBack)
             }
-            changePasswordEventChannel.send(ShowMessageSnackBar(response.responseType.messageRes))
+            eventChannel.send(ShowMessageSnackBar(response.responseType.messageRes))
         }.onFailure {
-            changePasswordEventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotChangePassword))
+            eventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotChangePassword))
         }
     }
 
 
-    sealed class ChangePasswordEvent {
+    sealed class ChangePasswordEvent: ViewModelEventMarker {
         class ShowMessageSnackBar(@StringRes val messageRes: Int): ChangePasswordEvent()
-        object NavigateBackEvent : ChangePasswordEvent()
-        class ShowLoadingDialog(@StringRes val messageRes: Int) : ChangePasswordEvent()
-        object HideLoadingDialog : ChangePasswordEvent()
     }
 
     companion object {

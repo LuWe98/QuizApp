@@ -3,18 +3,17 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/grid_2"
         app:layout_constraintTop_toBottomOf="@+id/statisticsCard">
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="45dp"
             android:id="@+id/adminFunctionalityHeader"
             android:text="@string/adminSettings"
             android:background="@drawable/background_round_corners_10dp"
             android:backgroundTint="?android:colorBackground"
             android:gravity="center_vertical"
-            android:paddingHorizontal="@dimen/grid_4"
+            android:paddingHorizontal="@dimen/grid_3"
             android:textSize="18sp"
             android:textStyle="bold"
             android:fontFamily="@font/work_sans_medium"

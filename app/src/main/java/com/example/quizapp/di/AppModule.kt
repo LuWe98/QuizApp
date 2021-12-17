@@ -2,6 +2,7 @@ package com.example.quizapp.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.quizapp.QuizApplication
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.apiclasses.*
@@ -33,6 +34,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideQuizApplication(@ApplicationContext context: Context) = context as QuizApplication
 
     @Provides
     @Singleton
@@ -148,6 +153,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideCourseOfStudiesApi(ktorClient: HttpClient) = CourseOfStudiesApi(ktorClient)
+
 
     @Provides
     @Singleton

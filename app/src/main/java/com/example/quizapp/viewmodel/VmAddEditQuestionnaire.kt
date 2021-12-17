@@ -1,11 +1,10 @@
 package com.example.quizapp.viewmodel
 
-import android.app.Application
 import androidx.annotation.StringRes
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.AddEditNavGraphArgs
+import com.example.quizapp.QuizApplication
 import com.example.quizapp.R
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.DataMapper
@@ -23,22 +22,25 @@ import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.utils.CsvDocumentFilePicker.*
-import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
+import com.example.quizapp.view.fragments.resultdispatcher.UpdateStringValueResult
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
+import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.*
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.AddEditQuestionnaireEvent.*
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.http.cio.*
 import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import org.bson.types.ObjectId
 import javax.inject.Inject
-
 
 @HiltViewModel
 class VmAddEditQuestionnaire @Inject constructor(
@@ -47,8 +49,8 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val backendRepository: BackendRepository,
     private val state: SavedStateHandle,
-    application: Application
-) : AndroidViewModel(application) {
+    private val app: QuizApplication
+) : BaseViewModel<AddEditQuestionnaireEvent>() {
 
     private val args = AddEditNavGraphArgs.fromSavedStateHandle(state)
 
@@ -59,7 +61,7 @@ class VmAddEditQuestionnaire @Inject constructor(
             else -> R.string.editQuestionnaire
         }
 
-    private val parsedQuestionnaireId = args.completeQuestionnaire?.questionnaire?.id ?: ObjectId().toHexString()
+    private val parsedQuestionnaireId = if (args.copy) ObjectId().toHexString() else args.completeQuestionnaire?.questionnaire?.id ?: ObjectId().toHexString()
 
     private val parsedQuestionnaireTitle get() = args.completeQuestionnaire?.questionnaire?.title ?: ""
 
@@ -79,13 +81,6 @@ class VmAddEditQuestionnaire @Inject constructor(
             ?: emptyList()
 
 
-
-    private val addEditQuestionnaireEventChannel = Channel<AddEditQuestionnaireEvent>()
-
-    val addEditQuestionnaireEventChannelFlow = addEditQuestionnaireEventChannel.receiveAsFlow()
-
-
-
     private var questionnaireTitleMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_TITLE_KEY, parsedQuestionnaireTitle)
 
     val questionnaireTitleStateFlow get() = questionnaireTitleMutableStateFlow.asStateFlow()
@@ -93,13 +88,11 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val questionnaireTitle get() = questionnaireTitleStateFlow.value
 
 
-
     private var questionnaireSubjectMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_SUBJECT_KEY, parsedQuestionnaireSubject)
 
     val questionnaireSubjectStateFlow get() = questionnaireSubjectMutableStateFlow.asStateFlow()
 
     private val questionnaireSubject get() = questionnaireSubjectStateFlow.value
-
 
 
     private var coursesOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(COURSES_OF_STUDIES_IDS_KEY, parsedCourseOfStudiesIds)
@@ -111,7 +104,6 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val courseOfStudiesIds get() = coursesOfStudiesIdsMutableStateFlow.value
 
 
-
     private val questionsWithAnswersMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_QUESTIONS_KEY, parsedQuestionsWithAnswers)
 
     val questionsWithAnswersStateFlow = questionsWithAnswersMutableStateFlow.asStateFlow()
@@ -119,17 +111,14 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val questionsWithAnswers get() = questionsWithAnswersMutableStateFlow.value
 
 
-
     private val publishQuestionMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_PUBLISH_KEY, parsedQuestionnaireVisibility == PUBLIC)
 
-    val  publishQuestionStateFlow = publishQuestionMutableStateFlow.asStateFlow()
+    val publishQuestionStateFlow = publishQuestionMutableStateFlow.asStateFlow()
 
     private val publishQuestionnaire get() = publishQuestionMutableStateFlow.value
 
 
     val userRoleFlow = preferencesRepository.userFlow.map(User::role::get).stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-
 
 
     private fun setCoursesOfStudiesIds(courseOfStudiesIds: List<String>) {
@@ -146,52 +135,34 @@ class VmAddEditQuestionnaire @Inject constructor(
         }
     }
 
-
-    fun onCourseOfStudiesUpdated(courseOfStudiesIds: Array<String>) {
-        setCoursesOfStudiesIds(courseOfStudiesIds.toList())
+    fun onCourseOfStudiesSelectionResultReceived(result: FragmentResult.CourseOfStudiesSelectionResult) {
+        setCoursesOfStudiesIds(result.courseOfStudiesIds)
     }
 
-    fun onCourseOfStudiesButtonClicked() {
-        launch(IO) {
-            addEditQuestionnaireEventChannel.send(NavigateToCourseOfStudiesSelector(coursesOfStudiesIdsMutableStateFlow.value.toTypedArray()))
-        }
+    fun onCourseOfStudiesButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(coursesOfStudiesIdsMutableStateFlow.value.toTypedArray()))
     }
 
-    fun onTitleCardClicked() {
-        launch {
-            addEditQuestionnaireEventChannel.send(
-                NavigateToUpdateStringDialog(
-                    questionnaireTitle,
-                    UpdateStringType.QUESTIONNAIRE_TITLE
-                )
-            )
-        }
+    fun onTitleCardClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringValueResult.QuestionnaireTitleUpdateResult(questionnaireTitle)))
     }
 
-    fun onSubjectCardClicked() {
-        launch {
-            addEditQuestionnaireEventChannel.send(
-                NavigateToUpdateStringDialog(
-                    questionnaireSubject,
-                    UpdateStringType.QUESTIONNAIRE_SUBJECT
-                )
-            )
-        }
+    fun onSubjectCardClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringValueResult.QuestionnaireSubjectUpdateResult(questionnaireSubject)))
     }
 
-    fun onPublishCardClicked(){
+    fun onPublishCardClicked() {
         state.set(QUESTIONNAIRE_PUBLISH_KEY, !publishQuestionnaire)
         publishQuestionMutableStateFlow.value = !publishQuestionnaire
     }
 
 
-
-    fun onTitleUpdated(newTitle: String) {
-        questionnaireTitleMutableStateFlow.value = newTitle
+    fun onTitleUpdateResultReceived(result: UpdateStringValueResult.QuestionnaireTitleUpdateResult) {
+        questionnaireTitleMutableStateFlow.value = result.stringValue
     }
 
-    fun onSubjectUpdated(newSubject: String) {
-        questionnaireSubjectMutableStateFlow.value = newSubject
+    fun onSubjectUpdateResultReceived(result: UpdateStringValueResult.QuestionnaireSubjectUpdateResult) {
+        questionnaireSubjectMutableStateFlow.value = result.stringValue
     }
 
     fun onQuestionWithAnswerUpdated(position: Int, questionWithAnswers: QuestionWithAnswers) {
@@ -201,26 +172,20 @@ class VmAddEditQuestionnaire @Inject constructor(
         }
     }
 
-    fun onAddQuestionButtonClicked() {
-        launch(IO) {
-            addEditQuestionnaireEventChannel.send(NavigateToAddEditQuestionScreenEvent(questionsWithAnswers.size))
-        }
+    fun onAddQuestionButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(FromAddEditQuestionnaireToAddEditQuestion(questionsWithAnswers.size))
     }
 
-    fun onQuestionItemClicked(position: Int) {
-        launch(IO) {
-            addEditQuestionnaireEventChannel.send(NavigateToAddEditQuestionScreenEvent(position, questionsWithAnswers[position]))
-        }
+    fun onQuestionItemClicked(position: Int) = launch(IO) {
+        navigationDispatcher.dispatch(FromAddEditQuestionnaireToAddEditQuestion(questionsWithAnswers.size, questionsWithAnswers[position]))
     }
 
-    private fun onQuestionItemDelete(position: Int) {
-        launch(IO) {
-            questionsWithAnswers.toMutableList().apply {
-                removeAt(position).let {
-                    addEditQuestionnaireEventChannel.send(ShowQuestionDeletedSnackBarEvent(position, it))
-                }
-                setQuestionWithAnswers(this)
+    private fun onQuestionItemDelete(position: Int) = launch(IO) {
+        questionsWithAnswers.toMutableList().apply {
+            removeAt(position).let {
+                eventChannel.send(ShowQuestionDeletedSnackBarEvent(position, it))
             }
+            setQuestionWithAnswers(this)
         }
     }
 
@@ -236,21 +201,21 @@ class VmAddEditQuestionnaire @Inject constructor(
     }
 
 
-    fun onUndoDeleteQuestionClicked(event: ShowQuestionDeletedSnackBarEvent) {
-        launch(IO) {
-            questionsWithAnswers.toMutableList().apply {
-                add(event.questionPosition, event.questionWithAnswers)
-                setQuestionWithAnswers(this)
-            }
+    fun onUndoDeleteQuestionClicked(event: ShowQuestionDeletedSnackBarEvent) = launch(IO) {
+        questionsWithAnswers.toMutableList().apply {
+            add(event.questionPosition, event.questionWithAnswers)
+            setQuestionWithAnswers(this)
         }
+
     }
 
-    fun onMoreOptionsClicked() {
-        launch(IO) {
-            addEditQuestionnaireEventChannel.send(ShowPopupMenu)
-        }
+    fun onMoreOptionsClicked() = launch(IO) {
+        eventChannel.send(ShowPopupMenu)
     }
 
+    fun onBackButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(NavigateBack)
+    }
 
     fun onSaveButtonClicked() = launch(IO, applicationScope) {
         if (!isInputValid()) return@launch
@@ -261,7 +226,7 @@ class VmAddEditQuestionnaire @Inject constructor(
             authorInfo = preferencesRepository.user.asAuthorInfo,
             subject = questionnaireSubject,
             syncStatus = SYNCING,
-            visibility = if(publishQuestionnaire) PUBLIC else PRIVATE
+            visibility = if (publishQuestionnaire) PUBLIC else PRIVATE
         )
 
         val questionsWithAnswersMapped = questionsWithAnswers.mapIndexed { questionIndex, qwa ->
@@ -293,7 +258,7 @@ class VmAddEditQuestionnaire @Inject constructor(
 
         localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
         localRepository.insert(courseOfStudiesIds.map { cosId -> QuestionnaireCourseOfStudiesRelation(parsedQuestionnaireId, cosId) })
-        addEditQuestionnaireEventChannel.send(NavigateBackEvent)
+        navigationDispatcher.dispatch(NavigateBack)
 
         runCatching {
             localRepository.findCompleteQuestionnaireWith(parsedQuestionnaireId)!!.let(DataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
@@ -308,12 +273,12 @@ class VmAddEditQuestionnaire @Inject constructor(
 
     private suspend fun isInputValid(): Boolean {
         if (questionnaireTitle.isEmpty()) {
-            addEditQuestionnaireEventChannel.send(ShowMessageSnackBarEvent(R.string.errorQuestionnaireHasNoTitle))
+            eventChannel.send(ShowMessageSnackBarEvent(R.string.errorQuestionnaireHasNoTitle))
             return false
         }
 
         if (questionnaireSubject.isEmpty()) {
-            addEditQuestionnaireEventChannel.send(ShowMessageSnackBarEvent(R.string.errorQuestionnaireHasNoSubject))
+            eventChannel.send(ShowMessageSnackBarEvent(R.string.errorQuestionnaireHasNoSubject))
             return false
         }
 
@@ -321,48 +286,44 @@ class VmAddEditQuestionnaire @Inject constructor(
     }
 
 
-    fun onLoadCsvFilePopupMenuItemClicked() = launch(IO)  {
-        addEditQuestionnaireEventChannel.send(NavigateToConfirmationDialog(ConfirmationType.LoadCsvFileConfirmation))
+    fun onLoadCsvFilePopupMenuItemClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToConfirmationDialog(ConfirmationRequestType.LoadCsvFileConfirmationRequest))
     }
 
-    fun onCsvLoadingConfirmationReceived(result: ConfirmationType.LoadCsvFileConfirmation) = launch(IO)  {
-        addEditQuestionnaireEventChannel.send(StartCsvDocumentFilePicker)
+    fun onCsvLoadingConfirmationResultReceived(result: ConfirmationResult.LoadCsvFileConfirmationResult) = launch(IO) {
+        if(result.confirmed) {
+            eventChannel.send(StartCsvDocumentFilePicker)
+        }
     }
+
 
     fun onValidCsvFileSelected() = launch(IO) {
-        addEditQuestionnaireEventChannel.send(ShowLoadingDialog(R.string.loadingCsvData))
+        navigationDispatcher.dispatch(ToLoadingDialog(R.string.loadingCsvData))
     }
 
     fun onCsvFilePickerResultReceived(result: CsvDocumentFilePickerResult) = launch(IO) {
         delay(DfLoading.LOADING_DIALOG_LONG_DISMISS_DELAY)
-        addEditQuestionnaireEventChannel.send(HideLoadingDialog)
+        navigationDispatcher.dispatch(PopLoadingDialog)
 
-        when(result) {
+        when (result) {
             is CsvDocumentFilePickerResult.Success -> {
-                onTitleUpdated(result.questionnaire.title)
-                onSubjectUpdated(result.questionnaire.subject)
+                questionnaireTitleMutableStateFlow.value = result.questionnaire.title
+                questionnaireSubjectMutableStateFlow.value = result.questionnaire.subject
                 setQuestionWithAnswers(result.qwa)
-                addEditQuestionnaireEventChannel.send(ShowMessageSnackBarEvent(R.string.successfullyLoadedCsvData))
+                eventChannel.send(ShowMessageSnackBarEvent(R.string.successfullyLoadedCsvData))
             }
             is CsvDocumentFilePickerResult.Error -> {
-                addEditQuestionnaireEventChannel.send(ShowMessageSnackBarWithStringEvent(result.type.getErrorMessage(app)))
+                eventChannel.send(ShowMessageSnackBarWithStringEvent(result.type.getErrorMessage(app)))
             }
         }
     }
 
-    sealed class AddEditQuestionnaireEvent {
-        object NavigateBackEvent : AddEditQuestionnaireEvent()
-        class NavigateToCourseOfStudiesSelector(val courseOfStudiesIds: Array<String>) : AddEditQuestionnaireEvent()
-        class NavigateToUpdateStringDialog(val initialValue: String, val updateType: UpdateStringType) : AddEditQuestionnaireEvent()
-        class NavigateToAddEditQuestionScreenEvent(val position: Int, val questionWithAnswers: QuestionWithAnswers? = null) : AddEditQuestionnaireEvent()
+    sealed class AddEditQuestionnaireEvent: ViewModelEventMarker {
         class ShowMessageSnackBarEvent(@StringRes val messageRes: Int) : AddEditQuestionnaireEvent()
         class ShowMessageSnackBarWithStringEvent(val message: String) : AddEditQuestionnaireEvent()
         class ShowQuestionDeletedSnackBarEvent(val questionPosition: Int, val questionWithAnswers: QuestionWithAnswers) : AddEditQuestionnaireEvent()
-        object ShowPopupMenu: AddEditQuestionnaireEvent()
-        object StartCsvDocumentFilePicker: AddEditQuestionnaireEvent()
-        class ShowLoadingDialog(@StringRes val messageRes: Int): AddEditQuestionnaireEvent()
-        object HideLoadingDialog: AddEditQuestionnaireEvent()
-        class NavigateToConfirmationDialog(val type: ConfirmationType): AddEditQuestionnaireEvent()
+        object ShowPopupMenu : AddEditQuestionnaireEvent()
+        object StartCsvDocumentFilePicker : AddEditQuestionnaireEvent()
     }
 
     companion object {

@@ -2,14 +2,12 @@ package com.example.quizapp.view.fragments.searchscreen
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentSearchBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.fragments.searchscreen.filterselection.BsdfBrowseQuestionnaireFilterSelection
 import com.example.quizapp.view.recyclerview.adapters.RvaBrowsableQuestionnaires
 import com.example.quizapp.viewmodel.VmSearch
 import com.example.quizapp.viewmodel.VmSearch.SearchEvent.*
@@ -52,7 +50,7 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
 
     private fun initListeners() {
         binding.apply {
-            btnBack.onClick(navigator::popBackStack)
+            btnBack.onClick(vmSearch::onBackButtonClicked)
             btnSearch.onClick(vmSearch::onClearSearchQueryClicked)
             btnFilter.onClick(vmSearch::onFilterButtonClicked)
             etSearchQuery.onTextChanged(vmSearch::onSearchQueryChanged)
@@ -61,12 +59,10 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
     }
 
     private fun initObservers() {
-        setFragmentResultListener(BsdfBrowseQuestionnaireFilterSelection.QUESTIONNAIRE_FILTER_RESULT_KEY) { key, bundle ->
-            bundle.getTypedParcelableArray<AuthorInfo>(key)?.let(vmSearch::onQuestionnaireFilterUpdateReceived)
-        }
 
-        setSelectionTypeWithParsedValueListener(vmSearch::onMoreOptionsItemClickedUpdateReceived)
+        setFragmentResultEventListener(vmSearch::onRemoteQuestionnaireFilterUpdateReceived)
 
+        setFragmentResultEventListener(vmSearch::onQuestionnaireMoreOptionsSelectionResultReceived)
 
         vmSearch.filteredPagedData.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitData(it)
@@ -79,16 +75,11 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
             }
         }
 
-        vmSearch.searchEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmSearch.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                is NavigateToQuestionnaireFilterSelection -> navigator.navigateToRemoteQuestionnaireFilterSelection(event.selectedAuthors)
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
                 is ChangeItemDownloadStatusEvent -> rvAdapter.changeItemDownloadStatus(event.questionnaireId, event.status)
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
-                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
-                HideLoadingDialog -> navigator.popLoadingDialog()
-                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
-                is NavigateToQuizScreen -> navigator.navigateToQuizScreen(event.questionnaireId)
             }
         }
     }

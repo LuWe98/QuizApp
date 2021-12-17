@@ -4,14 +4,13 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddEditQuestionBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.view.recyclerview.adapters.RvaAddEditAnswer
 import com.example.quizapp.viewmodel.VmAddEditQuestion
 import com.example.quizapp.viewmodel.VmAddEditQuestion.FragmentAddEditQuestionEvent.*
@@ -65,7 +64,7 @@ class FragmentAddEditQuestion: BindingFragment<FragmentAddEditQuestionBinding>()
 
     private fun initListeners(){
         binding.apply {
-            btnBack.onClick(navigator::popBackStack)
+            btnBack.onClick(vmAddEditQuestion::onBackButtonClicked)
             btnSave.onClick(vmAddEditQuestion::onSaveButtonClicked)
             btnAddQuestion.onClick(vmAddEditQuestion::onAddAnswerButtonClicked)
             etQuestion.onTextChanged(vmAddEditQuestion::onQuestionTextChanged)
@@ -75,8 +74,7 @@ class FragmentAddEditQuestion: BindingFragment<FragmentAddEditQuestionBinding>()
 
     private fun initObservers(){
 
-        setUpdateStringTypeListener(UpdateStringType.ADD_EDIT_ANSWER_TEXT, vmAddEditQuestion::onAnswerTextUpdateResultReceived)
-
+        setFragmentResultEventListener(vmAddEditQuestion::onAnswerTextUpdateResultReceived)
 
         vmAddEditQuestion.answersStateFlow.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitList(it)
@@ -86,9 +84,8 @@ class FragmentAddEditQuestion: BindingFragment<FragmentAddEditQuestionBinding>()
             updateQuestionTypeIcon(it)
         }
 
-        vmAddEditQuestion.fragmentAddEditQuestionEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAddEditQuestion.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                is NavigateToStringSelectDialog -> navigator.navigateToUpdateStringDialog(event.initialValue, UpdateStringType.ADD_EDIT_ANSWER_TEXT)
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes, anchorView = binding.btnSave)
                 is ShowAnswerDeletedSnackBar -> {
                     showSnackBar(
@@ -100,7 +97,6 @@ class FragmentAddEditQuestion: BindingFragment<FragmentAddEditQuestionBinding>()
                 }
                 is SaveQuestionWithAnswersEvent -> {
                     vmAddEditQuestionnaire.onQuestionWithAnswerUpdated(event.questionPosition, event.questionWithAnswers)
-                    navigator.popBackStack()
                 }
             }
         }

@@ -4,6 +4,6 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingTop="@dimen/grid_2"
-        android:paddingBottom="100dp"
+        android:paddingBottom="150dp"
         android:paddingHorizontal="@dimen/grid_2"
         android:id="@+id/rv" />

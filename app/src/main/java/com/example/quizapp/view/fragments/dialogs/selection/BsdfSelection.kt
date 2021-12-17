@@ -2,8 +2,7 @@ package com.example.quizapp.view.fragments.dialogs.selection
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.setFragmentResult
-import androidx.navigation.fragment.navArgs
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfSelectionBinding
@@ -11,33 +10,27 @@ import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.getThemeColor
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaSelectionDialog
+import com.example.quizapp.viewmodel.VmSelectionDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BsdfSelection : BindingBottomSheetDialogFragment<BsdfSelectionBinding>() {
 
-    private val args: BsdfSelectionArgs by navArgs()
-
-    private val selectionType get() = args.selectionType
+    private val vmSelection: VmSelectionDialog by viewModels()
 
     private lateinit var rvAdapter: RvaSelectionDialog
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.tvTitle.text = selectionType.getTitle(requireContext())
-        initRecyclerView()
+        iniViews()
     }
 
-    private fun initRecyclerView() {
+    private fun iniViews() {
+        binding.tvTitle.text = vmSelection.selectionType.titleProvider(requireContext())
+
         rvAdapter = RvaSelectionDialog().apply {
-            onItemClicked = {
-                setFragmentResult(selectionType.resultKey, Bundle().apply {
-                    putParcelable(selectionType.resultKey, it)
-                    putParcelable(selectionType.resultKey.plus(SelectionType.INITIAL_VALUE_SUFFIX), selectionType)
-                })
-                navigator.popBackStack()
-            }
-            selectionPredicate = selectionType::isItemSelected
+            onItemClicked = vmSelection::onItemSelected
+            selectionPredicate = vmSelection::isItemSelected
             selectionColor = getThemeColor(R.attr.colorOnBackground)
         }
 
@@ -48,6 +41,6 @@ class BsdfSelection : BindingBottomSheetDialogFragment<BsdfSelectionBinding>() {
             disableChangeAnimation()
         }
 
-        rvAdapter.submitList(selectionType.recyclerViewList)
+        rvAdapter.submitList(vmSelection.selectionType.recyclerViewList)
     }
 }

@@ -7,6 +7,6 @@
         android:clipToPadding="false"
         tools:listitem="@layout/rvi_course_of_studies"
         android:paddingTop="@dimen/grid_2"
-        android:paddingBottom="100dp"
+        android:paddingBottom="150dp"
         android:paddingHorizontal="@dimen/grid_2"
         android:id="@+id/rv" />

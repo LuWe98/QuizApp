@@ -8,7 +8,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddEditQuestionnaireBinding
@@ -18,9 +17,8 @@ import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Question
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.utils.CsvDocumentFilePicker
+import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.view.recyclerview.adapters.RvaAddEditQuestion
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.AddEditQuestionnaireEvent.*
@@ -121,7 +119,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
     private fun initListeners() {
         binding.apply {
             btnSave.onClick(vmAddEdit::onSaveButtonClicked)
-            btnBack.onClick(navigator::popBackStack)
+            btnBack.onClick(vmAddEdit::onBackButtonClicked)
             btnMoreOptions.onClick(vmAddEdit::onMoreOptionsClicked)
 
             infoCard.apply {
@@ -140,16 +138,14 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
     }
 
     private fun initObservers() {
-        setFragmentResultListener(BsdfCourseOfStudiesSelection.COURSE_OF_STUDIES_RESULT_KEY) { key, bundle ->
-            bundle.getStringArray(key)?.let(vmAddEdit::onCourseOfStudiesUpdated)
-        }
 
-        setUpdateStringTypeListener(UpdateStringType.QUESTIONNAIRE_TITLE, vmAddEdit::onTitleUpdated)
+        setFragmentResultEventListener(vmAddEdit::onCourseOfStudiesSelectionResultReceived)
 
-        setUpdateStringTypeListener(UpdateStringType.QUESTIONNAIRE_SUBJECT, vmAddEdit::onSubjectUpdated)
+        setFragmentResultEventListener(vmAddEdit::onTitleUpdateResultReceived)
 
-        setConfirmationTypeListener(vmAddEdit::onCsvLoadingConfirmationReceived)
+        setFragmentResultEventListener(vmAddEdit::onSubjectUpdateResultReceived)
 
+        setFragmentResultEventListener(vmAddEdit::onCsvLoadingConfirmationResultReceived)
 
         vmAddEdit.coursesOfStudiesStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.infoCard.cosDropDown.text = it.map(CourseOfStudies::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: "-"
@@ -193,12 +189,8 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
             }
         }
 
-        vmAddEdit.addEditQuestionnaireEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAddEdit.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                NavigateBackEvent -> navigator.popBackStack()
-                is NavigateToCourseOfStudiesSelector -> navigator.navigateToCourseOfStudiesSelection(event.courseOfStudiesIds)
-                is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringDialog(event.initialValue, event.updateType)
-                is NavigateToAddEditQuestionScreenEvent -> navigator.navigateToAddEditQuestionScreen(event.position, event.questionWithAnswers)
                 is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes, anchorView = binding.btnSave)
                 is ShowMessageSnackBarWithStringEvent -> showSnackBar(event.message, anchorView = binding.btnSave)
                 is ShowQuestionDeletedSnackBarEvent -> showSnackBar(
@@ -214,13 +206,10 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
                         show()
                     }
                 }
-                HideLoadingDialog -> navigator.popLoadingDialog()
-                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
                 StartCsvDocumentFilePicker -> picker.startFilePicker(
                     vmAddEdit::onValidCsvFileSelected,
                     vmAddEdit::onCsvFilePickerResultReceived
                 )
-                is NavigateToConfirmationDialog -> navigator.navigateToConfirmationDialog(event.type)
             }
         }
     }

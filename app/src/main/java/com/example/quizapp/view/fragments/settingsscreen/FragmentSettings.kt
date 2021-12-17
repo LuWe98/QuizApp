@@ -3,14 +3,12 @@ package com.example.quizapp.view.fragments.settingsscreen
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentSettingsBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
-import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelection
 import com.example.quizapp.viewmodel.VmQuizActivity
 import com.example.quizapp.viewmodel.VmSettings
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
@@ -33,7 +31,7 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
     private fun initListeners() {
         binding.apply {
-            btnBack.onClick(navigator::popBackStack)
+            btnBack.onClick(vmSettings::onBackButtonClicked)
 
             adminLayout.apply {
                 btnAdminUser.onClick(vmSettings::onGoToManageUsersClicked)
@@ -50,7 +48,7 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
             userLayout.apply {
                 btnLogout.onClick(vmSettings::onLogoutClicked)
-                btnChangePassword.onClick(navigator::navigateToChangePasswordScreen)
+                btnChangePassword.onClick(vmSettings::onChangePasswordCardClicked)
             }
 
             synchronizationLayout.apply {
@@ -63,18 +61,16 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
 
     private fun initObservers() {
-        setFragmentResultListener(BsdfCourseOfStudiesSelection.COURSE_OF_STUDIES_RESULT_KEY) { key, bundle ->
-            bundle.getStringArray(key)?.let(vmSettings::onCourseOfStudiesUpdateTriggered)
-        }
 
-        setSelectionTypeListener(vmSettings::onLanguageUpdateReceived)
+        setFragmentResultEventListener(vmSettings::onCourseOfStudiesSelectionResultReceived)
 
-        setSelectionTypeListener(vmSettings::onThemeUpdateReceived)
+        setFragmentResultEventListener(vmSettings::onLogoutConfirmationResultReceived)
 
-        setSelectionTypeListener(vmSettings::onShuffleTypeUpdateReceived)
+        setFragmentResultEventListener(vmSettings::onLanguageSelectionResultReceived)
 
-        setConfirmationTypeListener(vmSettings::onLogoutConfirmationReceived)
+        setFragmentResultEventListener(vmSettings::onThemeSelectionResultReceived)
 
+        setFragmentResultEventListener(vmSettings::onShuffleTypeSelectionResultReceived)
 
         vmSettings.userNameFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.userLayout.btnUserName.text = it ?: "-"
@@ -104,20 +100,11 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
                 if(it.size > 2) it.size.toString() else it.reduceOrNull { acc, s -> "$acc, $s" } ?: "-"
         }
 
-        vmSettings.fragmentSettingsEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmSettings.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                NavigateToLoginScreen -> navigator.navigateToAuthScreen()
-                OnLogoutClickedEvent -> navigator.navigateToConfirmationDialog(ConfirmationType.LogoutConfirmation)
-                NavigateToAdminManageUsersScreenEvent -> navigator.navigateToAdminManageUsersScreen()
-                NavigateToAdminManageCoursesOfStudiesScreenEvent -> navigator.navigateToAdminManageCourseOfStudiesScreen()
-                NavigateToAdminManageFacultiesScreenEvent -> navigator.navigateToAdminManageFacultiesScreen()
-                RecreateActivityEvent -> requireActivity().recreate()
                 LogoutEvent -> vmQuizActivity.onLogoutConfirmed()
-                is NavigateToCourseOfStudiesSelectionScreen -> navigator.navigateToCourseOfStudiesSelection(event.courseOfStudiesIds)
-                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
                 is ShowMessageSnackBarEvent -> showSnackBar(textRes = event.messageRes)
-                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
-                HideLoadingDialog -> navigator.popLoadingDialog()
+                RecreateActivityEvent -> requireActivity().recreate()
             }
         }
     }

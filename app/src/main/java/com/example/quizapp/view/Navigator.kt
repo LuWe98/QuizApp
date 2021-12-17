@@ -20,14 +20,14 @@ import com.example.quizapp.model.databases.room.entities.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
+import com.example.quizapp.view.fragments.resultdispatcher.UpdateStringValueResult
 import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestionnaireDirections
 import com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.FragmentAdminManageCourseOfStudiesDirections
 import com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminManageFacultiesDirections
 import com.example.quizapp.view.fragments.adminscreens.manageusers.FragmentAdminManageUsersDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
-import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
+import com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
 import com.example.quizapp.view.fragments.homescreen.FragmentHomeDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerDirections
@@ -150,7 +150,7 @@ class Navigator @Inject constructor(
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfLocalAuthorSelection(selectedAuthorIds))
     }
 
-    fun navigateToSelectionDialog(selectionType: SelectionType) {
+    fun navigateToSelectionDialog(selectionType: SelectionRequestType<*>) {
         if (currentDestinationId == R.id.bsdfSelection) return
         navController.navigate(MainNavGraphDirections.actionGlobalBsdfSelection(selectionType))
     }
@@ -167,16 +167,16 @@ class Navigator @Inject constructor(
 
 
     //STRING PICKER DIALOG
-    fun navigateToUpdateStringDialog(initialValue: String, updateStringType: UpdateStringType) {
+    fun navigateToUpdateStringDialog(resultType: UpdateStringValueResult) {
         if (currentDestinationId == R.id.dfUpdateStringValue) return
-        navController.navigate(MainNavGraphDirections.actionGlobalDfUpdateStringValue(updateStringType, initialValue))
+        navController.navigate(MainNavGraphDirections.actionGlobalDfUpdateStringValue(resultType))
     }
 
 
     //CONFIRMATION DIALOG
-    fun navigateToConfirmationDialog(confirmationType: ConfirmationType) {
+    fun navigateToConfirmationDialog(confirmationRequestType: ConfirmationRequestType) {
         if (currentDestinationId == R.id.dfConfirmation) return
-        navController.navigate(MainNavGraphDirections.actionGlobalDfConfirmation(confirmationType))
+        navController.navigate(MainNavGraphDirections.actionGlobalDfConfirmation(confirmationRequestType))
     }
 
 

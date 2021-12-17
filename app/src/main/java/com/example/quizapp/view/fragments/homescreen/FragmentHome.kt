@@ -31,8 +31,8 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
             etSearchQuery.setText(vmHome.searchQuery)
 
             rvAdapter = RvaHomeQuestionnaires().apply {
-                onItemClick = navigator::navigateToQuizScreen
-                onItemLongClick = navigator::navigateToQuestionnaireMoreOptions
+                onItemClick = vmHome::onQuestionnaireClicked
+                onItemLongClick = vmHome::onQuestionnaireLongClicked
             }
 
             rv.apply {
@@ -46,9 +46,9 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
 
     private fun initListeners() {
         binding.apply {
-            cardSettings.onClick(navigator::navigateToSettingsScreen)
-            cardSearch.onClick(navigator::navigateToSearchScreen)
-            addCard.onClick(navigator::navigateToAddEditQuestionnaireScreen)
+            cardSettings.onClick(vmHome::onSettingsButtonClicked)
+            cardSearch.onClick(vmHome::onRemoteSearchButtonClicked)
+            addCard.onClick(vmHome::onAddQuestionnaireButtonClicked)
             btnSearch.onClick(vmHome::onClearSearchQueryClicked)
             btnFilter.onClick(vmHome::onFilterButtonClicked)
             etSearchQuery.onTextChanged(vmHome::onSearchQueryChanged)
@@ -71,7 +71,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
             vmHome.onLocallyPresentAuthorsChanged(it)
         }
 
-        vmHome.fragmentHomeEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmHome.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 is ShowSnackBarMessageBar -> showSnackBar(event.messageRes)
                 is ShowUndoDeleteCreatedQuestionnaireSnackBar -> {
@@ -103,7 +103,6 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
                 }
                 is ChangeProgressVisibility -> binding.swipeRefreshLayout.isRefreshing = event.visible
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
-                NavigateToLocalQuestionnairesFilterSelection -> navigator.navigateToLocalQuestionnaireFilterSelection()
             }
         }
     }

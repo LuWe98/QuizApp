@@ -2,17 +2,14 @@ package com.example.quizapp.view.fragments.adminscreens.managecourseofstudies
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentAdminAddEditCourseOfStudiesBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.Faculty
+import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.fragments.dialogs.facultyselection.BsdfFacultySelection
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies
-import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.AddEditCourseOfStudiesEvent.*
+import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.AddEditCourseOfStudiesEvent.ShowMessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,7 +28,7 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
 
     private fun initListeners(){
         binding.apply {
-            btnBack.onClick(navigator::popBackStack)
+            btnBack.onClick(vmAddEdit::onBackButtonClicked)
             btnSave.onClick(vmAddEdit::onSaveButtonClicked)
             abbreviationCard.onClick(vmAddEdit::onAbbreviationCardClicked)
             nameCard.onClick(vmAddEdit::onNameCardClicked)
@@ -41,15 +38,13 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
     }
 
     private fun initObservers(){
-        setUpdateStringTypeListener(UpdateStringType.COURSE_OF_STUDIES_ABBREVIATION, vmAddEdit::onAbbreviationUpdateReceived)
+        setFragmentResultEventListener(vmAddEdit::onNameUpdateResultReceived)
 
-        setUpdateStringTypeListener(UpdateStringType.COURSE_OF_STUDIES_NAME, vmAddEdit::onNameUpdateReceived)
+        setFragmentResultEventListener(vmAddEdit::onAbbreviationUpdateResultReceived)
 
-        setFragmentResultListener(BsdfFacultySelection.FACULTY_SELECTION_RESULT_KEY) { key, bundle ->
-            bundle.getStringArray(key)?.let(vmAddEdit::onFacultyIdsUpdateReceived)
-        }
+        setFragmentResultEventListener(vmAddEdit::onFacultySelectionResultReceived)
 
-        setSelectionTypeListener(vmAddEdit::onDegreeResultReceived)
+        setFragmentResultEventListener(vmAddEdit::onDegreeSelectionResultReceived)
 
         vmAddEdit.cosAbbreviationStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.abbreviationCard.text = if(it.isBlank()) "-" else it
@@ -67,15 +62,9 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
             binding.degreeCard.text = getString(it.textRes)
         }
 
-        vmAddEdit.addEditCourseOfStudiesEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAddEdit.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringDialog(event.initialValue, event.updateType)
-                is NavigateToFacultySelectionScreen -> navigator.navigateToFacultySelection(event.selectedIds)
-                is NavigateToDegreeSelectionScreen -> navigator.navigateToSelectionDialog(SelectionType.DegreeSelection(event.currentDegree))
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
-                NavigateBackEvent -> navigator.popBackStack()
-                HideLoadingDialog -> navigator.popLoadingDialog()
-                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
             }
         }
     }

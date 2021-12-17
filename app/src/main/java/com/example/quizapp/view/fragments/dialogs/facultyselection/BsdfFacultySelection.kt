@@ -2,7 +2,6 @@ package com.example.quizapp.view.fragments.dialogs.facultyselection
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
@@ -12,15 +11,10 @@ import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFrag
 import com.example.quizapp.view.recyclerview.adapters.RvaFacultySelection
 import com.example.quizapp.viewmodel.VmFacultySelection
 import com.example.quizapp.viewmodel.VmFacultySelection.FacultySelectionEvent.ClearSearchQueryEvent
-import com.example.quizapp.viewmodel.VmFacultySelection.FacultySelectionEvent.ConfirmationEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BsdfFacultySelection: BindingBottomSheetDialogFragment<BsdfFacultySelectionBinding>() {
-
-    companion object {
-        const val FACULTY_SELECTION_RESULT_KEY = "facultySelectionResultKey"
-    }
 
     private val vmFaculty: VmFacultySelection by viewModels()
 
@@ -75,14 +69,8 @@ class BsdfFacultySelection: BindingBottomSheetDialogFragment<BsdfFacultySelectio
             binding.rv.updateAllViewHolders()
         }
 
-        vmFaculty.facultySelectionEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmFaculty.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                is ConfirmationEvent -> {
-                    setFragmentResult(FACULTY_SELECTION_RESULT_KEY, Bundle().apply {
-                        putStringArray(FACULTY_SELECTION_RESULT_KEY, event.facultyIds)
-                    })
-                    navigator.popBackStack()
-                }
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
             }
         }

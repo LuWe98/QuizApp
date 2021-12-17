@@ -36,17 +36,14 @@ class DfChangePassword: BindingDialogFragment<DfChangePasswordBinding>() {
         binding.apply {
             etCurrentPassword.onTextChanged(vmChangePw::onCurrentPwChanged)
             etNewPassword.onTextChanged(vmChangePw::onNewPasswordChanged)
-            btnCancel.onClick(navigator::popBackStack)
+            btnCancel.onClick(vmChangePw::onCancelButtonClicked)
             btnConfirm.onClick(vmChangePw::onConfirmButtonClicked)
         }
     }
 
     private fun initObservers(){
-        vmChangePw.changePasswordEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmChangePw.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                HideLoadingDialog -> navigator.popLoadingDialog()
-                NavigateBackEvent -> navigator.popBackStack()
-                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
             }
         }

@@ -5,11 +5,10 @@ import android.view.View
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminAddEditUserBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAdminAddEditUser
-import com.example.quizapp.viewmodel.VmAdminAddEditUser.AddEditUserEvent.*
+import com.example.quizapp.viewmodel.VmAdminAddEditUser.AddEditUserEvent.ShowMessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,16 +35,17 @@ class FragmentAdminAddEditUser: BindingFragment<FragmentAdminAddEditUserBinding>
             passwordCard.onClick(vmAdmin::onUserPasswordCardClicked)
             roleCard.onClick(vmAdmin::onUserRoleCardClicked)
             btnSave.onClick(vmAdmin::onSaveButtonClicked)
-            btnBack.onClick(navigator::popBackStack)
+            btnBack.onClick(vmAdmin::onBackButtonClicked)
         }
     }
 
     private fun initObservers() {
-        setUpdateStringTypeListener(UpdateStringType.USER_NAME, vmAdmin::onUserNameUpdateReceived)
 
-        setUpdateStringTypeListener(UpdateStringType.USER_PASSWORD, vmAdmin::onUserPasswordUpdateReceived)
+        setFragmentResultEventListener(vmAdmin::onUserNameUpdateResultReceived)
 
-        setSelectionTypeListener(vmAdmin::onUserRoleUpdateReceived)
+        setFragmentResultEventListener(vmAdmin::onUserPasswordUpdateResultReceived)
+
+        setFragmentResultEventListener(vmAdmin::onUserRoleSelectionResultReceived)
 
         vmAdmin.userNameStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.nameCard.text = if(it.isBlank()) "-" else it
@@ -59,17 +59,12 @@ class FragmentAdminAddEditUser: BindingFragment<FragmentAdminAddEditUserBinding>
             binding.roleCard.setTextWithRes(it.textRes)
         }
 
-        vmAdmin.addEditUserEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAdmin.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringDialog(event.initialValue, event.updateType)
                 is ShowMessageSnackBar -> showSnackBar(
                     event.messageRes,
                     anchorView = if(event.attachToActivity) null else binding.btnSave
                 )
-                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
-                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
-                NavigateBackEvent -> navigator.popBackStack()
-                HideLoadingDialog -> navigator.popLoadingDialog()
             }
         }
     }

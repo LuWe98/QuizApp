@@ -1,7 +1,6 @@
 package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
@@ -10,12 +9,14 @@ import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.datastore.datawrappers.LocalQuestionnaireOrderBy
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
-import com.example.quizapp.viewmodel.VmLocalQuestionnaireFilterSelection.LocalQuestionnaireFilterSelectionEvent.*
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.viewmodel.VmLocalQuestionnaireFilterSelection.LocalQuestionnaireFilterSelectionEvent
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -25,13 +26,7 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle
-) : ViewModel() {
-
-    private val localQuestionnaireFilterSelectionEventChannel = Channel<LocalQuestionnaireFilterSelectionEvent>()
-
-    val localQuestionnaireFilterSelectionEventChannelFlow = localQuestionnaireFilterSelectionEventChannel.receiveAsFlow()
-
-
+) : BaseViewModel<LocalQuestionnaireFilterSelectionEvent>() {
 
     private val selectedOrderByMutableStateFlow = state.getMutableStateFlow(SELECTED_ORDER_BY_KEY, runBlocking(IO) {
         preferencesRepository.getLocalQuestionnaireOrderBy()
@@ -93,7 +88,6 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
     private val selectedFacultiesIds get() = selectedFacultyIdsMutableStateFlow.value
 
 
-
     fun removeFilteredAuthor(author: AuthorInfo) {
         selectedAuthorIds.toMutableSet().apply {
             remove(author.userId)
@@ -118,52 +112,43 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
         }
     }
 
-    fun onAuthorAddButtonClicked() {
-        launch(IO) {
-            localQuestionnaireFilterSelectionEventChannel.send(NavigateToLocalAuthorSelectionScreen(selectedAuthorIds.toTypedArray()))
-        }
+    fun onAuthorAddButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToLocalAuthorSelectionDialog(selectedAuthorIds.toTypedArray()))
     }
 
-    fun onFacultyCardAddButtonClicked() {
-        launch(IO) {
-            localQuestionnaireFilterSelectionEventChannel.send(NavigateToFacultySelectionScreen(selectedFacultiesIds.toTypedArray()))
-        }
+    fun onFacultyCardAddButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToFacultySelectionDialog(selectedAuthorIds.toTypedArray()))
     }
 
-    fun onCourseOfStudiesAddButtonClicked() {
-        launch(IO) {
-            localQuestionnaireFilterSelectionEventChannel.send(NavigateToCourseOfStudiesSelectionScreen(selectedCosIds.toTypedArray()))
-        }
+    fun onCourseOfStudiesAddButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(selectedCosIds.toTypedArray()))
     }
 
-
-    fun onOrderByCardClicked(){
-        launch(IO) {
-            localQuestionnaireFilterSelectionEventChannel.send(NavigateToSelectionScreen(SelectionType.LocalQuestionnaireOrderBySelection(selectedOrderBy)))
-        }
+    fun onOrderByCardClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.LocalOrderBySelection(selectedOrderBy)))
     }
 
-    fun onOrderByUpdateReceived(newValue: LocalQuestionnaireOrderBy) {
-        state.set(SELECTED_ORDER_BY_KEY, newValue)
-        selectedOrderByMutableStateFlow.value = newValue
+    fun onLocalOrderBySelectionResultReceived(result: SelectionResult.LocalOrderBySelectionResult) {
+        state.set(SELECTED_ORDER_BY_KEY, result.selectedItem)
+        selectedOrderByMutableStateFlow.value = result.selectedItem
     }
 
-    fun onSelectedAuthorsUpdateReceived(selectedAuthorIds: Array<String>) {
-        selectedAuthorIds.toSet().let {
+    fun onAuthorsSelectionResultReceived(result: FragmentResult.LocalAuthorSelectionResult) {
+        result.authorIds.toSet().let {
             state.set(SELECTED_AUTHORS_KEY, it)
             selectedAuthorIdsMutableStateFlow.value = it
         }
     }
 
-    fun onSelectedFacultiesUpdateReceived(facultyIds: Array<String>){
-        facultyIds.toSet().apply {
+    fun onFacultiesSelectionResultReceived(result: FragmentResult.FacultySelectionResult) {
+        result.facultyIds.toSet().apply {
             state.set(SELECTED_FACULTY_IDS_KEY, this)
             selectedFacultyIdsMutableStateFlow.value = this
         }
     }
 
-    fun onSelectedCourseOfStudiesUpdateReceived(cosIds: Array<String>){
-        cosIds.toSet().apply {
+    fun onCourseOfStudiesSelectionResultReceived(result: FragmentResult.CourseOfStudiesSelectionResult) {
+        result.courseOfStudiesIds.toSet().apply {
             state.set(SELECTED_COS_IDS_KEY, this)
             selectedCosIdsMutableStateFlow.value = this
         }
@@ -174,33 +159,24 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
         selectedOrderAscendingMutableStateFlow.value = !selectedOrderAscending
     }
 
-    fun onHideCompletedCardClicked(){
+    fun onHideCompletedCardClicked() {
         state.set(SELECTED_HIDE_COMPLETED_KEY, !selectedHideCompleted)
         selectedHideCompletedMutableStateFlow.value = !selectedHideCompleted
     }
 
-    fun onApplyButtonClicked(){
-        launch(IO) {
-            preferencesRepository.updateLocalFilters(
-                selectedOrderBy,
-                selectedOrderAscending,
-                selectedAuthorIds,
-                selectedCosIds,
-                selectedFacultiesIds,
-                selectedHideCompleted
-            )
-            localQuestionnaireFilterSelectionEventChannel.send(NavigateBackEvent)
-        }
+    fun onApplyButtonClicked() = launch(IO) {
+        preferencesRepository.updateLocalFilters(
+            selectedOrderBy,
+            selectedOrderAscending,
+            selectedAuthorIds,
+            selectedCosIds,
+            selectedFacultiesIds,
+            selectedHideCompleted
+        )
+        navigationDispatcher.dispatch(NavigateBack)
     }
 
-    sealed class LocalQuestionnaireFilterSelectionEvent {
-        class NavigateToSelectionScreen(val selectionType: SelectionType): LocalQuestionnaireFilterSelectionEvent()
-        class NavigateToLocalAuthorSelectionScreen(val selectedAuthorIds: Array<String>): LocalQuestionnaireFilterSelectionEvent()
-        class NavigateToCourseOfStudiesSelectionScreen(val selectedCourseOfStudiesIds: Array<String>) : LocalQuestionnaireFilterSelectionEvent()
-        class NavigateToFacultySelectionScreen(val selectedFacultyIds: Array<String>) : LocalQuestionnaireFilterSelectionEvent()
-        object NavigateBackEvent: LocalQuestionnaireFilterSelectionEvent()
-    }
-
+    sealed class LocalQuestionnaireFilterSelectionEvent: ViewModelEventMarker
 
     companion object {
         private const val SELECTED_ORDER_BY_KEY = "selectedOrderByKey"

@@ -43,23 +43,22 @@ class FragmentAuth : BindingFragment<FragmentAuthBinding>() {
     }
 
     private fun initObservers(){
-        viewModel.fragmentEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        viewModel.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                NavigateToHomeScreen -> navigator.navigateToHomeScreen()
                 is SwitchPage -> binding.viewPager.setCurrentItem(event.pagePosition, true)
                 is ShowMessageSnackBar -> showSnackBar(event.stringRes)
                 is SetLoginCredentials -> {
-                    vpaAdapter.loginFragment.binding.apply {
-                        etUserName.setText(event.email)
-                        etPassword.setText(event.password)
+                    vpaAdapter.createFragment(0).let {
+                        (it as FragmentAuthLogin).binding.apply {
+                            etUserName.setText(event.email)
+                            etPassword.setText(event.password)
+                        }
                     }
                 }
                 ShowLoginScreen -> binding.apply {
                     viewPager.isVisible = true
                     tvAppLogo.isVisible = true
                 }
-                HideLoadingDialog -> navigator.popLoadingDialog()
-                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
             }
         }
     }

@@ -15,8 +15,6 @@ class VpaAuth(fragment : Fragment) : FragmentStateAdapter(fragment) {
         }
     }
 
-    val loginFragment : FragmentAuthLogin get() = fragments[0] as FragmentAuthLogin
-
     override fun getItemCount() = fragments.size
 
     override fun createFragment(position: Int) = fragments[position]

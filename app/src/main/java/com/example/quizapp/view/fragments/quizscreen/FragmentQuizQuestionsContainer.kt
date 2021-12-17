@@ -106,7 +106,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
 
     private fun initClickListeners() {
         binding.apply {
-            btnBack.onClick(navigator::popBackStack)
+            btnBack.onClick(vmQuiz::onBackButtonClicked)
             btnMoreOptions.onClick(vmContainer::onMoreOptionsClicked)
             btnSubmit.onClick { vmContainer.onSubmitButtonClicked(vmQuiz.completeQuestionnaire?.areAllQuestionsAnswered) }
             btnShuffle.onClick(vmContainer::onShuffleButtonClicked)
@@ -140,10 +140,9 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
             }
         }
 
-        vmContainer.fragmentEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmContainer.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 is SelectDifferentPage -> binding.viewPager.currentItem = event.newPosition
-                OnSubmitButtonClickedEvent -> navigator.navigateToQuizResultScreen()
                 ShowMoreOptionsPopUpMenuEvent -> {
                     PopupMenu(requireContext(), binding.btnMoreOptions).apply {
                         inflate(R.menu.quiz_container_popup_menu)

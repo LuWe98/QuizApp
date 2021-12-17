@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentAdminAddEditFacultyBinding
-import com.example.quizapp.extensions.*
+import com.example.quizapp.extensions.collectWhenStarted
+import com.example.quizapp.extensions.initMaterialZAxisAnimationForReceiver
+import com.example.quizapp.extensions.onClick
+import com.example.quizapp.extensions.showSnackBar
+import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty
-import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.*
+import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.ShowMessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,7 +30,7 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
 
     private fun initListeners() {
         binding.apply {
-            btnBack.onClick(navigator::popBackStack)
+            btnBack.onClick(vmAddEdit::onBackButtonClicked)
             btnSave.onClick(vmAddEdit::onSaveButtonClicked)
             abbreviationCard.onClick(vmAddEdit::onAbbreviationCardClicked)
             nameCard.onClick(vmAddEdit::onNameCardClicked)
@@ -35,10 +38,10 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
     }
 
     private fun initObservers() {
-        setUpdateStringTypeListener(UpdateStringType.FACULTY_ABBREVIATION, vmAddEdit::onAbbreviationUpdateReceived)
 
-        setUpdateStringTypeListener(UpdateStringType.FACULTY_NAME, vmAddEdit::onNameUpdateReceived)
+        setFragmentResultEventListener(vmAddEdit::onAbbreviationUpdateResultReceived)
 
+        setFragmentResultEventListener(vmAddEdit::onNameUpdateResultReceived)
 
         vmAddEdit.facultyAbbreviationStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.abbreviationCard.text = if(it.isBlank()) "-" else it
@@ -48,13 +51,9 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
             binding.nameCard.text = if(it.isBlank()) "-" else it
         }
 
-        vmAddEdit.addEditFacultyEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAddEdit.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                is NavigateToUpdateStringDialog -> navigator.navigateToUpdateStringDialog(event.initialValue, event.updateType)
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
-                NavigateBackEvent -> navigator.popBackStack()
-                HideLoadingDialog -> navigator.popLoadingDialog()
-                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
             }
         }
     }

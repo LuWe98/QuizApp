@@ -1,22 +1,21 @@
 package com.example.quizapp.viewmodel
 
-import android.app.Application
-import androidx.annotation.StringRes
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import com.example.quizapp.QuizApplication
 import com.example.quizapp.R
-import com.example.quizapp.extensions.app
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.dialogs.sharequestionnaire.DfShareQuestionnaireArgs
-import com.example.quizapp.viewmodel.VmShareQuestionnaire.ShareQuestionnaireEvent.*
+import com.example.quizapp.viewmodel.VmShareQuestionnaire.ShareQuestionnaireEvent
+import com.example.quizapp.viewmodel.VmShareQuestionnaire.ShareQuestionnaireEvent.ShowMessageSnackBar
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,14 +23,10 @@ class VmShareQuestionnaire @Inject constructor(
     private val backendRepository: BackendRepository,
     private val applicationScope: CoroutineScope,
     private val state: SavedStateHandle,
-    application: Application
-) : AndroidViewModel(application) {
+    private val app: QuizApplication
+) : BaseViewModel<ShareQuestionnaireEvent>() {
 
     private val args = DfShareQuestionnaireArgs.fromSavedStateHandle(state)
-
-    private val shareQuestionnaireEventChannel = Channel<ShareQuestionnaireEvent>()
-
-    val shareQuestionnaireEventChannelFlow = shareQuestionnaireEventChannel.receiveAsFlow()
 
     private var _userName = state.get<String>(USER_NAME_KEY) ?: ""
         set(value) {
@@ -43,30 +38,32 @@ class VmShareQuestionnaire @Inject constructor(
 
 
     fun onShareButtonClicked() = launch(IO, applicationScope) {
-        shareQuestionnaireEventChannel.send(ShowLoadingDialog(R.string.sharingQuestionnaire))
+        navigationDispatcher.dispatch(ToLoadingDialog(R.string.sharingQuestionnaire))
 
         runCatching {
             backendRepository.shareQuestionnaireWithUser(args.questionnaireId, userName, false)
         }.also {
             delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            shareQuestionnaireEventChannel.send(HideLoadingDialog)
-            shareQuestionnaireEventChannel.send(NavigateBackEvent)
+            navigationDispatcher.dispatch(PopLoadingDialog)
         }.onSuccess { response ->
-            shareQuestionnaireEventChannel.send(ShowMessageSnackBar(response.responseType.getMessage(userName, app)))
+            eventChannel.send(ShowMessageSnackBar(response.responseType.getMessage(userName, app)))
         }.onFailure {
-            shareQuestionnaireEventChannel.send(ShowMessageSnackBar(app.getString(R.string.errorCouldNotShare)))
+            eventChannel.send(ShowMessageSnackBar(app.getString(R.string.errorCouldNotShare)))
         }
+
+        navigationDispatcher.dispatch(NavigateBack)
+    }
+
+    fun onCancelButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(NavigateBack)
     }
 
     fun onUserNameEditTextChanged(newText: String){
         _userName = newText.trim()
     }
 
-    sealed class ShareQuestionnaireEvent {
-        object NavigateBackEvent: ShareQuestionnaireEvent()
+    sealed class ShareQuestionnaireEvent: ViewModelEventMarker {
         class ShowMessageSnackBar(val message: String): ShareQuestionnaireEvent()
-        class ShowLoadingDialog(@StringRes val messageRes: Int): ShareQuestionnaireEvent()
-        object HideLoadingDialog: ShareQuestionnaireEvent()
     }
 
     companion object {

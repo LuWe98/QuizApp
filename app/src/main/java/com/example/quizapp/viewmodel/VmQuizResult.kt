@@ -1,52 +1,36 @@
 package com.example.quizapp.viewmodel
 
-import androidx.lifecycle.ViewModel
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
-import com.example.quizapp.viewmodel.VmQuizResult.FragmentQuizResultEvent.*
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.FromQuizResultToQuizContainerScreen
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.NavigateBack
+import com.example.quizapp.viewmodel.VmQuizResult.FragmentQuizResultEvent
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class VmQuizResult @Inject constructor(
     private val localRepository: LocalRepository
-) : ViewModel() {
+) : BaseViewModel<FragmentQuizResultEvent>() {
 
-    private val fragmentQuizResultEventChannel = Channel<FragmentQuizResultEvent>()
+    fun onShowSolutionsClicked() = launch(IO) {
+        navigationDispatcher.dispatch(FromQuizResultToQuizContainerScreen( true))
+    }
 
-    val fragmentQuizResultEventChannelFlow = fragmentQuizResultEventChannel.receiveAsFlow()
+    fun onCloseButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(NavigateBack)
+    }
 
-    private var _retryQuiz: Boolean = false
-
-    val retryQuiz get() = _retryQuiz
-
-    fun onShowSolutionsClicked() {
-        launch(IO) {
-            fragmentQuizResultEventChannel.send(ShowSolutionsEvent)
+    fun onTryAgainClicked(completeQuestionnaire: CompleteQuestionnaire?) = launch(IO) {
+        completeQuestionnaire?.apply {
+            localRepository.update(allAnswers.map { it.copy(isAnswerSelected = false) })
         }
+        navigationDispatcher.dispatch(FromQuizResultToQuizContainerScreen(false))
     }
 
-    fun onCloseButtonClicked() {
-        launch(IO) {
-            fragmentQuizResultEventChannel.send(NavigateBackEvent)
-        }
-    }
-
-    fun onTryAgainClicked(completeQuestionnaire: CompleteQuestionnaire?) {
-        launch(IO) {
-            completeQuestionnaire?.apply {
-                localRepository.update(allAnswers.map { it.copy(isAnswerSelected = false) })
-            }
-            _retryQuiz = true
-        }
-    }
-
-    sealed class FragmentQuizResultEvent {
-        object NavigateBackEvent : FragmentQuizResultEvent()
-        object ShowSolutionsEvent : FragmentQuizResultEvent()
-    }
+    sealed class FragmentQuizResultEvent: ViewModelEventMarker
 }

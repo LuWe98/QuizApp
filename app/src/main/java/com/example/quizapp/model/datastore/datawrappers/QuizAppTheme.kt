@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.quizapp.R
-import com.example.quizapp.model.selection.SelectionTypeItemMarker
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionTypeItemMarker
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

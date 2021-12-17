@@ -10,14 +10,15 @@ import androidx.navigation.NavDestination
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.collectWhenStarted
+import com.example.quizapp.extensions.navController
+import com.example.quizapp.extensions.navHostFragment
 import com.example.quizapp.extensions.showSnackBar
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher
 import com.example.quizapp.viewmodel.VmQuizActivity
-import com.example.quizapp.viewmodel.VmQuizActivity.MainViewModelEvent.NavigateToLoginScreenEvent
 import com.example.quizapp.viewmodel.VmQuizActivity.MainViewModelEvent.ShowMessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import javax.inject.Provider
 import kotlin.math.max
 import kotlin.math.min
 
@@ -30,13 +31,12 @@ import kotlin.math.min
 class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDestinationChangedListener {
 
     @Inject
-    lateinit var navigatorProvider: Provider<Navigator>
-    private val navigator get() = navigatorProvider.get()!!
-
-    private val vmQuizActivity: VmQuizActivity by viewModels()
+    lateinit var navigationDispatcher: NavigationDispatcher
 
     @Inject
-    lateinit var navigationDispatcher: NavigatorDispatcher
+    lateinit var fragmentResultDispatcher: FragmentResultDispatcher
+
+    private val vmQuizActivity: VmQuizActivity by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +47,6 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
         navController.addOnDestinationChangedListener(this)
         registerObservers()
     }
-
 
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
         currentSnackBar?.let {
@@ -61,13 +60,16 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             vmQuizActivity.onUserDataChanged(it, navController.currentDestination?.id)
         }
 
-        navigationDispatcher.navigationEventChannelFlow.collectWhenStarted(this) {
-            it.invoke(navController, navHostFragment)
+        navigationDispatcher.navigationChannelFlow.collectWhenStarted(this) { navEvent ->
+            navEvent.execute(navController, navHostFragment)
         }
 
-        vmQuizActivity.mainViewModelEventChannelFlow.collectWhenStarted(this) { event ->
+        fragmentResultDispatcher.fragmentResultChannelFlow.collectWhenStarted(this) { fragmentResultEvent ->
+            fragmentResultEvent.execute(this)
+        }
+
+        vmQuizActivity.eventChannelFlow.collectWhenStarted(this) { event ->
             when (event) {
-                NavigateToLoginScreenEvent -> navigator.navigateToAuthScreen()
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
             }
         }

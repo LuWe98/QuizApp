@@ -12,7 +12,7 @@
             android:layout_marginTop="@dimen/grid_16"
             android:layout_marginHorizontal="@dimen/grid_6"
             app:startIconDrawable="@drawable/ic_person"
-            android:background="@drawable/background_round_corners_10dp"
+            android:background="@drawable/background_round_corners_45dp"
             android:backgroundTint="?android:colorBackground"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
@@ -35,7 +35,7 @@
             android:hint="@string/password"
             android:layout_marginHorizontal="@dimen/grid_6"
             android:layout_marginTop="@dimen/grid_4"
-            android:background="@drawable/background_round_corners_10dp"
+            android:background="@drawable/background_round_corners_45dp"
             android:backgroundTint="?android:colorBackground"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
@@ -55,7 +55,7 @@
 
 
     <com.google.android.material.textview.MaterialTextView
-            android:layout_width="175dp"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/btnLogin"
             android:text="@string/login"
@@ -65,11 +65,13 @@
             android:textColor="@color/white"
             android:background="@drawable/background_round_corners_45dp"
             android:backgroundTint="?colorPrimary"
-            android:layout_marginTop="@dimen/grid_12"
+            android:layout_marginTop="@dimen/grid_4"
+            android:layout_marginBottom="@dimen/grid_6"
+            android:layout_marginHorizontal="@dimen/grid_6"
             android:fontFamily="@font/work_sans_regular"
-            app:layout_constraintTop_toBottomOf="@id/tilPassword"
             app:layout_constraintEnd_toEndOf="@+id/tilPassword"
-            app:layout_constraintStart_toStartOf="@+id/tilPassword" />
+            app:layout_constraintStart_toStartOf="@+id/tilPassword"
+            app:layout_constraintTop_toBottomOf="@+id/tilPassword" />
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="0dp"

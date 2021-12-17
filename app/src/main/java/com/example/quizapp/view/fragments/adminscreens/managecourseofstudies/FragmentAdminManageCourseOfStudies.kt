@@ -8,13 +8,13 @@ import com.example.quizapp.databinding.FragmentAdminManageCourseOfStudiesBinding
 import com.example.quizapp.databinding.TabLayoutViewFacultyBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.Faculty
+import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.viewpager.adapter.VpaManageCourseOfStudies
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies
-import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent.*
+import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent.ClearSearchQueryEvent
+import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent.ShowMessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -95,17 +95,18 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
 
     private fun initListeners(){
         binding.apply {
-            btnBack.onClick(navigator::popBackStack)
-            fabAdd.onClick(navigator::navigateToAdminAddEditCourseOfStudies)
+            btnBack.onClick(vmAdmin::onBackButtonClicked)
+            fabAdd.onClick(vmAdmin::onAddCourseOfStudiesButtonClicked)
             etSearchQuery.onTextChanged(vmAdmin::onSearchQueryChanged)
             btnSearch.onClick(vmAdmin::onClearSearchQueryClicked)
         }
     }
 
     private fun initObservers(){
-        setSelectionTypeWithParsedValueListener(vmAdmin::onMoreOptionsItemSelected)
 
-        setConfirmationTypeListener(vmAdmin::onDeleteCourseOfStudiesConfirmed)
+        setFragmentResultEventListener(vmAdmin::onCosMoreOptionsSelectionResultReceived)
+
+        setFragmentResultEventListener(vmAdmin::onDeleteCourseOfStudiesConfirmationRequestReceived)
 
         vmAdmin.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.btnSearch.changeIconOnCondition {
@@ -113,18 +114,10 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
             }
         }
 
-        vmAdmin.manageCourseOfStudiesEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAdmin.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                is NavigateToManageCourseOfStudiesMoreOptionsEvent ->
-                    navigator.navigateToSelectionDialog(SelectionType.CourseOfStudiesMoreOptionsSelection(event.courseOfStudies))
-                is NavigateToAddEditCourseOfStudiesEvent ->
-                    navigator.navigateToAdminAddEditCourseOfStudies(event.courseOfStudies)
-                is NavigateToConfirmDeletionEvent ->
-                    navigator.navigateToConfirmationDialog(ConfirmationType.DeleteCourseOfStudiesConfirmation(event.courseOfStudies))
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
-                HideLoadingDialog -> navigator.popLoadingDialog()
-                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
             }
         }
     }

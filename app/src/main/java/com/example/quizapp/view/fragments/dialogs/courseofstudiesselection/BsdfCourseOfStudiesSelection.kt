@@ -3,7 +3,6 @@ package com.example.quizapp.view.fragments.dialogs.courseofstudiesselection
 import android.os.Bundle
 import android.view.View
 import android.view.animation.DecelerateInterpolator
-import androidx.fragment.app.setFragmentResult
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfCourseOfStudiesSelectionBinding
 import com.example.quizapp.databinding.TabLayoutViewFacultyBinding
@@ -14,7 +13,6 @@ import com.example.quizapp.view.viewpager.adapter.VpaCourseOfStudiesSelection
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection
 import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesSelectionEvent.ClearSearchQueryEvent
-import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesSelectionEvent.ConfirmationEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.first
@@ -22,10 +20,6 @@ import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class BsdfCourseOfStudiesSelection : BindingBottomSheetDialogFragment<BsdfCourseOfStudiesSelectionBinding>() {
-
-    companion object {
-        const val COURSE_OF_STUDIES_RESULT_KEY = "courseOfStudiesResultKey"
-    }
 
     private val vmCos: VmCourseOfStudiesSelection by hiltNavDestinationViewModels(R.id.bsdfCourseOfStudiesSelection)
 
@@ -117,14 +111,8 @@ class BsdfCourseOfStudiesSelection : BindingBottomSheetDialogFragment<BsdfCourse
             }
         }
 
-        vmCos.courseOfStudiesSelectionEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmCos.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                is ConfirmationEvent -> {
-                    setFragmentResult(COURSE_OF_STUDIES_RESULT_KEY, Bundle().apply {
-                        putStringArray(COURSE_OF_STUDIES_RESULT_KEY, event.courseOfStudiesIds)
-                    })
-                    navigator.popBackStack()
-                }
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
             }
         }

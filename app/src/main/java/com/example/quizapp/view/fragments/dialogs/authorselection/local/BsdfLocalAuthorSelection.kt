@@ -2,7 +2,6 @@ package com.example.quizapp.view.fragments.dialogs.authorselection.local
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
@@ -12,15 +11,10 @@ import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFrag
 import com.example.quizapp.view.recyclerview.adapters.RvaAuthorSelectionLocal
 import com.example.quizapp.viewmodel.VmLocalAuthorSelection
 import com.example.quizapp.viewmodel.VmLocalAuthorSelection.LocalAuthorSelectionEvent.ClearSearchQueryEvent
-import com.example.quizapp.viewmodel.VmLocalAuthorSelection.LocalAuthorSelectionEvent.SendResultEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BsdfLocalAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSelectionBinding>() {
-
-    companion object {
-        const val AUTHOR_SELECTION_RESULT_KEY = "localAuthorSelectionResultKey"
-    }
 
     private val vmAuthor: VmLocalAuthorSelection by viewModels()
 
@@ -75,14 +69,8 @@ class BsdfLocalAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSelec
             }
         }
 
-        vmAuthor.userCreatorSelectionEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAuthor.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                is SendResultEvent -> {
-                    setFragmentResult(AUTHOR_SELECTION_RESULT_KEY, Bundle().apply {
-                        putStringArray(AUTHOR_SELECTION_RESULT_KEY, event.selectedAuthorIds)
-                    })
-                    navigator.popBackStack()
-                }
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
             }
         }

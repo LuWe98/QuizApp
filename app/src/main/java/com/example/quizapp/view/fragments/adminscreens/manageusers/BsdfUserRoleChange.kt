@@ -16,6 +16,7 @@ import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.viewmodel.VmAdminManageUsers
 import com.example.quizapp.viewmodel.VmChangeUserRole
+import com.example.quizapp.viewmodel.VmChangeUserRole.FragmentChangeUserRoleEvent.*
 import com.google.android.material.radiobutton.MaterialRadioButton
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -74,12 +75,9 @@ class BsdfUserRoleChange : BindingBottomSheetDialogFragment<BsdfUserRoleSelectio
     }
 
     private fun initObservers(){
-        vmRole.fragmentChangeUserRoleEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmRole.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                VmChangeUserRole.FragmentChangeUserRoleEvent.NavigateBack -> {
-                    navigator.popBackStack()
-                }
-                is VmChangeUserRole.FragmentChangeUserRoleEvent.StateTest -> {
+                is StateTest -> {
                     when(event.resources){
                         is Resource.Loading -> {
                             dialog?.setCancelable(false)

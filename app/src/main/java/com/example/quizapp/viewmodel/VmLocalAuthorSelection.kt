@@ -1,23 +1,25 @@
 package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.view.fragments.dialogs.authorselection.local.BsdfLocalAuthorSelection
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.FragmentResult.LocalAuthorSelectionResult
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.fragments.dialogs.authorselection.local.BsdfLocalAuthorSelectionArgs
-import com.example.quizapp.view.fragments.dialogs.authorselection.remote.BsdfRemoteAuthorSelectionArgs
+import com.example.quizapp.viewmodel.VmLocalAuthorSelection.LocalAuthorSelectionEvent
 import com.example.quizapp.viewmodel.VmLocalAuthorSelection.LocalAuthorSelectionEvent.ClearSearchQueryEvent
-import com.example.quizapp.viewmodel.VmLocalAuthorSelection.LocalAuthorSelectionEvent.SendResultEvent
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
-import java.util.*
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,14 +27,9 @@ class VmLocalAuthorSelection @Inject constructor(
     private val localRepository: LocalRepository,
     private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
-) : ViewModel() {
+) : BaseViewModel<LocalAuthorSelectionEvent>() {
 
     private val args = BsdfLocalAuthorSelectionArgs.fromSavedStateHandle(state)
-
-    private val userCreatorSelectionEventChannel = Channel<LocalAuthorSelectionEvent>()
-
-    val userCreatorSelectionEventChannelFlow = userCreatorSelectionEventChannel.receiveAsFlow()
-
 
     private val searchQueryMutableStateFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
@@ -69,11 +66,9 @@ class VmLocalAuthorSelection @Inject constructor(
         searchQueryMutableStateFlow.value = newQuery
     }
 
-    fun onDeleteSearchQueryClicked() {
+    fun onDeleteSearchQueryClicked() = launch(IO) {
         if (searchQuery.isNotBlank()) {
-            launch {
-                userCreatorSelectionEventChannel.send(ClearSearchQueryEvent)
-            }
+            eventChannel.send(ClearSearchQueryEvent)
         }
     }
 
@@ -89,14 +84,12 @@ class VmLocalAuthorSelection @Inject constructor(
         }
     }
 
-    fun onConfirmButtonClicked() {
-        launch(IO) {
-            userCreatorSelectionEventChannel.send(SendResultEvent(selectedAuthorIds.toTypedArray()))
-        }
+    fun onConfirmButtonClicked() = launch(IO) {
+        fragmentResultDispatcher.dispatch(LocalAuthorSelectionResult(selectedAuthorIds.toList()))
+        navigationDispatcher.dispatch(NavigateBack)
     }
 
-    sealed class LocalAuthorSelectionEvent {
-        class SendResultEvent(val selectedAuthorIds: Array<String>) : LocalAuthorSelectionEvent()
+    sealed class LocalAuthorSelectionEvent: ViewModelEventMarker {
         object ClearSearchQueryEvent : LocalAuthorSelectionEvent()
     }
 

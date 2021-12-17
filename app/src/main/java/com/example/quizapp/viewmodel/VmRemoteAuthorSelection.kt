@@ -1,7 +1,6 @@
 package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.example.quizapp.extensions.getMutableStateFlow
@@ -9,29 +8,26 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.FragmentResult.RemoteAuthorSelectionResult
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.fragments.dialogs.authorselection.remote.BsdfRemoteAuthorSelectionArgs
+import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent
 import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent.ClearSearchQueryEvent
-import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent.SendResultEvent
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class VmRemoteAuthorSelection @Inject constructor(
     private val backendRepository: BackendRepository,
     private val state: SavedStateHandle
-) : ViewModel() {
+) : BaseViewModel<RemoteAuthorSelectionEvent>() {
 
     private val args = BsdfRemoteAuthorSelectionArgs.fromSavedStateHandle(state)
-
-    private val userCreatorSelectionEventChannel = Channel<RemoteAuthorSelectionEvent>()
-
-    val userCreatorSelectionEventChannelFlow = userCreatorSelectionEventChannel.receiveAsFlow()
-
 
     private val searchQueryMutableStateFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
@@ -64,11 +60,9 @@ class VmRemoteAuthorSelection @Inject constructor(
         searchQueryMutableStateFlow.value = newQuery
     }
 
-    fun onDeleteSearchQueryClicked(){
-        if(searchQuery.isNotBlank()) {
-            launch {
-                userCreatorSelectionEventChannel.send(ClearSearchQueryEvent)
-            }
+    fun onDeleteSearchQueryClicked() = launch(IO) {
+        if (searchQuery.isNotBlank()) {
+            eventChannel.send(ClearSearchQueryEvent)
         }
     }
 
@@ -85,15 +79,13 @@ class VmRemoteAuthorSelection @Inject constructor(
         }
     }
 
-    fun onConfirmButtonClicked() {
-        launch(IO) {
-            userCreatorSelectionEventChannel.send(SendResultEvent(selectedAuthors.toTypedArray()))
-        }
+    fun onConfirmButtonClicked() = launch(IO) {
+        fragmentResultDispatcher.dispatch(RemoteAuthorSelectionResult(selectedAuthors))
+        navigationDispatcher.dispatch(NavigateBack)
     }
 
-    sealed class RemoteAuthorSelectionEvent {
-        class SendResultEvent(val selectedAuthors: Array<AuthorInfo>) : RemoteAuthorSelectionEvent()
-        object ClearSearchQueryEvent: RemoteAuthorSelectionEvent()
+    sealed class RemoteAuthorSelectionEvent: ViewModelEventMarker {
+        object ClearSearchQueryEvent : RemoteAuthorSelectionEvent()
     }
 
     companion object {

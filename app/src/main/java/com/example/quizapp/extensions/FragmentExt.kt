@@ -15,17 +15,12 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.setFragmentResultListener
 import androidx.hilt.navigation.HiltViewModelFactory
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.transition.Slide
 import com.example.quizapp.R
-import com.example.quizapp.model.selection.SelectionTypeItemMarker
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
-import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
-import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.UpdateStringType
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
@@ -237,77 +232,6 @@ inline fun <reified T : DialogFragment> Fragment.findDialog(tag: String, fragmen
     return fragmentManager.findFragmentByTag(tag) as T?
 }
 
-
-/**
- * Listener for various selection types -> Acts as a wrapper for setFragmentResultListener.
- * Possible SelectionTypes can be seen in the [SelectionType] sealed class.
- * It supports selection that only requires the user input and listens for the selection with the according resultKey
- */
-inline fun <reified ResultType : SelectionTypeItemMarker<ResultType>> Fragment.setSelectionTypeListener(
-    crossinline action: (ResultType) -> (Unit)
-) {
-    SelectionType.getResultKeyWithResultClass<ResultType>().let { resultKey ->
-        setFragmentResultListener(resultKey) { _, bundle ->
-            bundle.getParcelable<ResultType>(resultKey)?.let {
-                action.invoke(it)
-            }
-        }
-    }
-}
-
-/**
- * Listener for various selection types -> Acts as a wrapper for setFragmentResultListener.
- * Possible SelectionTypes can be seen in the [SelectionType] sealed class.
- * It supports selection that only requires the user input and listens for the selection with the according resultKey.
- * This version of the method also returns the used SelectionType instance
- */
-inline fun <reified ResultType : SelectionTypeItemMarker<ResultType>, reified SelectionTypeT : SelectionType> Fragment.setSelectionTypeWithParsedValueListener(
-    crossinline action: (ResultType, SelectionTypeT) -> (Unit)
-) {
-    SelectionType.getResultKeyWithResultClass<ResultType>().let { resultKey ->
-        setFragmentResultListener(resultKey) { _, bundle ->
-            bundle.getParcelable<ResultType>(resultKey)?.let { result ->
-                bundle.getParcelable<SelectionTypeT>(resultKey.plus(SelectionType.INITIAL_VALUE_SUFFIX))?.let { parsedValue ->
-                    action.invoke(result, parsedValue)
-                }
-            }
-        }
-    }
-}
-
-/**
- * Listener for the [com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateString] -> Acts as a wrapper for setFragmentResultListener.
- * Possible update types can be seen in the [UpdateStringType] enum class.
- * It supports user String input which will be returned after confirmation with the given resultKey
- */
-inline fun Fragment.setUpdateStringTypeListener(type: UpdateStringType, crossinline action: (String) -> (Unit)) {
-    setFragmentResultListener(type.resultKey) { key, bundle ->
-        bundle.getString(key)?.let {
-            action.invoke(it)
-        }
-    }
-}
-
-
-/**
- * Listener for various confirmation types -> Acts as a wrapper for setFragmentResultListener.
- * Possible SelectionTypes can be seen in the [ConfirmationType] sealed class.
- * It supports confirmation of the user with one positive and one negative button.
- */
-inline fun <reified ResultType : ConfirmationType> Fragment.setConfirmationTypeListener(crossinline action: (ResultType) -> (Unit)) {
-    ConfirmationType.getResultKeyWithResultType<ResultType>().let { resultKey ->
-        setFragmentResultListener(resultKey) { _, bundle ->
-            bundle.getParcelable<ResultType>(resultKey)?.let {
-                action.invoke(it)
-            }
-        }
-    }
-}
-
-
-
-
-//action.invoke(SelectionType.getBundleContent<SelectionTypeClass, ResultType>(resultKey, bundle))
 
 
 //ANIMATION EXTENSIONS

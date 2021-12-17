@@ -45,6 +45,8 @@ class SettingsItemDropDownLayout constructor(
                 binding.dropDownIcon.setPadding(padding, padding, padding, padding)
             }
 
+            setBackgroundResource(R.drawable.ripple_round_corners_15_dp)
+
             typedArray.recycle()
         }
     }

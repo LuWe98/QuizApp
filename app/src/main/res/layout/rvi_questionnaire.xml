@@ -29,7 +29,7 @@
                     app:indicatorColor="?colorAccent"
                     tools:indicatorColor="@color/green"
                     app:trackColor="@color/unselectedColor"
-                    app:trackThickness="2.75dp"
+                    app:trackThickness="2.25dp"
                     app:trackCornerRadius="50dp"
                     tools:visibility="visible"
                     tools:progress="100"
@@ -51,60 +51,53 @@
                     app:layout_constraintEnd_toEndOf="@id/progressIndicator"
                     app:layout_constraintBottom_toBottomOf="@id/progressIndicator" />
 
-            <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:id="@+id/tvDateAndQuestionAmount"
-                    tools:text="Prof. Oliver Tamine"
-                    android:fontFamily="@font/work_sans_regular"
-                    android:textSize="13sp"
-                    app:layout_constraintStart_toEndOf="@id/progressIndicator"
-                    android:layout_marginStart="@dimen/grid_2"
-                    app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="25sp"
-                    android:layout_height="25sp"
-                    android:src="@drawable/ic_question"
-                    android:padding="6.5dp"
-                    android:visibility="gone"
-                    android:layout_marginStart="-4dp"
-                    app:layout_constraintStart_toEndOf="@+id/tvDateAndQuestionAmount"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:id="@+id/appCompatImageView2" />
-
-            <com.google.android.material.textview.MaterialTextView
+            <RelativeLayout
                     android:layout_width="0dp"
-                    android:layout_height="25dp"
-                    android:id="@+id/tvTitle"
-                    android:gravity="center_vertical"
-                    app:layout_constraintStart_toEndOf="@id/progressIndicator"
-                    tools:text="Questionnaire Title"
-                    app:autoSizeMinTextSize="12sp"
-                    app:autoSizeMaxTextSize="20sp"
-                    app:autoSizeStepGranularity="0.25sp"
-                    app:autoSizeTextType="uniform"
-                    android:maxLines="1"
-                    android:fontFamily="@font/work_sans_medium"
-                    android:textStyle="bold"
-                    android:layout_marginStart="@dimen/grid_2"
+                    android:id="@+id/textLayout"
+                    android:layout_marginHorizontal="@dimen/grid_2"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toEndOf="@+id/progressIndicator"
                     app:layout_constraintTop_toTopOf="@+id/progressIndicator"
-                    app:layout_constraintEnd_toStartOf="@+id/btnSync" />
+                    app:layout_constraintBottom_toBottomOf="@+id/progressIndicator"
+                    app:layout_constraintEnd_toStartOf="@+id/btnSync">
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvTitle"
+                        android:gravity="center_vertical"
+                        tools:text="Questionnaire Title"
+                        android:textSize="17.5sp"
+                        android:maxLines="2"
+                        android:fontFamily="@font/work_sans_medium"
+                        android:textStyle="bold"/>
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:id="@+id/tvDateAndQuestionAmount"
+                        tools:text="Prof. Oliver Tamine"
+                        android:fontFamily="@font/work_sans_regular"
+                        android:textSize="13sp"
+                        android:layout_below="@id/tvTitle"/>
+
+            </RelativeLayout>
+
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:id="@+id/btnSync"
                     tools:tint="@color/green"
-                    app:layout_constraintTop_toTopOf="@+id/tvTitle"
+                    app:layout_constraintTop_toTopOf="@+id/textLayout"
                     app:srcCompat="@drawable/ic_cloud_done"
                     android:padding="4dp"
                     android:layout_marginEnd="@dimen/grid_2"
                     android:background="@drawable/shape_circle"
                     android:backgroundTint="?android:colorBackground"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="@+id/tvTitle" />
+                    app:layout_constraintBottom_toBottomOf="@+id/textLayout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

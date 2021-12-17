@@ -6,9 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminManageFacultiesBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.fragments.dialogs.confirmation.ConfirmationType
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
 import com.example.quizapp.view.recyclerview.adapters.RvaFaculty
 import com.example.quizapp.viewmodel.VmAdminManageFaculties
 import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent.*
@@ -48,17 +47,18 @@ class FragmentAdminManageFaculties: BindingFragment<FragmentAdminManageFaculties
 
     private fun initListeners(){
         binding.apply {
-            btnBack.onClick(navigator::popBackStack)
-            fabAdd.onClick(navigator::navigateToAdminAddEditFaculty)
+            btnBack.onClick(vmAdmin::onBackButtonClicked)
+            fabAdd.onClick(vmAdmin::onAddFacultyButtonClicked)
             etSearchQuery.onTextChanged(vmAdmin::onSearchQueryChanged)
             btnSearch.onClick(vmAdmin::onDeleteSearchClicked)
         }
     }
 
     private fun initObservers(){
-        setSelectionTypeWithParsedValueListener(vmAdmin::onMoreOptionsItemSelected)
 
-        setConfirmationTypeListener(vmAdmin::onDeleteFacultyConfirmed)
+        setFragmentResultEventListener(vmAdmin::onFacultyMoreOptionsSelectionResultReceived)
+
+        setFragmentResultEventListener(vmAdmin::onDeleteFacultyConfirmationResultReceived)
 
         vmAdmin.facultiesStateFlow.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitList(it)
@@ -70,16 +70,10 @@ class FragmentAdminManageFaculties: BindingFragment<FragmentAdminManageFaculties
             }
         }
 
-        vmAdmin.fragmentAdminManageFacultiesEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmAdmin.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
-                NavigateBack -> navigator.popBackStack()
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
-                is NavigateToSelectionScreen -> navigator.navigateToSelectionDialog(event.selectionType)
-                is NavigateToAddEditFacultyEvent -> navigator.navigateToAdminAddEditFaculty(event.faculty)
-                is NavigateToDeletionConfirmationEvent -> navigator.navigateToConfirmationDialog(ConfirmationType.DeleteFacultyConfirmation(event.faculty))
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
-                is ShowLoadingDialog -> navigator.navigateToLoadingDialog(event.messageRes)
-                HideLoadingDialog -> navigator.popLoadingDialog()
             }
         }
     }

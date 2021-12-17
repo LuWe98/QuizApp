@@ -105,7 +105,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
     private fun initClickListener() {
         binding.apply {
-            btnBack.onClick(navigator::popBackStack)
+            btnBack.onClick(vmQuiz::onBackButtonClicked)
             bottomSheet.btnStart.onClick(vmQuiz::onStartButtonClicked)
             btnMoreOptions.onClick(vmQuiz::onMoreOptionsItemClicked)
             bottomSheet.sheetHeader.onClick(this@FragmentQuizOverview::toggleBottomSheet)
@@ -187,7 +187,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         }
 
 
-        vmQuiz.fragmentEventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
+        vmQuiz.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 is ShowUndoDeleteGivenAnswersSnackBack -> {
                     showSnackBar(R.string.answersDeleted, anchorView = binding.bottomSheet.root, actionTextRes = R.string.undo) {
@@ -206,10 +206,6 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                         }
                         show()
                     }
-                }
-                is NavigateToQuizScreen -> {
-                    navigator.navigateToQuizContainerScreen(event.position, event.isShowSolutionScreen)
-                    //navigator.navigateToQuizContainerScreenWithQuestionCardClick(position, questionId, card)
                 }
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes, anchorView = binding.bottomSheet.root)
             }

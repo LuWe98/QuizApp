@@ -1,4 +1,4 @@
-package com.example.quizapp.model.selection
+package com.example.quizapp.view.fragments.resultdispatcher.requests.selection
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

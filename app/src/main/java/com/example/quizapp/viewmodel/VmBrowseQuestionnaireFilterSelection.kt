@@ -1,7 +1,6 @@
 package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
@@ -9,17 +8,19 @@ import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
-import com.example.quizapp.view.fragments.dialogs.selection.SelectionType
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.FragmentResult.*
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
 import com.example.quizapp.view.fragments.searchscreen.filterselection.BsdfBrowseQuestionnaireFilterSelectionArgs
-import com.example.quizapp.viewmodel.VmBrowseQuestionnaireFilterSelection.FilterEvent.*
+import com.example.quizapp.viewmodel.VmBrowseQuestionnaireFilterSelection.FilterEvent
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -28,22 +29,15 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     private val localRepository: LocalRepository,
     private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
-): ViewModel() {
+) : BaseViewModel<FilterEvent>() {
 
     private val args = BsdfBrowseQuestionnaireFilterSelectionArgs.fromSavedStateHandle(state)
-
-    private val searchFilterEventChannel = Channel<FilterEvent>()
-
-    val searchFilterEventChannelFlow = searchFilterEventChannel.receiveAsFlow()
-
-
 
     private val selectedAuthorsMutableStateFlow = state.getMutableStateFlow(SELECTED_AUTHORS_KEY, args.selectedAuthors.toSet())
 
     val selectedAuthorsStateFlow = selectedAuthorsMutableStateFlow.asStateFlow()
 
     private val selectedAuthors get() = selectedAuthorsMutableStateFlow.value
-
 
 
     private val selectedCourseOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_COURSE_OF_STUDIES_ID_KEY, runBlocking(IO) {
@@ -57,7 +51,6 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     private val selectedCourseOfStudiesIds get() = selectedCourseOfStudiesIdsMutableStateFlow.value
 
 
-
     private val selectedFacultyIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_FACULTY_ID_KEY, runBlocking(IO) {
         preferencesRepository.getBrowsableFacultyIds()
     })
@@ -69,7 +62,6 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     private val selectedFacultyIds get() = selectedFacultyIdsMutableStateFlow.value
 
 
-
     private val orderByMutableStateFlow = state.getMutableStateFlow(SELECTED_ORDER_BY_KEY, runBlocking(IO) { preferencesRepository.getBrowsableOrderBy() })
 
     val orderByStateFlow = orderByMutableStateFlow.asStateFlow()
@@ -77,13 +69,12 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     private val orderBy get() = orderByMutableStateFlow.value
 
 
-
-    private val orderAscendingMutableStateFlow = state.getMutableStateFlow(SELECTED_ORDER_ASCENDING_KEY, runBlocking(IO) { preferencesRepository.getBrowsableAscendingOrder() })
+    private val orderAscendingMutableStateFlow =
+        state.getMutableStateFlow(SELECTED_ORDER_ASCENDING_KEY, runBlocking(IO) { preferencesRepository.getBrowsableAscendingOrder() })
 
     val orderAscendingStateFlow = orderAscendingMutableStateFlow.asStateFlow()
 
     private val orderAscending get() = orderAscendingMutableStateFlow.value
-
 
 
     fun removeFilteredFaculty(faculty: Faculty) {
@@ -111,82 +102,67 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     }
 
 
-    fun onOrderByCardClicked() {
-        launch(IO) {
-            searchFilterEventChannel.send(NavigateToSelectionScreen(SelectionType.BrowsableOrderBySelection(orderBy)))
-        }
+    fun onOrderByCardClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.RemoteOrderBySelection(orderBy)))
     }
 
-    fun onOrderAscendingCardClicked(){
+    fun onOrderAscendingCardClicked() {
         state.set(SELECTED_ORDER_ASCENDING_KEY, !orderAscending)
         orderAscendingMutableStateFlow.value = !orderAscending
     }
 
 
-    fun onFacultyCardAddButtonClicked() {
-        launch(IO) {
-            searchFilterEventChannel.send(NavigateToFacultySelectionScreen(selectedFacultyIds.toTypedArray()))
-        }
+    fun onFacultyCardAddButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToFacultySelectionDialog(selectedFacultyIds.toTypedArray()))
     }
 
-    fun onCourseOfStudiesAddButtonClicked() {
-        launch(IO) {
-            searchFilterEventChannel.send(NavigateToCourseOfStudiesSelectionScreen(selectedCourseOfStudiesIds.toTypedArray()))
-        }
+    fun onCourseOfStudiesAddButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(selectedCourseOfStudiesIds.toTypedArray()))
     }
 
-    fun onAuthorAddButtonClicked() {
-        launch(IO) {
-            searchFilterEventChannel.send(NavigateToRemoteAuthorSelectionScreen(selectedAuthors.toTypedArray()))
-        }
+    fun onAuthorAddButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToRemoteAuthorSelectionDialog(selectedAuthors.toTypedArray()))
     }
 
-    fun onSortByUpdateReceived(remoteQuestionnaireOrderBy: RemoteQuestionnaireOrderBy) {
-        state.set(SELECTED_ORDER_BY_KEY, remoteQuestionnaireOrderBy)
-        orderByMutableStateFlow.value = remoteQuestionnaireOrderBy
+    fun onRemoteOrderBySelectionResultReceived(result: SelectionResult.RemoteOrderBySelectionResult) {
+        state.set(SELECTED_ORDER_BY_KEY, result.selectedItem)
+        orderByMutableStateFlow.value = result.selectedItem
     }
 
-    fun onSelectedAuthorsUpdateReceived(selectedAuthors: Array<AuthorInfo>) {
-        selectedAuthors.toSet().let {
+    fun onAuthorsSelectionResultReceived(result: RemoteAuthorSelectionResult) {
+        result.authors.toSet().let {
             state.set(SELECTED_AUTHORS_KEY, it)
             selectedAuthorsMutableStateFlow.value = it
         }
     }
 
-    fun onSelectedFacultyUpdateReceived(selectedFacultyIds: Array<String>) {
-        selectedFacultyIds.toSet().let {
+    fun onFacultiesSelectionResultReceived(result: FacultySelectionResult) {
+        result.facultyIds.toSet().let {
             state.set(SELECTED_FACULTY_ID_KEY, it)
             selectedFacultyIdsMutableStateFlow.value = it
         }
     }
 
-    fun onSelectedCourseOfStudiesUpdateReceived(selectedCourseOfStudiesIds: Array<String>) {
-        selectedCourseOfStudiesIds.toSet().let {
+    fun onCourseOfStudiesSelectionResultReceived(result: CourseOfStudiesSelectionResult) {
+        result.courseOfStudiesIds.toSet().let {
             state.set(SELECTED_COURSE_OF_STUDIES_ID_KEY, it)
             selectedCourseOfStudiesIdsMutableStateFlow.value = it
         }
     }
 
-    fun onApplyButtonClicked(){
-        launch(IO) {
-            preferencesRepository.updateRemoteFilters(
-                orderBy,
-                orderAscending,
-                selectedCourseOfStudiesIds,
-                selectedFacultyIds
-            )
+    fun onApplyButtonClicked() = launch(IO) {
+        preferencesRepository.updateRemoteFilters(
+            orderBy,
+            orderAscending,
+            selectedCourseOfStudiesIds,
+            selectedFacultyIds
+        )
 
-            searchFilterEventChannel.send(ApplyFilterPreferencesEvent(selectedAuthors.toTypedArray()))
-        }
+        fragmentResultDispatcher.dispatch(RemoteQuestionnaireFilterResult(selectedAuthors))
+        navigationDispatcher.dispatch(NavigateBack)
     }
 
-    sealed class FilterEvent {
-        class NavigateToSelectionScreen(val selectionType: SelectionType) : FilterEvent()
-        class NavigateToRemoteAuthorSelectionScreen(val selectedUsers: Array<AuthorInfo>) : FilterEvent()
-        class NavigateToCourseOfStudiesSelectionScreen(val selectedCourseOfStudiesIds: Array<String>) : FilterEvent()
-        class NavigateToFacultySelectionScreen(val selectedFacultyIds: Array<String>) : FilterEvent()
-        class ApplyFilterPreferencesEvent(val selectedAuthors: Array<AuthorInfo>): FilterEvent()
-    }
+    sealed class FilterEvent: ViewModelEventMarker
 
     companion object {
         private const val SELECTED_AUTHORS_KEY = "selectedUsersKeys"

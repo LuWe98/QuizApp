@@ -47,13 +47,14 @@ class DialogFragmentVoiceSearch : BindingDialogFragment<DfVoiceSearchBinding>(),
     }
 
     private val resultLauncher: ActivityResultLauncher<String> = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if (granted) initSpeechRecognizer() else navigator.popBackStack()
+        if (granted) initSpeechRecognizer() else 1
+    //navigator.popBackStack()
     }
 
     private fun initSpeechRecognizer() {
         if (!SpeechRecognizer.isRecognitionAvailable(requireContext())) {
             showToast(getString(R.string.voiceSearchSpeechRecognizerNotAvailable))
-            navigator.popBackStack()
+            //navigator.popBackStack()
             return
         }
 

@@ -1,11 +1,13 @@
 package com.example.quizapp.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.example.quizapp.QuizApplication
 import com.example.quizapp.R
-import com.example.quizapp.extensions.*
+import com.example.quizapp.extensions.combine
+import com.example.quizapp.extensions.getMutableStateFlow
+import com.example.quizapp.extensions.isConnectedToInternet
+import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.QuestionnaireVisibility.PRIVATE
@@ -13,6 +15,7 @@ import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionnaireToUpload
+import com.example.quizapp.model.databases.room.entities.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
@@ -23,11 +26,15 @@ import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.Dele
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.InsertFilledQuestionnaireResponseType
 import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.InsertQuestionnairesResponseType
 import com.example.quizapp.model.ktor.status.SyncStatus.*
+import com.example.quizapp.view.NavigationDispatcher
+import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.viewmodel.VmHome.*
 import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.*
+import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -41,20 +48,16 @@ class VmHome @Inject constructor(
     private val backendSyncer: BackendSyncer,
     private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle,
-    application: Application
-) : AndroidViewModel(application) {
-
-    private val fragmentHomeEventChannel = Channel<FragmentHomeEvent>()
-
-    val fragmentHomeEventChannelFlow = fragmentHomeEventChannel.receiveAsFlow()
+    app: QuizApplication
+) : BaseViewModel<FragmentHomeEvent>() {
 
     init {
         if (app.isConnectedToInternet) {
             launch(IO, applicationScope) {
-                fragmentHomeEventChannel.send(ChangeProgressVisibility(true))
+                eventChannel.send(ChangeProgressVisibility(true))
                 backendSyncer.syncData()
                 delay(500)
-                fragmentHomeEventChannel.send(ChangeProgressVisibility(false))
+                eventChannel.send(ChangeProgressVisibility(false))
             }
         }
     }
@@ -69,13 +72,11 @@ class VmHome @Inject constructor(
     val locallyPresentAuthors = localRepository.getAllLocalAuthorsFlow()
         .distinctUntilChanged()
 
-    fun onLocallyPresentAuthorsChanged(locallyPresentAuthors: List<AuthorInfo>) {
-        launch(IO) {
-            preferencesRepository.getLocalFilteredAuthorIds().let { savedIds ->
-                savedIds.filter { locallyPresentAuthors.none { author -> author.userId == it } }.let { notAvailableAuthorIds ->
-                    if (notAvailableAuthorIds.isNotEmpty()) {
-                        preferencesRepository.updateLocalFilteredAuthorIds(savedIds - notAvailableAuthorIds.toSet())
-                    }
+    fun onLocallyPresentAuthorsChanged(locallyPresentAuthors: List<AuthorInfo>) = launch(IO) {
+        preferencesRepository.getLocalFilteredAuthorIds().let { savedIds ->
+            savedIds.filter { locallyPresentAuthors.none { author -> author.userId == it } }.let { notAvailableAuthorIds ->
+                if (notAvailableAuthorIds.isNotEmpty()) {
+                    preferencesRepository.updateLocalFilteredAuthorIds(savedIds - notAvailableAuthorIds.toSet())
                 }
             }
         }
@@ -104,7 +105,7 @@ class VmHome @Inject constructor(
 
     fun onSwipeRefreshTriggered() = launch(IO) {
         backendSyncer.synAllQuestionnaireData()
-        fragmentHomeEventChannel.send(ChangeProgressVisibility(false))
+        eventChannel.send(ChangeProgressVisibility(false))
     }
 
     fun onSearchQueryChanged(newQuery: String) {
@@ -112,18 +113,14 @@ class VmHome @Inject constructor(
         searchQueryMutableStateFlow.value = newQuery
     }
 
-    fun onClearSearchQueryClicked() {
+    fun onClearSearchQueryClicked() = launch(IO) {
         if (searchQuery.isNotBlank()) {
-            launch {
-                fragmentHomeEventChannel.send(ClearSearchQueryEvent)
-            }
+            eventChannel.send(ClearSearchQueryEvent)
         }
     }
 
-    fun onFilterButtonClicked() {
-        launch(IO) {
-            fragmentHomeEventChannel.send(NavigateToLocalQuestionnairesFilterSelection)
-        }
+    fun onFilterButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToLocalQuestionnaireFilterDialog)
     }
 
 
@@ -140,10 +137,10 @@ class VmHome @Inject constructor(
 
             if (result != null && result.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) {
                 localRepository.update(completeQuestionnaire.questionnaire.copy(syncStatus = SYNCED))
-                fragmentHomeEventChannel.send(ShowSnackBarMessageBar(R.string.syncSuccessful))
+                eventChannel.send(ShowSnackBarMessageBar(R.string.syncSuccessful))
             } else {
                 localRepository.update(completeQuestionnaire.questionnaire.copy(syncStatus = UNSYNCED))
-                fragmentHomeEventChannel.send(ShowSnackBarMessageBar(R.string.syncUnsuccessful))
+                eventChannel.send(ShowSnackBarMessageBar(R.string.syncUnsuccessful))
             }
         }
     }
@@ -152,7 +149,7 @@ class VmHome @Inject constructor(
     // DELETE CREATED QUESTIONNAIRE
     fun deleteCreatedQuestionnaire(questionnaireId: String) = launch(IO) {
         localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let {
-            fragmentHomeEventChannel.send(ShowUndoDeleteCreatedQuestionnaireSnackBar(it))
+            eventChannel.send(ShowUndoDeleteCreatedQuestionnaireSnackBar(it))
         }
         localRepository.insert(LocallyDeletedQuestionnaire.asOwner(questionnaireId))
         localRepository.deleteQuestionnaireWith(questionnaireId)
@@ -179,13 +176,13 @@ class VmHome @Inject constructor(
     // DELETE FILLED QUESTIONNAIRE
     fun deleteCachedQuestionnaire(questionnaireId: String) = launch(IO) {
         localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let {
-            fragmentHomeEventChannel.send(ShowUndoDeleteCachedQuestionnaireSnackBar(it))
+            eventChannel.send(ShowUndoDeleteCachedQuestionnaireSnackBar(it))
         }
         localRepository.insert(LocallyDeletedQuestionnaire.notAsOwner(questionnaireId))
         localRepository.deleteQuestionnaireWith(questionnaireId)
     }
 
-    fun onDeleteCachedQuestionnaireConfirmed(event: ShowUndoDeleteCachedQuestionnaireSnackBar) = applicationScope.launch(IO) {
+    fun onDeleteCachedQuestionnaireConfirmed(event: ShowUndoDeleteCachedQuestionnaireSnackBar) = launch(IO, applicationScope) {
         val questionnaireId = event.completeQuestionnaire.questionnaire.id
 
         runCatching {
@@ -197,7 +194,7 @@ class VmHome @Inject constructor(
         }
     }
 
-    fun onUndoDeleteCachedQuestionnaireClicked(event: ShowUndoDeleteCachedQuestionnaireSnackBar) = applicationScope.launch(IO) {
+    fun onUndoDeleteCachedQuestionnaireClicked(event: ShowUndoDeleteCachedQuestionnaireSnackBar) = launch(IO, applicationScope) {
         localRepository.insertCompleteQuestionnaire(event.completeQuestionnaire)
         localRepository.delete(LocallyDeletedQuestionnaire.notAsOwner(event.completeQuestionnaire.questionnaire.id))
     }
@@ -207,7 +204,7 @@ class VmHome @Inject constructor(
     fun deleteFilledQuestionnaire(questionnaireId: String) = launch(IO) {
         localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let { completeQuestionnaire ->
             localRepository.insert(LocallyFilledQuestionnaireToUpload(completeQuestionnaire.questionnaire.id))
-            fragmentHomeEventChannel.send(ShowUndoDeleteAnswersOfQuestionnaireSnackBar(completeQuestionnaire))
+            eventChannel.send(ShowUndoDeleteAnswersOfQuestionnaireSnackBar(completeQuestionnaire))
             completeQuestionnaire.allAnswers.map { it.copy(isAnswerSelected = false) }.let {
                 localRepository.update(it)
             }
@@ -239,23 +236,42 @@ class VmHome @Inject constructor(
                 }
 
                 val messageResource = if (newVisibility == PRIVATE) R.string.changedVisibilityToPrivate else R.string.changedVisibilityToPublic
-                fragmentHomeEventChannel.send(ShowSnackBarMessageBar(messageResource))
+                eventChannel.send(ShowSnackBarMessageBar(messageResource))
             } else {
-                fragmentHomeEventChannel.send(ShowSnackBarMessageBar(R.string.errorCouldNotChangeVisibility))
+                eventChannel.send(ShowSnackBarMessageBar(R.string.errorCouldNotChangeVisibility))
             }
         }.onFailure {
-            fragmentHomeEventChannel.send(ShowSnackBarMessageBar(R.string.errorCouldNotChangeVisibility))
+            eventChannel.send(ShowSnackBarMessageBar(R.string.errorCouldNotChangeVisibility))
         }
     }
 
+    fun onQuestionnaireClicked(questionnaireId: String) = launch(IO) {
+        navigationDispatcher.dispatch(ToQuizScreen(questionnaireId))
+    }
 
-    sealed class FragmentHomeEvent {
+    fun onQuestionnaireLongClicked(questionnaire: Questionnaire) = launch(IO) {
+        navigationDispatcher.dispatch(ToQuestionnaireMoreOptionsDialog(questionnaire))
+    }
+
+    fun onAddQuestionnaireButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(FromHomeToAddEditQuestionnaire())
+    }
+
+    fun onSettingsButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(FromHomeToSettingsScreen)
+    }
+
+    fun onRemoteSearchButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(FromHomeToSearchScreen)
+    }
+
+
+    sealed class FragmentHomeEvent: ViewModelEventMarker {
         class ShowSnackBarMessageBar(val messageRes: Int) : FragmentHomeEvent()
         class ShowUndoDeleteCreatedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
         class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
         class ShowUndoDeleteAnswersOfQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
         class ChangeProgressVisibility(val visible: Boolean) : FragmentHomeEvent()
-        object NavigateToLocalQuestionnairesFilterSelection : FragmentHomeEvent()
         object ClearSearchQueryEvent : FragmentHomeEvent()
     }
 

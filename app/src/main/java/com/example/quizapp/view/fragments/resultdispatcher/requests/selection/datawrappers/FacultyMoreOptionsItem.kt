@@ -1,9 +1,9 @@
-package com.example.quizapp.model.selection.datawrappers
+package com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.example.quizapp.R
-import com.example.quizapp.model.selection.SelectionTypeItemMarker
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionTypeItemMarker
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
