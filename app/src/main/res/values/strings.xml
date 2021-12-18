@@ -226,6 +226,7 @@
     <string name="syncingUserData">Syncing user data…</string>
     <string name="sharingQuestionnaire">Sharing questionnaire…</string>
     <string name="changingPassword">Changing password…</string>
+    <string name="changingVisibility">Changing visibility…</string>
 
 
 

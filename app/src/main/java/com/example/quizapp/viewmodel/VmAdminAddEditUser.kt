@@ -9,10 +9,10 @@ import com.example.quizapp.model.databases.mongodb.documents.user.Role
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.CreateUserResponse.CreateUserResponseType
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.fragments.resultdispatcher.UpdateStringValueResult
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.manageusers.FragmentAdminAddEditUserArgs
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
+import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmAdminAddEditUser.*
 import com.example.quizapp.viewmodel.VmAdminAddEditUser.AddEditUserEvent.*
@@ -63,11 +63,11 @@ class VmAdminAddEditUser @Inject constructor(
 
 
     fun onUserNameCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringValueResult.AddEditUserNameUpdateResult(userName)))
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateUserNameRequest(userName)))
     }
 
     fun onUserPasswordCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringValueResult.AddEditUserPasswordUpdateResult(userPassword)))
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateUserPasswordRequest(userPassword)))
     }
 
     fun onUserRoleCardClicked() = launch(IO) {
@@ -76,14 +76,14 @@ class VmAdminAddEditUser @Inject constructor(
 
 
     fun onUserNameUpdateResultReceived(result: UpdateStringValueResult.AddEditUserNameUpdateResult) {
-        result.stringValue.trim().let { trimmed ->
+        result.updatedStringValue.trim().let { trimmed ->
             state.set(USER_NAME_KEY, trimmed)
             userNameMutableStateFlow.value = trimmed
         }
     }
 
     fun onUserPasswordUpdateResultReceived(result: UpdateStringValueResult.AddEditUserPasswordUpdateResult) {
-        result.stringValue.trim().let { trimmed ->
+        result.updatedStringValue.trim().let { trimmed ->
             state.set(USER_PASSWORD_KEY, trimmed)
             userPasswordMutableStateFlow.value = trimmed
         }

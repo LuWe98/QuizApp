@@ -5,7 +5,7 @@
         android:layout_height="wrap_content"
         xmlns:tools="http://schemas.android.com/tools"
         app:cardBackgroundColor="?colorOnPrimary"
-        app:cardCornerRadius="10dp">
+        app:cardCornerRadius="15dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

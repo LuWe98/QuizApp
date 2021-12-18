@@ -305,8 +305,8 @@
             tools:layout="@layout/df_update_string_value">
 
         <argument
-            android:name="resultType"
-            app:argType="com.example.quizapp.view.fragments.resultdispatcher.UpdateStringValueResult"/>
+            android:name="requestType"
+            app:argType="com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType"/>
     </dialog>
 
 <!--    <argument-->

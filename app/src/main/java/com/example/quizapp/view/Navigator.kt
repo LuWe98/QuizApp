@@ -20,7 +20,6 @@ import com.example.quizapp.model.databases.room.entities.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
-import com.example.quizapp.view.fragments.resultdispatcher.UpdateStringValueResult
 import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestionnaireDirections
 import com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.FragmentAdminManageCourseOfStudiesDirections
 import com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminManageFacultiesDirections
@@ -32,6 +31,7 @@ import com.example.quizapp.view.fragments.homescreen.FragmentHomeDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizResultDirections
+import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType
 import com.example.quizapp.view.fragments.settingsscreen.FragmentSettingsDirections
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import javax.inject.Inject
@@ -167,7 +167,7 @@ class Navigator @Inject constructor(
 
 
     //STRING PICKER DIALOG
-    fun navigateToUpdateStringDialog(resultType: UpdateStringValueResult) {
+    fun navigateToUpdateStringDialog(resultType: UpdateStringRequestType) {
         if (currentDestinationId == R.id.dfUpdateStringValue) return
         navController.navigate(MainNavGraphDirections.actionGlobalDfUpdateStringValue(resultType))
     }

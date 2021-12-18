@@ -10,10 +10,10 @@ import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertFacultyResponse.*
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.fragments.resultdispatcher.UpdateStringValueResult.*
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminAddEditFacultiesArgs
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
+import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.*
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
@@ -61,21 +61,21 @@ class VmAdminAddEditFaculty @Inject constructor(
 
 
     fun onAbbreviationCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(AddEditFacultyAbbreviationUpdateResult(facultyAbbreviation)))
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateFacultyAbbreviationRequest(facultyAbbreviation)))
     }
 
     fun onNameCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(AddEditFacultyNameUpdateResult(facultyName)))
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateFacultyNameRequest(facultyName)))
     }
 
-    fun onAbbreviationUpdateResultReceived(result: AddEditFacultyAbbreviationUpdateResult) {
-        state.set(FACULTY_ABBREVIATION_KEY, result.stringValue)
-        facultyAbbreviationMutableStateFlow.value = result.stringValue
+    fun onAbbreviationUpdateResultReceived(result: UpdateStringValueResult.AddEditFacultyAbbreviationUpdateResult) {
+        state.set(FACULTY_ABBREVIATION_KEY, result.updatedStringValue)
+        facultyAbbreviationMutableStateFlow.value = result.updatedStringValue
     }
 
-    fun onNameUpdateResultReceived(result: AddEditFacultyNameUpdateResult) {
-        state.set(FACULTY_NAME_KEY, result.stringValue)
-        facultyNamMutableStateFlow.value = result.stringValue
+    fun onNameUpdateResultReceived(result: UpdateStringValueResult.AddEditFacultyNameUpdateResult) {
+        state.set(FACULTY_NAME_KEY, result.updatedStringValue)
+        facultyNamMutableStateFlow.value = result.updatedStringValue
     }
 
     fun onBackButtonClicked() = launch(IO) {

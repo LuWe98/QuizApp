@@ -11,7 +11,6 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.navController
-import com.example.quizapp.extensions.navHostFragment
 import com.example.quizapp.extensions.showSnackBar
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher
@@ -61,7 +60,7 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
         }
 
         navigationDispatcher.navigationChannelFlow.collectWhenStarted(this) { navEvent ->
-            navEvent.execute(navController, navHostFragment)
+            navEvent.execute(this)
         }
 
         fragmentResultDispatcher.fragmentResultChannelFlow.collectWhenStarted(this) { fragmentResultEvent ->

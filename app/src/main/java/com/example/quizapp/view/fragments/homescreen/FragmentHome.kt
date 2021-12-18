@@ -73,34 +73,17 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
 
         vmHome.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                is ShowSnackBarMessageBar -> showSnackBar(event.messageRes)
-                is ShowUndoDeleteCreatedQuestionnaireSnackBar -> {
-                    showSnackBar(
-                        R.string.questionnaireDeleted,
-                        anchorView = binding.bottomNavContainer,
-                        onDismissedAction = { vmHome.onDeleteCreatedQuestionnaireConfirmed(event) },
-                        actionTextRes = R.string.undo,
-                        actionClickEvent = { vmHome.onUndoDeleteCreatedQuestionnaireClicked(event) }
-                    )
-                }
-                is ShowUndoDeleteCachedQuestionnaireSnackBar -> {
-                    showSnackBar(
-                        R.string.questionnaireDeleted,
-                        anchorView = binding.bottomNavContainer,
-                        onDismissedAction = { vmHome.onDeleteCachedQuestionnaireConfirmed(event) },
-                        actionTextRes = R.string.undo,
-                        actionClickEvent = { vmHome.onUndoDeleteCachedQuestionnaireClicked(event) }
-                    )
-                }
-                is ShowUndoDeleteAnswersOfQuestionnaireSnackBar -> {
-                    showSnackBar(
-                        R.string.answersDeleted,
-                        anchorView = binding.bottomNavContainer,
-                        onDismissedAction = { vmHome.onDeleteFilledQuestionnaireConfirmed(event) },
-                        actionTextRes = R.string.undo,
-                        actionClickEvent = { vmHome.onUndoDeleteFilledQuestionnaireClicked(event) }
-                    )
-                }
+                is ShowMessageSnackBar -> showSnackBar(
+                    textRes = event.messageRes,
+                    anchorView = binding.bottomNavContainer
+                )
+                is ShowUndoDeleteSnackBar -> showSnackBar(
+                    textRes = event.messageRes,
+                    anchorView = binding.bottomNavContainer,
+                    onDismissedAction = event::executeConfirmAction,
+                    actionTextRes = R.string.undo,
+                    actionClickEvent = event::executeUndoAction
+                )
                 is ChangeProgressVisibility -> binding.swipeRefreshLayout.isRefreshing = event.visible
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
             }

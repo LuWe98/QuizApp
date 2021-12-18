@@ -40,6 +40,12 @@
     <color name="singleChoiceColor">#e6d8cf</color>
 
 
+
+    <color name="newBackgroundColor">#f5f8ff</color>
+    <color name="newPrimaryColor">#212a72</color>
+    <color name="newPrimaryColorLighter">#273078</color>
+
+
     <!-- Light Theme Colors -->
     <color name="lightColorPrimary">#0070ba</color>
     <color name="lightColorPrimaryVariant">#1570ab</color>

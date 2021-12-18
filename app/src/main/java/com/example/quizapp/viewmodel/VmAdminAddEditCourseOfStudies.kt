@@ -14,10 +14,10 @@ import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesR
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.responses.InsertCourseOfStudiesResponse.*
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.fragments.resultdispatcher.UpdateStringValueResult.*
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.FragmentAdminAddEditCourseOfStudiesArgs
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
+import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.*
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.AddEditCourseOfStudiesEvent.*
@@ -90,11 +90,11 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
 
 
     fun onAbbreviationCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(AddEditCourseOfStudiesAbbreviationUpdateResult(cosAbbreviation)))
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateCourseOfStudiesAbbreviationRequest(cosAbbreviation)))
     }
 
     fun onNameCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(AddEditCourseOfStudiesNameUpdateResult(cosName)))
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateCourseOfStudiesNameRequest(cosName)))
     }
 
     fun onFacultyCardClicked() = launch(IO) {
@@ -107,14 +107,14 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
     }
 
 
-    fun onAbbreviationUpdateResultReceived(result: AddEditCourseOfStudiesAbbreviationUpdateResult) {
-        state.set(COS_ABBREVIATION_KEY, result.stringValue)
-        cosAbbreviationMutableStateFlow.value = result.stringValue
+    fun onAbbreviationUpdateResultReceived(result: UpdateStringValueResult.AddEditCourseOfStudiesAbbreviationUpdateResult) {
+        state.set(COS_ABBREVIATION_KEY, result.updatedStringValue)
+        cosAbbreviationMutableStateFlow.value = result.updatedStringValue
     }
 
-    fun onNameUpdateResultReceived(result: AddEditCourseOfStudiesNameUpdateResult) {
-        state.set(COS_NAME_KEY, result.stringValue)
-        cosNameMutableStateFlow.value = result.stringValue
+    fun onNameUpdateResultReceived(result: UpdateStringValueResult.AddEditCourseOfStudiesNameUpdateResult) {
+        state.set(COS_NAME_KEY, result.updatedStringValue)
+        cosNameMutableStateFlow.value = result.updatedStringValue
     }
 
     fun onFacultySelectionResultReceived(result: FragmentResult.FacultySelectionResult) {

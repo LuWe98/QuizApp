@@ -19,7 +19,7 @@ class VmConfirmationDialog @Inject constructor(
     val confirmationType get() = args.confirmationType
 
     fun onConfirmButtonClicked() = launch(IO) {
-        confirmationType.generateFragmentResponse(true).let { result ->
+        confirmationType.responseProvider(true).let { result ->
              fragmentResultDispatcher.dispatch(result)
         }
         navigationDispatcher.dispatch(NavigateBack)

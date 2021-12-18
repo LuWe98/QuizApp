@@ -18,9 +18,9 @@ class VmUpdateStringValueDialog @Inject constructor(
 
     private val args = DfUpdateStringArgs.fromSavedStateHandle(state)
 
-    val resultType get() = args.resultType
+    val requestType get() = args.requestType
 
-    private var _updatedText = state.get<String>(UPDATED_TEXT_KEY) ?: args.resultType.stringValue
+    private var _updatedText = state.get<String>(UPDATED_TEXT_KEY) ?: args.requestType.currentStringValue
         set(value) {
             state.set(UPDATED_TEXT_KEY, value)
             field = value
@@ -34,7 +34,7 @@ class VmUpdateStringValueDialog @Inject constructor(
     }
 
     fun onConfirmButtonClicked() = launch(IO){
-        fragmentResultDispatcher.dispatch(resultType.apply { stringValue = updatedText })
+        fragmentResultDispatcher.dispatch(requestType.resultProvider(updatedText))
         navigationDispatcher.dispatch(NavigateBack)
     }
 

@@ -21,7 +21,7 @@ class VmSelectionDialog @Inject constructor(
     val selectionType: SelectionRequestType<*> get() = args.selectionType
 
     fun onItemSelected(item: SelectionTypeItemMarker<*>) = launch(IO) {
-        selectionType.createResultProvider(item).let { result ->
+        selectionType.resultProvider(item).let { result ->
             fragmentResultDispatcher.dispatch(result)
         }
         navigationDispatcher.dispatch(NavigationEvent.NavigateBack)

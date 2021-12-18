@@ -2,12 +2,9 @@ package com.example.quizapp.view.fragments.resultdispatcher
 
 import android.os.Bundle
 import android.os.Parcelable
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
-import com.example.quizapp.R
 import com.example.quizapp.extensions.currentFragment
 import com.example.quizapp.extensions.navHostFragment
 import com.example.quizapp.model.databases.Degree
@@ -18,14 +15,14 @@ import com.example.quizapp.model.databases.mongodb.documents.user.User
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.datastore.datawrappers.*
+import com.example.quizapp.view.QuizActivity
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.Companion.getResultKey
+import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.FragmentResult
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionTypeItemMarker
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.BrowseQuestionnaireMoreOptionsItem
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.CosMoreOptionsItem
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.FacultyMoreOptionsItem
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.UserMoreOptionsItem
-import com.example.quizapp.view.QuizActivity
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.Companion.getResultKey
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.FragmentResult
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -34,8 +31,8 @@ import javax.inject.Inject
 
 /**
  * Listener for various FragmentResultTypes -> Acts as a wrapper for setFragmentResultListener.
- * Possible FragmentResults are represented in the in the [FragmentResult] sealed class.
- * This function automatically gets the result key for the given class and gets the corresponding result type.
+ * Possible FragmentResults are represented in the [FragmentResult] sealed class.
+ * This function automatically gets the result key for the given class and returns the corresponding result type.
  */
 inline fun <reified ResultType : FragmentResult> Fragment.setFragmentResultEventListener(crossinline action: (ResultType) -> Unit) {
     setFragmentResultListener(getResultKey<ResultType>()) { key, bundle ->
@@ -49,7 +46,8 @@ class FragmentResultDispatcher @Inject constructor() {
     companion object {
         const val FRAGMENT_RESULT_KEY_SUFFIX = "FragmentResultKey"
 
-        inline fun <reified ResultType : FragmentResult> getResultKey() = ResultType::class.java.simpleName.plus(FRAGMENT_RESULT_KEY_SUFFIX)
+        inline fun <reified ResultType : FragmentResult> getResultKey() = ResultType::class.simpleName.plus(FRAGMENT_RESULT_KEY_SUFFIX)
+
     }
 
     private val fragmentResultChannel = Channel<FragmentResult>()
@@ -62,7 +60,7 @@ class FragmentResultDispatcher @Inject constructor() {
 
     sealed class FragmentResult : Parcelable {
 
-        private val resultKey: String get() = this::class.java.simpleName.plus(FRAGMENT_RESULT_KEY_SUFFIX)
+        private val resultKey: String get() = this::class.simpleName.plus(FRAGMENT_RESULT_KEY_SUFFIX)
 
         fun execute(quizActivity: QuizActivity) {
             quizActivity.navHostFragment.currentFragment.apply {
@@ -110,6 +108,39 @@ class FragmentResultDispatcher @Inject constructor() {
 
         @Parcelize
         class LoadCsvFileConfirmationResult(override val confirmed: Boolean) : ConfirmationResult()
+
+    }
+
+    sealed class UpdateStringValueResult : FragmentResult() {
+
+        abstract val updatedStringValue: String
+
+        @Parcelize
+        data class QuestionnaireTitleUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
+
+        @Parcelize
+        data class QuestionnaireSubjectUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
+
+        @Parcelize
+        data class AddEditQuestionAnswerTextUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
+
+        @Parcelize
+        data class AddEditFacultyAbbreviationUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
+
+        @Parcelize
+        data class AddEditFacultyNameUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
+
+        @Parcelize
+        data class AddEditCourseOfStudiesAbbreviationUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
+
+        @Parcelize
+        data class AddEditCourseOfStudiesNameUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
+
+        @Parcelize
+        data class AddEditUserNameUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
+
+        @Parcelize
+        data class AddEditUserPasswordUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
 
     }
 
@@ -165,88 +196,4 @@ class FragmentResultDispatcher @Inject constructor() {
             override val selectedItem: BrowseQuestionnaireMoreOptionsItem
         ): SelectionResult<BrowseQuestionnaireMoreOptionsItem>()
     }
-}
-
-
-//TODO -> Es wird ein Result als Request quasi übergeben. sollte eigentlich nicht so sein lol
-sealed class UpdateStringValueResult(
-    @DrawableRes val iconRes: Int,
-    @StringRes val hintRes: Int,
-    @StringRes val titleRes: Int
-) : FragmentResult() {
-
-    abstract var stringValue: String
-
-    @Parcelize
-    data class QuestionnaireTitleUpdateResult(override var stringValue: String) : UpdateStringValueResult(
-        iconRes = R.drawable.ic_title,
-        hintRes = R.string.title,
-        titleRes = R.string.updateQuestionnaireTitle
-    )
-
-    @Parcelize
-    data class QuestionnaireSubjectUpdateResult(override var stringValue: String) : UpdateStringValueResult(
-        iconRes = R.drawable.ic_subject,
-        hintRes = R.string.subject,
-        titleRes = R.string.updateQuestionnaireSubject
-    )
-
-    @Parcelize
-    data class AddEditQuestionAnswerTextUpdateResult(override var stringValue: String) : UpdateStringValueResult(
-        iconRes = R.drawable.ic_title,
-        hintRes = R.string.answerText,
-        titleRes = R.string.updateAnswerText
-    )
-
-    @Parcelize
-    data class AddEditFacultyAbbreviationUpdateResult(override var stringValue: String) : UpdateStringValueResult(
-        iconRes = R.drawable.ic_title,
-        hintRes = R.string.abbreviation,
-        titleRes = R.string.updateFacultyAbbreviation
-    )
-
-    @Parcelize
-    data class AddEditFacultyNameUpdateResult(override var stringValue: String) : UpdateStringValueResult(
-        iconRes = R.drawable.ic_faculty,
-        hintRes = R.string.name,
-        titleRes = R.string.updateFacultyName
-    )
-
-    @Parcelize
-    data class AddEditCourseOfStudiesAbbreviationUpdateResult(override var stringValue: String) : UpdateStringValueResult(
-        iconRes = R.drawable.ic_title,
-        hintRes = R.string.abbreviation,
-        titleRes = R.string.updateCourseOfStudiesAbbreviation
-    )
-
-    @Parcelize
-    data class AddEditCourseOfStudiesNameUpdateResult(override var stringValue: String) : UpdateStringValueResult(
-        iconRes = R.drawable.ic_course_of_studies,
-        hintRes = R.string.name,
-        titleRes = R.string.updateCourseOfStudiesName
-    )
-
-    @Parcelize
-    data class AddEditUserNameUpdateResult(override var stringValue: String) : UpdateStringValueResult(
-        iconRes = R.drawable.ic_person,
-        hintRes = R.string.userName,
-        titleRes = R.string.updateUserName
-    )
-
-    @Parcelize
-    data class AddEditUserPasswordUpdateResult(override var stringValue: String) : UpdateStringValueResult(
-        iconRes = R.drawable.ic_password,
-        hintRes = R.string.password,
-        titleRes = R.string.updatePassword
-    )
-
-    //@Parcelize
-//data class UpdateStringValueRequest<T: UpdateStringValueResult> (
-//    val currentValue: String,
-//    private val resultClass: @RawValue KClass<T>
-//): Parcelable {
-//    @Suppress("UNCHECKED_CAST")
-//    fun createResultInstance(updatedValue: String) = resultClass.java.constructors[0].newInstance(updatedValue)!! as T
-//}
-
 }

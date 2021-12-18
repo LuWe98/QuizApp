@@ -27,9 +27,9 @@ class DfUpdateString : BindingDialogFragment<DfUpdateStringValueBinding>() {
         binding.apply {
             editText.setText(vmUpdate.updatedText)
 
-            vmUpdate.resultType.apply {
+            vmUpdate.requestType.apply {
                 editText.hint = getString(hintRes)
-                editText. setCompoundDrawablesRelative(getDrawable(iconRes), null, null, null)
+                editText.setCompoundDrawablesRelative(getDrawable(iconRes), null, null, null)
                 editText.setDrawableSize(50.dp)
                 tvTitle.setText(titleRes)
             }

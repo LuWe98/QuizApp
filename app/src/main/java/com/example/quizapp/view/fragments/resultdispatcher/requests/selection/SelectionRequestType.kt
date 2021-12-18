@@ -22,7 +22,7 @@ import kotlinx.parcelize.Parcelize
 sealed class SelectionRequestType<T : Enum<T>>(
     val recyclerViewList: List<SelectionTypeItemMarker<T>>,
     val titleProvider: (Context) -> String,
-    val createResultProvider: (SelectionTypeItemMarker<*>) -> (FragmentResultDispatcher.SelectionResult<T>),
+    val resultProvider: (SelectionTypeItemMarker<*>) -> (FragmentResultDispatcher.SelectionResult<T>),
     val isItemSelectedProvider: (SelectionTypeItemMarker<*>) -> Boolean
 ) : Parcelable {
 
@@ -30,7 +30,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class RoleSelection(val currentRole: Role? = null) : SelectionRequestType<Role>(
             recyclerViewList = Role.values().toList(),
             titleProvider = { it.getString(R.string.roleSelection) },
-            createResultProvider = { RoleSelectionResult(it as Role) },
+            resultProvider = { RoleSelectionResult(it as Role) },
             isItemSelectedProvider = { currentRole == it }
     )
 
@@ -38,7 +38,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class DegreeSelection(val currentDegree: Degree? = null) : SelectionRequestType<Degree>(
             recyclerViewList = Degree.values().toList(),
             titleProvider = { it.getString(R.string.degreeSelection) },
-            createResultProvider = { DegreeSelectionResult(it as Degree) },
+            resultProvider = { DegreeSelectionResult(it as Degree) },
             isItemSelectedProvider = { currentDegree == it }
     )
 
@@ -46,7 +46,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class ShuffleTypeSelection(val currentShuffleType: QuestionnaireShuffleType) : SelectionRequestType<QuestionnaireShuffleType>(
             recyclerViewList = QuestionnaireShuffleType.values().toList(),
             titleProvider = { it.getString(R.string.shuffleTypeSelection) },
-            createResultProvider = { ShuffleTypeSelectionResult(it as QuestionnaireShuffleType) },
+            resultProvider = { ShuffleTypeSelectionResult(it as QuestionnaireShuffleType) },
             isItemSelectedProvider = { currentShuffleType == it }
     )
 
@@ -54,7 +54,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class LanguageSelection(val currentLanguage: QuizAppLanguage) : SelectionRequestType<QuizAppLanguage>(
             recyclerViewList = QuizAppLanguage.values().toList(),
             titleProvider = { it.getString(R.string.languageSelection) },
-            createResultProvider = { LanguageSelectionResult(it as QuizAppLanguage) },
+            resultProvider = { LanguageSelectionResult(it as QuizAppLanguage) },
             isItemSelectedProvider = { currentLanguage == it }
     )
 
@@ -62,7 +62,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class ThemeSelection(val currentTheme: QuizAppTheme) : SelectionRequestType<QuizAppTheme>(
             recyclerViewList = QuizAppTheme.values().toList(),
             titleProvider = { it.getString(R.string.themeSelection) },
-            createResultProvider = { ThemeSelectionResult(it as QuizAppTheme) },
+            resultProvider = { ThemeSelectionResult(it as QuizAppTheme) },
             isItemSelectedProvider = { currentTheme == it }
     )
 
@@ -70,7 +70,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class UserMoreOptionsSelection(val user: User) : SelectionRequestType<UserMoreOptionsItem>(
             recyclerViewList = UserMoreOptionsItem.values().toList(),
             titleProvider = { it.getString(R.string._ph, user.userName) },
-            createResultProvider = { UserMoreOptionsSelectionResult(user, it as UserMoreOptionsItem) },
+            resultProvider = { UserMoreOptionsSelectionResult(user, it as UserMoreOptionsItem) },
             isItemSelectedProvider = { false }
     )
 
@@ -78,7 +78,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class CourseOfStudiesMoreOptionsSelection(val courseOfStudies: CourseOfStudies) : SelectionRequestType<CosMoreOptionsItem>(
             recyclerViewList = CosMoreOptionsItem.values().toList(),
             titleProvider = { it.getString(R.string._ph, courseOfStudies.name) },
-            createResultProvider = { CourseOfStudiesMoreOptionsResult(courseOfStudies, it as CosMoreOptionsItem) },
+            resultProvider = { CourseOfStudiesMoreOptionsResult(courseOfStudies, it as CosMoreOptionsItem) },
             isItemSelectedProvider = { false }
     )
 
@@ -86,7 +86,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class FacultyMoreOptionsSelection(val faculty: Faculty) : SelectionRequestType<FacultyMoreOptionsItem>(
             recyclerViewList = FacultyMoreOptionsItem.values().toList(),
             titleProvider = { it.getString(R.string._ph, faculty.name) },
-            createResultProvider = { FacultyMoreOptionsSelectionResult(faculty, it as FacultyMoreOptionsItem) },
+            resultProvider = { FacultyMoreOptionsSelectionResult(faculty, it as FacultyMoreOptionsItem) },
             isItemSelectedProvider = { false }
     )
 
@@ -94,7 +94,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class RemoteOrderBySelection(val currentValue: RemoteQuestionnaireOrderBy) : SelectionRequestType<RemoteQuestionnaireOrderBy>(
             recyclerViewList = RemoteQuestionnaireOrderBy.values().toList(),
             titleProvider = { it.getString(R.string.orderByTypeSelection) },
-            createResultProvider = { RemoteOrderBySelectionResult(it as RemoteQuestionnaireOrderBy) },
+            resultProvider = { RemoteOrderBySelectionResult(it as RemoteQuestionnaireOrderBy) },
             isItemSelectedProvider = { currentValue == it }
     )
 
@@ -102,7 +102,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class LocalOrderBySelection(val currentValue: LocalQuestionnaireOrderBy) : SelectionRequestType<LocalQuestionnaireOrderBy>(
             recyclerViewList = LocalQuestionnaireOrderBy.values().toList(),
             titleProvider = { it.getString(R.string.orderByTypeSelection) },
-            createResultProvider = { LocalOrderBySelectionResult(it as LocalQuestionnaireOrderBy) },
+            resultProvider = { LocalOrderBySelectionResult(it as LocalQuestionnaireOrderBy) },
             isItemSelectedProvider = { currentValue == it }
     )
 
@@ -110,7 +110,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class ManageUsersOrderBySelection(val currentValue: ManageUsersOrderBy) : SelectionRequestType<ManageUsersOrderBy>(
             recyclerViewList = ManageUsersOrderBy.values().toList(),
             titleProvider = { it.getString(R.string.orderByTypeSelection) },
-            createResultProvider = { UsersOrderBySelectionResult(it as ManageUsersOrderBy) },
+            resultProvider = { UsersOrderBySelectionResult(it as ManageUsersOrderBy) },
             isItemSelectedProvider = { currentValue == it }
     )
 
@@ -118,7 +118,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class BrowseQuestionnaireMoreOptionsSelection(val browsableQuestionnaire: BrowsableQuestionnaire) : SelectionRequestType<BrowseQuestionnaireMoreOptionsItem>(
             recyclerViewList = BrowseQuestionnaireMoreOptionsItem.values().toList(),
             titleProvider = { it.getString(R.string._ph, browsableQuestionnaire.title) },
-            createResultProvider = { RemoteQuestionnaireMoreOptionsSelectionResult(browsableQuestionnaire, it as BrowseQuestionnaireMoreOptionsItem) },
+            resultProvider = { RemoteQuestionnaireMoreOptionsSelectionResult(browsableQuestionnaire, it as BrowseQuestionnaireMoreOptionsItem) },
             isItemSelectedProvider = { false }
     )
 

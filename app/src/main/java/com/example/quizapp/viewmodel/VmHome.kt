@@ -1,5 +1,6 @@
 package com.example.quizapp.viewmodel
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.QuizApplication
@@ -26,8 +27,8 @@ import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.Dele
 import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.InsertFilledQuestionnaireResponseType
 import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.InsertQuestionnairesResponseType
 import com.example.quizapp.model.ktor.status.SyncStatus.*
-import com.example.quizapp.view.NavigationDispatcher
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.viewmodel.VmHome.*
 import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
@@ -137,10 +138,10 @@ class VmHome @Inject constructor(
 
             if (result != null && result.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) {
                 localRepository.update(completeQuestionnaire.questionnaire.copy(syncStatus = SYNCED))
-                eventChannel.send(ShowSnackBarMessageBar(R.string.syncSuccessful))
+                eventChannel.send(ShowMessageSnackBar(R.string.syncSuccessful))
             } else {
                 localRepository.update(completeQuestionnaire.questionnaire.copy(syncStatus = UNSYNCED))
-                eventChannel.send(ShowSnackBarMessageBar(R.string.syncUnsuccessful))
+                eventChannel.send(ShowMessageSnackBar(R.string.syncUnsuccessful))
             }
         }
     }
@@ -148,15 +149,22 @@ class VmHome @Inject constructor(
 
     // DELETE CREATED QUESTIONNAIRE
     fun deleteCreatedQuestionnaire(questionnaireId: String) = launch(IO) {
-        localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let {
-            eventChannel.send(ShowUndoDeleteCreatedQuestionnaireSnackBar(it))
+        localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let { completeQuestionnaire ->
+            eventChannel.send(
+                ShowUndoDeleteSnackBar(
+                    R.string.questionnaireDeleted,
+                    completeQuestionnaire,
+                    ::onUndoDeleteCreatedQuestionnaireClicked,
+                    ::onDeleteCreatedQuestionnaireConfirmed
+                )
+            )
         }
         localRepository.insert(LocallyDeletedQuestionnaire.asOwner(questionnaireId))
         localRepository.deleteQuestionnaireWith(questionnaireId)
     }
 
-    fun onDeleteCreatedQuestionnaireConfirmed(event: ShowUndoDeleteCreatedQuestionnaireSnackBar) = launch(IO) {
-        val questionnaireId = event.completeQuestionnaire.questionnaire.id
+    private fun onDeleteCreatedQuestionnaireConfirmed(completeQuestionnaire: CompleteQuestionnaire) = launch(IO) {
+        val questionnaireId = completeQuestionnaire.questionnaire.id
 
         runCatching {
             backendRepository.deleteQuestionnaire(listOf(questionnaireId))
@@ -167,23 +175,30 @@ class VmHome @Inject constructor(
         }
     }
 
-    fun onUndoDeleteCreatedQuestionnaireClicked(event: ShowUndoDeleteCreatedQuestionnaireSnackBar) = launch(IO) {
-        localRepository.insertCompleteQuestionnaire(event.completeQuestionnaire)
-        localRepository.delete(LocallyDeletedQuestionnaire.asOwner(event.completeQuestionnaire.questionnaire.id))
+    private fun onUndoDeleteCreatedQuestionnaireClicked(completeQuestionnaire: CompleteQuestionnaire) = launch(IO) {
+        localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
+        localRepository.delete(LocallyDeletedQuestionnaire.asOwner(completeQuestionnaire.questionnaire.id))
     }
 
 
     // DELETE FILLED QUESTIONNAIRE
     fun deleteCachedQuestionnaire(questionnaireId: String) = launch(IO) {
-        localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let {
-            eventChannel.send(ShowUndoDeleteCachedQuestionnaireSnackBar(it))
+        localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let { completeQuestionnaire ->
+            eventChannel.send(
+                ShowUndoDeleteSnackBar(
+                    R.string.questionnaireDeleted,
+                    completeQuestionnaire,
+                    ::onUndoDeleteCachedQuestionnaireClicked,
+                    ::onDeleteCachedQuestionnaireConfirmed
+                )
+            )
         }
         localRepository.insert(LocallyDeletedQuestionnaire.notAsOwner(questionnaireId))
         localRepository.deleteQuestionnaireWith(questionnaireId)
     }
 
-    fun onDeleteCachedQuestionnaireConfirmed(event: ShowUndoDeleteCachedQuestionnaireSnackBar) = launch(IO, applicationScope) {
-        val questionnaireId = event.completeQuestionnaire.questionnaire.id
+    private fun onDeleteCachedQuestionnaireConfirmed(completeQuestionnaire: CompleteQuestionnaire) = launch(IO, applicationScope) {
+        val questionnaireId = completeQuestionnaire.questionnaire.id
 
         runCatching {
             backendRepository.deleteFilledQuestionnaire(listOf(questionnaireId))
@@ -194,9 +209,9 @@ class VmHome @Inject constructor(
         }
     }
 
-    fun onUndoDeleteCachedQuestionnaireClicked(event: ShowUndoDeleteCachedQuestionnaireSnackBar) = launch(IO, applicationScope) {
-        localRepository.insertCompleteQuestionnaire(event.completeQuestionnaire)
-        localRepository.delete(LocallyDeletedQuestionnaire.notAsOwner(event.completeQuestionnaire.questionnaire.id))
+    private fun onUndoDeleteCachedQuestionnaireClicked(completeQuestionnaire: CompleteQuestionnaire) = launch(IO, applicationScope) {
+        localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
+        localRepository.delete(LocallyDeletedQuestionnaire.notAsOwner(completeQuestionnaire.questionnaire.id))
     }
 
 
@@ -204,31 +219,43 @@ class VmHome @Inject constructor(
     fun deleteFilledQuestionnaire(questionnaireId: String) = launch(IO) {
         localRepository.findCompleteQuestionnaireWith(questionnaireId)?.let { completeQuestionnaire ->
             localRepository.insert(LocallyFilledQuestionnaireToUpload(completeQuestionnaire.questionnaire.id))
-            eventChannel.send(ShowUndoDeleteAnswersOfQuestionnaireSnackBar(completeQuestionnaire))
+            eventChannel.send(
+                ShowUndoDeleteSnackBar(
+                    R.string.answersDeleted,
+                    completeQuestionnaire,
+                    ::onUndoDeleteFilledQuestionnaireClicked,
+                    ::onDeleteFilledQuestionnaireConfirmed
+                )
+            )
             completeQuestionnaire.allAnswers.map { it.copy(isAnswerSelected = false) }.let {
                 localRepository.update(it)
             }
         }
     }
 
-    fun onDeleteFilledQuestionnaireConfirmed(event: ShowUndoDeleteAnswersOfQuestionnaireSnackBar) = launch(IO) {
+    private fun onDeleteFilledQuestionnaireConfirmed(completeQuestionnaire: CompleteQuestionnaire) = launch(IO) {
         runCatching {
-            backendRepository.insertFilledQuestionnaire(DataMapper.mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(event.completeQuestionnaire))
+            backendRepository.insertFilledQuestionnaire(DataMapper.mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(completeQuestionnaire))
         }.onSuccess { response ->
             if (response.responseType != InsertFilledQuestionnaireResponseType.NOT_ACKNOWLEDGED) {
-                localRepository.delete(LocallyFilledQuestionnaireToUpload(event.completeQuestionnaire.questionnaire.id))
+                localRepository.delete(LocallyFilledQuestionnaireToUpload(completeQuestionnaire.questionnaire.id))
             }
         }
     }
 
-    fun onUndoDeleteFilledQuestionnaireClicked(event: ShowUndoDeleteAnswersOfQuestionnaireSnackBar) = launch(IO) {
-        localRepository.update(event.completeQuestionnaire.allAnswers)
+    private fun onUndoDeleteFilledQuestionnaireClicked(completeQuestionnaire: CompleteQuestionnaire) = launch(IO) {
+        localRepository.update(completeQuestionnaire.allAnswers)
     }
 
 
     fun onChangeQuestionnaireVisibilitySelected(questionnaireId: String, newVisibility: QuestionnaireVisibility) = launch(IO) {
+        navigationDispatcher.dispatch(ToLoadingDialog(R.string.changingVisibility))
+
         runCatching {
             backendRepository.changeQuestionnaireVisibility(questionnaireId, newVisibility)
+        }.also {
+            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+            navigationDispatcher.dispatch(PopLoadingDialog)
         }.onSuccess { response ->
             if (response.responseType == ChangeQuestionnaireVisibilityResponseType.SUCCESSFUL) {
                 localRepository.findQuestionnaireWith(questionnaireId)?.let {
@@ -236,12 +263,12 @@ class VmHome @Inject constructor(
                 }
 
                 val messageResource = if (newVisibility == PRIVATE) R.string.changedVisibilityToPrivate else R.string.changedVisibilityToPublic
-                eventChannel.send(ShowSnackBarMessageBar(messageResource))
+                eventChannel.send(ShowMessageSnackBar(messageResource))
             } else {
-                eventChannel.send(ShowSnackBarMessageBar(R.string.errorCouldNotChangeVisibility))
+                eventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotChangeVisibility))
             }
         }.onFailure {
-            eventChannel.send(ShowSnackBarMessageBar(R.string.errorCouldNotChangeVisibility))
+            eventChannel.send(ShowMessageSnackBar(R.string.errorCouldNotChangeVisibility))
         }
     }
 
@@ -266,14 +293,28 @@ class VmHome @Inject constructor(
     }
 
 
-    sealed class FragmentHomeEvent: ViewModelEventMarker {
-        class ShowSnackBarMessageBar(val messageRes: Int) : FragmentHomeEvent()
-        class ShowUndoDeleteCreatedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
-        class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
-        class ShowUndoDeleteAnswersOfQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
+    sealed class FragmentHomeEvent : ViewModelEventMarker {
+        class ShowMessageSnackBar(val messageRes: Int) : FragmentHomeEvent()
+        data class ShowUndoDeleteSnackBar(
+            @StringRes val messageRes: Int,
+            val completeQuestionnaire: CompleteQuestionnaire,
+            private val undoAction: (CompleteQuestionnaire) -> Unit,
+            private val confirmAction: (CompleteQuestionnaire) -> Unit
+        ) : FragmentHomeEvent() {
+            fun executeUndoAction() = undoAction(completeQuestionnaire)
+            fun executeConfirmAction() = confirmAction(completeQuestionnaire)
+        }
+
         class ChangeProgressVisibility(val visible: Boolean) : FragmentHomeEvent()
         object ClearSearchQueryEvent : FragmentHomeEvent()
     }
+
+    /*
+
+        //        class ShowUndoDeleteCreatedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
+//        class ShowUndoDeleteCachedQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
+//        class ShowUndoDeleteAnswersOfQuestionnaireSnackBar(val completeQuestionnaire: CompleteQuestionnaire) : FragmentHomeEvent()
+     */
 
     companion object {
         private const val SEARCH_QUERY_KEY = "searchQueryKey"

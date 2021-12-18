@@ -96,7 +96,7 @@ inline fun Fragment.showSnackBar(
     duration: Int = Snackbar.LENGTH_LONG,
     crossinline onDismissedAction: () -> (Unit) = {},
     @StringRes actionTextRes: Int,
-    crossinline actionClickEvent: ((View) -> Unit)
+    crossinline actionClickEvent: (() -> Unit)
 ) = Snackbar.make(viewToAttachTo, textRes, duration).apply {
     setAnchorView(anchorView)
     this.animationMode = animationMode
@@ -107,7 +107,7 @@ inline fun Fragment.showSnackBar(
             }
         }
     })
-    setAction(actionTextRes) { actionClickEvent(it) }
+    setAction(actionTextRes) { actionClickEvent() }
     show()
 }.also {
     bindingActivity.currentSnackBar = it

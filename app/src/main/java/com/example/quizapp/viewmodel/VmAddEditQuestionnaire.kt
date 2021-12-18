@@ -23,10 +23,10 @@ import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.utils.CsvDocumentFilePicker.*
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.fragments.resultdispatcher.UpdateStringValueResult
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
+import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.*
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.AddEditQuestionnaireEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
@@ -144,11 +144,11 @@ class VmAddEditQuestionnaire @Inject constructor(
     }
 
     fun onTitleCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringValueResult.QuestionnaireTitleUpdateResult(questionnaireTitle)))
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateQuestionnaireTitleRequest(questionnaireTitle)))
     }
 
     fun onSubjectCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringValueResult.QuestionnaireSubjectUpdateResult(questionnaireSubject)))
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateQuestionnaireSubjectRequest(questionnaireSubject)))
     }
 
     fun onPublishCardClicked() {
@@ -158,11 +158,11 @@ class VmAddEditQuestionnaire @Inject constructor(
 
 
     fun onTitleUpdateResultReceived(result: UpdateStringValueResult.QuestionnaireTitleUpdateResult) {
-        questionnaireTitleMutableStateFlow.value = result.stringValue
+        questionnaireTitleMutableStateFlow.value = result.updatedStringValue
     }
 
     fun onSubjectUpdateResultReceived(result: UpdateStringValueResult.QuestionnaireSubjectUpdateResult) {
-        questionnaireSubjectMutableStateFlow.value = result.stringValue
+        questionnaireSubjectMutableStateFlow.value = result.updatedStringValue
     }
 
     fun onQuestionWithAnswerUpdated(position: Int, questionWithAnswers: QuestionWithAnswers) {

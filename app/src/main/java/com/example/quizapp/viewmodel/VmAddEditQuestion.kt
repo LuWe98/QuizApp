@@ -10,9 +10,9 @@ import com.example.quizapp.model.databases.room.entities.Answer
 import com.example.quizapp.model.databases.room.entities.Question
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.fragments.resultdispatcher.UpdateStringValueResult
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestionArgs
+import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType
 import com.example.quizapp.viewmodel.VmAddEditQuestion.*
 import com.example.quizapp.viewmodel.VmAddEditQuestion.FragmentAddEditQuestionEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
@@ -78,7 +78,7 @@ class VmAddEditQuestion @Inject constructor(
     fun onAnswerTextUpdateResultReceived(result: UpdateStringValueResult.AddEditQuestionAnswerTextUpdateResult) {
         findAnswerIndex(answerIdToUpdateTextFor ?: "")?.let { index ->
             answers.toMutableList().apply {
-                set(index, get(index).copy(answerText = result.stringValue))
+                set(index, get(index).copy(answerText = result.updatedStringValue))
                 setAnswerList(this)
             }
         }
@@ -87,7 +87,7 @@ class VmAddEditQuestion @Inject constructor(
 
     fun onAnswerClicked(answer: Answer) = launch(IO) {
         answerIdToUpdateTextFor = answer.id
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringValueResult.AddEditQuestionAnswerTextUpdateResult(answer.answerText)))
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateAddEditQuestionAnswerRequest(answer.answerText)))
     }
 
     fun onAnswerCheckClicked(answer: Answer) {
