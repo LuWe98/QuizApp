@@ -7,6 +7,7 @@
     <dimen name="grid_1">4dp</dimen>
     <dimen name="grid_1_5">6dp</dimen>
     <dimen name="grid_2">8dp</dimen>
+    <dimen name="grid_2_5">10dp</dimen>
     <dimen name="grid_3">12dp</dimen>
     <dimen name="grid_4">16dp</dimen>
     <dimen name="grid_6">24dp</dimen>
@@ -23,6 +24,10 @@
 
     <dimen name="maxHeaderTextSize">18sp</dimen>
 
-    <dimen name="searchBarHeight">50dp</dimen>
     <dimen name="bottomWideButtonHeight">60dp</dimen>
+
+    <dimen name="backButtonMargin">@dimen/grid_2_5</dimen>
+
+    <dimen name="searchBarHeight">50dp</dimen>
+    <dimen name="searchBarHorizontalMargin">@dimen/grid_2_5</dimen>
 </resources>

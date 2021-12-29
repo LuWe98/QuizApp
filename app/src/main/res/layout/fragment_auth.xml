@@ -10,7 +10,7 @@
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="QFU"
+            android:text="@string/app_name"
             android:textColor="?dominantTextColor"
             android:gravity="center"
             android:textSize="100sp"

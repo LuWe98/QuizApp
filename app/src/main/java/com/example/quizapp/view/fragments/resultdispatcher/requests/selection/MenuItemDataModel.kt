@@ -1,9 +1,9 @@
 package com.example.quizapp.view.fragments.resultdispatcher.requests.selection
 
 import com.example.quizapp.R
-import com.example.quizapp.model.databases.QuestionnaireVisibility
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
+import com.example.quizapp.model.databases.properties.Role
+import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.view.fragments.dialogs.localquestionnairemoreoptions.BsdfQuestionnaireMoreOptionsArgs
 
 object MenuItemDataModel {

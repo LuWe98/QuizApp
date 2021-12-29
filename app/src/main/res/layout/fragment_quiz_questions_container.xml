@@ -18,7 +18,7 @@
             app:srcCompat="@drawable/ic_arrow_back"
             android:padding="6dp"
             android:elevation="10dp"
-            android:layout_marginStart="@dimen/grid_1_5"
+            android:layout_marginStart="@dimen/backButtonMargin"
             android:layout_marginTop="@dimen/grid_3" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -29,7 +29,7 @@
             app:srcCompat="@drawable/ic_more"
             android:padding="6dp"
             android:elevation="10dp"
-            android:layout_marginEnd="@dimen/grid_1_5"
+            android:layout_marginEnd="@dimen/backButtonMargin"
             android:layout_marginTop="@dimen/grid_3"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -64,6 +64,21 @@
             app:layout_constraintEnd_toStartOf="@+id/btnQuestionType"
             app:layout_constraintBottom_toBottomOf="@+id/btnMoreOptions" />
 
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="80dp"
+            android:layout_height="35dp"
+            android:id="@+id/tvAnswered"
+            android:background="@drawable/background_round_corners_45dp"
+            android:backgroundTint="?android:colorBackground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnBack"
+            tools:text="13 / 27"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="?headingTextColor"
+            />
+
     <com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab.LazyQuestionTabLayout
             android:layout_width="wrap_content"
             android:layout_height="40dp"
@@ -92,12 +107,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/separatorView" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="00dp"
             android:id="@+id/bottomView"
+            android:visibility="gone"
             android:background="?colorOnPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -129,7 +145,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:gravity="center"
                 android:textStyle="bold"
-                android:fontFamily="@font/work_sans_bold"
                 android:textSize="16sp"
                 tools:text="12 / 21 answered" />
 
@@ -142,7 +157,6 @@
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:translationY="60dp"
-                android:fontFamily="@font/work_sans_medium"
                 android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:background="?colorPrimary" />

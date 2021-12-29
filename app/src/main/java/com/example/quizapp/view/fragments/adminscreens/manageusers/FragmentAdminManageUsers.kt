@@ -51,7 +51,7 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
         binding.apply {
             btnBack.onClick(vmAdmin::onBackButtonClicked)
             etSearchQuery.onTextChanged(vmAdmin::onSearchQueryChanged)
-            fabAdd.onClick(vmAdmin::onAddUserButtonClicked)
+            btnAdd.onClick(vmAdmin::onAddUserButtonClicked)
             btnSearch.onClick(vmAdmin::onClearSearchQueryClicked)
             btnFilter.onClick(vmAdmin::onFilterButtonClicked)
         }

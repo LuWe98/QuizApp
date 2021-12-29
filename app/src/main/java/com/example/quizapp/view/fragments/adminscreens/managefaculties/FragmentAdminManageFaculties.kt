@@ -48,7 +48,7 @@ class FragmentAdminManageFaculties: BindingFragment<FragmentAdminManageFaculties
     private fun initListeners(){
         binding.apply {
             btnBack.onClick(vmAdmin::onBackButtonClicked)
-            fabAdd.onClick(vmAdmin::onAddFacultyButtonClicked)
+            btnAdd.onClick(vmAdmin::onAddFacultyButtonClicked)
             etSearchQuery.onTextChanged(vmAdmin::onSearchQueryChanged)
             btnSearch.onClick(vmAdmin::onDeleteSearchClicked)
         }

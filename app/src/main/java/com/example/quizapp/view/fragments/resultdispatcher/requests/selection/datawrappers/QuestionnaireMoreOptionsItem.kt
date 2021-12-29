@@ -3,9 +3,9 @@ package com.example.quizapp.view.fragments.resultdispatcher.requests.selection.d
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.example.quizapp.R
-import com.example.quizapp.model.databases.QuestionnaireVisibility
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
+import com.example.quizapp.model.databases.properties.Role
+import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.room.entities.Questionnaire
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionTypeItemMarker
 import kotlinx.parcelize.Parcelize

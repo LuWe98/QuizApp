@@ -41,9 +41,13 @@
         <!-- Text Colors -->
         <item name="defaultTextColor">@color/lightDefaultTextColor</item>
         <item name="dominantTextColor">@color/lightDominantTextColor</item>
-
+        <item name="invertedDefaultTextColor">@color/darkDefaultTextColor</item>
+        <item name="invertedDominantTextColor">@color/darkDominantTextColor</item>
+        <item name="headingTextColor">@color/black</item>
 
         <!-- Customization -->
+<!--        <item name="android:windowTranslucentStatus">true</item>-->
+
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="bottomSheetDialogTheme">@style/Theme.QuizApp.BottomSheetDialog</item>
@@ -79,7 +83,8 @@
         <!-- Text Colors -->
         <item name="defaultTextColor">@color/lightDefaultTextColor</item>
         <item name="dominantTextColor">@color/lightDominantTextColor</item>
-
+        <item name="invertedDefaultTextColor">@color/darkDefaultTextColor</item>
+        <item name="invertedDominantTextColor">@color/darkDominantTextColor</item>
 
         <!-- Customization -->
         <item name="windowActionBar">false</item>
@@ -124,7 +129,8 @@
         <!-- Text Colors -->
         <item name="defaultTextColor">@color/lightDefaultTextColor</item>
         <item name="dominantTextColor">@color/lightDominantTextColor</item>
-
+        <item name="invertedDefaultTextColor">@color/darkDefaultTextColor</item>
+        <item name="invertedDominantTextColor">@color/darkDominantTextColor</item>
 
         <!-- Customization -->
         <item name="windowActionBar">false</item>

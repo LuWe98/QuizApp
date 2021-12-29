@@ -5,10 +5,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.client.KtorClientAuth
-import com.example.quizapp.view.NavigationDispatcher
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.viewmodel.VmQuizActivity.*
 import com.example.quizapp.viewmodel.VmQuizActivity.MainViewModelEvent.ShowMessageSnackBar

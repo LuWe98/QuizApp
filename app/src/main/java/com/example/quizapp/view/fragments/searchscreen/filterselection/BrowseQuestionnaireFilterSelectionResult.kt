@@ -1,7 +1,7 @@
 package com.example.quizapp.view.fragments.searchscreen.filterselection
 
 import android.os.Parcelable
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.properties.AuthorInfo
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

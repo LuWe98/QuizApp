@@ -10,9 +10,9 @@ import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.isConnectedToInternet
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
-import com.example.quizapp.model.databases.QuestionnaireVisibility
-import com.example.quizapp.model.databases.QuestionnaireVisibility.PRIVATE
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
+import com.example.quizapp.model.databases.properties.QuestionnaireVisibility.PRIVATE
+import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionnaireToUpload
@@ -20,12 +20,12 @@ import com.example.quizapp.model.databases.room.entities.Questionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.BackendResponse.ChangeQuestionnaireVisibilityResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.DeleteFilledQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.DeleteQuestionnaireResponse
+import com.example.quizapp.model.ktor.BackendResponse.InsertFilledQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.InsertQuestionnairesResponse
 import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
-import com.example.quizapp.model.ktor.responses.ChangeQuestionnaireVisibilityResponse.ChangeQuestionnaireVisibilityResponseType
-import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireResponse.DeleteFilledQuestionnaireResponseType
-import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.DeleteQuestionnaireResponseType
-import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.InsertFilledQuestionnaireResponseType
-import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.InsertQuestionnairesResponseType
 import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
@@ -46,6 +46,7 @@ class VmHome @Inject constructor(
     private val applicationScope: CoroutineScope,
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
+    private val dataMapper: DataMapper,
     private val backendSyncer: BackendSyncer,
     private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle,
@@ -131,12 +132,14 @@ class VmHome @Inject constructor(
             localRepository.update(completeQuestionnaire.questionnaire.copy(syncStatus = SYNCING))
 
             val result = try {
-                backendRepository.insertQuestionnaire(completeQuestionnaire)
+                dataMapper.mapRoomQuestionnaireToMongoQuestionnaire(completeQuestionnaire).let { mongoQuestionnaire ->
+                    backendRepository.insertQuestionnaire(mongoQuestionnaire)
+                }
             } catch (e: Exception) {
                 null
             }
 
-            if (result != null && result.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) {
+            if (result != null && result.responseType == InsertQuestionnairesResponse.InsertQuestionnairesResponseType.SUCCESSFUL) {
                 localRepository.update(completeQuestionnaire.questionnaire.copy(syncStatus = SYNCED))
                 eventChannel.send(ShowMessageSnackBar(R.string.syncSuccessful))
             } else {
@@ -169,7 +172,7 @@ class VmHome @Inject constructor(
         runCatching {
             backendRepository.deleteQuestionnaire(listOf(questionnaireId))
         }.onSuccess {
-            if (it.responseType == DeleteQuestionnaireResponseType.SUCCESSFUL) {
+            if (it.responseType == DeleteQuestionnaireResponse.DeleteQuestionnaireResponseType.SUCCESSFUL) {
                 localRepository.delete(LocallyDeletedQuestionnaire.asOwner(questionnaireId))
             }
         }
@@ -235,7 +238,7 @@ class VmHome @Inject constructor(
 
     private fun onDeleteFilledQuestionnaireConfirmed(completeQuestionnaire: CompleteQuestionnaire) = launch(IO) {
         runCatching {
-            backendRepository.insertFilledQuestionnaire(DataMapper.mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(completeQuestionnaire))
+            backendRepository.insertFilledQuestionnaire(dataMapper.mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(completeQuestionnaire))
         }.onSuccess { response ->
             if (response.responseType != InsertFilledQuestionnaireResponseType.NOT_ACKNOWLEDGED) {
                 localRepository.delete(LocallyFilledQuestionnaireToUpload(completeQuestionnaire.questionnaire.id))

@@ -6,11 +6,10 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.LoginUserResponse.*
-import com.example.quizapp.model.ktor.responses.RegisterUserResponse.*
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.view.NavigationDispatcher
+import com.example.quizapp.model.ktor.BackendResponse.LoginUserResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.RegisterUserResponse
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.viewmodel.VmAuth.*
@@ -158,7 +157,7 @@ class VmAuth @Inject constructor(
             delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
             navigationDispatcher.dispatch(PopLoadingDialog)
         }.onSuccess { response ->
-            if (response.responseType == RegisterUserResponseType.REGISTER_SUCCESSFUL) {
+            if (response.responseType == RegisterUserResponse.RegisterUserResponseType.REGISTER_SUCCESSFUL) {
                 eventChannel.send(SetLoginCredentials(currentRegisterUserName, currentRegisterPassword))
                 eventChannel.send(SwitchPage(0))
             }

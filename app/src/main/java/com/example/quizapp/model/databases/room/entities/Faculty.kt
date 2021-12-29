@@ -5,8 +5,6 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.quizapp.extensions.generateDiffItemCallback
-import com.example.quizapp.model.databases.DataMapper
-import com.example.quizapp.model.databases.mongodb.documents.MongoFaculty
 import io.ktor.util.date.*
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
@@ -32,8 +30,6 @@ data class Faculty(
     @ColumnInfo(name = LAST_MODIFIED_TIMESTAMP_COLUMN)
     val lastModifiedTimestamp : Long = getTimeMillis()
 ) : EntityMarker {
-
-    val asMongoFaculty: MongoFaculty get() = DataMapper.mapRoomFacultyToMongoFaculty(this)
 
     companion object {
         val DIFF_CALLBACK = generateDiffItemCallback(Faculty::id)

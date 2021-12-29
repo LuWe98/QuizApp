@@ -1,7 +1,5 @@
 package com.example.quizapp.model.databases.mongodb.documents
 
-import com.example.quizapp.model.databases.DataMapper
-import com.example.quizapp.model.databases.room.entities.Faculty
 import io.ktor.util.date.*
 import kotlinx.serialization.Serializable
 import org.bson.codecs.pojo.annotations.BsonId
@@ -13,8 +11,4 @@ data class MongoFaculty(
     val abbreviation: String,
     val name: String,
     val lastModifiedTimestamp : Long = getTimeMillis()
-) {
-
-    val asRoomFaculty : Faculty get() = DataMapper.mapMongoFacultyToRoomFaculty(this)
-
-}
+)

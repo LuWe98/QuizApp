@@ -35,6 +35,7 @@ class FragmentAdminAddEditUser: BindingFragment<FragmentAdminAddEditUserBinding>
             passwordCard.onClick(vmAdmin::onUserPasswordCardClicked)
             roleCard.onClick(vmAdmin::onUserRoleCardClicked)
             btnSave.onClick(vmAdmin::onSaveButtonClicked)
+            tvSave.onClick(vmAdmin::onSaveButtonClicked)
             btnBack.onClick(vmAdmin::onBackButtonClicked)
         }
     }
@@ -63,7 +64,7 @@ class FragmentAdminAddEditUser: BindingFragment<FragmentAdminAddEditUserBinding>
             when(event) {
                 is ShowMessageSnackBar -> showSnackBar(
                     event.messageRes,
-                    anchorView = if(event.attachToActivity) null else binding.btnSave
+                    anchorView = if(event.attachToActivity) null else null
                 )
             }
         }

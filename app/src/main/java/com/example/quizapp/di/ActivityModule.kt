@@ -1,7 +1,6 @@
 package com.example.quizapp.di
 
 import android.content.Context
-import com.example.quizapp.view.Navigator
 import com.example.quizapp.view.QuizActivity
 import dagger.Module
 import dagger.Provides
@@ -15,8 +14,5 @@ object ActivityModule {
 
     @Provides
     fun provideQuizActivity(@ActivityContext context: Context): QuizActivity = if(context is QuizActivity) context else throw IllegalStateException()
-
-    @Provides
-    fun provideNavigator(quizActivity: QuizActivity) = Navigator(quizActivity)
 
 }

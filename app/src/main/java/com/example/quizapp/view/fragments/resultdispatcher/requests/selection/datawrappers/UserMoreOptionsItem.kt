@@ -18,7 +18,7 @@ enum class UserMoreOptionsItem(
     ),
     VIEW_CREATED_QUESTIONNAIRES(
         R.string.browseCreatedQuestionnaires,
-        R.drawable.ic_question
+        R.drawable.ic_answer
     ),
     DELETE(
         R.string.delete,

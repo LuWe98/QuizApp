@@ -20,6 +20,12 @@ class RvaLazyQuestionTabsLayout(
     private val tabPredicate: ((String) -> Boolean)
 ) : LazyQuestionTabLayoutAdapter<LazyQuestionTab, RvaLazyQuestionTabsLayout.ImplementedLazyViewHolder>(generateDiffItemCallback(LazyQuestionTab::questionId)) {
 
+    companion object {
+        private const val SCALED_UP_FACTOR = 1.15f
+        private const val SCALE_DOWN_ANIM_DURATION = 300L
+        private const val SCALE_UP_ANIM_DURATION = 200L
+    }
+
     var onItemClicked: ((Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -81,14 +87,16 @@ class RvaLazyQuestionTabsLayout(
                 selectedView.setStrokeColor(tabSelectedStrokeColor)
                 selectedView.setCardBackgroundColor(tabSelectedBackgroundColor)
 
-                val animFactor: Float = if (isPositionSelected) 1f else 0f
-                if (animFactor != selectedView.scaleX) {
+                val scale: Float = if (isPositionSelected) SCALED_UP_FACTOR else 0f
+                val alpha: Float = if (isPositionSelected) 1f else 0f
+
+                if (scale != selectedView.scaleX) {
                     selectedView.clearAnimation()
                     selectedView.animate()
-                        .scaleX(animFactor)
-                        .scaleY(animFactor)
-                        .alpha(animFactor)
-                        .setDuration(if (isPositionSelected) 300 else 200)
+                        .scaleX(scale)
+                        .scaleY(scale)
+                        .alpha(alpha)
+                        .setDuration(if (isPositionSelected) SCALE_UP_ANIM_DURATION else SCALE_DOWN_ANIM_DURATION)
                         .setInterpolator(if (isPositionSelected) DecelerateInterpolator() else AccelerateInterpolator())
                         .start()
                 }
@@ -98,13 +106,13 @@ class RvaLazyQuestionTabsLayout(
         private fun updateSelectedTabIndicator() {
             binding.apply {
                 if (lazyTabLayout.currentItem == bindingAdapterPosition) {
-                    if (selectedView.scaleX == 1f) return
+                    if (selectedView.scaleX == SCALED_UP_FACTOR) return
                     selectedView.clearAnimation()
                     selectedView.animate()
-                        .scaleY(1f)
-                        .scaleX(1f)
+                        .scaleY(SCALED_UP_FACTOR)
+                        .scaleX(SCALED_UP_FACTOR)
                         .alpha(1f)
-                        .setDuration(350)
+                        .setDuration(SCALE_UP_ANIM_DURATION)
                         .setInterpolator(DecelerateInterpolator())
                         .start()
 
@@ -117,7 +125,7 @@ class RvaLazyQuestionTabsLayout(
                     .scaleY(0f)
                     .scaleX(0f)
                     .alpha(0f)
-                    .setDuration(250)
+                    .setDuration(SCALE_DOWN_ANIM_DURATION)
                     .setInterpolator(AccelerateInterpolator())
                     .start()
             }

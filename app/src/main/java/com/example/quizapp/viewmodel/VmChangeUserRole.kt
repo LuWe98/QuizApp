@@ -2,10 +2,10 @@ package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.properties.Role
+import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.UpdateUserResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.UpdateUserResponse.*
 import com.example.quizapp.model.ktor.status.Resource
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.manageusers.BsdfUserRoleChangeArgs

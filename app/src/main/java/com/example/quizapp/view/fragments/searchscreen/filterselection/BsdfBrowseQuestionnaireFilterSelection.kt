@@ -6,7 +6,7 @@ import androidx.fragment.app.viewModels
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfBrowseQuestionnaireFilterSelectionBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
@@ -67,17 +67,15 @@ class BsdfBrowseQuestionnaireFilterSelection : BindingBottomSheetDialogFragment<
         }
 
         vmFilter.selectedAuthorsStateFlow.collectWhenStarted(viewLifecycleOwner) { authors ->
-            setUpChipsForChipGroup(
-                binding.chipGroupAuthor,
-                authors.toList(),
+            binding.chipGroupAuthor.setUpChipsForChipGroup(
+                authors,
                 AuthorInfo::userName,
                 vmFilter::removeFilteredAuthor
             ) { showToast(it.userName) }
         }
 
         vmFilter.selectedCourseOfStudiesStateFlow.collectWhenStarted(viewLifecycleOwner) { coursesOfStudies ->
-            setUpChipsForChipGroup(
-                binding.chipGroupCos,
+            binding.chipGroupCos.setUpChipsForChipGroup(
                 coursesOfStudies,
                 CourseOfStudies::abbreviation,
                 vmFilter::removeFilteredCourseOfStudies
@@ -85,8 +83,7 @@ class BsdfBrowseQuestionnaireFilterSelection : BindingBottomSheetDialogFragment<
         }
 
         vmFilter.selectedFacultyStateFlow.collectWhenStarted(viewLifecycleOwner) { faculties ->
-            setUpChipsForChipGroup(
-                binding.chipGroupFaculty,
+            binding.chipGroupFaculty.setUpChipsForChipGroup(
                 faculties,
                 Faculty::abbreviation,
                 vmFilter::removeFilteredFaculty

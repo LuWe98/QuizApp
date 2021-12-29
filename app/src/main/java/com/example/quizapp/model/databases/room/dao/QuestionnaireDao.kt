@@ -6,7 +6,7 @@ import androidx.room.RawQuery
 import androidx.room.Transaction
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.example.quizapp.extensions.asRawQueryPlaceHolderString
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalDatabase.Companion.PLACEHOLDER
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty

@@ -6,13 +6,13 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
-import com.example.quizapp.model.databases.Degree
+import com.example.quizapp.model.databases.properties.Degree
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.InsertCourseOfStudiesResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.InsertCourseOfStudiesResponse.*
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.FragmentAdminAddEditCourseOfStudiesArgs
@@ -38,13 +38,14 @@ import javax.inject.Inject
 class VmAdminAddEditCourseOfStudies @Inject constructor(
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
+    private val dataMapper: DataMapper,
     private val applicationScope: CoroutineScope,
     private val state: SavedStateHandle
 ) : BaseViewModel<AddEditCourseOfStudiesEvent>() {
 
     private val args = FragmentAdminAddEditCourseOfStudiesArgs.fromSavedStateHandle(state)
 
-    val pageTitleRes get() = if (args.courseOfStudiesWithFaculties == null) R.string.addCourseOfStudies else R.string.editCourseOfStudies
+    val pageTitleRes get() = if (args.courseOfStudiesWithFaculties == null) R.string.create else R.string.edit
 
     private val parsedCourseOfStudies get() = args.courseOfStudiesWithFaculties?.courseOfStudies
 
@@ -98,7 +99,7 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
     }
 
     fun onFacultyCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToFacultySelectionDialog(cosFacultyIds.toTypedArray()))
+        navigationDispatcher.dispatch(ToFacultySelectionDialog(cosFacultyIds))
     }
 
 
@@ -121,6 +122,14 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
         result.facultyIds.let {
             state.set(COS_FACULTY_IDS_KEY, it)
             cosFacultyIdsMutableStateFlow.value = it
+        }
+    }
+
+    fun onFacultyChipClicked(faculty: Faculty) {
+        cosFacultyIds.toMutableList().apply {
+            remove(faculty.id)
+            state.set(COS_FACULTY_IDS_KEY, this)
+            cosFacultyIdsMutableStateFlow.value = this
         }
     }
 
@@ -154,7 +163,7 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.savingCourseOfStudies))
 
         runCatching {
-            DataMapper.mapRoomCourseOfStudiesToMongoCourseOfStudies(updatedCourseOfStudies, cosFacultyIds).let { mongoCourseOfStudies ->
+            dataMapper.mapRoomCourseOfStudiesToMongoCourseOfStudies(updatedCourseOfStudies, cosFacultyIds).let { mongoCourseOfStudies ->
                 backendRepository.insertCourseOfStudies(mongoCourseOfStudies)
             }
         }.also {

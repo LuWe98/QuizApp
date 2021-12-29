@@ -31,7 +31,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
     private lateinit var rvAdapter: RvaQuestionQuiz
 
-    private lateinit var bottomSheetBehaviour: BottomSheetBehavior<FrameLayout>
+    private lateinit var bottomSheetBehaviour: BottomSheetBehavior<ConstraintLayout>
     private lateinit var bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,7 +63,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         bottomSheetBehaviour = BottomSheetBehavior.from(binding.bottomSheet.root).apply {
             onBottomSheetSlide(if (vmQuiz.bottomSheetState == BottomSheetBehavior.STATE_COLLAPSED) 0f else 1f)
             state = vmQuiz.bottomSheetState
-            peekHeight = 70.dp
+            peekHeight = 75.dp
             skipCollapsed = true
             bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) = vmQuiz.onBottomSheetStateUpdated(newState)
@@ -76,7 +76,8 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
     private fun onBottomSheetSlide(slideOffset: Float) {
         binding.bottomSheet.apply {
-            rv.alpha = slideOffset.pow(2) + 0.1f
+            rv.alpha = slideOffset.pow(2)
+            //+ 0.1f
 
             (2.dp * slideOffset).let { newElevation ->
                 sheetHeader.elevation = newElevation

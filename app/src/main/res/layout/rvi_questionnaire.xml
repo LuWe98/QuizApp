@@ -69,7 +69,6 @@
                         tools:text="Questionnaire Title"
                         android:textSize="17.5sp"
                         android:maxLines="2"
-                        android:fontFamily="@font/work_sans_medium"
                         android:textStyle="bold"/>
 
                 <com.google.android.material.textview.MaterialTextView
@@ -78,7 +77,6 @@
                         android:gravity="center_vertical"
                         android:id="@+id/tvDateAndQuestionAmount"
                         tools:text="Prof. Oliver Tamine"
-                        android:fontFamily="@font/work_sans_regular"
                         android:textSize="13sp"
                         android:layout_below="@id/tvTitle"/>
 
@@ -137,7 +135,6 @@
                     app:autoSizeStepGranularity="0.25sp"
                     app:autoSizeTextType="uniform"
                     android:maxLines="1"
-                    android:fontFamily="@font/work_sans_medium"
                     app:layout_constraintTop_toTopOf="@id/iconSubject"
                     app:layout_constraintBottom_toBottomOf="@id/iconSubject" />
 
@@ -167,7 +164,6 @@
                     app:autoSizeStepGranularity="0.25sp"
                     app:autoSizeTextType="uniform"
                     android:maxLines="1"
-                    android:fontFamily="@font/work_sans_medium"
                     app:layout_constraintTop_toTopOf="@+id/iconCos"
                     app:layout_constraintBottom_toBottomOf="@+id/iconCos" />
 

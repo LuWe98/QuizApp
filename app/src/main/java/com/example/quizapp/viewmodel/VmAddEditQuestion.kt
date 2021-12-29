@@ -12,7 +12,9 @@ import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestionArgs
-import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType
+import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType.*
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.AddEditAnswerMoreOptionsItem
 import com.example.quizapp.viewmodel.VmAddEditQuestion.*
 import com.example.quizapp.viewmodel.VmAddEditQuestion.FragmentAddEditQuestionEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
@@ -31,15 +33,19 @@ class VmAddEditQuestion @Inject constructor(
 
     private val parsedQuestion get() = args.questionWithAnswers?.question ?: Question()
 
-    private val parsedAnswers get() = args.questionWithAnswers?.answers?.sortedBy(Answer::answerPosition) ?: listOf()
+    private val parsedAnswers get() = args.questionWithAnswers?.answers?.sortedBy(Answer::answerPosition) ?: emptyList()
 
-    private var _questionText = state.get<String>(QUESTION_TEXT_KEY) ?: parsedQuestion.questionText
+    val pageTitleRes get() = if (args.questionWithAnswers == null) R.string.add else R.string.edit
+
+    private var questionTextMutableStateFlow = state.getMutableStateFlow(QUESTION_TEXT_KEY, parsedQuestion.questionText)
         set(value) {
             state.set(QUESTION_TEXT_KEY, value)
             field = value
         }
 
-    val questionText get() = _questionText
+    val questionTextStateFlow = questionTextMutableStateFlow.asStateFlow()
+
+    private val questionText get() = questionTextMutableStateFlow.value
 
 
     private var isQuestionMultipleChoiceMutableStateFlow = state.getMutableStateFlow(QUESTION_TYPE_KEY, parsedQuestion.isMultipleChoice)
@@ -54,11 +60,6 @@ class VmAddEditQuestion @Inject constructor(
 
     val answers get() = answersMutableStateFlow.value
 
-    private var answerIdToUpdateTextFor = state.get<String>(ANSWER_ID_TO_UPDATE_TEXT_KEY)
-        set(value) {
-            state.set(ANSWER_ID_TO_UPDATE_TEXT_KEY, value)
-            field = value
-        }
 
     private fun findAnswerIndex(answerId: String) = answers.indexOfFirstOrNull { it.id == answerId }
 
@@ -69,26 +70,63 @@ class VmAddEditQuestion @Inject constructor(
         }
     }
 
+    private fun deleteAnswerFromList(answer: Answer) = launch(IO) {
+        answers.toMutableList().apply {
+            val answerIndex = indexOf(answer)
+            removeAt(answerIndex)
+            setAnswerList(this)
+            eventChannel.send(ShowAnswerDeletedSnackBar(answer, answerIndex))
+        }
+    }
 
-    fun onQuestionTextChanged(newText: String) {
-        _questionText = newText
+    private fun addAnswerToList(answer: Answer) {
+        answers.toMutableList().apply {
+            add(answer)
+            setAnswerList(this)
+        }
     }
 
 
-    fun onAnswerTextUpdateResultReceived(result: UpdateStringValueResult.AddEditQuestionAnswerTextUpdateResult) {
-        findAnswerIndex(answerIdToUpdateTextFor ?: "")?.let { index ->
-            answers.toMutableList().apply {
-                set(index, get(index).copy(answerText = result.updatedStringValue))
-                setAnswerList(this)
-            }
-        }
-        answerIdToUpdateTextFor = null
+    fun onQuestionTextCardClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateAddEditQuestionTextRequest(questionText)))
+    }
+
+    fun onQuestionTextUpdateReceived(result: UpdateStringValueResult.AddEditQuestionTextUpdateResult) {
+        state.set(QUESTION_TEXT_KEY, result.updatedStringValue)
+        questionTextMutableStateFlow.value = result.updatedStringValue
     }
 
     fun onAnswerClicked(answer: Answer) = launch(IO) {
-        answerIdToUpdateTextFor = answer.id
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateAddEditQuestionAnswerRequest(answer.answerText)))
+        navigationDispatcher.dispatch(FromAddEditQuestionToAddEditAnswer(answer))
     }
+
+    fun onAnswerLongClicked(answer: Answer) = launch(IO) {
+        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.AddEditAnswerMoreOptionsSelection(answer)))
+    }
+
+    fun onAnswerMoreOptionsSelectionResultReceived(result: SelectionResult.AddEditAnswerMoreOptionsSelectionResult) = launch(IO) {
+        when (result.selectedItem) {
+            AddEditAnswerMoreOptionsItem.EDIT -> navigationDispatcher.dispatch(FromAddEditQuestionToAddEditAnswer(result.calledOnAnswer))
+            AddEditAnswerMoreOptionsItem.DELETE -> deleteAnswerFromList(result.calledOnAnswer)
+        }
+    }
+
+    fun onAddEditAnswerResultReceived(result: FragmentResult.AddEditAnswerResult) = launch(IO) {
+        findAnswerIndex(result.answer.id)?.let { index ->
+            answers.toMutableList().apply {
+                set(index, result.answer)
+                setAnswerList(this)
+            }
+            return@launch
+        }
+        addAnswerToList(result.answer)
+    }
+
+
+/*
+            onCheckButtonClicked = vmAddEditQuestion::onAnswerCheckClicked
+            onDeleteButtonClick = vmAddEditQuestion::onAnswerDeleteClicked
+ */
 
     fun onAnswerCheckClicked(answer: Answer) {
         answers.toMutableList().apply {
@@ -107,17 +145,6 @@ class VmAddEditQuestion @Inject constructor(
     }
 
 
-    fun onAnswerDeleteClicked(answer: Answer) {
-        answers.toMutableList().apply {
-            val answerIndex = indexOf(answer)
-            removeAt(answerIndex)
-            setAnswerList(this)
-            launch {
-                eventChannel.send(ShowAnswerDeletedSnackBar(answer, answerIndex))
-            }
-        }
-    }
-
     fun onUndoDeleteAnswerClicked(event: ShowAnswerDeletedSnackBar) {
         answers.toMutableList().apply {
             if (!isQuestionMultipleChoice && event.answer.isAnswerCorrect) {
@@ -130,11 +157,8 @@ class VmAddEditQuestion @Inject constructor(
         }
     }
 
-    fun onAddAnswerButtonClicked() {
-        answers.toMutableList().apply {
-            add(Answer())
-            setAnswerList(this)
-        }
+    fun onAddAnswerButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(FromAddEditQuestionToAddEditAnswer(null))
     }
 
     fun onAnswerItemDragged(from: Int, to: Int) {
@@ -145,14 +169,12 @@ class VmAddEditQuestion @Inject constructor(
     }
 
     fun onAnswerItemSwiped(pos: Int) {
-        onAnswerDeleteClicked(answers[pos])
+        deleteAnswerFromList(answers[pos])
     }
-
 
     fun onChangeQuestionTypeClicked() {
         state.set(QUESTION_TYPE_KEY, !isQuestionMultipleChoice)
         isQuestionMultipleChoiceMutableStateFlow.value = !isQuestionMultipleChoice
-        setAnswerList(answers.map { it.copy(isAnswerCorrect = false) })
     }
 
 
@@ -171,13 +193,18 @@ class VmAddEditQuestion @Inject constructor(
             return@launch
         }
 
+        if (answers.any(Answer::answerText / String::isEmpty)) {
+            eventChannel.send(ShowMessageSnackBar(R.string.errorAnswersDoNotHaveText))
+            return@launch
+        }
+
         if (answers.none(Answer::isAnswerCorrect)) {
             eventChannel.send(ShowMessageSnackBar(R.string.errorSelectOneCorrectAnswer))
             return@launch
         }
 
-        if (answers.any(Answer::answerText / String::isEmpty)) {
-            eventChannel.send(ShowMessageSnackBar(R.string.errorAnswersDoNotHaveText))
+        if(!isQuestionMultipleChoice && answers.count(Answer::isAnswerCorrect) > 1) {
+            eventChannel.send(ShowMessageSnackBar(R.string.errorQuestionIsSingleChoiceAndHasMultipleCorrectAnswersAddEdit))
             return@launch
         }
 
@@ -194,7 +221,7 @@ class VmAddEditQuestion @Inject constructor(
         navigationDispatcher.dispatch(NavigateBack)
     }
 
-    sealed class FragmentAddEditQuestionEvent: ViewModelEventMarker {
+    sealed class FragmentAddEditQuestionEvent : ViewModelEventMarker {
         class ShowAnswerDeletedSnackBar(val answer: Answer, val answerIndex: Int) : FragmentAddEditQuestionEvent()
         class ShowMessageSnackBar(val messageRes: Int) : FragmentAddEditQuestionEvent()
         class SaveQuestionWithAnswersEvent(val questionPosition: Int, val questionWithAnswers: QuestionWithAnswers) : FragmentAddEditQuestionEvent()
@@ -204,6 +231,5 @@ class VmAddEditQuestion @Inject constructor(
         private const val ANSWERS_KEY = "answersKey"
         private const val QUESTION_TEXT_KEY = "questionTextKey"
         private const val QUESTION_TYPE_KEY = "questionTypeKey"
-        private const val ANSWER_ID_TO_UPDATE_TEXT_KEY = "answerToUpdateTextKey"
     }
 }

@@ -1,14 +1,14 @@
 package com.example.quizapp.model.ktor.apiclasses
 
-import com.example.quizapp.model.databases.QuestionnaireVisibility
+import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
 import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
 import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
 import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.ktor.requests.*
-import com.example.quizapp.model.ktor.responses.*
-import com.example.quizapp.model.ktor.ApiPaths.QuestionnairePaths
 import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
+import com.example.quizapp.model.ktor.ApiPaths.QuestionnairePaths
+import com.example.quizapp.model.ktor.BackendRequest.*
+import com.example.quizapp.model.ktor.BackendResponse.*
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject

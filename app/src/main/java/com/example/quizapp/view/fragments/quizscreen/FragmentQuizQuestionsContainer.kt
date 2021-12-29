@@ -66,7 +66,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
         binding.apply {
             viewPager.apply {
                 adapter = vpaAdapter
-                onPageSelected(this@FragmentQuizQuestionsContainer::onPageSelected)
+                onPageSelected(::onPageSelected)
                 setPageTransformer(FadeOutPageTransformer())
             }
 
@@ -119,6 +119,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
             binding.apply {
                 answeredQuestionsProgress.setProgressWithAnimation(it.answeredQuestionsPercentage, 200)
                 tvAnsweredQuestions.text = getString(R.string.outOfAnswered, it.answeredQuestionsAmount.toString(), it.questionsAmount.toString())
+                tvAnswered.text = getString(R.string.outOf, it.answeredQuestionsAmount.toString(), it.questionsAmount.toString())
             }
 
             changeSubmitButtonVisibility(it.areAllQuestionsAnswered)

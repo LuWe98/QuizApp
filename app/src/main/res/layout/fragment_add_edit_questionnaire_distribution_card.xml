@@ -7,18 +7,16 @@
         android:layout_height="wrap_content"
         app:cardElevation="0dp"
         app:cardBackgroundColor="?android:colorBackground"
-        app:cardCornerRadius="15dp">
+        app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clipToPadding="false">
+            android:paddingBottom="@dimen/grid_3">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:background="@drawable/background_round_corners_15dp"
-                android:backgroundTint="?android:colorBackground"
+                android:layout_height="60dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -28,7 +26,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:srcCompat="@drawable/ic_bar_chart"
+                    app:srcCompat="@drawable/ic_question_mark"
                     android:background="@drawable/shape_circle"
                     android:backgroundTint="@color/transparent"
                     android:padding="10dp"
@@ -41,23 +39,50 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:id="@+id/tvStatistic"
-                    android:text="@string/questionDistribution"
+                    android:text="@string/questions"
                     android:layout_marginStart="@dimen/grid_2"
                     android:textStyle="bold"
-                    android:fontFamily="@font/work_sans_medium"
                     android:gravity="center_vertical"
                     android:textSize="16sp"
+                    android:ellipsize="end"
+                    android:lines="1"
                     app:layout_constraintStart_toEndOf="@+id/statisticIcon"
                     app:layout_constraintBottom_toBottomOf="@+id/statisticIcon"
                     app:layout_constraintTop_toTopOf="@+id/statisticIcon"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toStartOf="@+id/btnListQuestions" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/btnListQuestions"
+                    android:background="?actionBarItemBackground"
+                    android:padding="7.5dp"
+                    app:tint="?colorPrimary"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    app:layout_constraintEnd_toStartOf="@+id/btnAddQuestion"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_list" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/btnAddQuestion"
+                    android:background="?actionBarItemBackground"
+                    android:layout_marginEnd="@dimen/grid_1"
+                    android:padding="7.5dp"
+                    app:tint="?colorPrimary"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_add"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:paddingBottom="@dimen/grid_6"
-                android:layout_marginTop="@dimen/grid_2"
                 android:paddingHorizontal="@dimen/grid_2"
                 android:id="@+id/statisticsContainer"
                 android:visibility="visible"
@@ -71,7 +96,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/totalQuestions"
                     android:textSize="15sp"
-                    android:fontFamily="@font/work_sans_regular"
                     android:id="@+id/allQuestionsLabel"
                     android:layout_marginTop="@dimen/grid_4"
                     app:layout_constraintTop_toTopOf="parent"
@@ -83,7 +107,6 @@
                     tools:text="20"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:fontFamily="@font/work_sans_regular"
                     android:id="@+id/allQuestionsNumber"
                     android:layout_marginTop="@dimen/grid_4"
                     android:layout_marginBottom="@dimen/grid_1"
@@ -110,7 +133,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/multipleChoice"
                     android:textSize="15sp"
-                    android:fontFamily="@font/work_sans_regular"
                     android:id="@+id/tvMultipleChoiceLabel"
                     android:layout_marginTop="@dimen/grid_8"
                     app:layout_constraintStart_toStartOf="@+id/allQuestions"
@@ -122,7 +144,6 @@
                     tools:text="15"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:fontFamily="@font/work_sans_regular"
                     android:id="@+id/tvMultipleChoiceAmount"
                     android:layout_marginTop="@dimen/grid_6"
                     android:layout_marginBottom="@dimen/grid_1"
@@ -149,7 +170,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/singleChoice"
                     android:textSize="15sp"
-                    android:fontFamily="@font/work_sans_regular"
                     android:id="@+id/tvSingleChoiceLabel"
                     android:layout_marginTop="@dimen/grid_8"
                     app:layout_constraintStart_toStartOf="@+id/allQuestions"
@@ -161,7 +181,6 @@
                     tools:text="5"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:fontFamily="@font/work_sans_regular"
                     android:id="@+id/tvSingleChoiceAmount"
                     android:layout_marginTop="@dimen/grid_6"
                     android:layout_marginBottom="@dimen/grid_1"
@@ -183,5 +202,28 @@
                     app:trackColor="?colorOnPrimary"
                     app:layout_constraintTop_toBottomOf="@+id/tvSingleChoiceLabel" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:text="@string/add"
+                android:visibility="gone"
+                android:id="@+id/btnAdd"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/statisticsContainer"
+                android:gravity="center"
+                android:textColor="?colorPrimary"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:background="@drawable/background_round_corners_45dp"
+                android:backgroundTint="?colorPrimary"
+                app:tint="@color/white"
+                app:srcCompat="@drawable/ic_add"
+                android:padding="10dp"
+                android:layout_marginBottom="@dimen/grid_2"
+                app:layout_constraintWidth_percent="0.35"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

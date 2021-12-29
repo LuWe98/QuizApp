@@ -3,7 +3,7 @@ package com.example.quizapp.view.fragments.resultdispatcher.requests
 import android.os.Parcelable
 import androidx.annotation.StringRes
 import com.example.quizapp.R
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*

@@ -2,7 +2,7 @@ package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.QuestionnaireVisibility
+import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.MenuIntIdItem

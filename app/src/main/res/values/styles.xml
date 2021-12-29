@@ -73,19 +73,21 @@
         <item name="chipIcon">@drawable/ic_add</item>
         <item name="chipIconSize">20dp</item>
         <item name="chipIconTint">?colorPrimary</item>
-        <item name="chipStartPadding">@dimen/grid_2</item>
-        <item name="chipEndPadding">@dimen/grid_2</item>
+        <item name="chipStartPadding">@dimen/grid_0_5</item>
+        <item name="chipEndPadding">@dimen/grid_1</item>
         <item name="chipMinHeight">30dp</item>
+        <item name="chipMinTouchTargetSize">35dp</item>
     </style>
 
     <style name="Style.QuizApp.EntryChip" parent="Widget.MaterialComponents.Chip.Entry">
         <item name="chipStrokeWidth">2dp</item>
-        <item name="chipStrokeColor">?colorPrimary</item>
-        <item name="chipBackgroundColor">?colorPrimary</item>
+        <item name="chipStrokeColor">@color/transparent</item>
+        <item name="chipBackgroundColor">?colorAccent</item>
         <item name="chipIconTint">?colorPrimary</item>
-        <item name="chipStartPadding">@dimen/grid_2</item>
-        <item name="chipEndPadding">@dimen/grid_2</item>
+        <item name="chipStartPadding">@dimen/grid_0_5</item>
+        <item name="chipEndPadding">@dimen/grid_1</item>
         <item name="chipMinHeight">30dp</item>
+        <item name="chipMinTouchTargetSize">35dp</item>
         <item name="closeIconTint">@color/white</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:checkable">false</item>
@@ -94,9 +96,10 @@
     <style name="Style.QuizApp.FilterChip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">?colorOnPrimary</item>
         <item name="chipIconTint">?colorPrimary</item>
-        <item name="chipStartPadding">@dimen/grid_2</item>
-        <item name="chipEndPadding">@dimen/grid_2</item>
+        <item name="chipStartPadding">@dimen/grid_0_5</item>
+        <item name="chipEndPadding">@dimen/grid_1</item>
         <item name="chipMinHeight">30dp</item>
+        <item name="chipMinTouchTargetSize">35dp</item>
         <item name="android:checkable">true</item>
         <item name="checkedIconVisible">true</item>
         <item name="checkedIcon">@drawable/ic_check_circle</item>
@@ -104,11 +107,14 @@
         <item name="checkedIconTint">?colorPrimary</item>
     </style>
 
-    style="@style/Widget.MaterialComponents.Chip.Choice"
-    app:checkedIcon="@drawable/ic_check_circle"
-    app:chipIconSize="20dp"
-    app:checkedIconTint="?colorPrimary"
-    app:checkedIconVisible="true"
-    android:checked="true"
-    app:chipBackgroundColor="?colorOnPrimary"
+
+    <style name="Style.QuizApp.Heading.TextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">?headingTextColor</item>
+        <item name="autoSizeMaxTextSize">19sp</item>
+        <item name="autoSizeMinTextSize">17sp</item>
+        <item name="autoSizeStepGranularity">0.5dp</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="android:gravity">center</item>
+        <item name="maxLines">1</item>
+    </style>
 </resources>

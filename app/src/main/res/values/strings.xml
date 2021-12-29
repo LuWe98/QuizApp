@@ -20,6 +20,9 @@
     <string name="questionnaires">Questionnaires</string>
 
     <string name="questions">Questions</string>
+    <string name="question">Question</string>
+    <string name="questionText">Question text</string>
+    <string name="questionsOfQuestionnaire">Questions of questionnaire</string>
     <string name="multipleChoice">Multiple choice</string>
     <string name="singleChoice">Single choice</string>
 
@@ -50,17 +53,21 @@
     <string name="update">Update</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
+    <string name="create">Create</string>
+    <string name="done">Done</string>
 
 
 
     <!-- ADD EDIT QUESTIONNAIRE STRINGS -->
-    <string name="addQuestionnaire">Add Questionnaire</string>
-    <string name="editQuestionnaire">Edit Questionnaire</string>
-    <string name="copyQuestionnaire">Copy Questionnaire</string>
+    <string name="createQuestionnaire">Create questionnaire</string>
+    <string name="editQuestionnaire">Edit questionnaire</string>
+    <string name="copyQuestionnaire">Copy questionnaire</string>
     <string name="saveQuestionnaire">Save questionnaire</string>
 
-    <string name="addQuestion">Add Question</string>
-    <string name="editQuestion">Edit Question</string>
+    <string name="addAnswer">Add answer</string>
+    <string name="addQuestion">Add question</string>
+    <string name="editAnswer">Edit answer</string>
+    <string name="editQuestion">Edit question</string>
     <string name="saveQuestion">Save question</string>
     <string name="clickToWriteYourQuestion">Click to type your question!</string>
 
@@ -75,25 +82,26 @@
     <string name="errorQuestionHasNoAnswers">Question don\'t have answers!</string>
     <string name="errorAnswersDoNotHaveText">Some answers don\'t have a text yet!</string>
     <string name="errorQuestionHasNoText">Question has no text yet!</string>
+    <string name="errorQuestionIsSingleChoiceAndHasMultipleCorrectAnswersAddEdit">Question is single choice but has multiple correct answers!</string>
 
 
 
     <!-- ADD EDIT FACULTY STRINGS -->
-    <string name="addFaculty">Add faculty</string>
+    <string name="createFaculty">Create faculty</string>
     <string name="editFaculty">Edit faculty</string>
     <string name="saveFaculty">Save faculty</string>
 
 
 
     <!-- ADD EDIT COURSE OF STUDIES STRINGS -->
-    <string name="addCourseOfStudies">Add course of studies</string>
+    <string name="createCourseOfStudies">Create course of studies</string>
     <string name="editCourseOfStudies">Edit course of studies</string>
     <string name="saveCourseOfStudies">Save course of studies</string>
 
 
 
     <!-- ADD EDIT USERS STRINGS -->
-    <string name="addUser">Add user</string>
+    <string name="createUser">Create user</string>
     <string name="editUser">Edit user</string>
     <string name="saveUser">Save user</string>
 
@@ -112,6 +120,7 @@
     <string name="updateCourseOfStudiesName">Update name</string>
     <string name="updateUserName">Update username</string>
     <string name="updatePassword">Update password</string>
+    <string name="updateQuestionText">Update question text</string>
 
 
 
@@ -198,6 +207,7 @@
     <string name="onlineSearchFilters">Online search filters</string>
     <string name="localSearchFilters">Local search filters</string>
     <string name="searchForQuestionnaires">Search for Questionnaires…</string>
+    <string name="searchForQuestions">Search for Questions…</string>
     <string name="searchForFaculties">Search for faculties…</string>
     <string name="searchForCourseOfStudies">Search for course of studies…</string>
     <string name="userSearchFilters">User search filters</string>

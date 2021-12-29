@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.quizapp.extensions.generateDiffItemCallback
-import com.example.quizapp.model.databases.Degree
+import com.example.quizapp.model.databases.properties.Degree
 import io.ktor.util.date.*
 import kotlinx.parcelize.Parcelize
 import org.bson.types.ObjectId

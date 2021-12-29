@@ -52,7 +52,6 @@
                 android:maxLines="1"
                 app:autoSizeStepGranularity="0.25sp"
                 app:autoSizeTextType="uniform"
-                android:fontFamily="@font/work_sans_regular"
                 android:layout_marginStart="@dimen/grid_3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/startCard"

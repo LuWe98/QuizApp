@@ -11,7 +11,8 @@ import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.DeleteCourseOfStudiesResponse.DeleteCourseOfStudiesResponseType
+import com.example.quizapp.model.ktor.BackendResponse
+import com.example.quizapp.model.ktor.BackendResponse.DeleteCourseOfStudiesResponse.*
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.CosMoreOptionsItem.DELETE
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.CosMoreOptionsItem.EDIT
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*

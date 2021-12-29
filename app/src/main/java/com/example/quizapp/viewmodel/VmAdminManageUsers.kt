@@ -6,12 +6,12 @@ import androidx.paging.*
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.properties.Role
+import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.BackendResponse.DeleteUserResponse.*
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.UserMoreOptionsItem.*
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*

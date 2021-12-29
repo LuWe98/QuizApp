@@ -1,10 +1,11 @@
 package com.example.quizapp.model.databases.room.typeconverter
 
 import androidx.room.TypeConverter
-import com.example.quizapp.model.databases.Degree
+import com.example.quizapp.model.databases.properties.Degree
+import com.example.quizapp.model.databases.properties.QuestionType
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.databases.QuestionnaireVisibility
-import com.example.quizapp.model.databases.mongodb.documents.user.SharedWithInfo
+import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
+import com.example.quizapp.model.databases.properties.SharedWithInfo
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -30,8 +31,17 @@ class LocalDatabaseTypeConverter {
     fun fromCourseOfStudiesDegree(degree: Degree) = degree.name
 
     @TypeConverter
+    fun toQuestionType(questionTypeName: String) = QuestionType.valueOf(questionTypeName)
+
+    @TypeConverter
+    fun fromQuestionType(questionType: QuestionType) = questionType.name
+
+
+
+    @TypeConverter
     fun fromShareWithInfoList(list: List<SharedWithInfo>) : String = Json.encodeToString(list)
 
     @TypeConverter
     fun toSharedWithInfoList(json: String) : List<SharedWithInfo> = Json.decodeFromString(json)
+
 }

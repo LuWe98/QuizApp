@@ -5,6 +5,9 @@
       <map>
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable-v24/background_round_corners_7_5dp.xml" value="0.48205128205128206" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable-v24/background_round_corners_bot_10dp.xml" value="0.4722222222222222" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable-v24/background_round_corners_top_25dp.xml" value="0.46624472573839665" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable-v24/background_round_corners_top_35dp.xml" value="0.46624472573839665" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable-v24/background_round_corners_top_45dp.xml" value="0.46624472573839665" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable-v24/background_stroke_2dp.xml" value="0.26666666666666666" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable-v24/ripple_round_corners_10_dp.xml" value="0.4722222222222222" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable/background_round_corners_10dp.xml" value="0.5755208333333334" />
@@ -55,6 +58,7 @@
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable/ic_subject_new.xml" value="0.32094017094017097" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable/ic_voice.xml" value="0.35052083333333334" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable/ripple_round_corners_15_dp.xml" value="0.35" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable/search_bar_background.xml" value="0.4722222222222222" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable/shape_circle.xml" value="0.5755208333333334" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable/shape_ring.xml" value="0.32094017094017097" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/drawable/tab_indicator.xml" value="0.5755208333333334" />
@@ -65,6 +69,7 @@
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/backdrop_layout_back_layer.xml" value="0.5" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/backdrop_layout_front_layer.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/basic_recyclerview.xml" value="0.559375" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/bsdf_add_edit_questionnaire_question_list.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/bsdf_admin_manage_course_of_studies.xml" value="0.3367521367521368" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/bsdf_admin_manage_courses_of_studies_more_options.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/bsdf_admin_manage_faculties.xml" value="0.3367521367521368" />
@@ -106,6 +111,7 @@
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/custom_view_settings_item_switch.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/custom_view_settings_item_text.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/default_search_bar.xml" value="0.45897435897435895" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/df_add_edit_answer.xml" value="0.32264957264957267" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/df_admin_manage_course_of_studies_edit.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/df_admin_manage_faculties_edit.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/df_change_password.xml" value="0.559375" />
@@ -120,10 +126,14 @@
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/df_voice_search.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/dialog_custom_loading.xml" value="0.4688034188034188" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_question.xml" value="0.33" />
-        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_questionnaire.xml" value="0.25" />
-        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_questionnaire_bottom_sheet.xml" value="0.3367521367521368" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_question_answer_card.xml" value="0.3128205128205128" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_question_container.xml" value="0.45897435897435895" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_question_old.xml" value="0.32264957264957267" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_questionnaire.xml" value="0.5" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_questionnaire_bottom_sheet.xml" value="0.5" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_questionnaire_bottom_sheet_old.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_questionnaire_distribution_card.xml" value="0.45897435897435895" />
-        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_questionnaire_info_card.xml" value="0.45897435897435895" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_questionnaire_info_card.xml" value="0.5" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_questionnaire_info_card_old.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_edit_questionnaire_new.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_add_question.xml" value="0.33" />
@@ -160,7 +170,8 @@
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_login.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_overview.xml" value="0.33" />
-        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_overview_bottom_sheet.xml" value="0.33" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_overview_bottom_sheet.xml" value="0.5" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_overview_bottom_sheet_old.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_overview_info_card.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_overview_new.xml" value="0.5" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_overview_new_bottom_sheet.xml" value="0.45897435897435895" />
@@ -173,6 +184,7 @@
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_question.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_question_new.xml" value="0.4688034188034188" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_question_old.xml" value="0.45897435897435895" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_question_old_new.xml" value="0.2841880341880342" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_questions_container.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_questions_container_new.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_questions_container_new_bottom_tabs.xml" value="0.4688034188034188" />
@@ -180,7 +192,7 @@
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_questions_container_old.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_quiz_result.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_register.xml" value="0.559375" />
-        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_search.xml" value="0.33" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_search.xml" value="0.67" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_search_new.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_settings.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_settings_admin_card.xml" value="0.559375" />
@@ -192,8 +204,9 @@
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/fragment_settings_user_data_card.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_add_question.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer.xml" value="0.67" />
-        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer_add_edit.xml" value="0.45897435897435895" />
-        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer_add_edit_new.xml" value="0.9" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer_add_edit.xml" value="0.67" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer_add_edit_new.xml" value="0.5" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer_add_edit_old.xml" value="0.45897435897435895" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer_edit.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer_quiz.xml" value="0.5" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/rvi_answer_quiz_old.xml" value="0.4688034188034188" />
@@ -232,6 +245,7 @@
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/settings_item_text.xml" value="0.5" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/settings_section_header.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/tab_layout_view_faculty.xml" value="0.75" />
+        <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/layout/tab_layout_view_question.xml" value="0.2743589743589744" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/menu/add_edit_questionnaire_popup_menu.xml" value="0.4688034188034188" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/menu/bottom_nav_menu.xml" value="0.559375" />
         <entry key="..\:/AndroidStudioProjects/QuizApp/app/src/main/res/menu/bsdf_questionnaire_more_options_menu.xml" value="0.38645833333333335" />

@@ -41,6 +41,9 @@
         <!-- Text Colors -->
         <item name="defaultTextColor">@color/darkDefaultTextColor</item>
         <item name="dominantTextColor">@color/darkDominantTextColor</item>
+        <item name="invertedDefaultTextColor">@color/lightDefaultTextColor</item>
+        <item name="invertedDominantTextColor">@color/lightDominantTextColor</item>
+        <item name="headingTextColor">@color/white</item>
 
     </style>
 
@@ -72,6 +75,8 @@
         <!-- Text Colors -->
         <item name="defaultTextColor">@color/darkDefaultTextColor</item>
         <item name="dominantTextColor">@color/darkDominantTextColor</item>
+        <item name="invertedDefaultTextColor">@color/lightDefaultTextColor</item>
+        <item name="invertedDominantTextColor">@color/lightDominantTextColor</item>
 
     </style>
 
@@ -108,6 +113,8 @@
         <!-- Text Colors -->
         <item name="defaultTextColor">@color/darkDefaultTextColor</item>
         <item name="dominantTextColor">@color/darkDominantTextColor</item>
+        <item name="invertedDefaultTextColor">@color/lightDefaultTextColor</item>
+        <item name="invertedDominantTextColor">@color/lightDominantTextColor</item>
 
     </style>
 

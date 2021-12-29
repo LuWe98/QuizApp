@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
@@ -113,15 +113,15 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
     }
 
     fun onAuthorAddButtonClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToLocalAuthorSelectionDialog(selectedAuthorIds.toTypedArray()))
+        navigationDispatcher.dispatch(ToLocalAuthorSelectionDialog(selectedAuthorIds))
     }
 
     fun onFacultyCardAddButtonClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToFacultySelectionDialog(selectedAuthorIds.toTypedArray()))
+        navigationDispatcher.dispatch(ToFacultySelectionDialog(selectedFacultiesIds))
     }
 
     fun onCourseOfStudiesAddButtonClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(selectedCosIds.toTypedArray()))
+        navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(selectedCosIds))
     }
 
     fun onOrderByCardClicked() = launch(IO) {

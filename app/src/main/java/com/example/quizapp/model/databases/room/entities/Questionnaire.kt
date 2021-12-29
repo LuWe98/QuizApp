@@ -2,10 +2,10 @@ package com.example.quizapp.model.databases.room.entities
 
 import androidx.room.*
 import com.example.quizapp.extensions.generateDiffItemCallback
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.databases.QuestionnaireVisibility
+import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
 import io.ktor.util.date.*
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Transient

@@ -44,6 +44,9 @@
     <color name="newBackgroundColor">#f5f8ff</color>
     <color name="newPrimaryColor">#212a72</color>
     <color name="newPrimaryColorLighter">#273078</color>
+    <color name="testColor">#171a51</color>
+    <color name="testColorTwo">#72c0de</color>
+    <color name="newTestColor">#1a2332</color>
 
 
     <!-- Light Theme Colors -->

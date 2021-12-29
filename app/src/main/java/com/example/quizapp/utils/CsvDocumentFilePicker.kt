@@ -8,7 +8,7 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import com.example.quizapp.R
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.entities.Answer
 import com.example.quizapp.model.databases.room.entities.Question
 import com.example.quizapp.model.databases.room.entities.Questionnaire

@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.FragmentResult.LocalAuthorSelectionResult

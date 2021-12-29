@@ -96,7 +96,7 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
     private fun initListeners(){
         binding.apply {
             btnBack.onClick(vmAdmin::onBackButtonClicked)
-            fabAdd.onClick(vmAdmin::onAddCourseOfStudiesButtonClicked)
+            btnAdd.onClick(vmAdmin::onAddCourseOfStudiesButtonClicked)
             etSearchQuery.onTextChanged(vmAdmin::onSearchQueryChanged)
             btnSearch.onClick(vmAdmin::onClearSearchQueryClicked)
         }

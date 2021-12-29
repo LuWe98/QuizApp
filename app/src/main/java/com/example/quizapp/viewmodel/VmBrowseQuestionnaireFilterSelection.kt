@@ -3,7 +3,7 @@ package com.example.quizapp.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
@@ -113,15 +113,15 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
 
 
     fun onFacultyCardAddButtonClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToFacultySelectionDialog(selectedFacultyIds.toTypedArray()))
+        navigationDispatcher.dispatch(ToFacultySelectionDialog(selectedFacultyIds))
     }
 
     fun onCourseOfStudiesAddButtonClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(selectedCourseOfStudiesIds.toTypedArray()))
+        navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(selectedCourseOfStudiesIds))
     }
 
     fun onAuthorAddButtonClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToRemoteAuthorSelectionDialog(selectedAuthors.toTypedArray()))
+        navigationDispatcher.dispatch(ToRemoteAuthorSelectionDialog(selectedAuthors))
     }
 
     fun onRemoteOrderBySelectionResultReceived(result: SelectionResult.RemoteOrderBySelectionResult) {

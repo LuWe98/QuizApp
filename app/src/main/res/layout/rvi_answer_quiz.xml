@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        xmlns:tools="http://schemas.android.com/tools"
         app:cardBackgroundColor="?colorOnPrimary"
-        android:layout_marginHorizontal="@dimen/grid_2"
         app:cardElevation="0dp"
         android:layout_marginTop="@dimen/grid_2"
         app:cardCornerRadius="7.5dp">
@@ -13,43 +12,32 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="60dp"
-            android:layout_margin="@dimen/grid_2">
+            android:minHeight="@dimen/defaultMinCardHeight">
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:id="@+id/ivRing"
-                app:srcCompat="@drawable/shape_ring"
-                app:layout_constraintStart_toStartOf="parent"
+        <View
+                android:layout_width="7.5dp"
+                android:layout_height="0dp"
+                android:id="@+id/answerCorrectLine"
+                android:background="?colorAccent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginStart="@dimen/grid_1" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:id="@+id/ivSelectedIcon"
-                app:srcCompat="@drawable/ic_check"
-                android:tint="?colorAccent"
-                android:visibility="gone"
-                app:layout_constraintTop_toTopOf="@id/ivRing"
-                app:layout_constraintStart_toStartOf="@id/ivRing"
-                app:layout_constraintEnd_toEndOf="@id/ivRing"
-                app:layout_constraintBottom_toBottomOf="@id/ivRing" />
+                app:layout_constraintStart_toStartOf="parent"
+                android:alpha="0.65" />
 
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:minHeight="30dp"
                 android:id="@+id/tvAnswerText"
                 android:gravity="center_vertical"
-                app:layout_constraintStart_toEndOf="@id/ivRing"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                tools:text="Answer"
-                android:fontFamily="@font/work_sans_medium"
-                android:textSize="15sp"
-                android:layout_marginStart="@dimen/grid_1"
-                app:layout_constraintEnd_toEndOf="parent" />
+                tools:text="@string/answerText"
+                android:textSize="14.5sp"
+                android:layout_marginHorizontal="@dimen/grid_3"
+                android:layout_marginVertical="@dimen/grid_1_5"
+                android:background="@android:color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/answerCorrectLine" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -21,8 +21,8 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initMaterialZAxisAnimationForReceiver()
-
         super.onViewCreated(view, savedInstanceState)
+
         binding.pageTitle.setText(vmAddEdit.pageTitleRes)
         initListeners()
         initObservers()
@@ -32,6 +32,7 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
         binding.apply {
             btnBack.onClick(vmAddEdit::onBackButtonClicked)
             btnSave.onClick(vmAddEdit::onSaveButtonClicked)
+            tvSave.onClick(vmAddEdit::onSaveButtonClicked)
             abbreviationCard.onClick(vmAddEdit::onAbbreviationCardClicked)
             nameCard.onClick(vmAddEdit::onNameCardClicked)
         }

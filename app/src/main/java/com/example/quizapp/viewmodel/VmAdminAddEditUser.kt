@@ -5,9 +5,9 @@ import androidx.lifecycle.SavedStateHandle
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.CreateUserResponse.CreateUserResponseType
+import com.example.quizapp.model.ktor.BackendResponse.CreateUserResponse.*
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.manageusers.FragmentAdminAddEditUserArgs
@@ -32,7 +32,7 @@ class VmAdminAddEditUser @Inject constructor(
 
     private val args = FragmentAdminAddEditUserArgs.fromSavedStateHandle(state)
 
-    val pageTitleRes get() = if (args.user == null) R.string.addUser else R.string.editUser
+    val pageTitleRes get() = if (args.user == null) R.string.create else R.string.edit
 
     private val parsedUserName get() = args.user?.userName ?: ""
 

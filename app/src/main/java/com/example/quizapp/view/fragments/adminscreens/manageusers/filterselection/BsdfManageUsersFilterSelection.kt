@@ -10,7 +10,7 @@ import com.example.quizapp.databinding.ChipFilterChoiceBinding
 import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.setImageDrawable
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.viewmodel.VmManageUsersFilterSelection

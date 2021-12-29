@@ -40,11 +40,12 @@
     <string name="update">Update</string>
     <string name="save">Speichern</string>
     <string name="delete">Löschen</string>
-
+    <string name="create">Erstellen</string>
+    <string name="done">Fertig</string>
 
 
     <!-- ADD EDIT QUESTIONNAIRE STRINGS -->
-    <string name="addQuestionnaire">Fragebogen hizufügen</string>
+    <string name="createQuestionnaire">Fragebogen erstellen</string>
     <string name="editQuestionnaire">Fragebogen bearbeiten</string>
     <string name="copyQuestionnaire">Fragebogen kopieren</string>
     <string name="saveQuestionnaire">Fragebogen speichern</string>
@@ -69,21 +70,21 @@
 
 
     <!-- ADD EDIT FACULTY STRINGS -->
-    <string name="addFaculty">Fakultät hinzufügen</string>
+    <string name="createFaculty">Fakultät erstellen</string>
     <string name="editFaculty">Fakultät bearbeiten</string>
     <string name="saveFaculty">Fakultät speichern</string>
 
 
 
     <!-- ADD EDIT COURSE OF STUDIES STRINGS -->
-    <string name="addCourseOfStudies">Studiengang hinzufügen</string>
+    <string name="createCourseOfStudies">Studiengang erstellen</string>
     <string name="editCourseOfStudies">Studiengang bearbeiten</string>
     <string name="saveCourseOfStudies">Studiengang speichern</string>
 
 
 
     <!-- ADD EDIT USERS STRINGS -->
-    <string name="addUser">User hinzufügen</string>
+    <string name="createUser">User erstellen</string>
     <string name="editUser">User bearbeiten</string>
     <string name="saveUser">User speichern</string>
 

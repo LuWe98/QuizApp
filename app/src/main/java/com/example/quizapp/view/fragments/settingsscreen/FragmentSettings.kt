@@ -6,7 +6,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentSettingsBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmQuizActivity

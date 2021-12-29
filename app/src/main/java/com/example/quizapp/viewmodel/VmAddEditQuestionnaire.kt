@@ -8,8 +8,8 @@ import com.example.quizapp.QuizApplication
 import com.example.quizapp.R
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.DataMapper
-import com.example.quizapp.model.databases.QuestionnaireVisibility.*
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.properties.QuestionnaireVisibility.*
+import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Question
@@ -19,7 +19,8 @@ import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.InsertQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.utils.CsvDocumentFilePicker.*
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
@@ -48,6 +49,7 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val localRepository: LocalRepository,
     private val preferencesRepository: PreferencesRepository,
     private val backendRepository: BackendRepository,
+    private val dataMapper: DataMapper,
     private val state: SavedStateHandle,
     private val app: QuizApplication
 ) : BaseViewModel<AddEditQuestionnaireEvent>() {
@@ -56,9 +58,9 @@ class VmAddEditQuestionnaire @Inject constructor(
 
     val pageTitleRes
         get() = when {
-            args.completeQuestionnaire == null -> R.string.addQuestionnaire
-            args.copy -> R.string.copyQuestionnaire
-            else -> R.string.editQuestionnaire
+            args.completeQuestionnaire == null -> R.string.create
+            args.copy -> R.string.copy
+            else -> R.string.edit
         }
 
     private val parsedQuestionnaireId = if (args.copy) ObjectId().toHexString() else args.completeQuestionnaire?.questionnaire?.id ?: ObjectId().toHexString()
@@ -128,6 +130,15 @@ class VmAddEditQuestionnaire @Inject constructor(
         }
     }
 
+    fun onCosChipClicked(courseOfStudies: CourseOfStudies) {
+        courseOfStudiesIds.toMutableSet().apply {
+            remove(courseOfStudies.id)
+            state.set(COURSES_OF_STUDIES_IDS_KEY, this)
+            coursesOfStudiesIdsMutableStateFlow.value = this
+        }
+    }
+
+
     private fun setQuestionWithAnswers(questionsWithAnswers: List<QuestionWithAnswers>) {
         questionsWithAnswers.toMutableList().let {
             state.set(QUESTIONNAIRE_QUESTIONS_KEY, it)
@@ -140,7 +151,7 @@ class VmAddEditQuestionnaire @Inject constructor(
     }
 
     fun onCourseOfStudiesButtonClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(coursesOfStudiesIdsMutableStateFlow.value.toTypedArray()))
+        navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(coursesOfStudiesIdsMutableStateFlow.value))
     }
 
     fun onTitleCardClicked() = launch(IO) {
@@ -176,8 +187,12 @@ class VmAddEditQuestionnaire @Inject constructor(
         navigationDispatcher.dispatch(FromAddEditQuestionnaireToAddEditQuestion(questionsWithAnswers.size))
     }
 
+    fun onAddQuestionButtonInQuestionListDialogClicked() = launch(IO) {
+        navigationDispatcher.dispatch(FromAddEditQuestionnaireQuestionListToAddEditQuestion(questionsWithAnswers.size))
+    }
+
     fun onQuestionItemClicked(position: Int) = launch(IO) {
-        navigationDispatcher.dispatch(FromAddEditQuestionnaireToAddEditQuestion(questionsWithAnswers.size, questionsWithAnswers[position]))
+        navigationDispatcher.dispatch(FromAddEditQuestionnaireQuestionListToAddEditQuestion(position, questionsWithAnswers[position]))
     }
 
     private fun onQuestionItemDelete(position: Int) = launch(IO) {
@@ -198,6 +213,10 @@ class VmAddEditQuestionnaire @Inject constructor(
 
     fun onQuestionItemSwiped(position: Int) {
         onQuestionItemDelete(position)
+    }
+
+    fun onQuestionCardClicked() = launch(IO) {
+        navigationDispatcher.dispatch(FromAddEditQuestionnaireToBsdfQuestionList)
     }
 
 
@@ -261,7 +280,7 @@ class VmAddEditQuestionnaire @Inject constructor(
         navigationDispatcher.dispatch(NavigateBack)
 
         runCatching {
-            localRepository.findCompleteQuestionnaireWith(parsedQuestionnaireId)!!.let(DataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
+            localRepository.findCompleteQuestionnaireWith(parsedQuestionnaireId)!!.let(dataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
                 backendRepository.insertQuestionnaire(it)
             }
         }.onSuccess {

@@ -1,21 +1,19 @@
 package com.example.quizapp.model.ktor
 
-import com.example.quizapp.model.databases.DataMapper
+import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
 import com.example.quizapp.model.databases.dto.CourseOfStudiesIdWithTimeStamp
 import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
 import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
-import com.example.quizapp.model.ktor.apiclasses.*
-import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
-import com.example.quizapp.model.databases.QuestionnaireVisibility
 import com.example.quizapp.model.databases.mongodb.documents.MongoCourseOfStudies
 import com.example.quizapp.model.databases.mongodb.documents.MongoFaculty
 import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
+import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
-import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
 import com.example.quizapp.model.datastore.datawrappers.ManageUsersOrderBy
+import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
+import com.example.quizapp.model.ktor.apiclasses.*
+import com.example.quizapp.model.ktor.paging.PagingConfigValues
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,7 +25,6 @@ class BackendRepository @Inject constructor(
     private val facultyApi: FacultyApi,
     private val courseOfStudiesApi: CourseOfStudiesApi
 ) {
-
 
     // USER
     suspend fun loginUser(userName: String, password: String) = userApi.loginUser(userName, password)
@@ -60,10 +57,7 @@ class BackendRepository @Inject constructor(
 
 
 
-        // QUESTIONNAIRES
-    suspend fun insertQuestionnaire(completeCompleteQuestionnaire: CompleteQuestionnaire) =
-        insertQuestionnaire(DataMapper.mapRoomQuestionnaireToMongoQuestionnaire(completeCompleteQuestionnaire))
-
+    // QUESTIONNAIRES
     suspend fun insertQuestionnaire(mongoQuestionnaire: MongoQuestionnaire) =
         questionnaireApi.insertQuestionnaires(listOf(mongoQuestionnaire))
 
@@ -142,4 +136,5 @@ class BackendRepository @Inject constructor(
     suspend fun insertCourseOfStudies(courseOfStudies: MongoCourseOfStudies) = courseOfStudiesApi.insertCourseOfStudies(courseOfStudies)
 
     suspend fun deleteCourseOfStudies(courseOfStudiesId: String) = courseOfStudiesApi.deleteCourseOfStudies(courseOfStudiesId)
+
 }

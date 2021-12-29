@@ -7,11 +7,12 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import com.example.quizapp.extensions.currentFragment
 import com.example.quizapp.extensions.navHostFragment
-import com.example.quizapp.model.databases.Degree
+import com.example.quizapp.model.databases.properties.Degree
 import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.properties.AuthorInfo
+import com.example.quizapp.model.databases.properties.Role
+import com.example.quizapp.model.databases.mongodb.documents.User
+import com.example.quizapp.model.databases.room.entities.Answer
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.datastore.datawrappers.*
@@ -19,15 +20,13 @@ import com.example.quizapp.view.QuizActivity
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.Companion.getResultKey
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.FragmentResult
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionTypeItemMarker
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.BrowseQuestionnaireMoreOptionsItem
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.CosMoreOptionsItem
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.FacultyMoreOptionsItem
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.UserMoreOptionsItem
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.*
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
 /**
  * Listener for various FragmentResultTypes -> Acts as a wrapper for setFragmentResultListener.
@@ -35,7 +34,7 @@ import javax.inject.Inject
  * This function automatically gets the result key for the given class and returns the corresponding result type.
  */
 inline fun <reified ResultType : FragmentResult> Fragment.setFragmentResultEventListener(crossinline action: (ResultType) -> Unit) {
-    setFragmentResultListener(getResultKey<ResultType>()) { key, bundle ->
+    setFragmentResultListener(getResultKey(ResultType::class)) { key, bundle ->
         bundle.getParcelable<ResultType>(key)?.let(action)
     }
 }
@@ -44,9 +43,10 @@ inline fun <reified ResultType : FragmentResult> Fragment.setFragmentResultEvent
 class FragmentResultDispatcher @Inject constructor() {
 
     companion object {
+
         const val FRAGMENT_RESULT_KEY_SUFFIX = "FragmentResultKey"
 
-        inline fun <reified ResultType : FragmentResult> getResultKey() = ResultType::class.simpleName.plus(FRAGMENT_RESULT_KEY_SUFFIX)
+        fun <ResultType : FragmentResult> getResultKey(clazz: KClass<ResultType>) = clazz.simpleName.plus(FRAGMENT_RESULT_KEY_SUFFIX)
 
     }
 
@@ -88,6 +88,9 @@ class FragmentResultDispatcher @Inject constructor() {
         @Parcelize
         data class RemoteQuestionnaireFilterResult(val selectedAuthors: Set<AuthorInfo>) : FragmentResult()
 
+        @Parcelize
+        data class AddEditAnswerResult(val answer: Answer): FragmentResult()
+
     }
 
     sealed class ConfirmationResult : FragmentResult() {
@@ -123,6 +126,9 @@ class FragmentResultDispatcher @Inject constructor() {
 
         @Parcelize
         data class AddEditQuestionAnswerTextUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
+
+        @Parcelize
+        data class AddEditQuestionTextUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
 
         @Parcelize
         data class AddEditFacultyAbbreviationUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
@@ -195,5 +201,11 @@ class FragmentResultDispatcher @Inject constructor() {
             val calledOnRemoteQuestionnaire: BrowsableQuestionnaire,
             override val selectedItem: BrowseQuestionnaireMoreOptionsItem
         ): SelectionResult<BrowseQuestionnaireMoreOptionsItem>()
+
+        @Parcelize
+        data class AddEditAnswerMoreOptionsSelectionResult(
+            val calledOnAnswer: Answer,
+            override val selectedItem : AddEditAnswerMoreOptionsItem
+        ): SelectionResult<AddEditAnswerMoreOptionsItem>()
     }
 }

@@ -25,7 +25,6 @@
                 android:textSize="14sp"
                 android:background="@drawable/background_round_corners_45dp"
                 android:backgroundTint="?android:colorBackground"
-                android:fontFamily="@font/work_sans_bold"
                 android:textStyle="bold"
                 android:layout_marginStart="@dimen/grid_2"
                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -41,7 +40,6 @@
                 app:layout_constraintStart_toEndOf="@+id/tvAbbreviation"
                 tools:text="Wirtschaftsinformatik"
                 android:textSize="13sp"
-                android:fontFamily="@font/work_sans_regular"
                 android:layout_marginStart="@dimen/grid_2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tvAbbreviation"

@@ -3,6 +3,10 @@
     <attr name="mainTransparencyColor" format="color"/>
     <attr name="dominantTextColor" format="color"/>
     <attr name="defaultTextColor" format="color"/>
+    <attr name="invertedDominantTextColor" format="color"/>
+    <attr name="invertedDefaultTextColor" format="color"/>
+    <attr name="headingTextColor" format="color"/>
+
 
 
     <declare-styleable name="BackdropLayout">
@@ -61,5 +65,6 @@
         <attr name="iconPadding"/>
         <attr name="dropDownIcon"/>
         <attr name="dropDownIconPadding"/>
+        <attr name="maxLines" format="integer"/>
     </declare-styleable>
 </resources>

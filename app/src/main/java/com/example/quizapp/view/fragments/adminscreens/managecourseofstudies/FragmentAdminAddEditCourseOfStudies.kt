@@ -2,9 +2,11 @@ package com.example.quizapp.view.fragments.adminscreens.managecourseofstudies
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentAdminAddEditCourseOfStudiesBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
@@ -30,9 +32,10 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
         binding.apply {
             btnBack.onClick(vmAddEdit::onBackButtonClicked)
             btnSave.onClick(vmAddEdit::onSaveButtonClicked)
+            tvSave.onClick(vmAddEdit::onSaveButtonClicked)
             abbreviationCard.onClick(vmAddEdit::onAbbreviationCardClicked)
             nameCard.onClick(vmAddEdit::onNameCardClicked)
-            facultiesCard.onClick(vmAddEdit::onFacultyCardClicked)
+            addLayout.onClick(vmAddEdit::onFacultyCardClicked)
             degreeCard.onClick(vmAddEdit::onDegreeCardClicked)
         }
     }
@@ -55,7 +58,15 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
         }
 
         vmAddEdit.cosFacultyIdsStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.facultiesCard.text = it.map(Faculty::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: "-"
+            binding.chipGroupFaculty.apply {
+                isVisible = it.isNotEmpty()
+
+                setUpChipsForChipGroup(
+                    it,
+                    Faculty::abbreviation,
+                    vmAddEdit::onFacultyChipClicked
+                ) { cos -> showToast(cos.name) }
+            }
         }
 
         vmAddEdit.cosDegreeStateFlow.collectWhenStarted(viewLifecycleOwner) {

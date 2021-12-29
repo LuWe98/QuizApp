@@ -10,13 +10,12 @@
             android:layout_height="45dp"
             android:id="@+id/preferencesHeader"
             android:text="@string/preference"
-            android:background="@drawable/background_round_corners_10dp"
+            android:background="@drawable/background_round_corners_15dp"
             android:backgroundTint="?android:colorBackground"
             android:gravity="center_vertical"
-            android:paddingHorizontal="@dimen/grid_3"
+            android:paddingHorizontal="@dimen/grid_4"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:fontFamily="@font/work_sans_medium"
             app:layout_constraintTop_toTopOf="parent" />
 
     <com.example.quizapp.view.customimplementations.settings.SettingsItemDropDownLayout

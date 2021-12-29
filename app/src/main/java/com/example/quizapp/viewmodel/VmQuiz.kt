@@ -15,7 +15,8 @@ import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType.*
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.BackendResponse
+import com.example.quizapp.model.ktor.BackendResponse.InsertFilledQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.viewmodel.VmQuiz.*
@@ -38,6 +39,7 @@ class VmQuiz @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
+    private val dataMapper: DataMapper,
     private val state: SavedStateHandle
 ) : BaseViewModel<FragmentQuizEvent>() {
 
@@ -193,7 +195,9 @@ class VmQuiz @Inject constructor(
             if (!localRepository.isLocallyFilledQuestionnaireToUploadPresent(it.questionnaire.id)) return@launch
 
             runCatching {
-                backendRepository.insertFilledQuestionnaire(DataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(it))
+                dataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(it).let { mongoFilledQuestionnaire ->
+                    backendRepository.insertFilledQuestionnaire(mongoFilledQuestionnaire)
+                }
             }.onSuccess { response ->
                 if (response.responseType != InsertFilledQuestionnaireResponseType.NOT_ACKNOWLEDGED) {
                     localRepository.delete(LocallyFilledQuestionnaireToUpload(it.questionnaire.id))

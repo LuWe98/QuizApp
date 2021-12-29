@@ -3,7 +3,6 @@ package com.example.quizapp.view.fragments.addeditquestionnairescreen
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.FrameLayout
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -12,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddEditQuestionnaireBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
+import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Question
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
@@ -20,6 +19,7 @@ import com.example.quizapp.utils.CsvDocumentFilePicker
 import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaAddEditQuestion
+import com.example.quizapp.view.recyclerview.impl.SimpleItemTouchHelper
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.AddEditQuestionnaireEvent.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -37,7 +37,9 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
     private lateinit var rvAdapter: RvaAddEditQuestion
 
-    private lateinit var bottomSheetBehaviour: BottomSheetBehavior<FrameLayout>
+    private lateinit var itemTouchHelper: SimpleItemTouchHelper
+
+    private lateinit var bottomSheetBehaviour: BottomSheetBehavior<ConstraintLayout>
     private lateinit var bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +67,9 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
             layoutManager = LinearLayoutManager(requireContext())
             adapter = rvAdapter
             disableChangeAnimation()
-            addCustomItemTouchHelperCallBack().apply {
+
+            itemTouchHelper = SimpleItemTouchHelper().apply {
+                attachToRecyclerView(binding.bottomSheet.rv)
                 onDrag = vmAddEdit::onQuestionItemDragged
                 onSwiped = vmAddEdit::onQuestionItemSwiped
             }
@@ -75,7 +79,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
     private fun initBottomSheet() {
         bottomSheetBehaviour = BottomSheetBehavior.from(binding.bottomSheet.root).apply {
             state = BottomSheetBehavior.STATE_COLLAPSED
-            peekHeight = 125.dp
+            peekHeight = 150.dp
             skipCollapsed = true
             bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {}
@@ -88,7 +92,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
     private fun onBottomSheetSlide(slideOffset: Float) {
         binding.bottomSheet.apply {
-            rv.alpha = slideOffset.pow(2) + 0.1f
+            rv.alpha = slideOffset.pow(2)
 
             (2.dp * slideOffset).let { newElevation ->
                 sheetHeader.elevation = newElevation
@@ -119,20 +123,30 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
     private fun initListeners() {
         binding.apply {
             btnSave.onClick(vmAddEdit::onSaveButtonClicked)
+            tvSave.onClick(vmAddEdit::onSaveButtonClicked)
             btnBack.onClick(vmAddEdit::onBackButtonClicked)
             btnMoreOptions.onClick(vmAddEdit::onMoreOptionsClicked)
 
             infoCard.apply {
-                cosDropDown.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
+                addChipCos.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
+                addLayout.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
                 titleCard.onClick(vmAddEdit::onTitleCardClicked)
                 subjectCard.onClick(vmAddEdit::onSubjectCardClicked)
                 publishLayout.onClick(vmAddEdit::onPublishCardClicked)
+                btnAdd.onClick(vmAddEdit::onAddQuestionButtonClicked)
+
+                questionCard.onClick(vmAddEdit::onQuestionCardClicked)
+            }
+
+            questionDistributionCard.apply {
+                btnAddQuestion.onClick(vmAddEdit::onAddQuestionButtonClicked)
+                btnListQuestions.onClick(vmAddEdit::onQuestionCardClicked)
             }
 
             bottomSheet.apply {
                 btnAdd.onClick(vmAddEdit::onAddQuestionButtonClicked)
-                btnCollapse.onClick(this@FragmentAddEditQuestionnaire::toggleBottomSheet)
-                sheetHeader.onClick(this@FragmentAddEditQuestionnaire::toggleBottomSheet)
+                btnCollapse.onClick(::toggleBottomSheet)
+                sheetHeader.onClick(::toggleBottomSheet)
             }
         }
     }
@@ -148,7 +162,15 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
         setFragmentResultEventListener(vmAddEdit::onCsvLoadingConfirmationResultReceived)
 
         vmAddEdit.coursesOfStudiesStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.infoCard.cosDropDown.text = it.map(CourseOfStudies::abbreviation).reduceOrNull { acc, abbr -> "$acc, $abbr" } ?: "-"
+            binding.infoCard.chipGroupCos.apply {
+                isVisible = it.isNotEmpty()
+
+                setUpChipsForChipGroup(
+                    it,
+                    CourseOfStudies::abbreviation,
+                    vmAddEdit::onCosChipClicked
+                ) { cos -> showToast(cos.name) }
+            }
         }
 
         vmAddEdit.questionnaireTitleStateFlow.collectWhenStarted(viewLifecycleOwner) {
@@ -160,7 +182,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
         }
 
         vmAddEdit.publishQuestionStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.infoCard.publishCheckBox.isChecked = it
+            binding.infoCard.checkBox.isChecked = it
         }
 
         vmAddEdit.userRoleFlow.collectWhenStarted(viewLifecycleOwner) { role ->
@@ -177,6 +199,7 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
                 questionDistributionCard.apply {
                     allQuestions.setProgressWithAnimation(if (it.isEmpty()) 0 else 100)
                     allQuestionsNumber.text = it.size.toString()
+                    infoCard.tvQuestionsAmount.text = it.size.toString()
 
                     val multipleChoice = it.count(QuestionWithAnswers::question / Question::isMultipleChoice)
                     progressMultipleChoice.setProgressWithAnimation((multipleChoice * 100f / it.size).toInt())
@@ -191,8 +214,8 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
         vmAddEdit.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes, anchorView = binding.btnSave)
-                is ShowMessageSnackBarWithStringEvent -> showSnackBar(event.message, anchorView = binding.btnSave)
+                is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes)
+                is ShowMessageSnackBarWithStringEvent -> showSnackBar(event.message)
                 is ShowQuestionDeletedSnackBarEvent -> showSnackBar(
                     textRes = R.string.questionDeleted,
                     anchorView = binding.btnSave,

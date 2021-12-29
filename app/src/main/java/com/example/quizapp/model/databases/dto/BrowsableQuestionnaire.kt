@@ -3,7 +3,7 @@ package com.example.quizapp.model.databases.dto
 import android.os.Parcelable
 import com.example.quizapp.extensions.generateDiffItemCallback
 import com.example.quizapp.model.ktor.status.DownloadStatus
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.properties.AuthorInfo
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat

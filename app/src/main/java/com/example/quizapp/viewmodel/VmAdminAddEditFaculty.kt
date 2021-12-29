@@ -5,10 +5,11 @@ import androidx.lifecycle.SavedStateHandle
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
+import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.InsertFacultyResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.InsertFacultyResponse.*
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminAddEditFacultiesArgs
@@ -31,13 +32,14 @@ import javax.inject.Inject
 class VmAdminAddEditFaculty @Inject constructor(
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
+    private val dataMapper: DataMapper,
     private val applicationScope: CoroutineScope,
     private val state: SavedStateHandle
 ) : BaseViewModel<AddEditFacultyEvent>() {
 
     private val args = FragmentAdminAddEditFacultiesArgs.fromSavedStateHandle(state)
 
-    val pageTitleRes get() = if (args.faculty == null) R.string.addFaculty else R.string.editFaculty
+    val pageTitleRes get() = if (args.faculty == null) R.string.create else R.string.edit
 
     private val parsedFacultyAbbreviation get() = args.faculty?.abbreviation ?: ""
 
@@ -97,7 +99,7 @@ class VmAdminAddEditFaculty @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.savingFaculty))
 
         runCatching {
-            updatedFaculty.asMongoFaculty.let { mongoFaculty ->
+            dataMapper.mapRoomFacultyToMongoFaculty(updatedFaculty).let { mongoFaculty ->
                 backendRepository.insertFaculty(mongoFaculty)
             }
         }.also {

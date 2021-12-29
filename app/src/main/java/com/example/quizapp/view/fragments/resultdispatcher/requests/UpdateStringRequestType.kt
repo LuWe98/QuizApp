@@ -43,6 +43,14 @@ sealed class UpdateStringRequestType constructor(
     )
 
     @Parcelize
+    data class UpdateAddEditQuestionTextRequest(override val currentStringValue: String): UpdateStringRequestType(
+        iconRes = R.drawable.ic_title,
+        hintRes = R.string.questionText,
+        titleRes = R.string.updateQuestionText,
+        resultProvider = ::AddEditQuestionTextUpdateResult
+    )
+
+    @Parcelize
     data class UpdateFacultyAbbreviationRequest(override val currentStringValue: String): UpdateStringRequestType(
         iconRes = R.drawable.ic_title,
         hintRes = R.string.abbreviation,

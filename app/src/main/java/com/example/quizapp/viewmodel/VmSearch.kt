@@ -12,13 +12,13 @@ import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.BackendResponse.GetQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.model.ktor.responses.GetQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.status.DownloadStatus
 import com.example.quizapp.model.ktor.status.DownloadStatus.*
 import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.BrowseQuestionnaireMoreOptionsItem
@@ -40,6 +40,7 @@ import javax.inject.Inject
 class VmSearch @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
+    private val dataMapper: DataMapper,
     preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
 ) : BaseViewModel<SearchEvent>() {
@@ -101,7 +102,7 @@ class VmSearch @Inject constructor(
     }
 
     fun onFilterButtonClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToRemoteQuestionnaireFilterDialog(selectedAuthorsMutableStateFlow.value.toTypedArray()))
+        navigationDispatcher.dispatch(ToRemoteQuestionnaireFilterDialog(selectedAuthorsMutableStateFlow.value))
     }
 
     fun onRemoteQuestionnaireFilterUpdateReceived(result: FragmentResult.RemoteQuestionnaireFilterResult){
@@ -121,11 +122,11 @@ class VmSearch @Inject constructor(
         }.onSuccess { response ->
             when (response.responseType) {
                 GetQuestionnaireResponseType.SUCCESSFUL -> {
-                    DataMapper.mapMongoQuestionnaireToRoomCompleteQuestionnaire(response.mongoQuestionnaire!!).let { completeQuestionnaire ->
+                    dataMapper.mapMongoQuestionnaireToRoomCompleteQuestionnaire(response.mongoQuestionnaire!!).let { completeQuestionnaire ->
                         localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
                         localRepository.deleteLocallyDeletedQuestionnaireWith(completeQuestionnaire.questionnaire.id)
 
-                        DataMapper.mapMongoQuestionnaireToRoomQuestionnaireCourseOfStudiesRelation(response.mongoQuestionnaire).let {
+                        dataMapper.mapMongoQuestionnaireToRoomQuestionnaireCourseOfStudiesRelation(response.mongoQuestionnaire).let {
                             localRepository.insert(it)
                         }
 
@@ -175,11 +176,11 @@ class VmSearch @Inject constructor(
         }.onSuccess { response ->
             when (response.responseType) {
                 GetQuestionnaireResponseType.SUCCESSFUL -> {
-                    DataMapper.mapMongoQuestionnaireToRoomCompleteQuestionnaire(response.mongoQuestionnaire!!).let { completeQuestionnaire ->
+                    dataMapper.mapMongoQuestionnaireToRoomCompleteQuestionnaire(response.mongoQuestionnaire!!).let { completeQuestionnaire ->
                         localRepository.insertCompleteQuestionnaire(completeQuestionnaire)
                         localRepository.deleteLocallyDeletedQuestionnaireWith(completeQuestionnaire.questionnaire.id)
 
-                        DataMapper.mapMongoQuestionnaireToRoomQuestionnaireCourseOfStudiesRelation(response.mongoQuestionnaire).let {
+                        dataMapper.mapMongoQuestionnaireToRoomQuestionnaireCourseOfStudiesRelation(response.mongoQuestionnaire).let {
                             localRepository.insert(it)
                         }
 

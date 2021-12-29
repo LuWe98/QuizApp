@@ -35,7 +35,6 @@
                 android:lines="1"
                 android:ellipsize="end"
                 android:textStyle="bold"
-                android:fontFamily="@font/work_sans_medium"
                 android:layout_marginEnd="@dimen/grid_2"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/icon"

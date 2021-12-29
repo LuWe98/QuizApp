@@ -1,35 +1,33 @@
 package com.example.quizapp.view.recyclerview.adapters
 
 import android.annotation.SuppressLint
-import android.transition.TransitionManager
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import androidx.core.view.isVisible
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviQuestionAddEditBinding
-import com.example.quizapp.databinding.RviQuestionAddEditNewBinding
-import com.example.quizapp.extensions.log
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.onLongClick
+import com.example.quizapp.extensions.onTouch
 import com.example.quizapp.extensions.setImageDrawable
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
-import kotlin.random.Random
 
-class RvaAddEditQuestion : BindingListAdapter<QuestionWithAnswers, RviQuestionAddEditNewBinding>(QuestionWithAnswers.DIFF_CALLBACK){
+class RvaAddEditQuestion : BindingListAdapter<QuestionWithAnswers, RviQuestionAddEditBinding>(QuestionWithAnswers.DIFF_CALLBACK){
 
     var onItemClick : ((Int) -> (Unit))? = null
 
-    var onDeleteItemClicked: ((Int, QuestionWithAnswers) -> (Unit))? = null
+    var onItemLongClicked : ((String) -> (Unit))? = null
 
-    override fun initListeners(binding: RviQuestionAddEditNewBinding, vh: BindingListAdapterViewHolder) {
+    var onDragHandleTouched: ((BindingListAdapterViewHolder) -> (Unit))? = null
+
+    override fun initListeners(binding: RviQuestionAddEditBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
             root.onClick { onItemClick?.invoke(vh.bindingAdapterPosition) }
+            root.onLongClick { onItemLongClicked?.invoke(getItem(vh).question.id) }
+            dragHandle.onTouch { onDragHandleTouched?.invoke(vh) }
         }
     }
 
     @SuppressLint("SetTextI18n")
-    override fun bindViews(binding: RviQuestionAddEditNewBinding, item: QuestionWithAnswers, position: Int) {
+    override fun bindViews(binding: RviQuestionAddEditBinding, item: QuestionWithAnswers, position: Int) {
         binding.apply {
             tvNumber.text = "${position + 1}"
             tvTitle.text = item.question.questionText

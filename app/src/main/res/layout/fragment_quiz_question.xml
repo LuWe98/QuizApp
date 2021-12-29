@@ -1,44 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="125dp"
-            android:paddingBottom="10dp"
-            android:id="@+id/appBarLayout"
-            android:background="?colorOnPrimary"
-            app:liftOnScroll="true"
-            app:liftOnScrollTargetViewId="@id/rv">
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:background="@drawable/background_round_corners_15dp"
-                android:backgroundTint="?android:colorBackground"
-                android:layout_marginHorizontal="@dimen/grid_4"
-                android:id="@+id/tvQuestion"
-                tools:text="Question"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:padding="@dimen/grid_3"
-                app:autoSizeMaxTextSize="18sp"
-                app:autoSizeMinTextSize="10sp"
-                app:autoSizeTextType="uniform"
-                app:autoSizeStepGranularity="0.25sp"/>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
+    <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/grid_1"
-            android:id="@+id/rv"
-            tools:listitem="@layout/rvi_answer_quiz"
-            android:clipToPadding="false"
-            android:paddingBottom="100dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+            android:id="@+id/card"
+            android:layout_marginBottom="@dimen/grid_4"
+            android:layout_marginHorizontal="@dimen/grid_3"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="0"
+
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:srcCompat="@drawable/ic_check_circle"
+                    android:padding="7.5dp"
+                    android:layout_marginHorizontal="@dimen/grid_2"
+                    android:elevation="0dp"
+                    android:layout_marginTop="@dimen/grid_4"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:id="@+id/statisticIcon"/>
+
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/grid_4"
+                    android:layout_marginStart="@dimen/grid_2"
+                    android:elevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:id="@+id/tvQuestion"
+                    tools:text="Question"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintStart_toEndOf="@+id/statisticIcon"
+                    app:layout_constraintTop_toTopOf="@+id/statisticIcon" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_round_corners_15dp"
+                    android:backgroundTint="?android:colorBackground"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:id="@+id/rv"
+                    tools:listitem="@layout/rvi_answer_quiz"
+                    android:clipToPadding="false"
+                    android:layout_marginTop="@dimen/grid_6"
+                    android:paddingTop="@dimen/grid_2"
+                    android:paddingBottom="@dimen/grid_4"
+                    android:paddingHorizontal="@dimen/grid_4"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    app:layout_constraintTop_toBottomOf="@+id/tvQuestion" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

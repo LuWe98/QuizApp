@@ -3,7 +3,7 @@ package com.example.quizapp.view.recyclerview.adapters
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviUserBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
+import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.view.recyclerview.impl.BindingPagingDataAdapter
 
 class RvaAuthorSelectionRemote : BindingPagingDataAdapter<AuthorInfo, RviUserBinding>(AuthorInfo.DIFF_CALLBACK) {

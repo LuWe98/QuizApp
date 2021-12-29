@@ -71,8 +71,10 @@ dependencies {
     //Base
     val jetBrainsAnnotationVersion: String by project
     implementation("org.jetbrains:annotations:$jetBrainsAnnotationVersion")
+
     val appCompatVersion: String by project
     implementation("androidx.appcompat:appcompat:$appCompatVersion")
+
     val androidXCoreVersion: String by project
     implementation("androidx.core:core-ktx:$androidXCoreVersion")
 
@@ -128,7 +130,7 @@ dependencies {
     implementation("androidx.navigation:navigation-dynamic-features-fragment:$navigationVersion")
 
 
-    // Dagger Hilt
+    //Hilt
     val hiltVersion: String by project
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
@@ -164,6 +166,7 @@ dependencies {
     implementation("io.ktor:ktor-client-android:$ktorVersion")
     implementation("io.ktor:ktor-client-serialization:$ktorVersion")
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
+    //implementation("io.ktor:ktor-auth-jwt:$ktorVersion")
 
 
     //AUTH 0 - JWT
@@ -175,12 +178,11 @@ dependencies {
     val kotlinSerialisationVersion: String by project
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialisationVersion")
 
+
     //BSON
     val bsonVersion: String by project
     implementation("org.mongodb:bson:$bsonVersion")
 
-    //Kotlin Reflect
-//    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
 
     //Testing
     val jUnitVersion: String by project

@@ -6,8 +6,9 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.BackendResponse
+import com.example.quizapp.model.ktor.BackendResponse.ChangePasswordResponse.*
 import com.example.quizapp.model.ktor.client.KtorClientAuth
-import com.example.quizapp.model.ktor.responses.ChangePasswordResponse
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.viewmodel.VmChangePassword.*
@@ -75,7 +76,7 @@ class VmChangePassword @Inject constructor(
             delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
             navigationDispatcher.dispatch(PopLoadingDialog)
         }.onSuccess { response ->
-            if(response.responseType == ChangePasswordResponse.ChangePasswordResponseType.SUCCESSFUL) {
+            if(response.responseType == ChangePasswordResponseType.SUCCESSFUL) {
                 preferencesRepository.updateUserPassword(newPw)
                 preferencesRepository.updateJwtToken(response.newToken)
                 auth.resetJwtAuth()

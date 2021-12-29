@@ -30,6 +30,7 @@ class ItemBottomTextDropDownLayout constructor(
             text = typedArray.getString(R.styleable.ItemBottomTextDropDownLayout_text) ?: ""
             icon = typedArray.getDrawable(R.styleable.ItemBottomTextDropDownLayout_icon)
             dropDownIcon = typedArray.getDrawable(R.styleable.ItemBottomTextDropDownLayout_dropDownIcon)
+            binding.text.maxLines = typedArray.getInt(R.styleable.ItemBottomTextDropDownLayout_maxLines, Int.MAX_VALUE)
 
             typedArray.getDimension(R.styleable.ItemBottomTextDropDownLayout_iconPadding, 10.dp.toFloat()).toInt().let { padding ->
                 binding.icon.setPadding(padding, padding, padding, padding)
@@ -45,8 +46,6 @@ class ItemBottomTextDropDownLayout constructor(
             }
             typedArray.recycle()
         }
-
-        setBackgroundResource(R.drawable.ripple_round_corners_15_dp)
     }
 
     var title = ""

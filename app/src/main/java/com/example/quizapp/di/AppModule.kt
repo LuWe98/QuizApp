@@ -3,6 +3,7 @@ package com.example.quizapp.di
 import android.content.Context
 import androidx.room.Room
 import com.example.quizapp.QuizApplication
+import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.apiclasses.*
@@ -41,9 +42,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePreferencesManager(
+    fun provideDataMapper() = DataMapper()
+
+    @Provides
+    @Singleton
+    fun providePreferencesRepository(
         @ApplicationContext context: Context
     ) = PreferencesRepository(context)
+
 
     @Provides
     @Singleton
@@ -74,17 +80,22 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideApplicationScope() = CoroutineScope(SupervisorJob())
+    fun provideApplicationScope(): CoroutineScope = CoroutineScope(SupervisorJob())
 
 
     @Singleton
     @Provides
-    fun provideBasicAuthHelper(
+    fun provideKtorClientAuth(
         applicationScope: CoroutineScope,
         preferencesRepository: PreferencesRepository,
         ktorClientProvider: Provider<HttpClient>,
         userApiProvider: Provider<UserApi>
-    ) = KtorClientAuth(applicationScope, preferencesRepository, ktorClientProvider, userApiProvider)
+    ) = KtorClientAuth(
+        applicationScope,
+        preferencesRepository,
+        ktorClientProvider,
+        userApiProvider
+    )
 
 
     @Singleton
@@ -183,6 +194,12 @@ object AppModule {
         preferencesRepository: PreferencesRepository,
         localRepository: LocalRepository,
         backendRepository: BackendRepository,
-    ) = BackendSyncer(preferencesRepository, localRepository, backendRepository)
+        dataMapper: DataMapper
+    ) = BackendSyncer(
+        preferencesRepository,
+        localRepository,
+        backendRepository,
+        dataMapper
+    )
 
 }

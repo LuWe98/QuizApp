@@ -13,19 +13,11 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:id="@+id/tvTitle"
+            style="@style/Style.QuizApp.Heading.TextAppearance"
             android:text="@string/onlineSearchFilters"
-            android:background="@drawable/background_round_corners_10dp"
-            android:backgroundTint="@color/transparent"
             android:gravity="center_vertical"
             android:paddingHorizontal="@dimen/grid_3"
             android:layout_marginHorizontal="@dimen/grid_3"
-            app:autoSizeMaxTextSize="19sp"
-            app:autoSizeMinTextSize="10sp"
-            app:autoSizeTextType="uniform"
-            app:autoSizeStepGranularity="0.25sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/work_sans_regular"
-            android:lines="1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -70,7 +62,6 @@
                         android:layout_marginHorizontal="@dimen/grid_2"
                         android:textSize="17sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/work_sans_medium"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -94,9 +85,7 @@
                         android:id="@+id/tvOrderBy"
                         android:gravity="center_vertical"
                         android:textSize="16sp"
-                        android:textStyle="bold"
                         android:textColor="?colorPrimary"
-                        android:fontFamily="@font/work_sans_regular"
                         android:paddingHorizontal="@dimen/grid_12"
                         android:layout_marginHorizontal="@dimen/grid_4"
                         android:layout_marginTop="@dimen/grid_2"
@@ -136,9 +125,7 @@
                         android:id="@+id/tvOrderAscending"
                         android:gravity="center_vertical"
                         android:textSize="16sp"
-                        android:textStyle="bold"
                         android:textColor="?colorPrimary"
-                        android:fontFamily="@font/work_sans_regular"
                         android:paddingHorizontal="@dimen/grid_12"
                         android:layout_marginTop="@dimen/grid_2"
                         android:layout_marginHorizontal="@dimen/grid_4"
@@ -173,7 +160,6 @@
                         android:layout_marginHorizontal="@dimen/grid_2"
                         android:textSize="17sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/work_sans_medium"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.chip.ChipGroup
@@ -223,7 +209,6 @@
                         android:layout_marginHorizontal="@dimen/grid_2"
                         android:textSize="17sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/work_sans_medium"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.chip.ChipGroup
@@ -273,7 +258,6 @@
                         android:layout_marginHorizontal="@dimen/grid_2"
                         android:textSize="17sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/work_sans_medium"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.chip.ChipGroup
@@ -314,7 +298,6 @@
             android:gravity="center"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:fontFamily="@font/work_sans_medium"
             android:textColor="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

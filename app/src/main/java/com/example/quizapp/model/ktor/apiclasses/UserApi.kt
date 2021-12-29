@@ -1,12 +1,12 @@
 package com.example.quizapp.model.ktor.apiclasses
 
-import com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.properties.AuthorInfo
+import com.example.quizapp.model.databases.properties.Role
+import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.datastore.datawrappers.ManageUsersOrderBy
-import com.example.quizapp.model.ktor.requests.*
-import com.example.quizapp.model.ktor.responses.*
-import com.example.quizapp.model.ktor.ApiPaths.*
+import com.example.quizapp.model.ktor.ApiPaths.UserPaths
+import com.example.quizapp.model.ktor.BackendRequest.*
+import com.example.quizapp.model.ktor.BackendResponse.*
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject
@@ -35,26 +35,25 @@ class UserApi @Inject constructor(
     suspend fun deleteSelf(): DeleteUserResponse =
         client.delete(UserPaths.DELETE_SELF)
 
-    suspend fun syncUserData(userId: String) : SyncUserDataResponse =
-        client.post(UserPaths.SYNC){
+    suspend fun syncUserData(userId: String): SyncUserDataResponse =
+        client.post(UserPaths.SYNC) {
             body = SyncUserDataRequest(userId)
         }
 
-    suspend fun refreshJwtToken(userName: String, password: String) : RefreshJwtTokenResponse =
+    suspend fun refreshJwtToken(userName: String, password: String): RefreshJwtTokenResponse =
         client.post(UserPaths.REFRESH_TOKEN) {
             body = RefreshJwtTokenRequest(userName, password)
         }
 
-    suspend fun getPagedAuthors(limit: Int, page: Int, searchString: String) : List<AuthorInfo> =
+    suspend fun getPagedAuthors(limit: Int, page: Int, searchString: String): List<AuthorInfo> =
         client.post(UserPaths.AUTHORS_PAGED) {
             body = GetPagedAuthorsRequest(limit, page, searchString)
         }
 
-    suspend fun updateUserPassword(newPassword: String) : ChangePasswordResponse =
-        client.post(UserPaths.CHANGE_PASSWORD) {
+    suspend fun updateUserPassword(newPassword: String): ChangePasswordResponse =
+        client.post(UserPaths.UPDATE_PASSWORD) {
             body = ChangePasswordRequest(newPassword)
         }
-
 
 
     //ADMIN
@@ -63,19 +62,17 @@ class UserApi @Inject constructor(
             body = UpdateUserRoleRequest(userId, newRole)
         }
 
-    suspend fun getPagedUsersAdmin(limit: Int, page: Int, searchString: String, roles: Set<Role>, orderBy: ManageUsersOrderBy, ascending: Boolean) : List<User> =
+    suspend fun getPagedUsersAdmin(limit: Int, page: Int, searchString: String, roles: Set<Role>, orderBy: ManageUsersOrderBy, ascending: Boolean): List<User> =
         client.post(UserPaths.USERS_PAGED_ADMIN) {
             body = GetPagedUserAdminRequest(limit, page, searchString, roles, orderBy, ascending)
         }
 
-    suspend fun deleteUser(userId: String): DeleteUserResponse = deleteUsers(listOf(userId))
-
-    suspend fun deleteUsers(userIds: List<String>): DeleteUserResponse =
+    suspend fun deleteUser(userId: String): DeleteUserResponse =
         client.delete(UserPaths.DELETE_USER) {
-            body = DeleteUsersRequest(userIds)
+            body = DeleteUserRequest(userId)
         }
 
-    suspend fun createUser(userName: String, password: String, role: Role) : CreateUserResponse =
+    suspend fun createUser(userName: String, password: String, role: Role): CreateUserResponse =
         client.post(UserPaths.CREATE) {
             body = CreateUserRequest(userName, password, role)
         }

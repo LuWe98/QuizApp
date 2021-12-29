@@ -34,21 +34,14 @@
                     app:srcCompat="@drawable/ic_arrow_back"
                     android:padding="6dp"
                     android:layout_marginVertical="@dimen/grid_3"
-                    android:layout_marginStart="@dimen/grid_1_5" />
+                    android:layout_marginStart="@dimen/backButtonMargin" />
 
             <com.google.android.material.textview.MaterialTextView
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    style="@style/Style.QuizApp.Heading.TextAppearance"
                     android:id="@+id/pageTitle"
                     android:text="@string/settings"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    app:autoSizeMaxTextSize="19sp"
-                    app:autoSizeMinTextSize="10sp"
-                    app:autoSizeTextType="uniform"
-                    app:autoSizeStepGranularity="0.25sp"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/work_sans_regular"
                     app:layout_constraintTop_toTopOf="@+id/btnBack"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -76,14 +69,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/userLayout"
-                    android:layout_marginHorizontal="@dimen/grid_4"
+                    android:layout_marginHorizontal="@dimen/grid_3"
                     layout="@layout/fragment_settings_user_data_card" />
 
             <include
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/preferencesLayout"
-                    android:layout_marginHorizontal="@dimen/grid_4"
+                    android:layout_marginHorizontal="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_4"
                     layout="@layout/fragment_settings_preferences_card"
                     app:layout_constraintTop_toBottomOf="@+id/userLayout" />
@@ -92,7 +85,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/synchronizationLayout"
-                    android:layout_marginHorizontal="@dimen/grid_4"
+                    android:layout_marginHorizontal="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_4"
                     layout="@layout/fragment_settings_synchronization_card"
                     app:layout_constraintTop_toBottomOf="@id/preferencesLayout" />
@@ -102,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/adminLayout"
                     android:visibility="gone"
-                    android:layout_marginHorizontal="@dimen/grid_4"
+                    android:layout_marginHorizontal="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_4"
                     tools:visibility="visible"
                     layout="@layout/fragment_settings_admin_card"

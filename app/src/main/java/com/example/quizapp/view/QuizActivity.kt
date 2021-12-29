@@ -49,6 +49,7 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
         currentSnackBar?.let {
+            if(navigationDispatcher.isLastDestinationDialog) return@let
             it.dismiss()
             currentSnackBar = null
         }

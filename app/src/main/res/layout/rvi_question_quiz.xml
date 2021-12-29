@@ -36,7 +36,6 @@
                 app:layout_constraintTop_toTopOf="@+id/ivRing"
                 app:layout_constraintBottom_toBottomOf="@+id/ivRing"
                 tools:text="1"
-                android:fontFamily="@font/work_sans_medium"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/ivRing"
                 app:layout_constraintEnd_toEndOf="@+id/ivRing" />
@@ -52,7 +51,6 @@
                 app:layout_constraintEnd_toStartOf="@id/btnOpen"
                 tools:text="Question"
                 android:layout_marginHorizontal="@dimen/grid_2"
-                android:fontFamily="@font/work_sans_regular"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 

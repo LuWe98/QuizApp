@@ -4,17 +4,16 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
 import com.example.quizapp.model.datastore.datawrappers.QuizAppLanguage
 import com.example.quizapp.model.datastore.datawrappers.QuizAppTheme
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.BackendResponse.SyncUserDataResponse.*
 import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
 import com.example.quizapp.model.ktor.backendsyncer.SyncFacultyAndCourseOfStudiesResultType.*
-import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_CHANGED
-import com.example.quizapp.model.ktor.responses.SyncUserDataResponse.SyncUserDataResponseType.DATA_UP_TO_DATE
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
 import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType
@@ -84,7 +83,7 @@ class VmSettings @Inject constructor(
 
     fun onPreferredCourseOfStudiesButtonClicked() = launch(IO) {
         preferencesRepository.getPreferredCourseOfStudiesId().let {
-            navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(it.toTypedArray()))
+            navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(it))
         }
     }
 
@@ -144,10 +143,10 @@ class VmSettings @Inject constructor(
             navigationDispatcher.dispatch(PopLoadingDialog)
         }.onSuccess { response ->
             when (response.responseType) {
-                DATA_UP_TO_DATE -> {
+                SyncUserDataResponseType.DATA_UP_TO_DATE -> {
                     eventChannel.send(ShowMessageSnackBarEvent(R.string.userDataIsAlreadyUpToDate))
                 }
-                DATA_CHANGED -> {
+                SyncUserDataResponseType.DATA_CHANGED -> {
                     eventChannel.send(ShowMessageSnackBarEvent(R.string.userDataUpdated))
                     User(
                         id = user.id,

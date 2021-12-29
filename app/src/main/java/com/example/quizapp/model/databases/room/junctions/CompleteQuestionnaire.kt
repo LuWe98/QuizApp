@@ -6,15 +6,7 @@ import androidx.room.Junction
 import androidx.room.Relation
 import com.example.quizapp.extensions.div
 import com.example.quizapp.extensions.generateDiffItemCallback
-import com.example.quizapp.model.databases.DataMapper
-import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
-import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
-import com.example.quizapp.model.databases.room.entities.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.Faculty
-import com.example.quizapp.model.databases.room.entities.Answer
-import com.example.quizapp.model.databases.room.entities.Question
-import com.example.quizapp.model.databases.room.entities.Questionnaire
-import com.example.quizapp.model.databases.room.entities.QuestionnaireCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.*
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -35,13 +27,6 @@ data class CompleteQuestionnaire(
     )
     var coursesOfStudiesWithFaculties: List<CourseOfStudiesWithFaculties>,
 ) : Parcelable {
-
-    val asMongoQuestionnaire: MongoQuestionnaire get() = DataMapper.mapRoomQuestionnaireToMongoQuestionnaire(this)
-
-    val asMongoFilledQuestionnaire: MongoFilledQuestionnaire get() = DataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(this)
-
-    val asEmptyMongoFilledQuestionnaire: MongoFilledQuestionnaire get() = DataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(this)
-
 
     val allQuestions: List<Question> get() = questionsWithAnswers.map(QuestionWithAnswers::question)
 

@@ -1,27 +1,18 @@
 package com.example.quizapp.model.databases
 
-import com.example.quizapp.model.databases.mongodb.documents.MongoCourseOfStudies
-import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestion
-import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
-import com.example.quizapp.model.databases.mongodb.documents.MongoAnswer
-import com.example.quizapp.model.databases.mongodb.documents.MongoQuestion
-import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
-import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.model.databases.mongodb.documents.MongoFaculty
-import com.example.quizapp.model.databases.room.entities.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.Faculty
-import com.example.quizapp.model.databases.room.entities.Answer
-import com.example.quizapp.model.databases.room.entities.Question
-import com.example.quizapp.model.databases.room.entities.Questionnaire
-import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
-import com.example.quizapp.model.databases.room.entities.QuestionnaireCourseOfStudiesRelation
-import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
+import com.example.quizapp.model.databases.mongodb.documents.*
+import com.example.quizapp.model.databases.room.entities.*
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
+import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
+import com.example.quizapp.model.ktor.status.SyncStatus
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * DataMapper for ROOM and MONGO Entities/Documents
  */
-object DataMapper {
+@Singleton
+class DataMapper @Inject constructor() {
 
     fun mapMongoQuestionnaireToRoomCompleteQuestionnaire(
         mongoQuestionnaire: MongoQuestionnaire,
@@ -33,7 +24,7 @@ object DataMapper {
             authorInfo = mongoQuestionnaire.authorInfo,
             subject = mongoQuestionnaire.subject,
             syncStatus = SyncStatus.SYNCED,
-            visibility = mongoQuestionnaire.questionnaireVisibility,
+            visibility = mongoQuestionnaire.visibility,
             lastModifiedTimestamp = mongoQuestionnaire.lastModifiedTimestamp
         )
 
@@ -70,7 +61,7 @@ object DataMapper {
         facultyIds = completeQuestionnaire.allFaculties.map(Faculty::id),
         courseOfStudiesIds = completeQuestionnaire.allCoursesOfStudies.map(CourseOfStudies::id),
         subject = completeQuestionnaire.questionnaire.subject,
-        questionnaireVisibility = completeQuestionnaire.questionnaire.visibility,
+        visibility = completeQuestionnaire.questionnaire.visibility,
         lastModifiedTimestamp = completeQuestionnaire.questionnaire.lastModifiedTimestamp,
         questions = completeQuestionnaire.questionsWithAnswers.map { qwa ->
             qwa.question.let { question ->

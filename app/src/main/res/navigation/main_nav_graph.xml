@@ -114,6 +114,9 @@
             <action
                     android:id="@+id/action_fragmentAddEditQuestionnaire_to_fragmentAddEditQuestion"
                     app:destination="@id/fragmentAddEditQuestion" />
+            <action
+                    android:id="@+id/action_fragmentAddEditQuestionnaire_to_bsdfAddEditQuestionnaireQuestionList"
+                    app:destination="@id/bsdfAddEditQuestionnaireQuestionList" />
         </fragment>
 
 
@@ -129,7 +132,29 @@
                     android:name="questionWithAnswers"
                     app:argType="com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers"
                     app:nullable="true" />
+            <action
+                    android:id="@+id/action_fragmentAddEditQuestion_to_dfAddEditAnswer"
+                    app:destination="@id/dfAddEditAnswer" />
         </fragment>
+        <dialog
+                android:id="@+id/bsdfAddEditQuestionnaireQuestionList"
+                android:name="com.example.quizapp.view.fragments.addeditquestionnairescreen.BsdfAddEditQuestionnaireQuestionList"
+                android:label="BsdfAddEditQuestionnaireQuestionList"
+                tools:layout="@layout/bsdf_add_edit_questionnaire_question_list">
+            <action
+                    android:id="@+id/action_bsdfAddEditQuestionnaireQuestionList_to_fragmentAddEditQuestion"
+                    app:destination="@id/fragmentAddEditQuestion" />
+        </dialog>
+        <dialog
+                android:id="@+id/dfAddEditAnswer"
+                android:name="com.example.quizapp.view.fragments.addeditquestionnairescreen.DfAddEditAnswer"
+                android:label="DfAddEditAnswer"
+                tools:layout="@layout/df_add_edit_answer">
+            <argument
+                android:name="answer"
+                app:nullable="true"
+                app:argType="com.example.quizapp.model.databases.room.entities.Answer"/>
+        </dialog>
     </navigation>
 
 
@@ -231,7 +256,7 @@
                     tools:layout="@layout/bsdf_user_role_selection">
                 <argument
                         android:name="user"
-                        app:argType="com.example.quizapp.model.databases.mongodb.documents.user.User" />
+                        app:argType="com.example.quizapp.model.databases.mongodb.documents.User" />
             </dialog>
             <fragment
                     android:id="@+id/fragmentAdminAddEditUser"
@@ -240,7 +265,7 @@
                     tools:layout="@layout/fragment_admin_add_edit_user">
                 <argument
                         android:name="user"
-                        app:argType="com.example.quizapp.model.databases.mongodb.documents.user.User"
+                        app:argType="com.example.quizapp.model.databases.mongodb.documents.User"
                         app:nullable="true" />
             </fragment>
             <dialog
@@ -250,7 +275,7 @@
                     tools:layout="@layout/bsdf_manage_users_filter_selection">
                 <argument
                         android:name="selectedRoles"
-                        app:argType="com.example.quizapp.model.databases.mongodb.documents.user.Role[]" />
+                        app:argType="com.example.quizapp.model.databases.properties.Role[]" />
             </dialog>
         </navigation>
         <dialog
@@ -293,7 +318,7 @@
             tools:layout="@layout/bsdf_author_selection">
         <argument
                 android:name="selectedAuthors"
-                app:argType="com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo[]" />
+                app:argType="com.example.quizapp.model.databases.properties.AuthorInfo[]" />
     </dialog>
 
 
@@ -410,7 +435,7 @@
             tools:layout="@layout/bsdf_browse_questionnaire_filter_selection">
         <argument
                 android:name="selectedAuthors"
-                app:argType="com.example.quizapp.model.databases.mongodb.documents.user.AuthorInfo[]" />
+                app:argType="com.example.quizapp.model.databases.properties.AuthorInfo[]" />
     </dialog>
 
     <action

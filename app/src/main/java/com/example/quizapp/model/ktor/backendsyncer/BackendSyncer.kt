@@ -10,13 +10,11 @@ import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionn
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.responses.*
-import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireResponse.*
-import com.example.quizapp.model.ktor.responses.DeleteFilledQuestionnaireResponse.DeleteFilledQuestionnaireResponseType.*
-import com.example.quizapp.model.ktor.responses.DeleteQuestionnaireResponse.*
-import com.example.quizapp.model.ktor.responses.DeleteUserResponse.*
-import com.example.quizapp.model.ktor.responses.InsertFilledQuestionnairesResponse.*
-import com.example.quizapp.model.ktor.responses.InsertQuestionnairesResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.DeleteFilledQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.DeleteQuestionnaireResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.InsertFilledQuestionnairesResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.InsertQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
@@ -31,7 +29,8 @@ import javax.inject.Singleton
 class BackendSyncer @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val localRepository: LocalRepository,
-    private val backendRepository: BackendRepository
+    private val backendRepository: BackendRepository,
+    private val dataMapper: DataMapper
 ) {
 
     suspend fun syncData() = withContext(IO) {
@@ -52,20 +51,20 @@ class BackendSyncer @Inject constructor(
         val cosAsync = async { getSyncCourseOfStudiesResponse() }
 
         facultyAsync.await()?.let { facultyResponse ->
-            localRepository.insert(facultyResponse.facultiesToInsert.map(DataMapper::mapMongoFacultyToRoomFaculty))
-            localRepository.update(facultyResponse.facultiesToUpdate.map(DataMapper::mapMongoFacultyToRoomFaculty))
+            localRepository.insert(facultyResponse.facultiesToInsert.map(dataMapper::mapMongoFacultyToRoomFaculty))
+            localRepository.update(facultyResponse.facultiesToUpdate.map(dataMapper::mapMongoFacultyToRoomFaculty))
             localRepository.deleteFacultiesWith(facultyResponse.facultyIdsToDelete)
 
             cosAsync.await()?.let { cosResponse ->
                 val allLocalFaculties = localRepository.getFacultyIdsWithTimestamp().map(FacultyIdWithTimeStamp::facultyId)
                 val facultyCosRelations: MutableList<FacultyCourseOfStudiesRelation>
 
-                (cosResponse.coursesOfStudiesToInsert.map(DataMapper::mapMongoCourseOfStudiesToRoomCourseOfStudies)).let {
+                (cosResponse.coursesOfStudiesToInsert.map(dataMapper::mapMongoCourseOfStudiesToRoomCourseOfStudies)).let {
                     localRepository.insert(it.map(Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>>::first))
                     facultyCosRelations = it.flatMap(Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>>::second).toMutableList()
                 }
 
-                (cosResponse.coursesOfStudiesToUpdate.map(DataMapper::mapMongoCourseOfStudiesToRoomCourseOfStudies)).let {
+                (cosResponse.coursesOfStudiesToUpdate.map(dataMapper::mapMongoCourseOfStudiesToRoomCourseOfStudies)).let {
                     localRepository.update(it.map(Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>>::first))
                     facultyCosRelations += it.flatMap(Pair<CourseOfStudies, List<FacultyCourseOfStudiesRelation>>::second)
                 }
@@ -100,7 +99,6 @@ class BackendSyncer @Inject constructor(
     }
 
 
-
     //TODO -> Die müssen auch ignoriert werden beim runterladen von den Antworten
     //TODO -> IGNORE bei finden von den MongoFilledQuestionnaires
     //val locallyDeletedFilledQuestionnaireIds = localRepository.getLocallyDeletedFilledQuestionnaireIds()
@@ -112,7 +110,7 @@ class BackendSyncer @Inject constructor(
         localRepository.unsyncAllSyncingQuestionnaires()
 
         val unsyncedQuestionnaireIdsAsync = async {
-            localRepository.findAllNonSyncedQuestionnaireIds()
+            localRepository.findAllUnsyncedQuestionnaireIds()
         }
 
         val locallyDeletedQuestionnaireIdsAsync = async {
@@ -138,9 +136,10 @@ class BackendSyncer @Inject constructor(
             }
         }
 
-        if(syncQuestionnairesAsync.await()
+        if (syncQuestionnairesAsync.await()
             && syncLocallyDeletedQuestionnairesAsync.await()
-            && syncLocallyAnsweredQuestionnairesAsync.await()) {
+            && syncLocallyAnsweredQuestionnairesAsync.await()
+        ) {
             return@withContext SyncQuestionnaireResultType.DATA_SYNCED
         }
         return@withContext SyncQuestionnaireResultType.NOT_SUCCESSFUL
@@ -148,7 +147,7 @@ class BackendSyncer @Inject constructor(
 
     private suspend fun syncQuestionnaires(
         locallyDeletedQuestionnairesProvider: suspend (() -> List<LocallyDeletedQuestionnaire>) = { localRepository.getLocallyDeletedQuestionnaireIds() },
-        unsyncedQuestionnaireIdsProvider: suspend (() -> List<String>) = { localRepository.findAllNonSyncedQuestionnaireIds() }
+        unsyncedQuestionnaireIdsProvider: suspend (() -> List<String>) = { localRepository.findAllUnsyncedQuestionnaireIds() }
     ): Boolean = withContext(IO) {
         val syncedQuestionnaires = localRepository.findAllSyncedQuestionnaires()
 
@@ -164,7 +163,7 @@ class BackendSyncer @Inject constructor(
                     localRepository.insertCompleteQuestionnaires(questionnairesToInsert)
                 }
 
-                response.mongoQuestionnaires.flatMap(DataMapper::mapMongoQuestionnaireToRoomQuestionnaireCourseOfStudiesRelation).let {
+                response.mongoQuestionnaires.flatMap(dataMapper::mapMongoQuestionnaireToRoomQuestionnaireCourseOfStudiesRelation).let {
                     localRepository.insert(it)
                 }
             }
@@ -187,7 +186,7 @@ class BackendSyncer @Inject constructor(
     private fun mapToCompleteQuestionnaire(
         syncedQuestionnaires: List<CompleteQuestionnaire>,
         response: SyncQuestionnairesResponse
-    ) = response.mongoQuestionnaires.map(DataMapper::mapMongoQuestionnaireToRoomCompleteQuestionnaire).onEach { cQ ->
+    ) = response.mongoQuestionnaires.map(dataMapper::mapMongoQuestionnaireToRoomCompleteQuestionnaire).onEach { cQ ->
         val selectedAnswerIds = response.mongoFilledQuestionnaires.firstOrNull { it.questionnaireId == cQ.questionnaire.id }?.allSelectedAnswerIds
             ?: syncedQuestionnaires.firstOrNull { it.questionnaire.id == cQ.questionnaire.id }?.allSelectedAnswerIds
 
@@ -197,7 +196,7 @@ class BackendSyncer @Inject constructor(
                     answers = if (!question.isMultipleChoice && answers.count { it.id in selectedAnswerIds } > 1) {
                         answers.map { it.copy(isAnswerSelected = false) }
                     } else {
-                        answers.map {  it.copy(isAnswerSelected = it.id in selectedAnswerIds) }
+                        answers.map { it.copy(isAnswerSelected = it.id in selectedAnswerIds) }
                     }
                 }
             }
@@ -211,11 +210,11 @@ class BackendSyncer @Inject constructor(
     ) = syncedCompleteQuestionnaires
         .filter { response.questionnaireIdsToUnsync.any { id -> id == it.questionnaire.id } }
         .map(CompleteQuestionnaire::questionnaire)
-        .map{ it.copy(syncStatus = SyncStatus.UNSYNCED) }
+        .map { it.copy(syncStatus = SyncStatus.UNSYNCED) }
 
 
     private suspend fun uploadUnsyncedQuestionnaires(
-        unsyncedQuestionnaireIdsProvider: suspend (() -> List<String>) = { localRepository.findAllNonSyncedQuestionnaireIds() }
+        unsyncedQuestionnaireIdsProvider: suspend (() -> List<String>) = { localRepository.findAllUnsyncedQuestionnaireIds() }
     ): Boolean = withContext(IO) {
         unsyncedQuestionnaireIdsProvider().let { unsyncedQuestionnaireIds ->
             if (unsyncedQuestionnaireIds.isEmpty()) return@withContext true
@@ -224,7 +223,7 @@ class BackendSyncer @Inject constructor(
                 localRepository.findCompleteQuestionnairesWith(
                     unsyncedQuestionnaireIds,
                     preferencesRepository.getUserId()
-                ).map(DataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
+                ).map(dataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
                     backendRepository.insertQuestionnaires(it)
                 }
             }.onSuccess { response ->
@@ -243,11 +242,18 @@ class BackendSyncer @Inject constructor(
      */
     private suspend fun syncLocallyDeletedQuestionnaires(
         locallyDeletedQuestionnairesProvider: suspend (() -> List<LocallyDeletedQuestionnaire>) = { localRepository.getLocallyDeletedQuestionnaireIds() }
-    ) : Boolean = withContext(IO) {
+    ): Boolean = withContext(IO) {
         locallyDeletedQuestionnairesProvider().let { locallyDeletedQuestionnaires ->
             locallyDeletedQuestionnaires.filter(LocallyDeletedQuestionnaire::isUserOwner).let { questionnaireToDelete ->
-                val deleteCreated = async { deleteCreatedQuestionnaires(questionnaireToDelete) }
-                val deleteCached = async { deleteCachedQuestionnaires(locallyDeletedQuestionnaires - questionnaireToDelete.toSet()) }
+
+                val deleteCreated = async {
+                    deleteCreatedQuestionnaires(questionnaireToDelete)
+                }
+
+                val deleteCached = async {
+                    deleteCachedQuestionnaires(locallyDeletedQuestionnaires - questionnaireToDelete.toSet())
+                }
+
                 return@withContext deleteCreated.await() && deleteCached.await()
             }
         }
@@ -273,7 +279,7 @@ class BackendSyncer @Inject constructor(
         runCatching {
             backendRepository.deleteFilledQuestionnaire(cachedQuestionnaires.map(LocallyDeletedQuestionnaire::questionnaireId))
         }.onSuccess { response ->
-            if (response.responseType == SUCCESSFUL) {
+            if (response.responseType == DeleteFilledQuestionnaireResponseType.SUCCESSFUL) {
                 localRepository.delete(cachedQuestionnaires)
                 return true
             }
@@ -286,27 +292,29 @@ class BackendSyncer @Inject constructor(
      * Sync of locally answered Questionnaires, so that they will be inserted online
      */
     private suspend fun syncLocallyAnsweredQuestionnaires(
-        unsyncedQuestionnaireIdsProvider: suspend (() -> List<String>) = { localRepository.findAllNonSyncedQuestionnaireIds() }
+        unsyncedQuestionnaireIdsProvider: suspend (() -> List<String>) = { localRepository.findAllUnsyncedQuestionnaireIds() }
     ): Boolean = withContext(IO) {
 
         val unsyncedQuestionnaireIds = unsyncedQuestionnaireIdsProvider()
 
-        localRepository.getAllLocallyFilledQuestionnairesToUpload().filter { it.questionnaireId !in unsyncedQuestionnaireIds }.let { filledQuestionnaires ->
-            if (filledQuestionnaires.isEmpty()) return@withContext true
+        localRepository.getLocallyAnsweredCompleteQuestionnaires()
+            .map(dataMapper::mapRoomQuestionnaireToMongoFilledQuestionnaire)
+            .filter { it.questionnaireId !in unsyncedQuestionnaireIds }.let { filledQuestionnaires ->
+                if (filledQuestionnaires.isEmpty()) return@withContext true
 
-            runCatching {
-                backendRepository.insertFilledQuestionnaires(filledQuestionnaires)
-            }.onSuccess { response ->
-                if (response.responseType == InsertFilledQuestionnairesResponseType.SUCCESSFUL) {
-                    localRepository.delete(filledQuestionnaires.map(MongoFilledQuestionnaire::asLocallyFilledQuestionnaireToUpload))
-                    //TODO -> Noch nicht sicher ob das so gemacht werden muss oder nicht
-                    //(filledQuestionnaires.map(MongoFilledQuestionnaire::questionnaireId) - response.notInsertedQuestionnaireIds).map { LocallyFilledQuestionnaireToUpload(it) }.let {
-                    //  localRepository.delete(it)
-                    //}
-                    return@withContext true
+                runCatching {
+                    backendRepository.insertFilledQuestionnaires(filledQuestionnaires)
+                }.onSuccess { response ->
+                    if (response.responseType == InsertFilledQuestionnairesResponseType.SUCCESSFUL) {
+                        localRepository.delete(filledQuestionnaires.map(MongoFilledQuestionnaire::asLocallyFilledQuestionnaireToUpload))
+                        //TODO -> Noch nicht sicher ob das so gemacht werden muss oder nicht
+                        //(filledQuestionnaires.map(MongoFilledQuestionnaire::questionnaireId) - response.notInsertedQuestionnaireIds).map { LocallyFilledQuestionnaireToUpload(it) }.let {
+                        //  localRepository.delete(it)
+                        //}
+                        return@withContext true
+                    }
                 }
+                return@withContext false
             }
-            return@withContext false
-        }
     }
 }

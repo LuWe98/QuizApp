@@ -9,8 +9,8 @@ import com.example.quizapp.extensions.context
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.onLongClick
 import com.example.quizapp.extensions.setImageDrawable
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.properties.Role
+import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.view.recyclerview.impl.BindingPagingDataAdapter
 
 class RvaAdminUser : BindingPagingDataAdapter<User, RviUserBinding>(User.DIFF_CALLBACK) {

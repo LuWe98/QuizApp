@@ -3,19 +3,17 @@ package com.example.quizapp.view.fragments.resultdispatcher.requests.selection
 import android.content.Context
 import android.os.Parcelable
 import com.example.quizapp.R
-import com.example.quizapp.model.databases.Degree
+import com.example.quizapp.model.databases.properties.Degree
 import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
-import com.example.quizapp.model.databases.mongodb.documents.user.Role
-import com.example.quizapp.model.databases.mongodb.documents.user.User
+import com.example.quizapp.model.databases.properties.Role
+import com.example.quizapp.model.databases.mongodb.documents.User
+import com.example.quizapp.model.databases.room.entities.Answer
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.datastore.datawrappers.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.BrowseQuestionnaireMoreOptionsItem
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.CosMoreOptionsItem
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.FacultyMoreOptionsItem
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.UserMoreOptionsItem
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher
 import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.SelectionResult.*
+import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.*
 import kotlinx.parcelize.Parcelize
 
 
@@ -23,7 +21,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     val recyclerViewList: List<SelectionTypeItemMarker<T>>,
     val titleProvider: (Context) -> String,
     val resultProvider: (SelectionTypeItemMarker<*>) -> (FragmentResultDispatcher.SelectionResult<T>),
-    val isItemSelectedProvider: (SelectionTypeItemMarker<*>) -> Boolean
+    val isItemSelectedProvider: (SelectionTypeItemMarker<*>) -> Boolean = { false }
 ) : Parcelable {
 
     @Parcelize
@@ -70,24 +68,21 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class UserMoreOptionsSelection(val user: User) : SelectionRequestType<UserMoreOptionsItem>(
             recyclerViewList = UserMoreOptionsItem.values().toList(),
             titleProvider = { it.getString(R.string._ph, user.userName) },
-            resultProvider = { UserMoreOptionsSelectionResult(user, it as UserMoreOptionsItem) },
-            isItemSelectedProvider = { false }
+            resultProvider = { UserMoreOptionsSelectionResult(user, it as UserMoreOptionsItem) }
     )
 
     @Parcelize
     data class CourseOfStudiesMoreOptionsSelection(val courseOfStudies: CourseOfStudies) : SelectionRequestType<CosMoreOptionsItem>(
             recyclerViewList = CosMoreOptionsItem.values().toList(),
             titleProvider = { it.getString(R.string._ph, courseOfStudies.name) },
-            resultProvider = { CourseOfStudiesMoreOptionsResult(courseOfStudies, it as CosMoreOptionsItem) },
-            isItemSelectedProvider = { false }
+            resultProvider = { CourseOfStudiesMoreOptionsResult(courseOfStudies, it as CosMoreOptionsItem) }
     )
 
     @Parcelize
     data class FacultyMoreOptionsSelection(val faculty: Faculty) : SelectionRequestType<FacultyMoreOptionsItem>(
             recyclerViewList = FacultyMoreOptionsItem.values().toList(),
             titleProvider = { it.getString(R.string._ph, faculty.name) },
-            resultProvider = { FacultyMoreOptionsSelectionResult(faculty, it as FacultyMoreOptionsItem) },
-            isItemSelectedProvider = { false }
+            resultProvider = { FacultyMoreOptionsSelectionResult(faculty, it as FacultyMoreOptionsItem) }
     )
 
     @Parcelize
@@ -118,9 +113,18 @@ sealed class SelectionRequestType<T : Enum<T>>(
     data class BrowseQuestionnaireMoreOptionsSelection(val browsableQuestionnaire: BrowsableQuestionnaire) : SelectionRequestType<BrowseQuestionnaireMoreOptionsItem>(
             recyclerViewList = BrowseQuestionnaireMoreOptionsItem.values().toList(),
             titleProvider = { it.getString(R.string._ph, browsableQuestionnaire.title) },
-            resultProvider = { RemoteQuestionnaireMoreOptionsSelectionResult(browsableQuestionnaire, it as BrowseQuestionnaireMoreOptionsItem) },
-            isItemSelectedProvider = { false }
+            resultProvider = { RemoteQuestionnaireMoreOptionsSelectionResult(browsableQuestionnaire, it as BrowseQuestionnaireMoreOptionsItem) }
     )
+
+    @Parcelize
+    data class AddEditAnswerMoreOptionsSelection(val answer: Answer) : SelectionRequestType<AddEditAnswerMoreOptionsItem>(
+        recyclerViewList = AddEditAnswerMoreOptionsItem.values().toList(),
+        titleProvider = { it.getString(R.string.answerText) },
+        resultProvider = { AddEditAnswerMoreOptionsSelectionResult(answer, it as AddEditAnswerMoreOptionsItem) }
+    )
+
+
+
 
 
     //    @Parcelize

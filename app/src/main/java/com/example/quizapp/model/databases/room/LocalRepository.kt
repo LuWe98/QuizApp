@@ -2,7 +2,6 @@ package com.example.quizapp.model.databases.room
 
 import androidx.room.withTransaction
 import com.example.quizapp.extensions.div
-import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.room.dao.*
 import com.example.quizapp.model.databases.room.entities.*
@@ -46,8 +45,11 @@ class LocalRepository @Inject constructor(
 
     suspend inline fun <reified T : EntityMarker> delete(entity: Collection<T>) = getBaseDaoWith(T::class).delete(entity)
 
+    /**
+     * This method returns the DAO object for the given Entity Class
+     */
     @Suppress("UNCHECKED_CAST")
-    fun <T : EntityMarker> getBaseDaoWith(entity: KClass<T>) = (when (entity) {
+    fun <T : EntityMarker> getBaseDaoWith(entity: KClass<T>) : BaseDao<T> = when (entity) {
         Answer::class -> answerDao
         Question::class -> questionDao
         Questionnaire::class -> questionnaireDao
@@ -57,8 +59,8 @@ class LocalRepository @Inject constructor(
         FacultyCourseOfStudiesRelation::class -> facultyCourseOfStudiesRelationDao
         LocallyDeletedQuestionnaire::class -> locallyDeletedQuestionnaireDao
         LocallyFilledQuestionnaireToUpload::class -> locallyFilledQuestionnaireToUploadDao
-        else -> throw IllegalArgumentException("Entity DAO for entity could not be found! Did you add it to the 'getBaseDaoWith' Method?")
-    } as BaseDao<T>)
+        else -> throw IllegalArgumentException("Entity DAO for entity class '${entity.simpleName}' could not be found! Did you add it to the 'getBaseDaoWith' Method?")
+    } as BaseDao<T>
 
     suspend fun deleteAllUserData() {
         localDatabase.withTransaction {
@@ -79,13 +81,13 @@ class LocalRepository @Inject constructor(
         }
     }
 
-    suspend fun insertCompleteQuestionnaires(completeQuestionnaire: List<CompleteQuestionnaire>) {
+    suspend fun insertCompleteQuestionnaires(completeQuestionnaires: List<CompleteQuestionnaire>) {
         localDatabase.withTransaction {
-            deleteQuestionnairesWith(completeQuestionnaire.map(CompleteQuestionnaire::questionnaire / Questionnaire::id))
-            insert(completeQuestionnaire.map(CompleteQuestionnaire::questionnaire))
-            insert(completeQuestionnaire.flatMap(CompleteQuestionnaire::allQuestions))
-            insert(completeQuestionnaire.flatMap(CompleteQuestionnaire::allAnswers))
-            insert(completeQuestionnaire.flatMap(CompleteQuestionnaire::asQuestionnaireCourseOfStudiesRelations))
+            deleteQuestionnairesWith(completeQuestionnaires.map(CompleteQuestionnaire::questionnaire / Questionnaire::id))
+            insert(completeQuestionnaires.map(CompleteQuestionnaire::questionnaire))
+            insert(completeQuestionnaires.flatMap(CompleteQuestionnaire::allQuestions))
+            insert(completeQuestionnaires.flatMap(CompleteQuestionnaire::allAnswers))
+            insert(completeQuestionnaires.flatMap(CompleteQuestionnaire::asQuestionnaireCourseOfStudiesRelations))
         }
     }
 
@@ -125,7 +127,7 @@ class LocalRepository @Inject constructor(
 
     suspend fun findQuestionnairesWith(questionnaireIds: List<String>) = questionnaireDao.findQuestionnairesWith(questionnaireIds)
 
-    suspend fun findAllNonSyncedQuestionnaireIds() = questionnaireDao.findAllNonSyncedQuestionnaireIds()
+    suspend fun findAllUnsyncedQuestionnaireIds() = questionnaireDao.findAllNonSyncedQuestionnaireIds()
 
     suspend fun findAllSyncedQuestionnaires() = questionnaireDao.findAllSyncedQuestionnaires()
 
@@ -161,7 +163,7 @@ class LocalRepository @Inject constructor(
 
 
     //LOCALLY ANSWERED QUESTIONNAIRES
-    suspend fun getAllLocallyFilledQuestionnairesToUpload(): List<MongoFilledQuestionnaire> {
+    suspend fun getLocallyAnsweredCompleteQuestionnaires(): List<CompleteQuestionnaire> {
         val locallyAnsweredQuestionnaireIds = locallyFilledQuestionnaireToUploadDao.getAllLocallyFilledQuestionnairesToUploadIds()
 
         locallyAnsweredQuestionnaireIds.map(LocallyFilledQuestionnaireToUpload::questionnaireId).let { locallyAnswered ->
@@ -175,7 +177,7 @@ class LocalRepository @Inject constructor(
                 }
             }
 
-            return foundCompleteQuestionnaires.map(DataMapper::mapRoomQuestionnaireToMongoFilledQuestionnaire)
+            return foundCompleteQuestionnaires
         }
     }
 

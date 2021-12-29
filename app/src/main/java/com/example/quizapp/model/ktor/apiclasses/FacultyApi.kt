@@ -2,13 +2,9 @@ package com.example.quizapp.model.ktor.apiclasses
 
 import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
 import com.example.quizapp.model.databases.mongodb.documents.MongoFaculty
-import com.example.quizapp.model.ktor.requests.DeleteFacultyRequest
-import com.example.quizapp.model.ktor.requests.InsertFacultyRequest
-import com.example.quizapp.model.ktor.requests.SyncFacultiesRequest
-import com.example.quizapp.model.ktor.responses.DeleteFacultyResponse
-import com.example.quizapp.model.ktor.responses.InsertFacultyResponse
-import com.example.quizapp.model.ktor.responses.SyncFacultiesResponse
 import com.example.quizapp.model.ktor.ApiPaths.FacultyPaths
+import com.example.quizapp.model.ktor.BackendRequest.*
+import com.example.quizapp.model.ktor.BackendResponse.*
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject

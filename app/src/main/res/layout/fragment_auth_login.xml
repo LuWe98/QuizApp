@@ -68,7 +68,6 @@
             android:layout_marginTop="@dimen/grid_4"
             android:layout_marginBottom="@dimen/grid_6"
             android:layout_marginHorizontal="@dimen/grid_6"
-            android:fontFamily="@font/work_sans_regular"
             app:layout_constraintEnd_toEndOf="@+id/tilPassword"
             app:layout_constraintStart_toStartOf="@+id/tilPassword"
             app:layout_constraintTop_toBottomOf="@+id/tilPassword" />
@@ -81,7 +80,6 @@
             android:textSize="15sp"
             android:layout_marginTop="@dimen/grid_4"
             android:textStyle="bold"
-            android:fontFamily="@font/work_sans_medium"
             android:textColor="?colorPrimary"
             android:gravity="center"
             app:layout_constraintStart_toStartOf="@+id/btnLogin"
