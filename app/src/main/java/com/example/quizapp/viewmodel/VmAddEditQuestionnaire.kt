@@ -23,20 +23,24 @@ import com.example.quizapp.model.ktor.BackendResponse.*
 import com.example.quizapp.model.ktor.BackendResponse.InsertQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.utils.CsvDocumentFilePicker.*
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType
+import com.example.quizapp.utils.asLocalDataAvailability
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.AddEditQuestionMoreOptionsItem
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.*
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.AddEditQuestionnaireEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.http.cio.*
 import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
@@ -55,6 +59,11 @@ class VmAddEditQuestionnaire @Inject constructor(
 ) : BaseViewModel<AddEditQuestionnaireEvent>() {
 
     private val args = AddEditNavGraphArgs.fromSavedStateHandle(state)
+
+    private val questionListEventChannel = Channel<AddEditQuestionnaireQuestionListEvent>()
+
+    val questionListEventChannelFlow = questionListEventChannel.receiveAsFlow()
+
 
     val pageTitleRes
         get() = when {
@@ -83,11 +92,20 @@ class VmAddEditQuestionnaire @Inject constructor(
             ?: emptyList()
 
 
+    private val questionSearchQueryMutableStateFlow = state.getMutableStateFlow(QUESTION_SEARCH_QUERY_KEY, "")
+
+    val questionSearchQueryStateFlow = questionSearchQueryMutableStateFlow.asStateFlow()
+
+    val questionSearchQuery get() = questionSearchQueryMutableStateFlow.value
+
+
+
     private var questionnaireTitleMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_TITLE_KEY, parsedQuestionnaireTitle)
 
     val questionnaireTitleStateFlow get() = questionnaireTitleMutableStateFlow.asStateFlow()
 
     private val questionnaireTitle get() = questionnaireTitleStateFlow.value
+
 
 
     private var questionnaireSubjectMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_SUBJECT_KEY, parsedQuestionnaireSubject)
@@ -97,20 +115,27 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val questionnaireSubject get() = questionnaireSubjectStateFlow.value
 
 
+
     private var coursesOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(COURSES_OF_STUDIES_IDS_KEY, parsedCourseOfStudiesIds)
 
     val coursesOfStudiesStateFlow = coursesOfStudiesIdsMutableStateFlow
         .map(localRepository::getCoursesOfStudiesWithIds)
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    private val courseOfStudiesIds get() = coursesOfStudiesIdsMutableStateFlow.value
+    private val courseOfStudiesIds get() = coursesOfStudiesIdsMutableStateFlow.value.toMutableSet()
+
 
 
     private val questionsWithAnswersMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_QUESTIONS_KEY, parsedQuestionsWithAnswers)
 
     val questionsWithAnswersStateFlow = questionsWithAnswersMutableStateFlow.asStateFlow()
 
-    private val questionsWithAnswers get() = questionsWithAnswersMutableStateFlow.value
+    private val questionsWithAnswers get() = questionsWithAnswersMutableStateFlow.value.toMutableList()
+
+    val filteredQuestionsWithAnswersFlow = combine(questionsWithAnswersMutableStateFlow, questionSearchQueryMutableStateFlow) { qwa, query ->
+        qwa.filter { it.question.questionText.lowercase().contains(query.lowercase()) }.asLocalDataAvailability(query::isNotEmpty)
+    }.distinctUntilChanged()
+
 
 
     private val publishQuestionMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_PUBLISH_KEY, parsedQuestionnaireVisibility == PUBLIC)
@@ -120,29 +145,41 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val publishQuestionnaire get() = publishQuestionMutableStateFlow.value
 
 
+
     val userRoleFlow = preferencesRepository.userFlow.map(User::role::get).stateIn(viewModelScope, SharingStarted.Lazily, null)
 
 
-    private fun setCoursesOfStudiesIds(courseOfStudiesIds: List<String>) {
-        courseOfStudiesIds.toMutableSet().let {
+    private fun setQuestionWithAnswersWithoutPositionUpdate(questionsWithAnswers: List<QuestionWithAnswers>) {
+        questionsWithAnswers.toMutableList().let {
+            state.set(QUESTIONNAIRE_QUESTIONS_KEY, it)
+            questionsWithAnswersMutableStateFlow.value = it
+        }
+    }
+
+    private fun setQuestionWithAnswers(questionsWithAnswers: List<QuestionWithAnswers>) {
+        setQuestionWithAnswersWithoutPositionUpdate(questionsWithAnswers.mapIndexed { index, qwa ->
+            qwa.copy(question = qwa.question.copy(questionPosition = index))
+        })
+    }
+
+    private fun deleteQuestionItem(position: Int) = launch(IO) {
+        questionsWithAnswers.apply {
+            questionListEventChannel.send(AddEditQuestionnaireQuestionListEvent.ShowQuestionDeletedSnackBarEvent(position, removeAt(position)))
+            setQuestionWithAnswers(this)
+        }
+    }
+
+    private fun setCoursesOfStudiesIds(courseOfStudiesIds: Set<String>) {
+        courseOfStudiesIds.let {
             state.set(COURSES_OF_STUDIES_IDS_KEY, it)
             coursesOfStudiesIdsMutableStateFlow.value = it
         }
     }
 
-    fun onCosChipClicked(courseOfStudies: CourseOfStudies) {
-        courseOfStudiesIds.toMutableSet().apply {
+    fun onCourseOfStudiesDeleteButtonClicked(courseOfStudies: CourseOfStudies) {
+        courseOfStudiesIds.apply {
             remove(courseOfStudies.id)
-            state.set(COURSES_OF_STUDIES_IDS_KEY, this)
-            coursesOfStudiesIdsMutableStateFlow.value = this
-        }
-    }
-
-
-    private fun setQuestionWithAnswers(questionsWithAnswers: List<QuestionWithAnswers>) {
-        questionsWithAnswers.toMutableList().let {
-            state.set(QUESTIONNAIRE_QUESTIONS_KEY, it)
-            questionsWithAnswersMutableStateFlow.value = it
+            setCoursesOfStudiesIds(this)
         }
     }
 
@@ -177,7 +214,7 @@ class VmAddEditQuestionnaire @Inject constructor(
     }
 
     fun onQuestionWithAnswerUpdated(position: Int, questionWithAnswers: QuestionWithAnswers) {
-        questionsWithAnswers.toMutableList().apply {
+        questionsWithAnswers.apply {
             if (position == size) add(questionWithAnswers) else set(position, questionWithAnswers)
             setQuestionWithAnswers(this)
         }
@@ -191,28 +228,34 @@ class VmAddEditQuestionnaire @Inject constructor(
         navigationDispatcher.dispatch(FromAddEditQuestionnaireQuestionListToAddEditQuestion(questionsWithAnswers.size))
     }
 
-    fun onQuestionItemClicked(position: Int) = launch(IO) {
-        navigationDispatcher.dispatch(FromAddEditQuestionnaireQuestionListToAddEditQuestion(position, questionsWithAnswers[position]))
+    fun onQuestionItemClicked(questionWithAnswer: QuestionWithAnswers) = launch(IO) {
+        navigationDispatcher.dispatch(FromAddEditQuestionnaireQuestionListToAddEditQuestion(questionsWithAnswers.indexOf(questionWithAnswer), questionWithAnswer))
     }
 
-    private fun onQuestionItemDelete(position: Int) = launch(IO) {
-        questionsWithAnswers.toMutableList().apply {
-            removeAt(position).let {
-                eventChannel.send(ShowQuestionDeletedSnackBarEvent(position, it))
-            }
-            setQuestionWithAnswers(this)
+    fun onQuestionLongClicked(questionWithAnswer: QuestionWithAnswers) = launch(IO) {
+        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.AddEditQuestionMoreOptionsSelection(questionWithAnswer)))
+    }
+
+    fun onQuestionMoreOptionsSelectionResultReceived(result: SelectionResult.AddEditQuestionMoreOptionsSelectionResult) {
+        when(result.selectedItem) {
+            AddEditQuestionMoreOptionsItem.EDIT -> onQuestionItemClicked(result.calledOnQuestionWithAnswers)
+            AddEditQuestionMoreOptionsItem.DELETE -> deleteQuestionItem(questionsWithAnswers.indexOf(result.calledOnQuestionWithAnswers))
         }
     }
 
     fun onQuestionItemDragged(from: Int, to: Int) {
-        questionsWithAnswers.toMutableList().apply {
+        questionsWithAnswers.apply {
             add(to, removeAt(from))
-            setQuestionWithAnswers(this)
+            setQuestionWithAnswersWithoutPositionUpdate(this)
         }
     }
 
+    fun onQuestionItemDragReleased(position: Int) {
+        setQuestionWithAnswers(questionsWithAnswers)
+    }
+
     fun onQuestionItemSwiped(position: Int) {
-        onQuestionItemDelete(position)
+        deleteQuestionItem(position)
     }
 
     fun onQuestionCardClicked() = launch(IO) {
@@ -220,12 +263,11 @@ class VmAddEditQuestionnaire @Inject constructor(
     }
 
 
-    fun onUndoDeleteQuestionClicked(event: ShowQuestionDeletedSnackBarEvent) = launch(IO) {
-        questionsWithAnswers.toMutableList().apply {
+    fun onUndoDeleteQuestionClicked(event: AddEditQuestionnaireQuestionListEvent.ShowQuestionDeletedSnackBarEvent) = launch(IO) {
+        questionsWithAnswers.apply {
             add(event.questionPosition, event.questionWithAnswers)
             setQuestionWithAnswers(this)
         }
-
     }
 
     fun onMoreOptionsClicked() = launch(IO) {
@@ -235,6 +277,19 @@ class VmAddEditQuestionnaire @Inject constructor(
     fun onBackButtonClicked() = launch(IO) {
         navigationDispatcher.dispatch(NavigateBack)
     }
+
+    fun onSearchQueryChanged(query: String) {
+        state.set(QUESTION_SEARCH_QUERY_KEY, query)
+        questionSearchQueryMutableStateFlow.value = query
+    }
+
+    fun onDeleteSearchQueryClicked() = launch(IO) {
+        if(questionSearchQuery.isNotEmpty()) {
+            questionListEventChannel.send(AddEditQuestionnaireQuestionListEvent.ClearSearchQueryEvent)
+        }
+    }
+
+
 
     fun onSaveButtonClicked() = launch(IO, applicationScope) {
         if (!isInputValid()) return@launch
@@ -337,12 +392,16 @@ class VmAddEditQuestionnaire @Inject constructor(
         }
     }
 
-    sealed class AddEditQuestionnaireEvent: ViewModelEventMarker {
+    sealed class AddEditQuestionnaireEvent: UiEventMarker {
         class ShowMessageSnackBarEvent(@StringRes val messageRes: Int) : AddEditQuestionnaireEvent()
         class ShowMessageSnackBarWithStringEvent(val message: String) : AddEditQuestionnaireEvent()
-        class ShowQuestionDeletedSnackBarEvent(val questionPosition: Int, val questionWithAnswers: QuestionWithAnswers) : AddEditQuestionnaireEvent()
         object ShowPopupMenu : AddEditQuestionnaireEvent()
         object StartCsvDocumentFilePicker : AddEditQuestionnaireEvent()
+    }
+
+    sealed class AddEditQuestionnaireQuestionListEvent {
+        class ShowQuestionDeletedSnackBarEvent(val questionPosition: Int, val questionWithAnswers: QuestionWithAnswers) : AddEditQuestionnaireQuestionListEvent()
+        object ClearSearchQueryEvent: AddEditQuestionnaireQuestionListEvent()
     }
 
     companion object {
@@ -351,5 +410,6 @@ class VmAddEditQuestionnaire @Inject constructor(
         private const val QUESTIONNAIRE_QUESTIONS_KEY = "questionsWithAnswersKey"
         private const val COURSES_OF_STUDIES_IDS_KEY = "coursesOfStudiesIdsKey"
         private const val QUESTIONNAIRE_PUBLISH_KEY = "questionnairePublishKey"
+        private const val QUESTION_SEARCH_QUERY_KEY = "questionSearchQueryKey"
     }
 }

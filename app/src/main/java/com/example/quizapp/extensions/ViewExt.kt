@@ -130,6 +130,11 @@ inline fun EditText.onTextChanged(crossinline action: (String) -> (Unit)) {
     doOnTextChanged { text, _, _, _ -> action.invoke(text.toString()) }
 }
 
+inline fun ImageView.changeSearchIconOnCondition(
+    animDuration: Long = 150,
+    crossinline condition: () -> (Boolean),
+) = changeIconOnCondition(R.drawable.ic_search, R.drawable.ic_cross, animDuration, condition)
+
 inline fun ImageView.changeIconOnCondition(
     @DrawableRes trueIcon: Int = R.drawable.ic_search,
     @DrawableRes falseIcon: Int = R.drawable.ic_cross,

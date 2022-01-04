@@ -5,9 +5,12 @@
     <color name="blackAlpha">#bb000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="whiteAlpha">#bbffffff</color>
-    <color name="red">#de1738</color>
-    <color name="green">#73ba73</color>
+    <color name="red">#bbde1738</color>
+    <color name="green">#bb73ba73</color>
     <color name="lightGreen">#87A96B </color>
+
+<!--    <color name="red">#de1738</color>-->
+<!--    <color name="green">#73ba73</color>-->
 
 
 <!--    <color name="green">#078F45</color>-->
@@ -70,16 +73,17 @@
 <!--    #89000000-->
 <!--    Default-->
 
+<!--    202020-->
 
     <!-- Dark Theme Colors -->
     <color name="darkColorPrimary">#0070ba</color>
     <color name="darkColorPrimaryVariant">#1570ab</color>
-    <color name="darkColorOnPrimary">#202020</color>
+    <color name="darkColorOnPrimary">#262626</color>
     <color name="darkColorSecondary">#FF03DAC5</color>
     <color name="darkColorSecondaryVariant">#FF018786</color>
     <color name="darkColorOnSecondary">@color/black</color>
     <color name="darkColorAccent">#add8e6</color>
-    <color name="darkBackgroundColor">#262626</color>
+    <color name="darkBackgroundColor">#464646</color>
 
     <color name="darkColorControlActivated">#89000000</color>
     <color name="darkColorControlNormal">#bebebe</color>

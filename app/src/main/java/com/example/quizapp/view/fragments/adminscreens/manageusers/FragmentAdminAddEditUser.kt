@@ -5,8 +5,8 @@ import android.view.View
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminAddEditUserBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.viewmodel.VmAdminAddEditUser
 import com.example.quizapp.viewmodel.VmAdminAddEditUser.AddEditUserEvent.ShowMessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint

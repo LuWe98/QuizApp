@@ -69,15 +69,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/userLayout"
-                    android:layout_marginHorizontal="@dimen/grid_3"
+                    android:layout_marginHorizontal="@dimen/grid_5"
                     layout="@layout/fragment_settings_user_data_card" />
 
             <include
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/preferencesLayout"
-                    android:layout_marginHorizontal="@dimen/grid_3"
-                    android:layout_marginTop="@dimen/grid_4"
+                    android:layout_marginHorizontal="@dimen/grid_5"
+                    android:layout_marginTop="@dimen/grid_5"
                     layout="@layout/fragment_settings_preferences_card"
                     app:layout_constraintTop_toBottomOf="@+id/userLayout" />
 
@@ -85,8 +85,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/synchronizationLayout"
-                    android:layout_marginHorizontal="@dimen/grid_3"
-                    android:layout_marginTop="@dimen/grid_4"
+                    android:layout_marginHorizontal="@dimen/grid_5"
+                    android:layout_marginTop="@dimen/grid_5"
                     layout="@layout/fragment_settings_synchronization_card"
                     app:layout_constraintTop_toBottomOf="@id/preferencesLayout" />
 
@@ -95,8 +95,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/adminLayout"
                     android:visibility="gone"
-                    android:layout_marginHorizontal="@dimen/grid_3"
-                    android:layout_marginTop="@dimen/grid_4"
+                    android:layout_marginHorizontal="@dimen/grid_5"
+                    android:layout_marginTop="@dimen/grid_5"
                     tools:visibility="visible"
                     layout="@layout/fragment_settings_admin_card"
                     app:layout_constraintTop_toBottomOf="@+id/synchronizationLayout" />

@@ -212,7 +212,7 @@ class LocalRepository @Inject constructor(
 
     val allCoursesOfStudiesFlow = courseOfStudiesDao.getAllCourseOfStudiesFlow()
 
-    suspend fun getCoursesOfStudiesWithIds(courseOfStudiesIds: Set<String>) = courseOfStudiesDao.getCoursesOfStudiesWithIds(courseOfStudiesIds)
+    suspend fun getCoursesOfStudiesWithIds(courseOfStudiesIds: Collection<String>) = courseOfStudiesDao.getCoursesOfStudiesWithIds(courseOfStudiesIds)
 
     suspend fun deleteWhereAbbreviation(abb: String) = courseOfStudiesDao.deleteWhereAbbreviation(abb)
 

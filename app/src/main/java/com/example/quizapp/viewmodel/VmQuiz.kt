@@ -4,6 +4,7 @@ import androidx.cardview.widget.CardView
 import androidx.lifecycle.*
 import com.example.quizapp.QuizNavGraphArgs
 import com.example.quizapp.R
+import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.room.LocalRepository
@@ -15,19 +16,19 @@ import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType.*
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.BackendResponse
 import com.example.quizapp.model.ktor.BackendResponse.InsertFilledQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.utils.asLocalDataAvailability
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.viewmodel.VmQuiz.*
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import java.util.*
@@ -44,6 +45,11 @@ class VmQuiz @Inject constructor(
 ) : BaseViewModel<FragmentQuizEvent>() {
 
     private val args = QuizNavGraphArgs.fromSavedStateHandle(state)
+
+    private val questionListEventChannel = Channel<QuizOverviewQuestionListEvent>()
+
+    val questionListEventChannelFlow = questionListEventChannel.receiveAsFlow()
+
 
     private val completeQuestionnaireNullableStateFlow = localRepository.findCompleteQuestionnaireAsFlowWith(args.questionnaireId)
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
@@ -62,19 +68,29 @@ class VmQuiz @Inject constructor(
         .map(CompleteQuestionnaire::questionnaire::get)
         .distinctUntilChanged()
 
-    val questionsWithAnswersFlow = completeQuestionnaireFlow
-        .map(CompleteQuestionnaire::questionsWithAnswers::get)
-        .distinctUntilChanged()
-
     val questionStatisticsFlow = completeQuestionnaireFlow
         .map(CompleteQuestionnaire::toQuizStatisticNumbers::get)
         .distinctUntilChanged()
 
-    val areAllQuestionsAnsweredStateFlow = questionStatisticsFlow
-        .map(CompleteQuestionnaire.QuizStatisticNumbers::areAllQuestionsAnswered::get)
-        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+    val areAllQuestionsAnswered get() = runBlocking(IO) {
+        questionStatisticsFlow.first().areAllQuestionsAnswered
+    }
 
-    val areAllQuestionsAnswered get() = areAllQuestionsAnsweredStateFlow.value
+
+    private val questionSearchQueryMutableStateFlow = state.getMutableStateFlow(QUESTION_SEARCH_QUERY_KEY, "")
+
+    val questionSearchQueryStateFlow = questionSearchQueryMutableStateFlow.asStateFlow()
+
+    val questionSearchQuery get() = questionSearchQueryMutableStateFlow.value
+
+
+    private val questionsWithAnswersFlow = completeQuestionnaireFlow
+        .map(CompleteQuestionnaire::questionsWithAnswers::get)
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    val questionsWithAnswersFilteredFlow = combine(questionsWithAnswersFlow, questionSearchQueryMutableStateFlow) { qwa, query ->
+        qwa.filter { it.question.questionText.lowercase().contains(query.lowercase()) }.asLocalDataAvailability(query::isNotEmpty)
+    }.distinctUntilChanged()
 
 
     private var shuffleSeedStateFlow = preferencesRepository.shuffleSeedFlow
@@ -89,7 +105,9 @@ class VmQuiz @Inject constructor(
     val shuffleType get() = shuffleTypeStateFlow.value
 
 
-    val questionsWithAnswersCombinedStateFlow = combine(
+
+
+    private val questionsWithAnswersCombinedStateFlow = combine(
         questionsWithAnswersFlow,
         shuffleTypeStateFlow,
         shuffleSeedStateFlow
@@ -103,32 +121,16 @@ class VmQuiz @Inject constructor(
     val questionsShuffled get() = questionsWithAnswersCombinedStateFlow.value.map(QuestionWithAnswers::question)
 
 
-    private var _bottomSheetState = state.get<Int>(BOTTOMSHEET_STATE_KEY) ?: BottomSheetBehavior.STATE_COLLAPSED
-        set(value) {
-            state.set(BOTTOMSHEET_STATE_KEY, value)
-            field = value
-        }
-
-    val bottomSheetState get() = _bottomSheetState
-
-
     fun onMenuItemOrderSelected(shuffleType: QuestionnaireShuffleType) = launch(IO) {
         preferencesRepository.updateShuffleSeed()
         preferencesRepository.updateShuffleType(shuffleType)
     }
 
 
-    fun onBottomSheetStateUpdated(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED || newState == BottomSheetBehavior.STATE_EXPANDED) {
-            _bottomSheetState = newState
-        }
-    }
-
-
     fun onMenuItemShowSolutionClicked() = launch(IO) {
         completeQuestionnaire?.let {
             if (it.areAllQuestionsAnswered) {
-                navigationDispatcher.dispatch(FromQuizToQuizContainerScreen(0,true))
+                navigationDispatcher.dispatch(FromQuizToQuizContainerScreen(true))
             } else {
                 eventChannel.send(ShowMessageSnackBar(R.string.pleaseAnswerAllQuestionsText))
             }
@@ -136,8 +138,9 @@ class VmQuiz @Inject constructor(
     }
 
     fun onQuestionItemClicked(position: Int, questionId: String, card: CardView) = launch(IO) {
-        val questionPosition = questionsShuffled.indexOfFirst { it.id == questionId }
-        navigationDispatcher.dispatch(FromQuizToQuizContainerScreen(if (questionPosition == -1) 0 else questionPosition,false))
+        questionsShuffled.indexOfFirst { it.id == questionId }.let {
+            navigationDispatcher.dispatch(FromQuizQuestionListToQuizContainerScreen(if (it == -1) 0 else it, false))
+        }
     }
 
 
@@ -145,6 +148,16 @@ class VmQuiz @Inject constructor(
         eventChannel.send(ShowPopupMenu)
     }
 
+    fun onQuestionSearchQueryChanged(searchQuery: String) {
+        state.set(QUESTION_SEARCH_QUERY_KEY, searchQuery)
+        questionSearchQueryMutableStateFlow.value = searchQuery
+    }
+
+    fun onClearSearchQueryClicked() = launch(IO) {
+        if(questionSearchQuery.isNotEmpty()) {
+            questionListEventChannel.send(QuizOverviewQuestionListEvent.ClearQuestionQueryEvent)
+        }
+    }
 
     fun onMenuItemClearGivenAnswersClicked() = launch(IO, applicationScope) {
         completeQuestionnaire?.apply {
@@ -161,7 +174,11 @@ class VmQuiz @Inject constructor(
     }
 
     fun onStartButtonClicked() = launch(IO) {
-        navigationDispatcher.dispatch(FromQuizToQuizContainerScreen(0,false))
+        navigationDispatcher.dispatch(FromQuizToQuizContainerScreen(false))
+    }
+
+    fun onShowQuestionListDialogClicked() = launch(IO) {
+        navigationDispatcher.dispatch(FromQuizToQuestionListDialog)
     }
 
     fun onAnswerItemClicked(selectedAnswerId: String, questionId: String) = launch(IO) {
@@ -183,6 +200,7 @@ class VmQuiz @Inject constructor(
     fun onBackButtonClicked() = launch(IO) {
         navigationDispatcher.dispatch(NavigateBack)
     }
+
 
     override fun onCleared() {
         super.onCleared()
@@ -207,14 +225,17 @@ class VmQuiz @Inject constructor(
     }
 
 
-    sealed class FragmentQuizEvent: ViewModelEventMarker {
+    sealed class FragmentQuizEvent: UiEventMarker {
         class ShowUndoDeleteGivenAnswersSnackBack(val lastAnswerValues: List<Answer>) : FragmentQuizEvent()
         class ShowMessageSnackBar(val messageRes: Int) : FragmentQuizEvent()
         object ShowPopupMenu : FragmentQuizEvent()
     }
 
+    sealed class QuizOverviewQuestionListEvent: UiEventMarker {
+        object ClearQuestionQueryEvent: QuizOverviewQuestionListEvent()
+    }
+
     companion object {
-        private const val SHUFFLE_SEED_KEY = "shuffleSeedKey"
-        private const val BOTTOMSHEET_STATE_KEY = "bottomSheetStateKey"
+        private const val QUESTION_SEARCH_QUERY_KEY = "questionSearchQueryKey"
     }
 }

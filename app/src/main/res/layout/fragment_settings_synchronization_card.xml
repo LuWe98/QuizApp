@@ -2,12 +2,14 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_round_corners_10dp"
+        android:backgroundTint="?android:colorBackground">
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:id="@+id/userDataHeader"
+            android:layout_height="50dp"
+            android:id="@+id/syncHeader"
             android:text="@string/synchronization"
             android:background="@drawable/background_round_corners_15dp"
             android:backgroundTint="?android:colorBackground"
@@ -17,27 +19,42 @@
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
-            android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/btnSyncUserData"
-            app:icon="@drawable/ic_sync"
-            app:title="@string/syncUserData"
-            app:layout_constraintTop_toBottomOf="@id/userDataHeader" />
+            android:background="@drawable/background_round_corners_10dp"
+            android:backgroundTint="?colorOnPrimary"
+            android:layout_marginHorizontal="@dimen/grid_1"
+            android:layout_marginBottom="@dimen/grid_1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/syncHeader"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnSyncQuestionnaires"
-            app:icon="@drawable/ic_sync"
-            app:title="@string/syncQuestionnaires"
-            app:layout_constraintTop_toBottomOf="@id/btnSyncUserData" />
+        <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnSyncUserData"
+                app:icon="@drawable/ic_sync"
+                app:title="@string/syncUserData"
+                app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnSyncCosAndFaculties"
-            app:icon="@drawable/ic_sync"
-            app:title="@string/syncCoursesOfStudiesAndFaculties"
-            app:layout_constraintTop_toBottomOf="@id/btnSyncQuestionnaires" />
+        <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnSyncQuestionnaires"
+                app:icon="@drawable/ic_sync"
+                app:title="@string/syncQuestionnaires"
+                app:layout_constraintTop_toBottomOf="@id/btnSyncUserData" />
+
+        <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnSyncCosAndFaculties"
+                app:icon="@drawable/ic_sync"
+                app:title="@string/syncCoursesOfStudiesAndFaculties"
+                app:layout_constraintTop_toBottomOf="@id/btnSyncQuestionnaires" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

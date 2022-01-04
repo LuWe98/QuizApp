@@ -2,15 +2,20 @@ package com.example.quizapp.view.fragments.searchscreen.filterselection
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfBrowseQuestionnaireFilterSelectionBinding
-import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.properties.AuthorInfo
-import com.example.quizapp.model.databases.room.entities.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.Faculty
-import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
+import com.example.quizapp.extensions.collectWhenStarted
+import com.example.quizapp.extensions.disableChangeAnimation
+import com.example.quizapp.extensions.onClick
+import com.example.quizapp.extensions.setImageDrawable
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
+import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
+import com.example.quizapp.view.recyclerview.adapters.RvaAuthorChoice
+import com.example.quizapp.view.recyclerview.adapters.RvaCourseOfStudiesChoice
+import com.example.quizapp.view.recyclerview.adapters.RvaFacultyChoice
 import com.example.quizapp.viewmodel.VmBrowseQuestionnaireFilterSelection
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,22 +24,68 @@ class BsdfBrowseQuestionnaireFilterSelection : BindingBottomSheetDialogFragment<
 
     private val vmFilter: VmBrowseQuestionnaireFilterSelection by viewModels()
 
+    private lateinit var rvaAuthor: RvaAuthorChoice
+
+    private lateinit var rvaCourseOfStudiesChoice: RvaCourseOfStudiesChoice
+
+    private lateinit var rvaFaculty: RvaFacultyChoice
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         enableFullscreenMode()
 
+        initViews()
         initListeners()
         initObservers()
+    }
+
+    private fun initViews(){
+        rvaAuthor = RvaAuthorChoice().apply {
+            onDeleteButtonClicked = vmFilter::removeFilteredAuthor
+        }
+
+        rvaCourseOfStudiesChoice = RvaCourseOfStudiesChoice().apply {
+            onDeleteButtonClicked = vmFilter::removeFilteredCourseOfStudies
+        }
+
+        rvaFaculty = RvaFacultyChoice().apply {
+            onDeleteButtonClicked = vmFilter::removeFilteredFaculty
+        }
+
+        binding.apply {
+            rvAuthor.apply {
+                adapter = rvaAuthor
+                layoutManager = LinearLayoutManager(requireContext())
+                setHasFixedSize(false)
+                disableChangeAnimation()
+            }
+
+            rvCos.apply {
+                adapter = rvaCourseOfStudiesChoice
+                layoutManager = LinearLayoutManager(requireContext())
+                setHasFixedSize(false)
+                disableChangeAnimation()
+            }
+
+            rvFaculty.apply {
+                adapter = rvaFaculty
+                layoutManager = LinearLayoutManager(requireContext())
+                setHasFixedSize(false)
+                disableChangeAnimation()
+            }
+        }
     }
 
     private fun initListeners() {
         binding.apply {
             tvOrderBy.onClick(vmFilter::onOrderByCardClicked)
             tvOrderAscending.onClick(vmFilter::onOrderAscendingCardClicked)
-            addChipAuthor.onClick(vmFilter::onAuthorAddButtonClicked)
-            addChipCos.onClick(vmFilter::onCourseOfStudiesAddButtonClicked)
-            addChipFaculty.onClick(vmFilter::onFacultyCardAddButtonClicked)
             btnApply.onClick(vmFilter::onApplyButtonClicked)
+            btnCollapse.onClick(vmFilter::onCollapseButtonClicked)
+
+            btnBrowseAuthor.onClick(vmFilter::onAuthorAddButtonClicked)
+            btnBrowseCourseOfStudies.onClick(vmFilter::onCourseOfStudiesAddButtonClicked)
+            btnBrowseFaculty.onClick(vmFilter::onFacultyCardAddButtonClicked)
         }
     }
 
@@ -67,27 +118,21 @@ class BsdfBrowseQuestionnaireFilterSelection : BindingBottomSheetDialogFragment<
         }
 
         vmFilter.selectedAuthorsStateFlow.collectWhenStarted(viewLifecycleOwner) { authors ->
-            binding.chipGroupAuthor.setUpChipsForChipGroup(
-                authors,
-                AuthorInfo::userName,
-                vmFilter::removeFilteredAuthor
-            ) { showToast(it.userName) }
+            rvaAuthor.submitList(authors.toMutableList()) {
+                binding.rvAuthor.isVisible = authors.isNotEmpty()
+            }
         }
 
-        vmFilter.selectedCourseOfStudiesStateFlow.collectWhenStarted(viewLifecycleOwner) { coursesOfStudies ->
-            binding.chipGroupCos.setUpChipsForChipGroup(
-                coursesOfStudies,
-                CourseOfStudies::abbreviation,
-                vmFilter::removeFilteredCourseOfStudies
-            ) { showToast(it.name) }
+        vmFilter.selectedCourseOfStudiesStateFlow.collectWhenStarted(viewLifecycleOwner) { cos ->
+            rvaCourseOfStudiesChoice.submitList(cos) {
+                binding.rvCos.isVisible = cos.isNotEmpty()
+            }
         }
 
         vmFilter.selectedFacultyStateFlow.collectWhenStarted(viewLifecycleOwner) { faculties ->
-            binding.chipGroupFaculty.setUpChipsForChipGroup(
-                faculties,
-                Faculty::abbreviation,
-                vmFilter::removeFilteredFaculty
-            ) { showToast(it.name) }
+            rvaFaculty.submitList(faculties) {
+                binding.rvFaculty.isVisible = faculties.isNotEmpty()
+            }
         }
     }
 }

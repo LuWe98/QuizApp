@@ -2,6 +2,7 @@ package com.example.quizapp.view.fragments.dialogs.selection
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
@@ -22,11 +23,20 @@ class BsdfSelection : BindingBottomSheetDialogFragment<BsdfSelectionBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         iniViews()
     }
 
     private fun iniViews() {
         binding.tvTitle.text = vmSelection.selectionType.titleProvider(requireContext())
+
+        vmSelection.selectionType.titleProvider(requireContext()).let { title ->
+            if(title == null) {
+                binding.tvTitle.isVisible = false
+            } else {
+                binding.tvTitle.text = title
+            }
+        }
 
         rvAdapter = RvaSelectionDialog().apply {
             onItemClicked = vmSelection::onItemSelected

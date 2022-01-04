@@ -5,9 +5,10 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="0dp"
         android:id="@+id/statisticsCard"
-        app:cardCornerRadius="7.5dp">
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="?android:colorBackground"
+        app:cardCornerRadius="15dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -29,11 +30,11 @@
                     android:layout_width="42.5dp"
                     android:layout_height="42.5dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:srcCompat="@drawable/ic_bar_chart"
+                    app:srcCompat="@drawable/ic_question_mark"
                     android:background="@drawable/shape_circle"
                     android:backgroundTint="@color/transparent"
                     android:padding="10dp"
-                    android:layout_marginStart="@dimen/grid_3"
+                    android:layout_marginStart="@dimen/grid_2"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:id="@+id/statisticIcon" />
@@ -42,28 +43,29 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:id="@+id/tvStatistic"
-                    android:text="@string/performance"
-                    android:layout_marginStart="@dimen/grid_3"
+                    android:text="@string/questions"
+                    android:layout_marginStart="@dimen/grid_2"
                     android:textStyle="bold"
                     android:gravity="center_vertical"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@+id/statisticIcon"
                     app:layout_constraintBottom_toBottomOf="@+id/statisticIcon"
                     app:layout_constraintTop_toTopOf="@+id/statisticIcon"
-                    app:layout_constraintEnd_toStartOf="@+id/btnStatisticExpand" />
+                    app:layout_constraintEnd_toStartOf="@+id/btnListQuestions" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="42.5dp"
-                    android:layout_height="42.5dp"
-                    app:srcCompat="@drawable/ic_arrow_down"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/btnListQuestions"
                     android:background="?actionBarItemBackground"
-                    android:padding="10dp"
-                    android:visibility="invisible"
-                    android:layout_marginEnd="@dimen/grid_3"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:padding="7.5dp"
+                    app:tint="?colorPrimary"
+                    android:layout_marginEnd="@dimen/grid_2"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:id="@+id/btnStatisticExpand" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_list" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -110,7 +112,7 @@
                     app:indicatorColor="?colorPrimary"
                     app:trackCornerRadius="50dp"
                     app:trackThickness="5dp"
-                    app:trackColor="?android:colorBackground"
+                    app:trackColor="?colorOnPrimary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/allQuestionsLabel" />
@@ -149,7 +151,7 @@
                     app:indicatorColor="?colorAccent"
                     app:trackCornerRadius="50dp"
                     app:trackThickness="5dp"
-                    app:trackColor="?android:colorBackground"
+                    app:trackColor="?colorOnPrimary"
                     app:layout_constraintTop_toBottomOf="@+id/answeredQuestionsLabel" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -186,7 +188,7 @@
                     app:indicatorColor="@color/green"
                     app:trackCornerRadius="50dp"
                     app:trackThickness="5dp"
-                    app:trackColor="?android:colorBackground"
+                    app:trackColor="?colorOnPrimary"
                     app:layout_constraintTop_toBottomOf="@+id/correctQuestionsLabel" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -223,7 +225,7 @@
                     app:indicatorColor="@color/red"
                     app:trackCornerRadius="50dp"
                     app:trackThickness="5dp"
-                    app:trackColor="?android:colorBackground"
+                    app:trackColor="?colorOnPrimary"
                     app:layout_constraintTop_toBottomOf="@+id/wrongQuestionsLabel" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

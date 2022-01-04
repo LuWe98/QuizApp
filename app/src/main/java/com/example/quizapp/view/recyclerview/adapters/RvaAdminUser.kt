@@ -35,7 +35,7 @@ class RvaAdminUser : BindingPagingDataAdapter<User, RviUserBinding>(User.DIFF_CA
 
     override fun bindViews(binding: RviUserBinding, item: User, position: Int) {
         binding.apply {
-            if(item.lastModifiedTimestamp == UNKNOWN_TIMESTAMP) hideLayout(this)
+            if(item.lastModifiedTimestamp == User.UNKNOWN_TIMESTAMP) hideLayout(this)
             else showLayout(this)
 
             when(item.role) {
@@ -63,7 +63,6 @@ class RvaAdminUser : BindingPagingDataAdapter<User, RviUserBinding>(User.DIFF_CA
         }
     }
 
-
     fun updateUserRole(userId: String, newRole: Role) {
         snapshot().indexOfFirst { it?.id == userId }.let { index ->
             snapshot()[index]?.role = newRole
@@ -73,19 +72,8 @@ class RvaAdminUser : BindingPagingDataAdapter<User, RviUserBinding>(User.DIFF_CA
 
     fun hideUser(userId: String) {
         snapshot().indexOfFirst { it?.id == userId }.let { index ->
-            snapshot()[index]?.lastModifiedTimestamp = UNKNOWN_TIMESTAMP
+            snapshot()[index]?.lastModifiedTimestamp = User.UNKNOWN_TIMESTAMP
             notifyItemChanged(index)
         }
-    }
-
-    fun showUser(user: User) {
-        snapshot().indexOfFirst { it?.id == user.id }.let { index ->
-            snapshot()[index]?.lastModifiedTimestamp = user.lastModifiedTimestamp
-            notifyItemChanged(index)
-        }
-    }
-
-    companion object {
-        const val UNKNOWN_TIMESTAMP = -1L
     }
 }

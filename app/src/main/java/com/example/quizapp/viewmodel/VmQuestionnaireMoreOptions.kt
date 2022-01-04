@@ -5,14 +5,14 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.MenuIntIdItem
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.MenuItemDataModel
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.MenuIntIdItem
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.MenuItemDataModel
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.localquestionnairemoreoptions.BsdfQuestionnaireMoreOptionsArgs
 import com.example.quizapp.viewmodel.VmQuestionnaireMoreOptions.QuestionnaireMoreOptionsEvent
 import com.example.quizapp.viewmodel.VmQuestionnaireMoreOptions.QuestionnaireMoreOptionsEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import javax.inject.Inject
@@ -75,8 +75,8 @@ class VmQuestionnaireMoreOptions @Inject constructor(
 
     private fun onPublishQuestionnaireSelected() = launch(IO) {
         val newVisibility = if(currentVisibility == QuestionnaireVisibility.PUBLIC) QuestionnaireVisibility.PRIVATE else QuestionnaireVisibility.PUBLIC
-        eventChannel.send(PublishQuestionnaireEvent(questionnaireId, newVisibility))
         navigationDispatcher.dispatch(NavigateBack)
+        eventChannel.send(PublishQuestionnaireEvent(questionnaireId, newVisibility))
     }
 
     private fun onCopyQuestionnaireSelected() = launch(IO) {
@@ -86,7 +86,7 @@ class VmQuestionnaireMoreOptions @Inject constructor(
     }
 
 
-    sealed class QuestionnaireMoreOptionsEvent: ViewModelEventMarker {
+    sealed class QuestionnaireMoreOptionsEvent: UiEventMarker {
         class DeleteCreatedQuestionnaireEvent(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()
         class DeleteCachedQuestionnaireEvent(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()
         class DeleteGivenAnswersOfQuestionnaire(val questionnaireId: String) : QuestionnaireMoreOptionsEvent()

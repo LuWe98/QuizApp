@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.databinding.FragmentAdminAddEditCourseOfStudiesBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.room.entities.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.Faculty
-import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
+import com.example.quizapp.view.recyclerview.adapters.RvaFacultyChoice
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.AddEditCourseOfStudiesEvent.ShowMessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,13 +19,29 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
 
     private val vmAddEdit : VmAdminAddEditCourseOfStudies by viewModels()
 
+    private lateinit var rvaFaculty: RvaFacultyChoice
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initMaterialZAxisAnimationForReceiver()
 
         binding.pageTitle.setText(vmAddEdit.pageTitleRes)
+        initViews()
         initListeners()
         initObservers()
+    }
+
+    private fun initViews(){
+        rvaFaculty = RvaFacultyChoice().apply {
+            onDeleteButtonClicked = vmAddEdit::onFacultyChipClicked
+        }
+
+        binding.rvFaculty.apply {
+            adapter = rvaFaculty
+            layoutManager = LinearLayoutManager(requireContext())
+            setHasFixedSize(false)
+            disableChangeAnimation()
+        }
     }
 
     private fun initListeners(){
@@ -35,12 +51,13 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
             tvSave.onClick(vmAddEdit::onSaveButtonClicked)
             abbreviationCard.onClick(vmAddEdit::onAbbreviationCardClicked)
             nameCard.onClick(vmAddEdit::onNameCardClicked)
-            addLayout.onClick(vmAddEdit::onFacultyCardClicked)
+            btnAddFaculty.onClick(vmAddEdit::onFacultyCardClicked)
             degreeCard.onClick(vmAddEdit::onDegreeCardClicked)
         }
     }
 
     private fun initObservers(){
+
         setFragmentResultEventListener(vmAddEdit::onNameUpdateResultReceived)
 
         setFragmentResultEventListener(vmAddEdit::onAbbreviationUpdateResultReceived)
@@ -58,14 +75,8 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
         }
 
         vmAddEdit.cosFacultyIdsStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.chipGroupFaculty.apply {
-                isVisible = it.isNotEmpty()
-
-                setUpChipsForChipGroup(
-                    it,
-                    Faculty::abbreviation,
-                    vmAddEdit::onFacultyChipClicked
-                ) { cos -> showToast(cos.name) }
+            rvaFaculty.submitList(it) {
+                binding.rvFaculty.isVisible = it.isNotEmpty()
             }
         }
 

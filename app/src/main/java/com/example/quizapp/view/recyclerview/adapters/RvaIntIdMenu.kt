@@ -6,7 +6,7 @@ import com.example.quizapp.extensions.context
 import com.example.quizapp.extensions.getColor
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.setImageDrawable
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.MenuIntIdItem
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.MenuIntIdItem
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
 class RvaIntIdMenu : BindingListAdapter<MenuIntIdItem, RviMenuBinding>(MenuIntIdItem.DIFF_CALLBACK) {

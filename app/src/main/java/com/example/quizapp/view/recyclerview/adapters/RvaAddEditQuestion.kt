@@ -12,16 +12,16 @@ import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
 class RvaAddEditQuestion : BindingListAdapter<QuestionWithAnswers, RviQuestionAddEditBinding>(QuestionWithAnswers.DIFF_CALLBACK){
 
-    var onItemClick : ((Int) -> (Unit))? = null
+    var onItemClick : ((QuestionWithAnswers) -> (Unit))? = null
 
-    var onItemLongClicked : ((String) -> (Unit))? = null
+    var onItemLongClicked : ((QuestionWithAnswers) -> (Unit))? = null
 
     var onDragHandleTouched: ((BindingListAdapterViewHolder) -> (Unit))? = null
 
     override fun initListeners(binding: RviQuestionAddEditBinding, vh: BindingListAdapterViewHolder) {
         binding.apply {
-            root.onClick { onItemClick?.invoke(vh.bindingAdapterPosition) }
-            root.onLongClick { onItemLongClicked?.invoke(getItem(vh).question.id) }
+            root.onClick { onItemClick?.invoke(getItem(vh)) }
+            root.onLongClick { onItemLongClicked?.invoke(getItem(vh)) }
             dragHandle.onTouch { onDragHandleTouched?.invoke(vh) }
         }
     }
@@ -29,7 +29,7 @@ class RvaAddEditQuestion : BindingListAdapter<QuestionWithAnswers, RviQuestionAd
     @SuppressLint("SetTextI18n")
     override fun bindViews(binding: RviQuestionAddEditBinding, item: QuestionWithAnswers, position: Int) {
         binding.apply {
-            tvNumber.text = "${position + 1}"
+            tvNumber.text = "${item.question.questionPosition + 1}"
             tvTitle.text = item.question.questionText
             ivQuestionType.setImageDrawable(if(item.question.isMultipleChoice) R.drawable.ic_check_circle else R.drawable.ic_radio_button)
         }

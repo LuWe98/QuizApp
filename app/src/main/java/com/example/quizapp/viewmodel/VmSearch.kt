@@ -3,6 +3,7 @@ package com.example.quizapp.viewmodel
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.paging.CombinedLoadStates
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -21,15 +22,16 @@ import com.example.quizapp.model.ktor.BackendResponse.GetQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
 import com.example.quizapp.model.ktor.status.DownloadStatus
 import com.example.quizapp.model.ktor.status.DownloadStatus.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.BrowseQuestionnaireMoreOptionsItem
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.utils.RemoteDataAvailability
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.BrowseQuestionnaireMoreOptionsItem
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmSearch.*
 import com.example.quizapp.viewmodel.VmSearch.SearchEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -41,7 +43,7 @@ class VmSearch @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
     private val dataMapper: DataMapper,
-    preferencesRepository: PreferencesRepository,
+    private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
 ) : BaseViewModel<SearchEvent>() {
 
@@ -52,6 +54,8 @@ class VmSearch @Inject constructor(
     val searchQuery get() = searchQueryMutableStateFlow.value
 
     private val selectedAuthorsMutableStateFlow = state.getMutableStateFlow(SELECTED_AUTHORS_KEY, emptySet<AuthorInfo>())
+
+    private val selectedAuthors get() = selectedAuthorsMutableStateFlow.value
 
 
     val filteredPagedData = combine(
@@ -92,7 +96,7 @@ class VmSearch @Inject constructor(
     }
 
     fun onClearSearchQueryClicked() = launch(IO) {
-        if (searchQuery.isNotBlank()) {
+        if (searchQuery.isNotEmpty()) {
             eventChannel.send(ClearSearchQueryEvent)
         }
     }
@@ -199,10 +203,33 @@ class VmSearch @Inject constructor(
     }
 
 
-    sealed class SearchEvent: ViewModelEventMarker {
+    fun onListLoadStateChanged(loadStates: CombinedLoadStates, itemCount: Int) = launch(IO) {
+        if (loadStates.append.endOfPaginationReached) {
+            val isListFiltered = searchQuery.isNotEmpty()
+                    || selectedAuthors.isNotEmpty()
+                    || preferencesRepository.getBrowsableCosIds().isNotEmpty()
+                    || preferencesRepository.getBrowsableFacultyIds().isNotEmpty()
+
+            if (itemCount == 0 && isListFiltered) {
+                eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_FOUND))
+                return@launch
+            } else if(itemCount == 0 && !isListFiltered) {
+                eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_EXIST))
+                return@launch
+            }
+        }
+
+        if(itemCount != 0) {
+            eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.ENTRIES_FOUND))
+        }
+    }
+
+    sealed class SearchEvent: UiEventMarker {
         object ClearSearchQueryEvent : SearchEvent()
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : SearchEvent()
         class ChangeItemDownloadStatusEvent(val questionnaireId: String, val status: DownloadStatus) : SearchEvent()
+        class ChangeResultLayoutVisibility(val state: RemoteDataAvailability) : SearchEvent()
+
     }
 
     companion object {

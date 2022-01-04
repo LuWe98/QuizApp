@@ -20,6 +20,7 @@ import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.transition.Slide
 import com.example.quizapp.R
+import com.example.quizapp.view.QuizActivity
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
@@ -33,7 +34,7 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-val Fragment.bindingActivity get() = requireActivity() as BindingActivity<*>
+val Fragment.quizActivity get() = requireActivity() as QuizActivity
 
 
 @MainThread
@@ -66,7 +67,7 @@ fun Fragment.showAlertDialog(
 @MainThread
 fun Fragment.showSnackBar(
     text: String,
-    viewToAttachTo: View = bindingActivity.rootView,
+    viewToAttachTo: View = quizActivity.rootView,
     anchorView: View? = null,
     animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
     duration: Int = Snackbar.LENGTH_LONG
@@ -75,13 +76,13 @@ fun Fragment.showSnackBar(
     this.animationMode = animationMode
     show()
 }.also {
-    bindingActivity.currentSnackBar = it
+    quizActivity.currentSnackBar = it
 }
 
 @MainThread
 fun Fragment.showSnackBar(
     @StringRes textRes: Int,
-    viewToAttachTo: View = bindingActivity.rootView,
+    viewToAttachTo: View = quizActivity.rootView,
     anchorView: View? = null,
     animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
     duration: Int = Snackbar.LENGTH_LONG
@@ -90,7 +91,7 @@ fun Fragment.showSnackBar(
 @MainThread
 inline fun Fragment.showSnackBar(
     @StringRes textRes: Int,
-    viewToAttachTo: View = bindingActivity.rootView,
+    viewToAttachTo: View = quizActivity.rootView,
     anchorView: View? = null,
     animationMode: Int = Snackbar.ANIMATION_MODE_SLIDE,
     duration: Int = Snackbar.LENGTH_LONG,
@@ -110,7 +111,7 @@ inline fun Fragment.showSnackBar(
     setAction(actionTextRes) { actionClickEvent() }
     show()
 }.also {
-    bindingActivity.currentSnackBar = it
+    quizActivity.currentSnackBar = it
 }
 
 

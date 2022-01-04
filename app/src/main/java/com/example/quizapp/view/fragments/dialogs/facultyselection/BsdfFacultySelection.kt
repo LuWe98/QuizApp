@@ -2,11 +2,13 @@ package com.example.quizapp.view.fragments.dialogs.facultyselection
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfFacultySelectionBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.utils.LocalDataAvailability
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaFacultySelection
 import com.example.quizapp.viewmodel.VmFacultySelection
@@ -51,12 +53,21 @@ class BsdfFacultySelection: BindingBottomSheetDialogFragment<BsdfFacultySelectio
             btnConfirm.onClick(vmFaculty::onConfirmButtonClicked)
             etSearchQuery.onTextChanged(vmFaculty::onSearchQueryChanged)
             btnSearch.onClick(vmFaculty::onDeleteSearchClicked)
+            btnCollapse.onClick(vmFaculty::onCollapseButtonClicked)
         }
     }
 
     private fun initObservers(){
         vmFaculty.facultyFlow.collectWhenStarted(viewLifecycleOwner) {
-            rvAdapter.submitList(it)
+            it.adjustVisibilities(
+                binding.rv,
+                binding.dataAvailability,
+                R.string.noFacultyResultsFoundTitle,
+                R.string.noFacultyResultsFoundText,
+                R.string.noFacultyDataExistsTitle,
+                R.string.noFacultyDataExistsText
+            )
+            rvAdapter.submitList(it.data)
         }
 
         vmFaculty.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {

@@ -1,6 +1,5 @@
 package com.example.quizapp.view.recyclerview.adapters
 
-import androidx.core.view.isVisible
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviAnswerQuizBinding
 import com.example.quizapp.extensions.*
@@ -8,7 +7,6 @@ import com.example.quizapp.model.databases.room.entities.Answer
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
 class RvaAnswerQuiz(
-    private val isMultipleChoice: Boolean,
     private val isShowSolutionScreen: Boolean
 ) : BindingListAdapter<Answer, RviAnswerQuizBinding>(Answer.DIFF_CALLBACK) {
 
@@ -22,12 +20,20 @@ class RvaAnswerQuiz(
     override fun bindViews(binding: RviAnswerQuizBinding, item: Answer, position: Int) {
         binding.apply {
             tvAnswerText.text = item.answerText
+            tvQuestionIndex.text = Char(position + 65).toString()
 
             if (isShowSolutionScreen) {
-                answerCorrectLine.setBackgroundColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.red)
+                tvQuestionIndex.setBackgroundTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.red)
+
+                //answerCorrectLine.setBackgroundColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.red)
             } else {
-                answerCorrectLine.setBackgroundColor(getThemeColor(if (item.isAnswerSelected) R.attr.colorPrimary else R.attr.colorAccent))
+                tvQuestionIndex.setBackgroundTint(if (item.isAnswerSelected) getThemeColor(R.attr.colorPrimary) else getColor(defaultBackgroundColor))
+                tvQuestionIndex.setTextColor(if (item.isAnswerSelected) getThemeColor(R.attr.invertedDominantTextColor) else getThemeColor(R.attr.defaultTextColor))
+                tvAnswerText.setTextColor(if (item.isAnswerSelected) getThemeColor(R.attr.colorPrimary) else getThemeColor(R.attr.defaultTextColor))
+
+                //tvQuestionIndex.setBackgroundTint(if (item.isAnswerSelected) getThemeColor(R.attr.colorPrimary) else getThemeColor(R.attr.colorOnPrimary))
             }
+
 
 //            ivSelectedIcon.apply {
 //                isVisible = item.isAnswerSelected

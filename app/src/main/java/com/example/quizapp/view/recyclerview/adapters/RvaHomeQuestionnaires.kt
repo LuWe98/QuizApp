@@ -45,6 +45,13 @@ class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuest
         binding.apply {
             tvTitle.text = item.questionnaire.title
             tvDateAndQuestionAmount.text = item.questionnaire.authorInfo.userName
+
+            tvDateAndQuestionAmount.text = context.getString(
+                R.string.cosAndSubject,
+                item.questionnaire.authorInfo.userName,
+                item.questionnaire.timeStampAsDate
+            )
+
             tvCos.text = item.courseOfStudiesAbbreviations
             tvSubject.text = item.questionnaire.subject
 

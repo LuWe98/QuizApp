@@ -6,22 +6,23 @@ import androidx.paging.*
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.databases.mongodb.documents.User
+import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.DeleteUserResponse.*
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.UserMoreOptionsItem.*
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType
+import com.example.quizapp.utils.RemoteDataAvailability
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.UserMoreOptionsItem.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmAdminManageUsers.*
 import com.example.quizapp.viewmodel.VmAdminManageUsers.ManageUsersEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -71,7 +72,7 @@ class VmAdminManageUsers @Inject constructor(
     }
 
     fun onClearSearchQueryClicked() = launch(IO) {
-        if (searchQuery.isNotBlank()) {
+        if (searchQuery.isNotEmpty()) {
             eventChannel.send(ClearSearchQueryEvent)
         }
     }
@@ -127,6 +128,18 @@ class VmAdminManageUsers @Inject constructor(
         }
     }
 
+    fun onLocalUserHidden(snapshot: ItemSnapshotList<User>) = launch(IO) {
+        if(snapshot.all { it?.lastModifiedTimestamp == User.UNKNOWN_TIMESTAMP }){
+            eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_FOUND))
+        }
+    }
+
+    fun onLocalUserRoleUpdated(snapshot: ItemSnapshotList<User>) = launch(IO) {
+        if(snapshot.none { it?.role in selectedRoles }){
+            eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_FOUND))
+        }
+    }
+
     fun onMangeUsersFilterUpdateReceived(result: FragmentResult.ManageUsersFilterResult){
         result.selectedRoles.let { selectedRoles ->
             state.set(SELECTED_ROLES_KEY, selectedRoles)
@@ -134,12 +147,29 @@ class VmAdminManageUsers @Inject constructor(
         }
     }
 
-    sealed class ManageUsersEvent: ViewModelEventMarker {
+
+    fun onListLoadStateChanged(loadStates: CombinedLoadStates, itemCount: Int) = launch(IO) {
+        if (loadStates.append.endOfPaginationReached) {
+            val isListFiltered = searchQuery.isNotEmpty() || selectedRoles.isNotEmpty()
+            if (itemCount == 0 && isListFiltered) {
+                eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_FOUND))
+                return@launch
+            } else if(itemCount == 0 && !isListFiltered) {
+                eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_EXIST))
+                return@launch
+            }
+        }
+        if(itemCount != 0) {
+            eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.ENTRIES_FOUND))
+        }
+    }
+
+    sealed class ManageUsersEvent: UiEventMarker {
         class UpdateUserRoleEvent(val userId: String, val newRole: Role) : ManageUsersEvent()
         class HideUserEvent(val userId: String) : ManageUsersEvent()
-        class ShowUserEvent(val user: User) : ManageUsersEvent()
         class ShowMessageSnackBarEvent(@StringRes val messageRes: Int) : ManageUsersEvent()
         object ClearSearchQueryEvent : ManageUsersEvent()
+        class ChangeResultLayoutVisibility(val state: RemoteDataAvailability) : ManageUsersEvent()
     }
 
     companion object {

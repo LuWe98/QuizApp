@@ -6,9 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminManageUsersBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.extensions.collectWhenStarted
-import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.view.recyclerview.adapters.RvaAdminUser
 import com.example.quizapp.viewmodel.VmAdminManageUsers
 import com.example.quizapp.viewmodel.VmAdminManageUsers.ManageUsersEvent.*
@@ -47,7 +46,7 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
         binding.swipeRefreshLayout.setOnRefreshListener(rvAdapter::refresh)
     }
 
-    private fun initListeners(){
+    private fun initListeners() {
         binding.apply {
             btnBack.onClick(vmAdmin::onBackButtonClicked)
             etSearchQuery.onTextChanged(vmAdmin::onSearchQueryChanged)
@@ -66,23 +65,43 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
         setFragmentResultEventListener(vmAdmin::onMangeUsersFilterUpdateReceived)
 
         vmAdmin.filteredPagedDataStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            rvAdapter.submitData(lifecycle, it)
+            rvAdapter.submitData(it)
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
         vmAdmin.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.btnSearch.changeIconOnCondition {
-                it.isBlank()
+                it.isEmpty()
             }
+        }
+
+        rvAdapter.addLoadStateListener {
+            vmAdmin.onListLoadStateChanged(it, rvAdapter.itemCount)
         }
 
         vmAdmin.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                is UpdateUserRoleEvent -> rvAdapter.updateUserRole(event.userId, event.newRole)
-                is HideUserEvent -> rvAdapter.hideUser(event.userId)
-                is ShowUserEvent -> rvAdapter.showUser(event.user)
+                is UpdateUserRoleEvent -> {
+                    rvAdapter.updateUserRole(event.userId, event.newRole)
+                    vmAdmin.onLocalUserRoleUpdated(rvAdapter.snapshot())
+                }
+                is HideUserEvent -> {
+                    rvAdapter.hideUser(event.userId)
+                    vmAdmin.onLocalUserHidden(rvAdapter.snapshot())
+                }
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
                 is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes)
+                is ChangeResultLayoutVisibility -> {
+                    log("STATE: ${event.state}")
+                    event.state.adjustVisibilities(
+                        binding.rv,
+                        binding.dataAvailability,
+                        R.string.noUserResultsFoundTitle,
+                        R.string.noUserResultsFoundText,
+                        R.string.noUserDataExistsTitle,
+                        R.string.noUserDataExistsText
+                    )
+                }
             }
         }
     }

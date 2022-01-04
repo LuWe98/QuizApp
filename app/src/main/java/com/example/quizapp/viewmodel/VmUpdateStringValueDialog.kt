@@ -2,18 +2,20 @@ package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.NavigateBack
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringArgs
 import com.example.quizapp.viewmodel.VmUpdateStringValueDialog.UpdateStringEvent
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import javax.inject.Inject
 
 @HiltViewModel
 class VmUpdateStringValueDialog @Inject constructor(
-    private val state: SavedStateHandle
+    private val state: SavedStateHandle,
+    private val applicationScope: CoroutineScope
 ) : BaseViewModel<UpdateStringEvent>() {
 
     private val args = DfUpdateStringArgs.fromSavedStateHandle(state)
@@ -33,16 +35,16 @@ class VmUpdateStringValueDialog @Inject constructor(
         _updatedText = newText.trim()
     }
 
-    fun onConfirmButtonClicked() = launch(IO){
-        fragmentResultDispatcher.dispatch(requestType.resultProvider(updatedText))
+    fun onConfirmButtonClicked() = launch(IO, applicationScope){
         navigationDispatcher.dispatch(NavigateBack)
+        fragmentResultDispatcher.dispatch(requestType.resultProvider(updatedText))
     }
 
     fun onCancelButtonClicked() = launch(IO) {
         navigationDispatcher.dispatch(NavigateBack)
     }
 
-    sealed class UpdateStringEvent: ViewModelEventMarker
+    sealed class UpdateStringEvent: UiEventMarker
 
     companion object {
         private const val UPDATED_TEXT_KEY = "updatedTextKey"

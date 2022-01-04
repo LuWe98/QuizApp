@@ -6,30 +6,53 @@
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
         android:background="@drawable/background_round_corners_top_15dp"
-        android:backgroundTint="?colorOnPrimary"
-        android:paddingTop="@dimen/grid_4">
+        android:backgroundTint="?colorOnPrimary">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:elevation="2dp"
+            android:background="@drawable/background_round_corners_top_15dp"
+            android:backgroundTint="?colorOnPrimary"
+            android:id="@+id/topLayout"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <com.google.android.material.textview.MaterialTextView
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:id="@+id/tvTitle"
-            style="@style/Style.QuizApp.Heading.TextAppearance"
-            android:text="@string/localSearchFilters"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="@dimen/grid_3"
-            android:layout_marginHorizontal="@dimen/grid_3"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/btnCollapse"
+                app:layout_constraintTop_toTopOf="@+id/tvTitle"
+                app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+                app:srcCompat="@drawable/ic_arrow_down"
+                android:background="?actionBarItemBackground"
+                android:padding="5dp"
+                android:layout_marginStart="@dimen/backButtonMargin"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:text="@string/localSearchFilters"
+                style="@style/Style.QuizApp.BottomSheetHeading.TextAppearance"
+                android:textStyle="bold"
+                android:lines="1"
+                android:ellipsize="end"
+                android:id="@+id/tvTitle"
+                android:gravity="center_vertical"
+                android:layout_marginStart="@dimen/grid_4"
+                android:layout_marginEnd="@dimen/grid_6"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btnCollapse" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.NestedScrollView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/grid_2"
             android:paddingBottom="100dp"
             android:clipToPadding="false"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@id/topLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/btnApply">
@@ -61,7 +84,7 @@
                         android:gravity="center_vertical"
                         android:paddingHorizontal="@dimen/grid_4"
                         android:layout_marginHorizontal="@dimen/grid_2"
-                        android:textSize="17sp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -160,7 +183,7 @@
                         android:gravity="center_vertical"
                         android:paddingHorizontal="@dimen/grid_4"
                         android:layout_marginHorizontal="@dimen/grid_2"
-                        android:textSize="17sp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -217,45 +240,72 @@
                     android:background="@drawable/background_round_corners_7_5dp"
                     android:backgroundTint="?android:colorBackground"
                     android:layout_marginHorizontal="@dimen/grid_6"
-                    android:paddingVertical="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_4"
                     app:layout_constraintTop_toBottomOf="@id/includeCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
 
-                <com.google.android.material.textview.MaterialTextView
+                <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:id="@+id/authorFilterHeader"
-                        android:text="@string/filterAuthors"
-                        android:background="@drawable/background_round_corners_10dp"
-                        android:backgroundTint="@color/transparent"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="@dimen/grid_4"
-                        android:layout_marginHorizontal="@dimen/grid_2"
-                        android:textSize="17sp"
-                        android:textStyle="bold"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_height="60dp"
+                        android:id="@+id/authorCardHeader"
+                        app:layout_constraintTop_toTopOf="parent">
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:id="@+id/ivAuthorIcon"
+                            android:background="?actionBarItemBackground"
+                            android:padding="5dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginStart="@dimen/grid_2"
+                            app:layout_constraintBottom_toBottomOf="@+id/authorFilterHeader"
+                            app:layout_constraintTop_toTopOf="@+id/authorFilterHeader"
+                            app:srcCompat="@drawable/ic_person" />
 
-                <com.google.android.material.chip.ChipGroup
+                    <com.google.android.material.textview.MaterialTextView
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:id="@+id/authorFilterHeader"
+                            android:text="@string/authors"
+                            android:background="@drawable/background_round_corners_10dp"
+                            android:backgroundTint="@color/transparent"
+                            android:gravity="center_vertical"
+                            android:layout_marginHorizontal="@dimen/grid_2"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/ivAuthorIcon"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:id="@+id/btnBrowseAuthor"
+                            android:background="?actionBarItemBackground"
+                            android:padding="5dp"
+                            app:tint="?colorPrimary"
+                            app:layout_constraintEnd_toEndOf="@+id/authorFilterHeader"
+                            app:layout_constraintBottom_toBottomOf="@+id/authorFilterHeader"
+                            app:layout_constraintTop_toTopOf="@+id/authorFilterHeader"
+                            app:srcCompat="@drawable/ic_add" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/chipGroupAuthor"
-                        android:animateLayoutChanges="true"
-                        app:layout_constraintTop_toBottomOf="@id/authorFilterHeader"
-                        android:layout_marginTop="@dimen/grid_1"
-                        android:layout_marginHorizontal="@dimen/grid_3"
-                        app:layout_constraintStart_toStartOf="@id/authorFilterHeader"
-                        app:layout_constraintEnd_toEndOf="@id/authorFilterHeader">
-
-                    <com.google.android.material.chip.Chip
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/addChipAuthor"
-                            style="@style/Style.QuizApp.AddChip"
-                            android:text="@string/add" />
-
-                </com.google.android.material.chip.ChipGroup>
+                        app:layout_constraintHeight_max="300dp"
+                        android:overScrollMode="never"
+                        android:id="@+id/rvAuthors"
+                        tools:listitem="@layout/rvi_author_choice"
+                        tools:itemCount="2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/authorCardHeader"
+                        android:clipToPadding="false"
+                        android:paddingBottom="@dimen/grid_2_5"
+                        android:paddingHorizontal="@dimen/grid_2_5" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -266,45 +316,72 @@
                     android:background="@drawable/background_round_corners_7_5dp"
                     android:backgroundTint="?android:colorBackground"
                     android:layout_marginHorizontal="@dimen/grid_6"
-                    android:paddingVertical="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_4"
                     app:layout_constraintTop_toBottomOf="@id/authorCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
 
-                <com.google.android.material.textview.MaterialTextView
+                <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:id="@+id/cosFilterHeader"
-                        android:text="@string/filterCourseOfStudies"
-                        android:background="@drawable/background_round_corners_10dp"
-                        android:backgroundTint="@color/transparent"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="@dimen/grid_4"
-                        android:layout_marginHorizontal="@dimen/grid_2"
-                        android:textSize="17sp"
-                        android:textStyle="bold"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_height="60dp"
+                        android:id="@+id/cosCardHeader"
+                        app:layout_constraintTop_toTopOf="parent">
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:id="@+id/ivCourseOfStudiesIcon"
+                            android:background="?actionBarItemBackground"
+                            android:padding="5dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginStart="@dimen/grid_2"
+                            app:layout_constraintBottom_toBottomOf="@+id/cosFilterHeader"
+                            app:layout_constraintTop_toTopOf="@+id/cosFilterHeader"
+                            app:srcCompat="@drawable/ic_course_of_studies" />
 
-                <com.google.android.material.chip.ChipGroup
+                    <com.google.android.material.textview.MaterialTextView
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:id="@+id/cosFilterHeader"
+                            android:text="@string/coursesOfStudies"
+                            android:background="@drawable/background_round_corners_10dp"
+                            android:backgroundTint="@color/transparent"
+                            android:gravity="center_vertical"
+                            android:layout_marginHorizontal="@dimen/grid_2"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/ivCourseOfStudiesIcon"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:id="@+id/btnBrowseCourseOfStudies"
+                            android:background="?actionBarItemBackground"
+                            android:padding="5dp"
+                            app:tint="?colorPrimary"
+                            app:layout_constraintEnd_toEndOf="@+id/cosFilterHeader"
+                            app:layout_constraintBottom_toBottomOf="@+id/cosFilterHeader"
+                            app:layout_constraintTop_toTopOf="@+id/cosFilterHeader"
+                            app:srcCompat="@drawable/ic_add" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/chipGroupCos"
-                        app:layout_constraintTop_toBottomOf="@id/cosFilterHeader"
-                        android:layout_marginTop="@dimen/grid_1"
-                        android:animateLayoutChanges="true"
-                        android:layout_marginHorizontal="@dimen/grid_3"
-                        app:layout_constraintStart_toStartOf="@id/cosFilterHeader"
-                        app:layout_constraintEnd_toEndOf="@id/cosFilterHeader">
-
-                    <com.google.android.material.chip.Chip
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/addChipCos"
-                            style="@style/Style.QuizApp.AddChip"
-                            android:text="@string/add" />
-
-                </com.google.android.material.chip.ChipGroup>
+                        app:layout_constraintHeight_max="300dp"
+                        android:overScrollMode="never"
+                        android:id="@+id/rvCos"
+                        tools:listitem="@layout/rvi_course_of_studies_choice"
+                        tools:itemCount="2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cosCardHeader"
+                        android:clipToPadding="false"
+                        android:paddingBottom="@dimen/grid_2_5"
+                        android:paddingHorizontal="@dimen/grid_2_5" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -313,47 +390,74 @@
                     android:id="@+id/facultyCard"
                     android:background="@drawable/background_round_corners_7_5dp"
                     android:backgroundTint="?android:colorBackground"
-                    android:paddingVertical="@dimen/grid_3"
                     android:layout_marginTop="@dimen/grid_4"
                     android:layout_marginHorizontal="@dimen/grid_6"
                     app:layout_constraintTop_toBottomOf="@id/cosCard"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
 
-                <com.google.android.material.textview.MaterialTextView
+                <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:id="@+id/facultyFilterHeader"
-                        android:text="@string/filterFaculties"
-                        android:background="@drawable/background_round_corners_10dp"
-                        android:backgroundTint="@color/transparent"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="@dimen/grid_4"
-                        android:layout_marginHorizontal="@dimen/grid_2"
-                        android:textSize="17sp"
-                        android:textStyle="bold"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_height="60dp"
+                        android:id="@+id/facultyCardHeader"
+                        app:layout_constraintTop_toTopOf="parent">
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:id="@+id/ivFacultyIcon"
+                            android:background="?actionBarItemBackground"
+                            android:padding="7.5dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginStart="@dimen/grid_2"
+                            app:layout_constraintBottom_toBottomOf="@+id/facultyFilterHeader"
+                            app:layout_constraintTop_toTopOf="@+id/facultyFilterHeader"
+                            app:srcCompat="@drawable/ic_faculty" />
 
-                <com.google.android.material.chip.ChipGroup
+                    <com.google.android.material.textview.MaterialTextView
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:id="@+id/facultyFilterHeader"
+                            android:text="@string/faculties"
+                            android:background="@drawable/background_round_corners_10dp"
+                            android:backgroundTint="@color/transparent"
+                            android:gravity="center_vertical"
+                            android:layout_marginHorizontal="@dimen/grid_2"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/ivFacultyIcon"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:id="@+id/btnBrowseFaculty"
+                            android:background="?actionBarItemBackground"
+                            android:padding="5dp"
+                            app:tint="?colorPrimary"
+                            app:layout_constraintEnd_toEndOf="@+id/facultyFilterHeader"
+                            app:layout_constraintBottom_toBottomOf="@+id/facultyFilterHeader"
+                            app:layout_constraintTop_toTopOf="@+id/facultyFilterHeader"
+                            app:srcCompat="@drawable/ic_add" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <androidx.recyclerview.widget.RecyclerView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:animateLayoutChanges="true"
-                        android:id="@+id/chipGroupFaculty"
-                        app:layout_constraintTop_toBottomOf="@id/facultyFilterHeader"
-                        android:layout_marginTop="@dimen/grid_1"
-                        android:layout_marginHorizontal="@dimen/grid_3"
-                        app:layout_constraintStart_toStartOf="@id/facultyFilterHeader"
-                        app:layout_constraintEnd_toEndOf="@id/facultyFilterHeader">
-
-                    <com.google.android.material.chip.Chip
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/addChipFaculty"
-                            app:chipMinHeight="30dp"
-                            style="@style/Style.QuizApp.AddChip"
-                            android:text="@string/add" />
-
-                </com.google.android.material.chip.ChipGroup>
+                        app:layout_constraintHeight_max="300dp"
+                        android:overScrollMode="never"
+                        android:id="@+id/rvFaculty"
+                        tools:listitem="@layout/rvi_faculty_choice"
+                        tools:itemCount="2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/facultyCardHeader"
+                        android:clipToPadding="false"
+                        android:paddingBottom="@dimen/grid_2_5"
+                        android:paddingHorizontal="@dimen/grid_2_5" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

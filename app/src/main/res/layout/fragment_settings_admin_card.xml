@@ -3,11 +3,13 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/background_round_corners_10dp"
+        android:backgroundTint="?android:colorBackground"
         app:layout_constraintTop_toBottomOf="@+id/statisticsCard">
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="50dp"
             android:id="@+id/adminFunctionalityHeader"
             android:text="@string/adminSettings"
             android:background="@drawable/background_round_corners_15dp"
@@ -18,28 +20,43 @@
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
-            android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/btnAdminUser"
-            app:icon="@drawable/ic_admin_panel"
-            app:title="@string/manageUsers"
-            app:layout_constraintTop_toBottomOf="@+id/adminFunctionalityHeader" />
+            android:background="@drawable/background_round_corners_10dp"
+            android:backgroundTint="?colorOnPrimary"
+            android:layout_marginHorizontal="@dimen/grid_1"
+            android:layout_marginBottom="@dimen/grid_1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/adminFunctionalityHeader"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnAdminFaculty"
-            app:iconPadding="11dp"
-            app:icon="@drawable/ic_faculty"
-            app:title="@string/manageFaculties"
-            app:layout_constraintTop_toBottomOf="@+id/btnAdminUser" />
+        <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnAdminUser"
+                app:icon="@drawable/ic_admin_panel"
+                app:title="@string/manageUsers"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnAdminCourseOfStudies"
-            app:icon="@drawable/ic_course_of_studies"
-            app:title="@string/manageCoursesOfStudies"
-            app:layout_constraintTop_toBottomOf="@+id/btnAdminFaculty" />
+        <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnAdminFaculty"
+                app:iconPadding="11dp"
+                app:icon="@drawable/ic_faculty"
+                app:title="@string/manageFaculties"
+                app:layout_constraintTop_toBottomOf="@+id/btnAdminUser" />
+
+        <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnAdminCourseOfStudies"
+                app:icon="@drawable/ic_course_of_studies"
+                app:title="@string/manageCoursesOfStudies"
+                app:layout_constraintTop_toBottomOf="@+id/btnAdminFaculty" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,15 +10,15 @@ import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.InsertFacultyResponse.*
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminAddEditFacultiesArgs
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.*
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
@@ -120,7 +120,7 @@ class VmAdminAddEditFaculty @Inject constructor(
         }
     }
 
-    sealed class AddEditFacultyEvent: ViewModelEventMarker {
+    sealed class AddEditFacultyEvent: UiEventMarker {
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : AddEditFacultyEvent()
     }
 

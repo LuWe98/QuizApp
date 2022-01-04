@@ -3,11 +3,13 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/background_round_corners_10dp"
+        android:backgroundTint="?android:colorBackground"
         xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="50dp"
             android:id="@+id/userDataHeader"
             android:text="@string/userInfo"
             android:background="@drawable/background_round_corners_15dp"
@@ -18,38 +20,51 @@
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemTextLayout
-            android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/btnUserName"
-            app:icon="@drawable/ic_person"
-            app:title="@string/userName"
-            tools:text="Value"
-            app:layout_constraintTop_toBottomOf="@+id/userDataHeader" />
+            android:background="@drawable/background_round_corners_10dp"
+            android:backgroundTint="?colorOnPrimary"
+            android:layout_marginHorizontal="@dimen/grid_1"
+            android:layout_marginBottom="@dimen/grid_1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/userDataHeader"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemTextLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnRole"
-            app:icon="@drawable/ic_role_badge"
-            app:title="@string/role"
-            tools:text="Value"
-            app:layout_constraintTop_toBottomOf="@+id/btnUserName" />
+        <com.example.quizapp.view.customimplementations.settings.SettingsItemTextLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnUserName"
+                app:icon="@drawable/ic_person"
+                app:title="@string/userName"
+                tools:text="Value"
+                app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnChangePassword"
-            app:icon="@drawable/ic_password"
-            app:title="@string/changePassword"
-            app:layout_constraintTop_toBottomOf="@id/btnRole" />
+        <com.example.quizapp.view.customimplementations.settings.SettingsItemTextLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnRole"
+                app:icon="@drawable/ic_role_badge"
+                app:title="@string/role"
+                tools:text="Value"
+                app:layout_constraintTop_toBottomOf="@+id/btnUserName" />
 
-    <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnLogout"
-            app:icon="@drawable/ic_logout"
-            app:title="@string/logout"
-            app:layout_constraintTop_toBottomOf="@id/btnChangePassword" />
+        <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnChangePassword"
+                app:icon="@drawable/ic_password"
+                app:title="@string/changePassword"
+                app:layout_constraintTop_toBottomOf="@id/btnRole" />
+
+        <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnLogout"
+                app:icon="@drawable/ic_logout"
+                app:title="@string/logout"
+                app:layout_constraintTop_toBottomOf="@id/btnChangePassword" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

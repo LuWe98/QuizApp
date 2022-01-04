@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            app:tint="?colorPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@drawable/ic_search_no_results"
+            android:id="@+id/ivIcon"/>
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/grid_4"
+            android:id="@+id/tvTitle"
+            tools:text="@string/noFacultyResultsFoundTitle"
+            app:layout_constraintTop_toBottomOf="@id/ivIcon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/grid_4"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="?dominantTextColor"
+            android:textSize="20sp"/>
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvText"
+            tools:text="@string/noFacultyResultsFoundText"
+            android:layout_marginTop="@dimen/grid_2"
+            app:layout_constraintWidth_percent="0.65"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center"
+            android:textSize="15sp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

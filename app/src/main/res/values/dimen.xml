@@ -10,6 +10,7 @@
     <dimen name="grid_2_5">10dp</dimen>
     <dimen name="grid_3">12dp</dimen>
     <dimen name="grid_4">16dp</dimen>
+    <dimen name="grid_5">20dp</dimen>
     <dimen name="grid_6">24dp</dimen>
     <dimen name="grid_8">32dp</dimen>
     <dimen name="grid_10">40dp</dimen>
@@ -30,4 +31,5 @@
 
     <dimen name="searchBarHeight">50dp</dimen>
     <dimen name="searchBarHorizontalMargin">@dimen/grid_2_5</dimen>
+    <dimen name="searchBarElevation">1dp</dimen>
 </resources>

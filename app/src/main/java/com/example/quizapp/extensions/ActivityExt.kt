@@ -129,8 +129,10 @@ inline fun BindingActivity<*>.showSnackBar(
 }
 
 
+val NavHostFragment.currentFragment get() : Fragment = childFragmentManager.fragments.last()
+
 val QuizActivity.navHostFragment get() : NavHostFragment = supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
 
 val QuizActivity.navController get() = navHostFragment.navController
 
-val NavHostFragment.currentFragment get() : Fragment = childFragmentManager.fragments.first()
+val QuizActivity.currentNavHostFragment get() = navHostFragment.currentFragment

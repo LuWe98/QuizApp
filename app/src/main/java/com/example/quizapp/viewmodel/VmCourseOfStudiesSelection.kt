@@ -5,13 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.FragmentResult.CourseOfStudiesSelectionResult
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.NavigateBack
+import com.example.quizapp.utils.LocalDataAvailability
+import com.example.quizapp.utils.asLocalDataAvailability
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelectionArgs
 import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesSelectionEvent
 import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesSelectionEvent.ClearSearchQueryEvent
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
@@ -44,8 +46,10 @@ class VmCourseOfStudiesSelection @Inject constructor(
     fun isCourseOfStudySelected(courseOfStudiesId: String) = selectedCoursesOfStudiesIds.contains(courseOfStudiesId)
 
     fun getCourseOfStudiesFlow(facultyId: String) = searchQueryMutableStateFlow.flatMapLatest { query ->
-        localRepository.getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId, query)
-    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+        localRepository.getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId, query).map { cos ->
+            cos.asLocalDataAvailability(query::isNotEmpty)
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDataAvailability.DataFound(emptyList()))
 
 
     fun onItemClicked(courseOfStudiesId: String) {
@@ -64,7 +68,7 @@ class VmCourseOfStudiesSelection @Inject constructor(
 
 
     fun onConfirmButtonClicked() = launch(IO) {
-        fragmentResultDispatcher.dispatch(CourseOfStudiesSelectionResult(selectedCoursesOfStudiesIds.toList()))
+        fragmentResultDispatcher.dispatch(FragmentResult.CourseOfStudiesSelectionResult(selectedCoursesOfStudiesIds))
         navigationDispatcher.dispatch(NavigateBack)
     }
 
@@ -73,14 +77,18 @@ class VmCourseOfStudiesSelection @Inject constructor(
         searchQueryMutableStateFlow.value = newQuery
     }
 
+    fun onCollapseButtonClicked() =  launch(IO) {
+        navigationDispatcher.dispatch(NavigateBack)
+    }
+
     fun onClearSearchQueryClicked() = launch(IO) {
-        if (searchQuery.isNotBlank()) {
+        if (searchQuery.isNotEmpty()) {
             eventChannel.send(ClearSearchQueryEvent)
         }
     }
 
 
-    sealed class CourseOfStudiesSelectionEvent: ViewModelEventMarker {
+    sealed class CourseOfStudiesSelectionEvent: UiEventMarker {
         object ClearSearchQueryEvent : CourseOfStudiesSelectionEvent()
     }
 

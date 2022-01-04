@@ -3,7 +3,7 @@ package com.example.quizapp.view.recyclerview.adapters
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviMenuBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionTypeItemMarker
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionTypeItemMarker
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
 class RvaSelectionDialog : BindingListAdapter<SelectionTypeItemMarker<*>, RviMenuBinding>(SelectionTypeItemMarker.DIFF_CALLBACK) {

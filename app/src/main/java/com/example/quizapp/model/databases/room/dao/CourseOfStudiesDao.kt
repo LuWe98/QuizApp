@@ -30,7 +30,7 @@ abstract class CourseOfStudiesDao : BaseDao<CourseOfStudies>(CourseOfStudies.TAB
     abstract suspend fun getCoursesOfStudiesNameWithIds(courseOfStudiesIds: List<String>): List<String>
 
     @Query("SELECT * FROM courseOfStudiesTable WHERE courseOfStudiesId IN(:courseOfStudiesIds)")
-    abstract suspend fun getCoursesOfStudiesWithIds(courseOfStudiesIds: Set<String>): List<CourseOfStudies>
+    abstract suspend fun getCoursesOfStudiesWithIds(courseOfStudiesIds: Collection<String>): List<CourseOfStudies>
 
     @Transaction
     @Query("SELECT * FROM courseOfStudiesTable WHERE courseOfStudiesId = :courseOfStudiesId")

@@ -8,16 +8,16 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.CreateUserResponse.*
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.manageusers.FragmentAdminAddEditUserArgs
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmAdminAddEditUser.*
 import com.example.quizapp.viewmodel.VmAdminAddEditUser.AddEditUserEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -128,7 +128,7 @@ class VmAdminAddEditUser @Inject constructor(
     }
 
 
-    sealed class AddEditUserEvent: ViewModelEventMarker {
+    sealed class AddEditUserEvent: UiEventMarker {
         class ShowMessageSnackBar(@StringRes val messageRes: Int, val attachToActivity: Boolean = false) : AddEditUserEvent()
     }
 

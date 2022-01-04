@@ -2,33 +2,32 @@ package com.example.quizapp.viewmodel
 
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.BackendResponse
-import com.example.quizapp.model.ktor.BackendResponse.DeleteFacultyResponse
 import com.example.quizapp.model.ktor.BackendResponse.DeleteFacultyResponse.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.FacultyMoreOptionsItem.DELETE
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.FacultyMoreOptionsItem.EDIT
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType
+import com.example.quizapp.utils.LocalDataAvailability
+import com.example.quizapp.utils.asLocalDataAvailability
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.FacultyMoreOptionsItem.DELETE
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.FacultyMoreOptionsItem.EDIT
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent
 import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent.ClearSearchQueryEvent
 import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent.ShowMessageSnackBar
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,9 +44,11 @@ class VmAdminManageFaculties @Inject constructor(
     val searchQuery get() = searchQueryMutableStateFlow.value
 
 
-    val facultiesStateFlow = searchQueryMutableStateFlow.flatMapLatest {
-        localRepository.findFacultiesWithNameFlow(it)
-    }.distinctUntilChanged()
+    val facultiesStateFlow = searchQueryMutableStateFlow.flatMapLatest { query ->
+        localRepository.findFacultiesWithNameFlow(query).map { list ->
+            list.asLocalDataAvailability(query::isNotEmpty)
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDataAvailability.DataFound(emptyList()))
 
 
     fun onFacultyItemClicked(faculty: Faculty) = launch(IO) {
@@ -94,7 +95,7 @@ class VmAdminManageFaculties @Inject constructor(
     }
 
     fun onDeleteSearchClicked() = launch(IO) {
-        if (searchQuery.isNotBlank()) {
+        if (searchQuery.isNotEmpty()) {
             eventChannel.send(ClearSearchQueryEvent)
         }
     }
@@ -108,7 +109,7 @@ class VmAdminManageFaculties @Inject constructor(
     }
 
 
-    sealed class ManageFacultiesEvent: ViewModelEventMarker {
+    sealed class ManageFacultiesEvent: UiEventMarker {
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : ManageFacultiesEvent()
         object ClearSearchQueryEvent : ManageFacultiesEvent()
     }

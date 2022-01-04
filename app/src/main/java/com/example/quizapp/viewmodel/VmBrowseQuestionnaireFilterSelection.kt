@@ -8,14 +8,13 @@ import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.FragmentResult.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.view.fragments.searchscreen.filterselection.BsdfBrowseQuestionnaireFilterSelectionArgs
 import com.example.quizapp.viewmodel.VmBrowseQuestionnaireFilterSelection.FilterEvent
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.asStateFlow
@@ -124,26 +123,30 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
         navigationDispatcher.dispatch(ToRemoteAuthorSelectionDialog(selectedAuthors))
     }
 
+    fun onCollapseButtonClicked() =  launch(IO) {
+        navigationDispatcher.dispatch(NavigateBack)
+    }
+
     fun onRemoteOrderBySelectionResultReceived(result: SelectionResult.RemoteOrderBySelectionResult) {
         state.set(SELECTED_ORDER_BY_KEY, result.selectedItem)
         orderByMutableStateFlow.value = result.selectedItem
     }
 
-    fun onAuthorsSelectionResultReceived(result: RemoteAuthorSelectionResult) {
+    fun onAuthorsSelectionResultReceived(result: FragmentResult.RemoteAuthorSelectionResult) {
         result.authors.toSet().let {
             state.set(SELECTED_AUTHORS_KEY, it)
             selectedAuthorsMutableStateFlow.value = it
         }
     }
 
-    fun onFacultiesSelectionResultReceived(result: FacultySelectionResult) {
+    fun onFacultiesSelectionResultReceived(result: FragmentResult.FacultySelectionResult) {
         result.facultyIds.toSet().let {
             state.set(SELECTED_FACULTY_ID_KEY, it)
             selectedFacultyIdsMutableStateFlow.value = it
         }
     }
 
-    fun onCourseOfStudiesSelectionResultReceived(result: CourseOfStudiesSelectionResult) {
+    fun onCourseOfStudiesSelectionResultReceived(result: FragmentResult.CourseOfStudiesSelectionResult) {
         result.courseOfStudiesIds.toSet().let {
             state.set(SELECTED_COURSE_OF_STUDIES_ID_KEY, it)
             selectedCourseOfStudiesIdsMutableStateFlow.value = it
@@ -158,11 +161,11 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
             selectedFacultyIds
         )
 
-        fragmentResultDispatcher.dispatch(RemoteQuestionnaireFilterResult(selectedAuthors))
+        fragmentResultDispatcher.dispatch(FragmentResult.RemoteQuestionnaireFilterResult(selectedAuthors))
         navigationDispatcher.dispatch(NavigateBack)
     }
 
-    sealed class FilterEvent: ViewModelEventMarker
+    sealed class FilterEvent: UiEventMarker
 
     companion object {
         private const val SELECTED_AUTHORS_KEY = "selectedUsersKeys"

@@ -1,3 +1,0 @@
-package com.example.quizapp.viewmodel.customimplementations
-
-interface ViewModelEventMarker

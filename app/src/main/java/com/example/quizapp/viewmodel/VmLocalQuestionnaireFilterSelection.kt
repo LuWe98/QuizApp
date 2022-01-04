@@ -9,12 +9,12 @@ import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmLocalQuestionnaireFilterSelection.LocalQuestionnaireFilterSelectionEvent
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
@@ -164,6 +164,10 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
         selectedHideCompletedMutableStateFlow.value = !selectedHideCompleted
     }
 
+    fun onCollapseButtonClicked() =  launch(IO) {
+        navigationDispatcher.dispatch(NavigateBack)
+    }
+
     fun onApplyButtonClicked() = launch(IO) {
         preferencesRepository.updateLocalFilters(
             selectedOrderBy,
@@ -176,7 +180,7 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
         navigationDispatcher.dispatch(NavigateBack)
     }
 
-    sealed class LocalQuestionnaireFilterSelectionEvent: ViewModelEventMarker
+    sealed class LocalQuestionnaireFilterSelectionEvent: UiEventMarker
 
     companion object {
         private const val SELECTED_ORDER_BY_KEY = "selectedOrderByKey"

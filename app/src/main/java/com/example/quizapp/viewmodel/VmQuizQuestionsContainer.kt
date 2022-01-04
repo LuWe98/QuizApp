@@ -10,12 +10,12 @@ import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionna
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerArgs
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.*
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.FragmentQuizContainerEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import javax.inject.Inject
@@ -31,7 +31,7 @@ class VmQuizQuestionsContainer @Inject constructor(
 
     val isShowSolutionScreen get() = args.isShowSolutionScreen
 
-    private var _lastAdapterPosition = state.get<Int>(LAST_ADAPTER_POSITION_KEY) ?: args.questionPosition
+    private var _lastAdapterPosition = state[LAST_ADAPTER_POSITION_KEY] ?: args.questionPosition
         set(value) {
             state.set(LAST_ADAPTER_POSITION_KEY, value)
             field = value
@@ -85,7 +85,11 @@ class VmQuizQuestionsContainer @Inject constructor(
         localRepository.update(event.lastAnswerValues)
     }
 
-    sealed class FragmentQuizContainerEvent: ViewModelEventMarker {
+    fun onBackButtonClicked() = launch(IO) {
+        navigationDispatcher.dispatch(NavigateBack)
+    }
+
+    sealed class FragmentQuizContainerEvent: UiEventMarker {
         class SelectDifferentPage(val newPosition: Int) : FragmentQuizContainerEvent()
         class ShowUndoDeleteGivenAnswersSnackBack(val lastAnswerValues: List<Answer>) : FragmentQuizContainerEvent()
         class ShowMessageSnackBarEvent(@StringRes val messageRes: Int) : FragmentQuizContainerEvent()

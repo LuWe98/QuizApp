@@ -10,12 +10,12 @@ import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.ktor.BackendResponse.LoginUserResponse.*
 import com.example.quizapp.model.ktor.BackendResponse.RegisterUserResponse
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.viewmodel.VmAuth.*
 import com.example.quizapp.viewmodel.VmAuth.FragmentAuthEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -182,7 +182,7 @@ class VmAuth @Inject constructor(
     }
 
 
-    sealed class FragmentAuthEvent: ViewModelEventMarker {
+    sealed class FragmentAuthEvent: UiEventMarker {
         data class SwitchPage(val pagePosition: Int) : FragmentAuthEvent()
         object ShowLoginScreen : FragmentAuthEvent()
         data class ShowMessageSnackBar(@StringRes val stringRes: Int) : FragmentAuthEvent()

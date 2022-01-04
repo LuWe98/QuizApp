@@ -68,8 +68,9 @@
         <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/grid_1"
+                android:paddingHorizontal="@dimen/grid_2"
                 android:paddingBottom="@dimen/grid_2"
+                android:clipToPadding="false"
                 android:nestedScrollingEnabled="false"
                 android:visibility="gone"
                 tools:visibility="visible"

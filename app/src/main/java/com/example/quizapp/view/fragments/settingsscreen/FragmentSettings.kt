@@ -7,9 +7,9 @@ import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentSettingsBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.properties.Role
-import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.viewmodel.VmQuizActivity
+import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
+import com.example.quizapp.viewmodel.VmMainActivity
 import com.example.quizapp.viewmodel.VmSettings
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,7 +19,7 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
     private val vmSettings: VmSettings by viewModels()
 
-    private val vmQuizActivity: VmQuizActivity by activityViewModels()
+    private val vmQuizActivity: VmMainActivity by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

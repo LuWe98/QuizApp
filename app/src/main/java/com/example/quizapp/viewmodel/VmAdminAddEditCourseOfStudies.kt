@@ -13,16 +13,16 @@ import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.InsertCourseOfStudiesResponse.*
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.FragmentAdminAddEditCourseOfStudiesArgs
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.*
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.AddEditCourseOfStudiesEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
@@ -193,7 +193,7 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
     }
 
 
-    sealed class AddEditCourseOfStudiesEvent: ViewModelEventMarker {
+    sealed class AddEditCourseOfStudiesEvent: UiEventMarker {
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : AddEditCourseOfStudiesEvent()
     }
 

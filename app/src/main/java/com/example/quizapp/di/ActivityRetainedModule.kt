@@ -1,7 +1,7 @@
 package com.example.quizapp.di
 
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher
-import com.example.quizapp.view.NavigationDispatcher
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -91,7 +91,7 @@
                     app:trackThickness="10dp"
                     app:trackCornerRadius="5dp"
                     tools:progress="60"
-                    android:layout_marginTop="@dimen/grid_4"
+                    android:layout_marginTop="@dimen/grid_8"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -145,6 +145,7 @@
                     android:gravity="center"
                     android:letterSpacing="0.025"
                     android:textSize="30sp"
+                    android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="@+id/progress"
                     app:layout_constraintStart_toStartOf="@id/progress"
                     app:layout_constraintEnd_toEndOf="@id/progress"
@@ -158,6 +159,7 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:textSize="13sp"
+                    android:textStyle="bold"
                     android:visibility="gone"
                     tools:visibility="visible"
                     app:layout_constraintTop_toTopOf="@+id/tvQuestionsAnswered"
@@ -181,8 +183,8 @@
                     android:layout_height="wrap_content"
                     layout="@layout/fragment_quiz_overview_statistics_card"
                     android:id="@+id/statisticsCard"
-                    android:layout_marginHorizontal="@dimen/grid_4"
-                    android:layout_marginTop="@dimen/grid_8"
+                    android:layout_marginHorizontal="@dimen/grid_6"
+                    android:layout_marginTop="@dimen/grid_10"
                     app:layout_constraintTop_toBottomOf="@id/progress" />
 
             <include
@@ -190,18 +192,24 @@
                     android:layout_height="wrap_content"
                     layout="@layout/fragment_quiz_overview_info_card"
                     android:id="@+id/generalInfoCard"
-                    android:layout_marginHorizontal="@dimen/grid_4"
-                    android:layout_marginTop="@dimen/grid_4"
+                    android:layout_marginHorizontal="@dimen/grid_6"
+                    android:layout_marginTop="@dimen/grid_6"
                     app:layout_constraintTop_toBottomOf="@id/statisticsCard" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-
-    <include
-            layout="@layout/fragment_quiz_overview_bottom_sheet"
-            android:id="@+id/bottomSheet"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-            tools:visibility="gone"
+    <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="55dp"
+            android:id="@+id/btnStartQuiz"
+            android:text="Start Quiz"
+            android:textStyle="bold"
+            android:textColor="?invertedDominantTextColor"
+            android:textSize="17sp"
+            android:gravity="center"
+            android:layout_gravity="bottom"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            android:layout_marginBottom="@dimen/grid_6"
+            android:background="@drawable/background_round_corners_45dp"
+            android:backgroundTint="?colorPrimary" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

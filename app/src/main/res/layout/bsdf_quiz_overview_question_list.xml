@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:background="@drawable/background_round_corners_top_15dp"
+        android:backgroundTint="?android:colorBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/topLayout"
+            android:elevation="2dp"
+            android:clipToPadding="false"
+            android:background="@drawable/background_round_corners_top_15dp"
+            android:backgroundTint="?colorOnPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingBottom="@dimen/grid_4">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:id="@+id/sheetHeader"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                >
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/btnCollapse"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_down"
+                    android:background="?actionBarItemBackground"
+                    android:padding="5dp"
+                    android:layout_marginStart="@dimen/backButtonMargin"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/questions"
+                    android:id="@+id/tvQuestionsText"
+                    android:layout_marginStart="@dimen/grid_4"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    style="@style/Style.QuizApp.BottomSheetHeading.TextAppearance"
+                    android:textSize="17.5sp"
+                    android:textColor="?dominantTextColor"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/btnCollapse" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="0"
+                    android:id="@+id/tvQuestionsAmount"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:textSize="16sp"
+                    android:layout_marginStart="@dimen/grid_4"
+                    app:layout_constraintStart_toEndOf="@+id/tvQuestionsText" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="@dimen/searchBarHeight"
+                android:id="@+id/clSearchBar"
+                android:elevation="@dimen/searchBarElevation"
+                android:background="@drawable/search_bar_background"
+                android:backgroundTint="?android:colorBackground"
+                android:layout_marginHorizontal="@dimen/grid_4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sheetHeader"
+                app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/btnSearch"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:srcCompat="@drawable/ic_search"
+                    android:padding="7.5dp"
+                    android:layout_marginStart="@dimen/grid_3" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/etSearchQuery"
+                    android:hint="@string/searchForQuestions"
+                    android:background="@android:color/transparent"
+                    android:layout_marginHorizontal="@dimen/grid_1"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textSize="16sp"
+                    app:layout_constraintTop_toTopOf="@+id/btnSearch"
+                    app:layout_constraintBottom_toBottomOf="@+id/btnSearch"
+                    app:layout_constraintStart_toEndOf="@+id/btnSearch"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/rv"
+            android:elevation="-1dp"
+            tools:listitem="@layout/rvi_question_quiz"
+            android:paddingTop="@dimen/grid_2"
+            android:paddingBottom="200dp"
+            android:paddingHorizontal="@dimen/grid_4"
+            android:clipToPadding="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topLayout" />
+
+    <com.example.quizapp.view.customimplementations.DataAvailabilityLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dataAvailability"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintVertical_bias="0.25"
+            app:availabilityIcon="@drawable/ic_search_no_results"
+            app:availabilityTitle="@string/noFacultyResultsFoundTitle"
+            app:availabilityText="@string/noFacultyResultsFoundText"
+            app:layout_constraintTop_toBottomOf="@id/topLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,13 +5,13 @@ import com.example.quizapp.QuizApplication
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.dialogs.sharequestionnaire.DfShareQuestionnaireArgs
 import com.example.quizapp.viewmodel.VmShareQuestionnaire.ShareQuestionnaireEvent
 import com.example.quizapp.viewmodel.VmShareQuestionnaire.ShareQuestionnaireEvent.ShowMessageSnackBar
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -62,7 +62,7 @@ class VmShareQuestionnaire @Inject constructor(
         _userName = newText.trim()
     }
 
-    sealed class ShareQuestionnaireEvent: ViewModelEventMarker {
+    sealed class ShareQuestionnaireEvent: UiEventMarker {
         class ShowMessageSnackBar(val message: String): ShareQuestionnaireEvent()
     }
 

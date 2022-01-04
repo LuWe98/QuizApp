@@ -7,12 +7,12 @@ import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.UpdateUserResponse.*
 import com.example.quizapp.model.ktor.status.Resource
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.manageusers.BsdfUserRoleChangeArgs
 import com.example.quizapp.viewmodel.VmChangeUserRole.*
 import com.example.quizapp.viewmodel.VmChangeUserRole.FragmentChangeUserRoleEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -48,7 +48,7 @@ class VmChangeUserRole @Inject constructor(
         }
     }
 
-    sealed class FragmentChangeUserRoleEvent: ViewModelEventMarker {
+    sealed class FragmentChangeUserRoleEvent: UiEventMarker {
         class StateTest(val resources: Resource<User>): FragmentChangeUserRoleEvent()
     }
 }

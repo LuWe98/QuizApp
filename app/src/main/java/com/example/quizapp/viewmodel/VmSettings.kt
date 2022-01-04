@@ -14,15 +14,15 @@ import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.SyncUserDataResponse.*
 import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
 import com.example.quizapp.model.ktor.backendsyncer.SyncFacultyAndCourseOfStudiesResultType.*
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmSettings.*
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -193,7 +193,7 @@ class VmSettings @Inject constructor(
     }
 
 
-    sealed class FragmentSettingsEvent: ViewModelEventMarker {
+    sealed class FragmentSettingsEvent: UiEventMarker {
         class ShowMessageSnackBarEvent(val messageRes: Int) : FragmentSettingsEvent()
         object RecreateActivityEvent : FragmentSettingsEvent()
         object LogoutEvent : FragmentSettingsEvent()

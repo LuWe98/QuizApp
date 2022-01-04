@@ -28,8 +28,13 @@ class RvaAddEditAnswer(
     override fun bindViews(binding: RviAnswerAddEditBinding, item: Answer, position: Int) {
         binding.apply {
             tvAnswerText.text = item.answerText
-            answerCorrectLine.setBackgroundColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.red)
+            tvQuestionIndex.text = Char(position + 65).toString()
 
+//            answerCorrectLine.setBackgroundColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.red)
+
+            val color = if (item.isAnswerCorrect) R.color.green else R.color.red
+            //tvAnswerText.setTextColorWithRes(color)
+            tvQuestionIndex.setBackgroundTintWithRes(color)
 
 
 //            btnCheck.setBackgroundTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)

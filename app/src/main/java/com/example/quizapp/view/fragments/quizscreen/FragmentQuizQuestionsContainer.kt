@@ -33,7 +33,8 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
     private val vmContainer: VmQuizQuestionsContainer by hiltNavDestinationViewModels(R.id.fragmentQuizContainer)
 
     private lateinit var vpaAdapter: VpaQuiz
-    private lateinit var rvaLazyQuestionTabs: RvaLazyQuestionTabsLayout
+
+    private lateinit var lazyQuestionTabAdapter: RvaLazyQuestionTabsLayout
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -54,7 +55,6 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
 
             vpaAdapter = VpaQuiz(this, vmQuiz.questionsShuffled).apply {
                 binding.viewPager.adapter = this
-                vmContainer
                 vmContainer.onViewPagerPageSelected(indexToSelect)
             }
         } else {
@@ -82,7 +82,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
     }
 
     private fun initLazyQuestionTabs() {
-        rvaLazyQuestionTabs = RvaLazyQuestionTabsLayout(binding.lazyTabLayout, vmContainer.isShowSolutionScreen) { questionId ->
+        lazyQuestionTabAdapter = RvaLazyQuestionTabsLayout(binding.lazyTabLayout, vmContainer.isShowSolutionScreen) { questionId ->
             if (vmContainer.isShowSolutionScreen) {
                 vmQuiz.completeQuestionnaire?.isQuestionAnsweredCorrectly(questionId) ?: false
             } else {
@@ -97,7 +97,7 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
         binding.lazyTabLayout.apply {
             disableChangeAnimation()
             setHasFixedSize(true)
-            adapter = rvaLazyQuestionTabs
+            adapter = lazyQuestionTabAdapter
             attachToViewPager(binding.viewPager) { index ->
                 LazyQuestionTab(vmQuiz.questionsShuffled[index].id)
             }
@@ -106,11 +106,11 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
 
     private fun initClickListeners() {
         binding.apply {
-            btnBack.onClick(vmQuiz::onBackButtonClicked)
+            btnBack.onClick(vmContainer::onBackButtonClicked)
             btnMoreOptions.onClick(vmContainer::onMoreOptionsClicked)
-            btnSubmit.onClick { vmContainer.onSubmitButtonClicked(vmQuiz.completeQuestionnaire?.areAllQuestionsAnswered) }
             btnShuffle.onClick(vmContainer::onShuffleButtonClicked)
             btnQuestionType.onClick(vmContainer::onQuestionTypeInfoButtonClicked)
+            btnSubmit.onClick { vmContainer.onSubmitButtonClicked(vmQuiz.completeQuestionnaire?.areAllQuestionsAnswered) }
         }
     }
 

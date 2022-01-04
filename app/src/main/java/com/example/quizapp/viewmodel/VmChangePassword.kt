@@ -6,15 +6,14 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.BackendResponse
 import com.example.quizapp.model.ktor.BackendResponse.ChangePasswordResponse.*
 import com.example.quizapp.model.ktor.client.KtorClientAuth
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.viewmodel.VmChangePassword.*
 import com.example.quizapp.viewmodel.VmChangePassword.ChangePasswordEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -90,7 +89,7 @@ class VmChangePassword @Inject constructor(
     }
 
 
-    sealed class ChangePasswordEvent: ViewModelEventMarker {
+    sealed class ChangePasswordEvent: UiEventMarker {
         class ShowMessageSnackBar(@StringRes val messageRes: Int): ChangePasswordEvent()
     }
 

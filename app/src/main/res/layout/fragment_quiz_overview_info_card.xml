@@ -6,7 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/generalInfoCard"
-        app:cardCornerRadius="7.5dp"
+        app:cardBackgroundColor="?android:colorBackground"
+        app:cardCornerRadius="10dp"
         app:cardElevation="0dp"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -35,7 +36,7 @@
                     android:background="@drawable/shape_circle"
                     android:backgroundTint="@color/transparent"
                     android:padding="10dp"
-                    android:layout_marginStart="@dimen/grid_3"
+                    android:layout_marginStart="@dimen/grid_2"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:id="@+id/infoIcon" />
@@ -45,7 +46,7 @@
                     android:layout_height="0dp"
                     android:id="@+id/tvGeneralInfo"
                     android:text="@string/info"
-                    android:layout_marginStart="@dimen/grid_3"
+                    android:layout_marginStart="@dimen/grid_2"
                     android:textStyle="bold"
                     android:gravity="center_vertical"
                     android:textSize="16sp"
@@ -75,7 +76,12 @@
                 android:id="@+id/generalInfoContainer"
                 android:visibility="visible"
                 tools:visibility="visible"
+                android:paddingVertical="@dimen/grid_1"
                 android:layout_marginTop="@dimen/grid_2"
+                android:layout_marginBottom="@dimen/grid_1"
+                android:layout_marginHorizontal="@dimen/grid_1"
+                android:background="@drawable/background_round_corners_10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@id/generalInfoHeader"
                 app:layout_constraintEnd_toEndOf="@id/generalInfoHeader"
                 app:layout_constraintTop_toBottomOf="@id/generalInfoHeader">
@@ -87,18 +93,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:icon="@drawable/ic_person"
                     app:title="@string/author"
-                    android:layout_marginHorizontal="@dimen/grid_2"
                     tools:text="Luca"/>
-
-            <View
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
-                    app:layout_constraintTop_toBottomOf="@id/authorCard"
-                    app:layout_constraintBottom_toTopOf="@id/facultyCard"
-                    android:background="?android:colorBackground"
-                    android:layout_marginHorizontal="@dimen/grid_8"
-                    app:layout_constraintStart_toStartOf="@id/facultyCard"
-                    app:layout_constraintEnd_toEndOf="@id/facultyCard" />
 
             <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
                     android:layout_width="match_parent"
@@ -106,20 +101,9 @@
                     android:id="@+id/facultyCard"
                     app:layout_constraintTop_toBottomOf="@+id/authorCard"
                     android:layout_marginTop="@dimen/grid_2"
-                    android:layout_marginHorizontal="@dimen/grid_2"
                     app:icon="@drawable/ic_faculty"
                     app:title="@string/faculty"
                     tools:text="WI"/>
-
-            <View
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
-                    app:layout_constraintTop_toBottomOf="@id/facultyCard"
-                    app:layout_constraintBottom_toTopOf="@id/cosCard"
-                    android:background="?android:colorBackground"
-                    android:layout_marginHorizontal="@dimen/grid_8"
-                    app:layout_constraintStart_toStartOf="@id/facultyCard"
-                    app:layout_constraintEnd_toEndOf="@id/facultyCard" />
 
             <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
                     android:layout_width="match_parent"
@@ -127,20 +111,9 @@
                     android:id="@+id/cosCard"
                     app:layout_constraintTop_toBottomOf="@+id/facultyCard"
                     android:layout_marginTop="@dimen/grid_2"
-                    android:layout_marginHorizontal="@dimen/grid_2"
                     app:icon="@drawable/ic_course_of_studies"
                     app:title="@string/courseOfStudies"
                     tools:text="WIB"/>
-
-            <View
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
-                    app:layout_constraintTop_toBottomOf="@id/cosCard"
-                    app:layout_constraintBottom_toTopOf="@id/subjectCard"
-                    android:background="?android:colorBackground"
-                    android:layout_marginHorizontal="@dimen/grid_8"
-                    app:layout_constraintStart_toStartOf="@id/facultyCard"
-                    app:layout_constraintEnd_toEndOf="@id/facultyCard" />
 
             <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
                     android:layout_width="match_parent"
@@ -148,29 +121,18 @@
                     android:id="@+id/subjectCard"
                     app:layout_constraintTop_toBottomOf="@+id/cosCard"
                     android:layout_marginTop="@dimen/grid_2"
-                    android:layout_marginHorizontal="@dimen/grid_2"
                     app:icon="@drawable/ic_subject"
                     app:title="@string/subject"
                     tools:text="Promod"/>
-
-            <View
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
-                    app:layout_constraintTop_toBottomOf="@id/subjectCard"
-                    app:layout_constraintBottom_toTopOf="@id/lastUpdatedCard"
-                    android:background="?android:colorBackground"
-                    android:layout_marginHorizontal="@dimen/grid_8"
-                    app:layout_constraintStart_toStartOf="@id/facultyCard"
-                    app:layout_constraintEnd_toEndOf="@id/facultyCard" />
-
 
             <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:id="@+id/lastUpdatedCard"
                     app:layout_constraintTop_toBottomOf="@+id/subjectCard"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_marginTop="@dimen/grid_2"
-                    android:layout_marginHorizontal="@dimen/grid_2"
+                    android:layout_marginBottom="@dimen/grid_1"
                     app:icon="@drawable/ic_update"
                     app:title="@string/lastUpdated"
                     tools:text="05.11.2021"/>

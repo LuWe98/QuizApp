@@ -2,19 +2,21 @@ package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.paging.CombinedLoadStates
 import androidx.paging.cachedIn
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.FragmentResult.RemoteAuthorSelectionResult
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.NavigateBack
-import com.example.quizapp.view.fragments.dialogs.authorselection.remote.BsdfRemoteAuthorSelectionArgs
+import com.example.quizapp.utils.RemoteDataAvailability
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
+import com.example.quizapp.view.fragments.dialogs.authorselection.BsdfRemoteAuthorSelectionArgs
 import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent
-import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent.ClearSearchQueryEvent
+import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.asStateFlow
@@ -61,7 +63,7 @@ class VmRemoteAuthorSelection @Inject constructor(
     }
 
     fun onDeleteSearchQueryClicked() = launch(IO) {
-        if (searchQuery.isNotBlank()) {
+        if (searchQuery.isNotEmpty()) {
             eventChannel.send(ClearSearchQueryEvent)
         }
     }
@@ -79,13 +81,34 @@ class VmRemoteAuthorSelection @Inject constructor(
         }
     }
 
-    fun onConfirmButtonClicked() = launch(IO) {
-        fragmentResultDispatcher.dispatch(RemoteAuthorSelectionResult(selectedAuthors))
+    fun onCollapseButtonClicked() =  launch(IO) {
         navigationDispatcher.dispatch(NavigateBack)
     }
 
-    sealed class RemoteAuthorSelectionEvent: ViewModelEventMarker {
+    fun onConfirmButtonClicked() = launch(IO) {
+        fragmentResultDispatcher.dispatch(FragmentResult.RemoteAuthorSelectionResult(selectedAuthors))
+        navigationDispatcher.dispatch(NavigateBack)
+    }
+
+    fun onListLoadStateChanged(loadStates: CombinedLoadStates, itemCount: Int) = launch(IO) {
+        if (loadStates.append.endOfPaginationReached) {
+            if (itemCount == 0 && searchQuery.isNotEmpty()) {
+                eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_FOUND))
+                return@launch
+            } else if(itemCount == 0 && searchQuery.isEmpty()) {
+                eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_EXIST))
+                return@launch
+            }
+        }
+
+        if(itemCount != 0) {
+            eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.ENTRIES_FOUND))
+        }
+    }
+
+    sealed class RemoteAuthorSelectionEvent: UiEventMarker {
         object ClearSearchQueryEvent : RemoteAuthorSelectionEvent()
+        class ChangeResultLayoutVisibility(val state: RemoteDataAvailability) : RemoteAuthorSelectionEvent()
     }
 
     companion object {

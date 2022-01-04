@@ -6,9 +6,7 @@ import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizQuestionBinding
-import com.example.quizapp.extensions.collectWhenStarted
-import com.example.quizapp.extensions.disableChangeAnimation
-import com.example.quizapp.extensions.hiltNavDestinationViewModels
+import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.Question
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType.SHUFFLED_ANSWERS
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType.SHUFFLED_QUESTIONS_AND_ANSWERS
@@ -51,7 +49,7 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
     }
 
     private fun initRecyclerView(){
-        rvaAdapter = RvaAnswerQuiz(isMultipleChoice, vmContainer.isShowSolutionScreen).apply {
+        rvaAdapter = RvaAnswerQuiz(vmContainer.isShowSolutionScreen).apply {
             onItemClick = { selectedAnswerId ->
                 vmQuiz.onAnswerItemClicked(selectedAnswerId, questionId)
             }
@@ -68,6 +66,7 @@ class FragmentQuizQuestion : BindingFragment<FragmentQuizQuestionBinding>() {
     private fun initObservers(){
         vmQuiz.getQuestionWithAnswersFlow(questionId).collectWhenStarted(viewLifecycleOwner) {
             binding.tvQuestion.text = it.question.questionText
+            binding.questionTypeIcon.setImageDrawable(if(it.question.isMultipleChoice) R.drawable.ic_check_circle else R.drawable.ic_radio_button)
 
             when(vmQuiz.shuffleType){
                 SHUFFLED_ANSWERS, SHUFFLED_QUESTIONS_AND_ANSWERS -> it.answers.shuffled(Random(vmQuiz.shuffleSeed / it.shuffleSeedAdjusted))

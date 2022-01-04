@@ -58,12 +58,20 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
 
     private fun initObservers() {
         vmHome.completeQuestionnaireFlow.collectWhenStarted(viewLifecycleOwner) {
-            rvAdapter.submitList(it)
+            it.adjustVisibilities(
+                binding.rv,
+                binding.dataAvailability,
+                R.string.noLocalQuestionnaireResultsFoundTitle,
+                R.string.noLocalQuestionnaireResultsFoundText,
+                R.string.noLocalQuestionnaireDataExistsTitle,
+                R.string.noLocalQuestionnaireDataExistsText
+            )
+            rvAdapter.submitList(it.data)
         }
 
         vmHome.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.btnSearch.changeIconOnCondition {
-                it.isBlank()
+                it.isEmpty()
             }
         }
 

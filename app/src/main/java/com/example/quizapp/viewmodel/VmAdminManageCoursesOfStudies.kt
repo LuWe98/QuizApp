@@ -11,20 +11,21 @@ import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.BackendResponse
 import com.example.quizapp.model.ktor.BackendResponse.DeleteCourseOfStudiesResponse.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.CosMoreOptionsItem.DELETE
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.CosMoreOptionsItem.EDIT
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType
+import com.example.quizapp.utils.LocalDataAvailability
+import com.example.quizapp.utils.asLocalDataAvailability
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.CosMoreOptionsItem.DELETE
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.CosMoreOptionsItem.EDIT
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent.ClearSearchQueryEvent
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent.ShowMessageSnackBar
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -61,11 +62,15 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
 
     fun getCourseOfStudiesFlowWith(facultyId: String) = searchQueryMutableStateFlow.flatMapLatest { query ->
         if (facultyId == NO_FACULTY_ID) {
-            localRepository.getCoursesOfStudiesNotAssociatedWithFacultyFlow(query)
+            localRepository.getCoursesOfStudiesNotAssociatedWithFacultyFlow(query).map { list ->
+                list.asLocalDataAvailability(query::isNotEmpty)
+            }
         } else {
-            localRepository.getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId, query)
+            localRepository.getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId, query).map { list ->
+                list.asLocalDataAvailability(query::isNotEmpty)
+            }
         }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDataAvailability.DataFound(emptyList()))
 
 
     fun onItemClicked(courseOfStudies: CourseOfStudies) = launch(IO) {
@@ -116,7 +121,7 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
     }
 
     fun onClearSearchQueryClicked() = launch(IO) {
-        if (searchQuery.isNotBlank()) {
+        if (searchQuery.isNotEmpty()) {
             eventChannel.send(ClearSearchQueryEvent)
         }
     }
@@ -130,7 +135,7 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
     }
 
 
-    sealed class ManageCourseOfStudiesEvent: ViewModelEventMarker {
+    sealed class ManageCourseOfStudiesEvent: UiEventMarker {
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : ManageCourseOfStudiesEvent()
         object ClearSearchQueryEvent : ManageCourseOfStudiesEvent()
     }

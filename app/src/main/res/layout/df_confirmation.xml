@@ -16,6 +16,7 @@
                 android:layout_height="40dp"
                 android:id="@+id/tvTitle"
                 style="@style/Style.QuizApp.Heading.TextAppearance"
+                android:textStyle="bold"
                 tools:text="@string/deletionConfirmationTile"
                 android:gravity="center_vertical"
                 android:layout_marginTop="@dimen/grid_2"

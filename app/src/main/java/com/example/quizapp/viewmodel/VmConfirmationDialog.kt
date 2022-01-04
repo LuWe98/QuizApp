@@ -2,7 +2,7 @@ package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.NavigateBack
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.fragments.dialogs.confirmation.DfConfirmationArgs
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

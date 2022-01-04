@@ -13,9 +13,10 @@ import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.navController
 import com.example.quizapp.extensions.showSnackBar
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher
-import com.example.quizapp.viewmodel.VmQuizActivity
-import com.example.quizapp.viewmodel.VmQuizActivity.MainViewModelEvent.ShowMessageSnackBar
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher
+import com.example.quizapp.viewmodel.VmMainActivity
+import com.example.quizapp.viewmodel.VmMainActivity.MainViewModelEvent.ShowMessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.max
@@ -35,7 +36,8 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
     @Inject
     lateinit var fragmentResultDispatcher: FragmentResultDispatcher
 
-    private val vmQuizActivity: VmQuizActivity by viewModels()
+
+    private val vmQuizActivity: VmMainActivity by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +51,7 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
         currentSnackBar?.let {
-            if(navigationDispatcher.isLastDestinationDialog) return@let
+            if (navigationDispatcher.isLastDestinationDialog) return@let
             it.dismiss()
             currentSnackBar = null
         }
@@ -60,12 +62,12 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             vmQuizActivity.onUserDataChanged(it, navController.currentDestination?.id)
         }
 
-        navigationDispatcher.navigationChannelFlow.collectWhenStarted(this) { navEvent ->
-            navEvent.execute(this)
+        navigationDispatcher.dispatchEventChannelFlow.collectWhenStarted(this) { event ->
+            event.execute(this)
         }
 
-        fragmentResultDispatcher.fragmentResultChannelFlow.collectWhenStarted(this) { fragmentResultEvent ->
-            fragmentResultEvent.execute(this)
+        fragmentResultDispatcher.dispatchEventChannelFlow.collectWhenStarted(this) { event ->
+            event.execute(this)
         }
 
         vmQuizActivity.eventChannelFlow.collectWhenStarted(this) { event ->

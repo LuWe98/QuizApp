@@ -80,7 +80,7 @@
             android:elevation="-1dp"
             android:alpha="0"
             tools:alpha="1"
-            tools:listitem="@layout/rvi_question_quiz_new"
+            tools:listitem="@layout/rvi_question_quiz"
             android:paddingBottom="125dp"
             android:paddingHorizontal="@dimen/grid_2"
             android:clipToPadding="false"

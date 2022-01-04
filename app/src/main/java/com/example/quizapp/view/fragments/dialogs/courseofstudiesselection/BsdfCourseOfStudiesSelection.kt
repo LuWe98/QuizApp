@@ -101,13 +101,14 @@ class BsdfCourseOfStudiesSelection : BindingBottomSheetDialogFragment<BsdfCourse
             btnConfirm.onClick(vmCos::onConfirmButtonClicked)
             etSearchQuery.onTextChanged(vmCos::onSearchQueryChanged)
             btnSearch.onClick(vmCos::onClearSearchQueryClicked)
+            btnCollapse.onClick(vmCos::onCollapseButtonClicked)
         }
     }
 
     private fun initObservers() {
         vmCos.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner){
             binding.btnSearch.changeIconOnCondition {
-                it.isBlank()
+                it.isEmpty()
             }
         }
 

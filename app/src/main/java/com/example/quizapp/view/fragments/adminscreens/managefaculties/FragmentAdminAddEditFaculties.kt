@@ -8,8 +8,8 @@ import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.initMaterialZAxisAnimationForReceiver
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.showSnackBar
-import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.ShowMessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint

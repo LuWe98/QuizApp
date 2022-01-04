@@ -3,114 +3,39 @@ package com.example.quizapp.view.fragments.quizscreen
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.FrameLayout
 import androidx.appcompat.widget.PopupMenu
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizOverviewBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.recyclerview.adapters.RvaQuestionQuiz
 import com.example.quizapp.viewmodel.VmQuiz
 import com.example.quizapp.viewmodel.VmQuiz.*
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
-import kotlin.math.pow
 
 @AndroidEntryPoint
 class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), PopupMenu.OnMenuItemClickListener {
 
     private val vmQuiz: VmQuiz by hiltNavGraphViewModels(R.id.quiz_nav_graph)
 
-    private lateinit var rvAdapter: RvaQuestionQuiz
-
-    private lateinit var bottomSheetBehaviour: BottomSheetBehavior<ConstraintLayout>
-    private lateinit var bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initMaterialZAxisAnimationForReceiver()
 
-        initRecyclerView()
-        initBottomSheet()
-        initClickListener()
+        initListeners()
         initObservers()
     }
 
-    private fun initRecyclerView() {
-        rvAdapter = RvaQuestionQuiz(vmQuiz).apply {
-            onItemClick = { position, questionId, card ->
-                vmQuiz.onQuestionItemClicked(position, questionId, card)
-            }
-        }
-
-        binding.bottomSheet.rv.apply {
-            adapter = rvAdapter
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(requireContext())
-            disableChangeAnimation()
-        }
-    }
-
-    private fun initBottomSheet() {
-        bottomSheetBehaviour = BottomSheetBehavior.from(binding.bottomSheet.root).apply {
-            onBottomSheetSlide(if (vmQuiz.bottomSheetState == BottomSheetBehavior.STATE_COLLAPSED) 0f else 1f)
-            state = vmQuiz.bottomSheetState
-            peekHeight = 75.dp
-            skipCollapsed = true
-            bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) = vmQuiz.onBottomSheetStateUpdated(newState)
-                override fun onSlide(sheet: View, slideOffset: Float) = onBottomSheetSlide(slideOffset)
-            }
-
-            addBottomSheetCallback(bottomSheetCallback)
-        }
-    }
-
-    private fun onBottomSheetSlide(slideOffset: Float) {
-        binding.bottomSheet.apply {
-            rv.alpha = slideOffset.pow(2)
-            //+ 0.1f
-
-            (2.dp * slideOffset).let { newElevation ->
-                sheetHeader.elevation = newElevation
-                btnStart.elevation = newElevation
-            }
-
-            btnStart.apply {
-                updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    verticalBias = slideOffset
-                }
-                scaleX = 1 + slideOffset / 3.5f
-                scaleY = 1 + slideOffset / 3.5f
-            }
-
-            btnCollapse.rotation = 180 + slideOffset * 180
-        }
-    }
-
-    private fun toggleBottomSheet() {
-        if (bottomSheetBehaviour.state == BottomSheetBehavior.STATE_COLLAPSED) {
-            bottomSheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
-        } else if (bottomSheetBehaviour.state == BottomSheetBehavior.STATE_EXPANDED) {
-            bottomSheetBehaviour.state = BottomSheetBehavior.STATE_COLLAPSED
-        }
-    }
-
-    private fun initClickListener() {
+    private fun initListeners() {
         binding.apply {
             btnBack.onClick(vmQuiz::onBackButtonClicked)
-            bottomSheet.btnStart.onClick(vmQuiz::onStartButtonClicked)
             btnMoreOptions.onClick(vmQuiz::onMoreOptionsItemClicked)
-            bottomSheet.sheetHeader.onClick(this@FragmentQuizOverview::toggleBottomSheet)
-            bottomSheet.btnCollapse.onClick(this@FragmentQuizOverview::toggleBottomSheet)
+            statisticsCard.btnListQuestions.onClick(vmQuiz::onShowQuestionListDialogClicked)
+            btnStartQuiz.onClick(vmQuiz::onStartButtonClicked)
         }
     }
 
@@ -122,16 +47,6 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             }
         }
 
-
-        //TODO -> noch durchmischeln lassen, da es noch nüt get -> Positionen der Fragen werden nicht richtig angezeigt
-        vmQuiz.questionsWithAnswersFlow.collectWhenStarted(viewLifecycleOwner) { questionsWithAnswers ->
-            rvAdapter.submitList(questionsWithAnswers){
-//                rvAdapter.notifyDataSetChanged()
-            }
-            binding.bottomSheet.tvQuestionsAmount.text = questionsWithAnswers.size.toString()
-        }
-
-
         vmQuiz.questionnaireFlow.collectWhenStarted(viewLifecycleOwner) { questionnaire ->
             binding.apply {
                 tvTitle.text = questionnaire.title
@@ -142,7 +57,6 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                 }
             }
         }
-
 
         vmQuiz.questionStatisticsFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.apply {
@@ -157,11 +71,6 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                 tvQuestionsAnsweredLabel.isVisible = !visibilityToggle
                 tvQuestionsAnsweredPercentage.isVisible = !visibilityToggle
 
-                progress.setProgressWithAnimation(it.answeredQuestionsPercentage, (it.answeredQuestionsPercentage * 3.5f).toLong())
-                progressCorrect.setProgressWithAnimation(if (it.areAllQuestionsAnswered) it.correctQuestionsPercentage else 0, 350)
-                progressIncorrect.setProgressWithAnimation(if (it.areAllQuestionsAnswered) it.incorrectQuestionsPercentage else 0, 350)
-
-
                 statisticsCard.apply {
                     allQuestions.setProgressWithAnimation(if(it.hasQuestions) 100 else 0, 350)
                     allQuestionsNumber.text = it.questionsAmount.toString()
@@ -169,11 +78,19 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                     answeredQuestionsAmount.text = it.answeredQuestionsAmount.toString()
 
                     if (it.areAllQuestionsAnswered) {
+                        progress.progress = 0
+                        progressCorrect.setProgressWithAnimation(it.correctQuestionsPercentage, 350)
+                        progressIncorrect.setProgressWithAnimation(it.incorrectQuestionsPercentage, 350)
+
                         correctQuestions.setProgressWithAnimation(it.correctQuestionsPercentage, (it.correctQuestionsPercentage * 3.5f).toLong())
                         correctQuestionsAmount.text = it.correctQuestionsAmount.toString()
                         incorrectQuestions.setProgressWithAnimation(it.incorrectQuestionsPercentage, (it.incorrectQuestionsPercentage * 3.5f).toLong())
                         wrongQuestionsAmount.text = it.incorrectQuestionsAmount.toString()
                     } else {
+                        progress.setProgressWithAnimation(it.answeredQuestionsPercentage, (it.answeredQuestionsPercentage * 3.5f).toLong())
+                        progressCorrect.setProgressWithAnimation(0, 350)
+                        progressIncorrect.setProgressWithAnimation(0, 350)
+
                         correctQuestions.setProgressWithAnimation(0)
                         correctQuestionsAmount.text = "0"
                         incorrectQuestions.setProgressWithAnimation(0)
@@ -183,15 +100,10 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
             }
         }
 
-        vmQuiz.areAllQuestionsAnsweredStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.bottomSheet.rv.updateAllViewHolders()
-        }
-
-
         vmQuiz.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 is ShowUndoDeleteGivenAnswersSnackBack -> {
-                    showSnackBar(R.string.answersDeleted, anchorView = binding.bottomSheet.root, actionTextRes = R.string.undo) {
+                    showSnackBar(R.string.answersDeleted, actionTextRes = R.string.undo) {
                         vmQuiz.onUndoDeleteGivenAnswersClick(event)
                     }
                 }
@@ -208,7 +120,7 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
                         show()
                     }
                 }
-                is ShowMessageSnackBar -> showSnackBar(event.messageRes, anchorView = binding.bottomSheet.root)
+                is ShowMessageSnackBar -> showSnackBar(event.messageRes)
             }
         }
     }
@@ -224,9 +136,4 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
         }
         true
     } ?: false
-
-    override fun onDestroyView() {
-        bottomSheetBehaviour.removeBottomSheetCallback(bottomSheetCallback)
-        super.onDestroyView()
-    }
 }

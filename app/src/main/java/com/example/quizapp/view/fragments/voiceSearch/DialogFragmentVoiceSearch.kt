@@ -14,13 +14,13 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.DfVoiceSearchBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingDialogFragment
-import com.example.quizapp.viewmodel.VmQuizActivity
+import com.example.quizapp.viewmodel.VmMainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class DialogFragmentVoiceSearch : BindingDialogFragment<DfVoiceSearchBinding>(), RecognitionListener {
 
-    private val viewModel: VmQuizActivity by viewModels()
+    private val viewModel: VmMainActivity by viewModels()
 
     private val speechRecognizer : SpeechRecognizer by lazy { SpeechRecognizer.createSpeechRecognizer(requireContext()) }
 

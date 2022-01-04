@@ -17,7 +17,13 @@
         <!-- Colors -->
         <item name="colorPrimary">@color/lightColorPrimary</item>
         <item name="colorPrimaryVariant">@color/lightColorPrimaryVariant</item>
+
         <item name="colorOnPrimary">@color/lightColorOnPrimary</item>
+        <item name="android:colorBackground">@color/lightBackgroundColor</item>
+        <item name="colorOnBackground">@color/lightBackgroundColor</item>
+
+<!--        <item name="colorOnPrimary">@color/lightColorOnPrimary</item>-->
+<!--        <item name="android:colorBackground">@color/lightBackgroundColor</item>-->
 
         <item name="colorSecondary">@color/lightColorSecondary</item>
         <item name="colorSecondaryVariant">@color/lightColorSecondaryVariant</item>
@@ -25,11 +31,9 @@
 
         <item name="colorAccent">@color/lightColorAccent</item>
 
-        <item name="android:colorBackground">@color/lightBackgroundColor</item>
-        <item name="colorOnBackground">@color/lightBackgroundColor</item>
         <!--        <item name="colorOnSurface">@color/white</item>-->
 
-        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:statusBarColor">@color/transparent</item>
 <!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
 
         <item name="android:windowLightStatusBar">true</item>

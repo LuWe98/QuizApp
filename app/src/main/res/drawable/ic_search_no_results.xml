@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_search"
+        android:width="100dp"
+        android:height="100dp"
+            android:gravity="center"/>
+    <item android:drawable="@drawable/ic_cross"
+        android:width="25dp"
+        android:height="25dp"
+            android:left="27.45dp"
+            android:top="27.5dp"/>
+</layer-list>

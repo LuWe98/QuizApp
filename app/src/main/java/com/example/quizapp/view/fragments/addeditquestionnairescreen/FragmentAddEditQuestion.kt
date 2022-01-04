@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAddEditQuestionBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.view.recyclerview.adapters.RvaAddEditAnswer
 import com.example.quizapp.view.recyclerview.impl.SimpleItemTouchHelper
 import com.example.quizapp.viewmodel.VmAddEditQuestion

@@ -27,5 +27,7 @@ data class User(
 
     companion object {
         val DIFF_CALLBACK = generateDiffItemCallback(User::id)
+
+        const val UNKNOWN_TIMESTAMP = -1L
     }
 }

@@ -9,16 +9,16 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.entities.Answer
 import com.example.quizapp.model.databases.room.entities.Question
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestionArgs
-import com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.datawrappers.AddEditAnswerMoreOptionsItem
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.AddEditAnswerMoreOptionsItem
 import com.example.quizapp.viewmodel.VmAddEditQuestion.*
 import com.example.quizapp.viewmodel.VmAddEditQuestion.FragmentAddEditQuestionEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
@@ -221,7 +221,7 @@ class VmAddEditQuestion @Inject constructor(
         navigationDispatcher.dispatch(NavigateBack)
     }
 
-    sealed class FragmentAddEditQuestionEvent : ViewModelEventMarker {
+    sealed class FragmentAddEditQuestionEvent : UiEventMarker {
         class ShowAnswerDeletedSnackBar(val answer: Answer, val answerIndex: Int) : FragmentAddEditQuestionEvent()
         class ShowMessageSnackBar(val messageRes: Int) : FragmentAddEditQuestionEvent()
         class SaveQuestionWithAnswersEvent(val questionPosition: Int, val questionWithAnswers: QuestionWithAnswers) : FragmentAddEditQuestionEvent()

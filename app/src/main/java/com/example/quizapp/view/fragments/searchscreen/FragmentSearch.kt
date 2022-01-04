@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentSearchBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.view.recyclerview.adapters.RvaBrowsableQuestionnaires
 import com.example.quizapp.viewmodel.VmSearch
 import com.example.quizapp.viewmodel.VmSearch.SearchEvent.*
@@ -64,6 +64,10 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
 
         setFragmentResultEventListener(vmSearch::onQuestionnaireMoreOptionsSelectionResultReceived)
 
+        rvAdapter.addLoadStateListener {
+            vmSearch.onListLoadStateChanged(it, rvAdapter.itemCount)
+        }
+
         vmSearch.filteredPagedData.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitData(it)
             binding.swipeRefreshLayout.isRefreshing = false
@@ -71,7 +75,7 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
 
         vmSearch.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.btnSearch.changeIconOnCondition {
-                it.isBlank()
+                it.isEmpty()
             }
         }
 
@@ -80,6 +84,14 @@ class FragmentSearch : BindingFragment<FragmentSearchBinding>() {
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
                 is ChangeItemDownloadStatusEvent -> rvAdapter.changeItemDownloadStatus(event.questionnaireId, event.status)
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
+                is ChangeResultLayoutVisibility -> event.state.adjustVisibilities(
+                    binding.rv,
+                    binding.dataAvailability,
+                    R.string.noRemoteQuestionnaireResultsFoundTitle,
+                    R.string.noRemoteQuestionnaireResultsFoundText,
+                    R.string.noRemoteQuestionnaireDataExistsTitle,
+                    R.string.noRemoteQuestionnaireDataExistsText
+                )
             }
         }
     }

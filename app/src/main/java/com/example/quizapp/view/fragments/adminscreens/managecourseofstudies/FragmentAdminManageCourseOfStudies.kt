@@ -8,8 +8,8 @@ import com.example.quizapp.databinding.FragmentAdminManageCourseOfStudiesBinding
 import com.example.quizapp.databinding.TabLayoutViewFacultyBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.Faculty
-import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
+import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.view.viewpager.adapter.VpaManageCourseOfStudies
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies
@@ -110,7 +110,7 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
 
         vmAdmin.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.btnSearch.changeIconOnCondition {
-                it.isBlank()
+                it.isEmpty()
             }
         }
 

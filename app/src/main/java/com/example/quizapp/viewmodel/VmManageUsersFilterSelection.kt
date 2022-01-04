@@ -5,15 +5,14 @@ import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.FragmentResult.ManageUsersFilterResult
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.NavigateBack
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.ToSelectionDialog
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.ToSelectionDialog
 import com.example.quizapp.view.fragments.adminscreens.manageusers.filterselection.BsdfManageUsersFilterSelectionArgs
-import com.example.quizapp.view.fragments.resultdispatcher.FragmentResultDispatcher.*
-import com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmManageUsersFilterSelection.ManageUsersFilterSelectionEvent
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.asStateFlow
@@ -84,11 +83,11 @@ class VmManageUsersFilterSelection @Inject constructor(
     fun onApplyButtonClicked() = launch(IO) {
         preferencesRepository.updateManageUsersOrderBy(selectedOrderBy)
         preferencesRepository.updateManageUsersAscendingOrder(selectedOrderAscending)
-        fragmentResultDispatcher.dispatch(ManageUsersFilterResult(selectedRoles.toSet()))
+        fragmentResultDispatcher.dispatch(FragmentResult.ManageUsersFilterResult(selectedRoles.toSet()))
         navigationDispatcher.dispatch(NavigateBack)
     }
 
-    sealed class ManageUsersFilterSelectionEvent: ViewModelEventMarker
+    sealed class ManageUsersFilterSelectionEvent: UiEventMarker
 
     companion object {
         private const val SELECTED_ORDER_BY_KEY = "selectedOrderByKey"

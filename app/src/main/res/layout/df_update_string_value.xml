@@ -18,6 +18,7 @@
                 android:layout_height="40dp"
                 android:id="@+id/tvTitle"
                 style="@style/Style.QuizApp.Heading.TextAppearance"
+                android:textStyle="bold"
                 android:text="@string/updateQuestionnaireTitle"
                 android:gravity="center_vertical"
                 android:layout_marginTop="@dimen/grid_2"
@@ -25,7 +26,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginHorizontal="@dimen/grid_6" />
-
 
         <androidx.appcompat.widget.AppCompatEditText
                 android:layout_width="0dp"

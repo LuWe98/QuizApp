@@ -63,6 +63,9 @@
             <action
                     android:id="@+id/action_fragmentQuizOverview_to_fragmentQuizContainer"
                     app:destination="@id/fragmentQuizContainer" />
+            <action
+                    android:id="@+id/action_fragmentQuizOverview_to_bsdfQuizOverviewQuestionList"
+                    app:destination="@id/bsdfQuizOverviewQuestionList" />
         </fragment>
 
         <fragment
@@ -90,6 +93,15 @@
                     android:id="@+id/action_fragmentQuizResult_to_fragmentQuizContainer"
                     app:destination="@id/fragmentQuizContainer" />
         </fragment>
+        <dialog
+                android:id="@+id/bsdfQuizOverviewQuestionList"
+                android:name="com.example.quizapp.view.fragments.quizscreen.BsdfQuizOverviewQuestionList"
+                android:label="BsdfQuizOverviewQuestionList"
+                tools:layout="@layout/bsdf_quiz_overview_question_list">
+            <action
+                    android:id="@+id/action_bsdfQuizOverviewQuestionList_to_fragmentQuizContainer"
+                    app:destination="@id/fragmentQuizContainer" />
+        </dialog>
     </navigation>
 
 
@@ -313,7 +325,7 @@
     <!-- USER CREATOR SELECTION -->
     <dialog
             android:id="@+id/bsdfRemoteAuthorSelection"
-            android:name="com.example.quizapp.view.fragments.dialogs.authorselection.remote.BsdfRemoteAuthorSelection"
+            android:name="com.example.quizapp.view.fragments.dialogs.authorselection.BsdfRemoteAuthorSelection"
             android:label="BsdfAuthorSelection"
             tools:layout="@layout/bsdf_author_selection">
         <argument
@@ -331,7 +343,7 @@
 
         <argument
             android:name="requestType"
-            app:argType="com.example.quizapp.view.fragments.resultdispatcher.requests.UpdateStringRequestType"/>
+            app:argType="com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType"/>
     </dialog>
 
 <!--    <argument-->
@@ -391,7 +403,7 @@
             android:label="BsdfSelection"
             tools:layout="@layout/bsdf_selection">
         <argument
-                app:argType="com.example.quizapp.view.fragments.resultdispatcher.requests.selection.SelectionRequestType"
+                app:argType="com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType"
                 android:name="selectionType" />
     </dialog>
 
@@ -407,7 +419,7 @@
             android:label="DfConfirmation"
             tools:layout="@layout/df_confirmation">
         <argument
-                app:argType="com.example.quizapp.view.fragments.resultdispatcher.requests.ConfirmationRequestType"
+                app:argType="com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType"
                 android:name="confirmationType" />
     </dialog>
 
@@ -457,7 +469,7 @@
 
     <dialog
             android:id="@+id/bsdfLocalAuthorSelection"
-            android:name="com.example.quizapp.view.fragments.dialogs.authorselection.local.BsdfLocalAuthorSelection"
+            android:name="com.example.quizapp.view.fragments.dialogs.authorselection.BsdfLocalAuthorSelection"
             android:label="BsdfLocalAuthorSelection"
             tools:layout="@layout/bsdf_author_selection">
         <argument

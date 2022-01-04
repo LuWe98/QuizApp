@@ -6,60 +6,85 @@
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
         android:background="@drawable/background_round_corners_top_15dp"
-        android:backgroundTint="?colorOnPrimary"
-        android:paddingTop="@dimen/grid_4">
-
-    <com.google.android.material.textview.MaterialTextView
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:id="@+id/tvTitle"
-            style="@style/Style.QuizApp.Heading.TextAppearance"
-            android:text="@string/authorSelection"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="@dimen/grid_3"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginHorizontal="@dimen/grid_3" />
+        android:backgroundTint="?android:colorBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/searchBarHeight"
-            android:id="@+id/clSearchBar"
-            android:background="@drawable/search_bar_background"
-            android:backgroundTint="?android:colorBackground"
-            android:layout_marginHorizontal="@dimen/grid_4"
-            android:layout_marginTop="@dimen/grid_4"
-            app:layout_constraintTop_toBottomOf="@+id/tvTitle">
+            android:layout_height="wrap_content"
+            android:id="@+id/topLayout"
+            android:elevation="2dp"
+            android:clipToPadding="false"
+            android:background="@drawable/background_round_corners_top_15dp"
+            android:backgroundTint="?colorOnPrimary"
+            android:paddingBottom="@dimen/grid_4"
+            app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:id="@+id/btnSearch"
-                android:background="?attr/actionBarItemBackground"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/ic_search"
-                android:padding="7.5dp"
-                android:layout_marginStart="@dimen/grid_3" />
+                android:id="@+id/btnCollapse"
+                app:layout_constraintTop_toTopOf="@+id/tvAuthors"
+                app:layout_constraintBottom_toBottomOf="@+id/tvAuthors"
+                app:srcCompat="@drawable/ic_arrow_down"
+                android:background="?actionBarItemBackground"
+                android:padding="5dp"
+                android:layout_marginStart="@dimen/backButtonMargin"
+                app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatEditText
+        <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:id="@+id/etSearchQuery"
-                android:hint="@string/searchForAuthors"
-                android:background="@android:color/transparent"
-                android:layout_marginHorizontal="@dimen/grid_1"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:ellipsize="end"
-                android:textSize="16sp"
-                app:layout_constraintTop_toTopOf="@+id/btnSearch"
-                app:layout_constraintBottom_toBottomOf="@+id/btnSearch"
-                app:layout_constraintStart_toEndOf="@+id/btnSearch"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:layout_height="40dp"
+                style="@style/Style.QuizApp.BottomSheetHeading.TextAppearance"
+                android:textStyle="bold"
+                android:lines="1"
+                android:text="@string/authors"
+                android:id="@+id/tvAuthors"
+                android:gravity="center_vertical"
+                android:layout_marginStart="@dimen/grid_4"
+                android:layout_marginTop="17.5dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btnCollapse" />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/searchBarHeight"
+                android:id="@+id/clSearchBar"
+                android:elevation="@dimen/searchBarElevation"
+                android:background="@drawable/search_bar_background"
+                android:backgroundTint="?android:colorBackground"
+                android:layout_marginHorizontal="@dimen/grid_4"
+                android:layout_marginTop="17.5dp"
+                app:layout_constraintTop_toBottomOf="@+id/tvAuthors">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/btnSearch"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:srcCompat="@drawable/ic_search"
+                    android:padding="7.5dp"
+                    android:layout_marginStart="@dimen/grid_3" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/etSearchQuery"
+                    android:hint="@string/searchForAuthors"
+                    android:background="@android:color/transparent"
+                    android:layout_marginHorizontal="@dimen/grid_1"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textSize="16sp"
+                    app:layout_constraintTop_toTopOf="@+id/btnSearch"
+                    app:layout_constraintBottom_toBottomOf="@+id/btnSearch"
+                    app:layout_constraintStart_toEndOf="@+id/btnSearch"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -70,11 +95,26 @@
             android:paddingBottom="150dp"
             android:clipToPadding="false"
             android:id="@+id/rv"
-            tools:listitem="@layout/rvi_user"
-            app:layout_constraintTop_toBottomOf="@id/clSearchBar"
+            tools:listitem="@layout/rvi_author_selection"
+            app:layout_constraintTop_toBottomOf="@id/topLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/btnConfirm" />
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    <com.example.quizapp.view.customimplementations.DataAvailabilityLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dataAvailability"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintVertical_bias="0.25"
+            app:availabilityIcon="@drawable/ic_search_no_results"
+            app:availabilityTitle="@string/noFacultyResultsFoundTitle"
+            app:availabilityText="@string/noFacultyResultsFoundText"
+            app:layout_constraintTop_toBottomOf="@id/topLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"

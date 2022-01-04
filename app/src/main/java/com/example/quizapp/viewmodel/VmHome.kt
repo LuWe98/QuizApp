@@ -27,12 +27,14 @@ import com.example.quizapp.model.ktor.BackendResponse.InsertFilledQuestionnaireR
 import com.example.quizapp.model.ktor.BackendResponse.InsertQuestionnairesResponse
 import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
 import com.example.quizapp.model.ktor.status.SyncStatus.*
-import com.example.quizapp.view.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.utils.LocalDataAvailability
+import com.example.quizapp.utils.asLocalDataAvailability
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.viewmodel.VmHome.*
 import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.*
 import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
-import com.example.quizapp.viewmodel.customimplementations.ViewModelEventMarker
+import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -101,8 +103,12 @@ class VmHome @Inject constructor(
             orderBy = orderBy,
             ascending = ascending,
             hideCompleted = hideCompleted
-        )
-    }.flatMapLatest { it }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+        ).map { list ->
+            list.asLocalDataAvailability {
+                query.isNotEmpty() || authorIds.isNotEmpty() || cosIds.isNotEmpty() || facultyIds.isNotEmpty() || hideCompleted
+            }
+        }
+    }.flatMapLatest { it }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDataAvailability.DataFound(emptyList()))
 
 
     fun onSwipeRefreshTriggered() = launch(IO) {
@@ -116,7 +122,7 @@ class VmHome @Inject constructor(
     }
 
     fun onClearSearchQueryClicked() = launch(IO) {
-        if (searchQuery.isNotBlank()) {
+        if (searchQuery.isNotEmpty()) {
             eventChannel.send(ClearSearchQueryEvent)
         }
     }
@@ -296,7 +302,7 @@ class VmHome @Inject constructor(
     }
 
 
-    sealed class FragmentHomeEvent : ViewModelEventMarker {
+    sealed class FragmentHomeEvent : UiEventMarker {
         class ShowMessageSnackBar(val messageRes: Int) : FragmentHomeEvent()
         data class ShowUndoDeleteSnackBar(
             @StringRes val messageRes: Int,

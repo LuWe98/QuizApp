@@ -52,11 +52,11 @@
                     app:layout_constraintEnd_toStartOf="@+id/btnListQuestions" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:id="@+id/btnListQuestions"
                     android:background="?actionBarItemBackground"
-                    android:padding="7.5dp"
+                    android:padding="6dp"
                     app:tint="?colorPrimary"
                     android:layout_marginEnd="@dimen/grid_2"
                     app:layout_constraintEnd_toStartOf="@+id/btnAddQuestion"
@@ -65,12 +65,12 @@
                     app:srcCompat="@drawable/ic_list" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:id="@+id/btnAddQuestion"
                     android:background="?actionBarItemBackground"
                     android:layout_marginEnd="@dimen/grid_1"
-                    android:padding="7.5dp"
+                    android:padding="5dp"
                     app:tint="?colorPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"

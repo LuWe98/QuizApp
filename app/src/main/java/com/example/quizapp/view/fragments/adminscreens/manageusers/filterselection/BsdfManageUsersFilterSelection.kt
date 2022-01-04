@@ -12,7 +12,7 @@ import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.setImageDrawable
 import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
-import com.example.quizapp.view.fragments.resultdispatcher.setFragmentResultEventListener
+import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.viewmodel.VmManageUsersFilterSelection
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint

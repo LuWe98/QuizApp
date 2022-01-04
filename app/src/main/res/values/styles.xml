@@ -73,7 +73,7 @@
         <item name="chipIcon">@drawable/ic_add</item>
         <item name="chipIconSize">20dp</item>
         <item name="chipIconTint">?colorPrimary</item>
-        <item name="chipStartPadding">@dimen/grid_0_5</item>
+        <item name="chipStartPadding">@dimen/grid_1_5</item>
         <item name="chipEndPadding">@dimen/grid_1</item>
         <item name="chipMinHeight">30dp</item>
         <item name="chipMinTouchTargetSize">35dp</item>
@@ -84,7 +84,7 @@
         <item name="chipStrokeColor">@color/transparent</item>
         <item name="chipBackgroundColor">?colorAccent</item>
         <item name="chipIconTint">?colorPrimary</item>
-        <item name="chipStartPadding">@dimen/grid_0_5</item>
+        <item name="chipStartPadding">@dimen/grid_1_5</item>
         <item name="chipEndPadding">@dimen/grid_1</item>
         <item name="chipMinHeight">30dp</item>
         <item name="chipMinTouchTargetSize">35dp</item>
@@ -96,7 +96,7 @@
     <style name="Style.QuizApp.FilterChip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">?colorOnPrimary</item>
         <item name="chipIconTint">?colorPrimary</item>
-        <item name="chipStartPadding">@dimen/grid_0_5</item>
+        <item name="chipStartPadding">@dimen/grid_1_5</item>
         <item name="chipEndPadding">@dimen/grid_1</item>
         <item name="chipMinHeight">30dp</item>
         <item name="chipMinTouchTargetSize">35dp</item>
@@ -116,5 +116,16 @@
         <item name="autoSizeTextType">uniform</item>
         <item name="android:gravity">center</item>
         <item name="maxLines">1</item>
+    </style>
+
+    <style name="Style.QuizApp.BottomSheetHeading.TextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">?headingTextColor</item>
+        <item name="autoSizeMaxTextSize">17.5sp</item>
+        <item name="autoSizeMinTextSize">15sp</item>
+        <item name="autoSizeStepGranularity">0.5dp</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="android:gravity">center</item>
+        <item name="maxLines">1</item>
+        <item name="android:ellipsize">end</item>
     </style>
 </resources>
