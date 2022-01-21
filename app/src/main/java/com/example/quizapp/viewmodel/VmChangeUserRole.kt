@@ -11,7 +11,7 @@ import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.Navig
 import com.example.quizapp.view.fragments.adminscreens.manageusers.BsdfUserRoleChangeArgs
 import com.example.quizapp.viewmodel.VmChangeUserRole.*
 import com.example.quizapp.viewmodel.VmChangeUserRole.FragmentChangeUserRoleEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class VmChangeUserRole @Inject constructor(
     private val backendRepository: BackendRepository,
     state: SavedStateHandle
-) : BaseViewModel<FragmentChangeUserRoleEvent>() {
+) : EventViewModel<FragmentChangeUserRoleEvent>() {
 
     private val args = BsdfUserRoleChangeArgs.fromSavedStateHandle(state)
 

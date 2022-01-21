@@ -11,6 +11,7 @@ import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.properties.QuestionnaireVisibility.*
 import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.asRoomListLoadStatus
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Question
 import com.example.quizapp.model.databases.room.entities.Questionnaire
@@ -23,7 +24,6 @@ import com.example.quizapp.model.ktor.BackendResponse.*
 import com.example.quizapp.model.ktor.BackendResponse.InsertQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.utils.CsvDocumentFilePicker.*
-import com.example.quizapp.utils.asLocalDataAvailability
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
@@ -33,7 +33,7 @@ import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.Sel
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.AddEditQuestionMoreOptionsItem
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.*
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.AddEditQuestionnaireEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.http.cio.*
@@ -56,7 +56,7 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val dataMapper: DataMapper,
     private val state: SavedStateHandle,
     private val app: QuizApplication
-) : BaseViewModel<AddEditQuestionnaireEvent>() {
+) : EventViewModel<AddEditQuestionnaireEvent>() {
 
     private val args = AddEditNavGraphArgs.fromSavedStateHandle(state)
 
@@ -133,7 +133,7 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val questionsWithAnswers get() = questionsWithAnswersMutableStateFlow.value.toMutableList()
 
     val filteredQuestionsWithAnswersFlow = combine(questionsWithAnswersMutableStateFlow, questionSearchQueryMutableStateFlow) { qwa, query ->
-        qwa.filter { it.question.questionText.lowercase().contains(query.lowercase()) }.asLocalDataAvailability(query::isNotEmpty)
+        qwa.filter { it.question.questionText.lowercase().contains(query.lowercase()) }.asRoomListLoadStatus(query::isNotEmpty)
     }.distinctUntilChanged()
 
 
@@ -189,6 +189,10 @@ class VmAddEditQuestionnaire @Inject constructor(
 
     fun onCourseOfStudiesButtonClicked() = launch(IO) {
         navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(coursesOfStudiesIdsMutableStateFlow.value))
+    }
+
+    fun onClearCourseOfStudiesClicked() {
+        setCoursesOfStudiesIds(emptySet())
     }
 
     fun onTitleCardClicked() = launch(IO) {

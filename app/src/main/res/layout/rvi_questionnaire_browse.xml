@@ -8,13 +8,11 @@
         app:cardBackgroundColor="?colorOnPrimary"
         app:cardElevation="2dp"
         android:layout_marginTop="@dimen/grid_3"
-        android:layout_marginHorizontal="@dimen/grid_2"
-        app:cardCornerRadius="7.5dp">
+        app:cardCornerRadius="@dimen/itemCardCornerRadius">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/grid_2">
+            android:layout_height="90dp">
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:layout_width="45dp"
@@ -38,7 +36,7 @@
                 android:layout_height="35dp"
                 android:id="@+id/btnDownload"
                 app:srcCompat="@drawable/ic_cloud_download"
-                android:layout_marginStart="@dimen/grid_2"
+                android:layout_marginStart="@dimen/grid_3"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:tint="@color/white"
@@ -47,43 +45,47 @@
                 android:backgroundTint="@color/unselectedColor"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:id="@+id/tvDateAndQuestionAmount"
-                tools:text="01.10.2021 - 24"
-                android:textSize="13sp"
-                app:layout_constraintStart_toEndOf="@id/btnDownload"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginStart="@dimen/grid_4"/>
-
-        <com.google.android.material.textview.MaterialTextView
+        <RelativeLayout
                 android:layout_width="0dp"
+                android:id="@+id/textLayout"
+                android:layout_marginStart="@dimen/grid_3"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvTitle"
-                android:gravity="center_vertical"
-                app:layout_constraintStart_toEndOf="@id/btnDownload"
-                tools:text="Questionnaire Title"
-                android:textSize="18sp"
-                android:maxLines="1"
-                android:textStyle="bold"
-                android:layout_marginStart="@dimen/grid_4"
-                app:layout_constraintTop_toBottomOf="@+id/tvDateAndQuestionAmount"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:id="@+id/tvInfo"
-                tools:text="WIB - PROMOD 1"
-                android:gravity="center_vertical"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginStart="@dimen/grid_4"
                 app:layout_constraintStart_toEndOf="@+id/btnDownload"
-                app:layout_constraintTop_toBottomOf="@+id/tvTitle"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/btnDownload"
+                app:layout_constraintBottom_toBottomOf="@+id/btnDownload"
+                app:layout_constraintEnd_toStartOf="@+id/btnExpand">
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvTitle"
+                    android:gravity="center_vertical"
+                    tools:text="Questionnaire Title"
+                    android:textSize="17sp"
+                    android:textColor="?dominantTextColor" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:id="@+id/tvDateAndQuestionAmount"
+                    tools:text="Prof. Oliver Tamine  -  03.01.2022"
+                    android:textSize="13sp"
+                    android:layout_below="@id/tvTitle" />
+
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="35dp"
+                android:layout_height="match_parent"
+                android:id="@+id/btnExpand"
+                android:layout_marginEnd="@dimen/grid_2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_right"
+                app:tint="@color/hfuDarkerGreen"
+                android:padding="7.5dp"
+                android:elevation="1dp"
+                app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

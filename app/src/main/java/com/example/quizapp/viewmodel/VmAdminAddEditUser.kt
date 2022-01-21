@@ -16,7 +16,7 @@ import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringR
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmAdminAddEditUser.*
 import com.example.quizapp.viewmodel.VmAdminAddEditUser.AddEditUserEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -28,7 +28,7 @@ import javax.inject.Inject
 class VmAdminAddEditUser @Inject constructor(
     private val backendRepository: BackendRepository,
     private val state: SavedStateHandle
-) : BaseViewModel<AddEditUserEvent>() {
+) : EventViewModel<AddEditUserEvent>() {
 
     private val args = FragmentAdminAddEditUserArgs.fromSavedStateHandle(state)
 

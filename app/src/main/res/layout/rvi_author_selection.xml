@@ -6,8 +6,8 @@
         android:layout_height="wrap_content"
         app:cardBackgroundColor="?colorOnPrimary"
         app:cardElevation="1dp"
-        android:layout_marginTop="@dimen/grid_2"
-        app:cardCornerRadius="10dp">
+        android:layout_marginTop="@dimen/grid_3"
+        app:cardCornerRadius="@dimen/itemCardCornerRadius">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -35,6 +35,7 @@
                 android:ellipsize="end"
                 tools:text="@string/authorName"
                 android:textSize="14sp"
+                android:textColor="?dominantTextColor"
                 android:layout_marginEnd="@dimen/grid_2"
                 android:layout_marginStart="@dimen/grid_3"
                 app:layout_constraintStart_toEndOf="@+id/roleIcon"

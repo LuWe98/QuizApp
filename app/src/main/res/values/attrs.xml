@@ -31,6 +31,7 @@
         <attr name="text" format="string"/>
         <attr name="textColor" format="color"/>
         <attr name="icon"/>
+        <attr name="iconTint" format="color"/>
         <attr name="iconPadding"/>
     </declare-styleable>
 
@@ -40,8 +41,10 @@
         <attr name="text"/>
         <attr name="textColor"/>
         <attr name="icon"/>
+        <attr name="iconTint"/>
         <attr name="iconPadding"/>
         <attr name="dropDownIcon" format="reference"/>
+        <attr name="dropDownIconTint" format="color"/>
         <attr name="dropDownIconPadding" format="dimension"/>
     </declare-styleable>
 
@@ -51,8 +54,10 @@
         <attr name="text"/>
         <attr name="textColor"/>
         <attr name="icon"/>
+        <attr name="iconTint"/>
         <attr name="iconPadding"/>
         <attr name="dropDownIcon"/>
+        <attr name="dropDownIconTint"/>
         <attr name="dropDownIconPadding"/>
     </declare-styleable>
 
@@ -62,8 +67,10 @@
         <attr name="text"/>
         <attr name="textColor"/>
         <attr name="icon"/>
+        <attr name="iconTint"/>
         <attr name="iconPadding"/>
         <attr name="dropDownIcon"/>
+        <attr name="dropDownIconTint"/>
         <attr name="dropDownIconPadding"/>
         <attr name="maxLines" format="integer"/>
     </declare-styleable>

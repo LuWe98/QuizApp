@@ -11,10 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/topLayout"
-            android:elevation="2dp"
             android:clipToPadding="false"
-            android:background="@drawable/background_round_corners_top_15dp"
-            android:backgroundTint="?colorOnPrimary"
             app:layout_constraintTop_toTopOf="parent"
             android:paddingBottom="@dimen/grid_4">
 
@@ -71,8 +68,8 @@
                 android:id="@+id/clSearchBar"
                 android:elevation="@dimen/searchBarElevation"
                 android:background="@drawable/search_bar_background"
-                android:backgroundTint="?android:colorBackground"
-                android:layout_marginHorizontal="@dimen/grid_4"
+                android:backgroundTint="?colorOnPrimary"
+                android:layout_marginHorizontal="@dimen/grid_6"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/sheetHeader"
                 app:layout_constraintEnd_toEndOf="parent">

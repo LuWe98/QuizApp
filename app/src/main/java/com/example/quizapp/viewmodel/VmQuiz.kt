@@ -8,6 +8,7 @@ import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.asRoomListLoadStatus
 import com.example.quizapp.model.databases.room.entities.Answer
 import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
@@ -18,11 +19,10 @@ import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.InsertFilledQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus
-import com.example.quizapp.utils.asLocalDataAvailability
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.viewmodel.VmQuiz.*
 import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.date.*
@@ -42,7 +42,7 @@ class VmQuiz @Inject constructor(
     private val backendRepository: BackendRepository,
     private val dataMapper: DataMapper,
     private val state: SavedStateHandle
-) : BaseViewModel<FragmentQuizEvent>() {
+) : EventViewModel<FragmentQuizEvent>() {
 
     private val args = QuizNavGraphArgs.fromSavedStateHandle(state)
 
@@ -89,7 +89,7 @@ class VmQuiz @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     val questionsWithAnswersFilteredFlow = combine(questionsWithAnswersFlow, questionSearchQueryMutableStateFlow) { qwa, query ->
-        qwa.filter { it.question.questionText.lowercase().contains(query.lowercase()) }.asLocalDataAvailability(query::isNotEmpty)
+        qwa.filter { it.question.questionText.lowercase().contains(query.lowercase()) }.asRoomListLoadStatus(query::isNotEmpty)
     }.distinctUntilChanged()
 
 

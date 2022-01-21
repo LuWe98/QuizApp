@@ -59,7 +59,7 @@ class RvaAdminUser : BindingPagingDataAdapter<User, RviUserBinding>(User.DIFF_CA
         root.isVisible = true
         root.updateLayoutParams<RecyclerView.LayoutParams> {
             height = RecyclerView.LayoutParams.WRAP_CONTENT
-            setMargins(0, context.resources.getDimension(R.dimen.grid_2).toInt(),0,0)
+            setMargins(0, context.resources.getDimension(R.dimen.grid_3).toInt(),0,0)
         }
     }
 

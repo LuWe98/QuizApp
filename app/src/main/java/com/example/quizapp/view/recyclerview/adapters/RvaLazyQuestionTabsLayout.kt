@@ -62,7 +62,6 @@ class RvaLazyQuestionTabsLayout(
             binding.apply {
                 val isPositionSelected = bindingAdapterPosition == lazyTabLayout.currentItem
 
-                //defaultBackgroundColor
                 val tabTextColor: Int
                 val tabBackgroundTint: Int
                 val tabSelectedStrokeColor: ColorStateList
@@ -75,7 +74,7 @@ class RvaLazyQuestionTabsLayout(
                     tabSelectedBackgroundColor = getColorStateList(getThemeColor(R.attr.colorOnPrimary))
                 } else {
                     tabTextColor = if (isPositionSelected || predicateCurrent) getColor(R.color.white) else getThemeColor(R.attr.colorControlNormal)
-                    tabBackgroundTint = if (predicateCurrent) getThemeColor(R.attr.colorAccent) else getColor(defaultBackgroundColor)
+                    tabBackgroundTint = if (predicateCurrent) getThemeColor(R.attr.colorAccent) else getThemeColor(R.attr.colorOnPrimary)
                     getColorStateList(getThemeColor(R.attr.colorPrimary)).let { colorStateList ->
                         tabSelectedStrokeColor = colorStateList
                         tabSelectedBackgroundColor = colorStateList
@@ -149,12 +148,12 @@ class RvaLazyQuestionTabsLayout(
                 when {
                     predicateOther && predicateCurrent -> binding.getColor(R.color.green)
                     predicateOther == predicateCurrent -> binding.getColor(R.color.red)
-                    else -> binding.getColor(defaultBackgroundColor)
+                    else -> binding.getThemeColor(R.attr.colorOnPrimary)
                 }
             } else {
                 when {
                     predicateOther && predicateCurrent -> binding.getThemeColor(R.attr.colorAccent)
-                    else -> binding.getColor(defaultBackgroundColor)
+                    else -> binding.getThemeColor(R.attr.colorOnPrimary)
                 }
             }
         }

@@ -7,7 +7,7 @@
         app:cardBackgroundColor="?colorOnPrimary"
         app:cardElevation="1dp"
         android:layout_marginTop="@dimen/grid_3"
-        app:cardCornerRadius="10dp">
+        app:cardCornerRadius="@dimen/itemCardCornerRadius">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

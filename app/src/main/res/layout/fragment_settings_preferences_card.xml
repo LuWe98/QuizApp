@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/background_round_corners_10dp"
-        android:backgroundTint="?android:colorBackground"
+        android:backgroundTint="?colorOnPrimary"
         xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.textview.MaterialTextView
@@ -12,19 +12,16 @@
             android:layout_height="50dp"
             android:id="@+id/preferencesHeader"
             android:text="@string/preference"
-            android:background="@drawable/background_round_corners_15dp"
-            android:backgroundTint="?android:colorBackground"
+            android:textColor="@color/hfuDarkGreen"
             android:gravity="center_vertical"
             android:paddingHorizontal="@dimen/grid_4"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_round_corners_10dp"
-            android:backgroundTint="?colorOnPrimary"
             android:layout_marginHorizontal="@dimen/grid_1"
             android:layout_marginBottom="@dimen/grid_1"
             app:layout_constraintStart_toStartOf="parent"

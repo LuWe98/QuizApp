@@ -51,8 +51,10 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
             tvSave.onClick(vmAddEdit::onSaveButtonClicked)
             abbreviationCard.onClick(vmAddEdit::onAbbreviationCardClicked)
             nameCard.onClick(vmAddEdit::onNameCardClicked)
-            btnAddFaculty.onClick(vmAddEdit::onFacultyCardClicked)
             degreeCard.onClick(vmAddEdit::onDegreeCardClicked)
+
+            btnAddFaculty.onClick(vmAddEdit::onFacultyCardClicked)
+            btnClearFaculties.onClick(vmAddEdit::onClearFacultiesClicked)
         }
     }
 

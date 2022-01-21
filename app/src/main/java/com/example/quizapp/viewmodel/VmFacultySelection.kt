@@ -5,14 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.utils.LocalDataAvailability
-import com.example.quizapp.utils.asLocalDataAvailability
+import com.example.quizapp.model.databases.room.RoomListLoadStatus
+import com.example.quizapp.model.databases.room.asRoomListLoadStatus
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.fragments.dialogs.facultyselection.BsdfFacultySelectionArgs
 import com.example.quizapp.viewmodel.VmFacultySelection.FacultySelectionEvent
 import com.example.quizapp.viewmodel.VmFacultySelection.FacultySelectionEvent.ClearSearchQueryEvent
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class VmFacultySelection @Inject constructor(
     localRepository: LocalRepository,
     private val state: SavedStateHandle
-) : BaseViewModel<FacultySelectionEvent>() {
+) : EventViewModel<FacultySelectionEvent>() {
 
     private val args = BsdfFacultySelectionArgs.fromSavedStateHandle(state)
 
@@ -44,9 +44,9 @@ class VmFacultySelection @Inject constructor(
 
     val facultyFlow = searchQueryMutableStateFlow.flatMapLatest { query ->
         localRepository.findFacultiesWithNameFlow(query).map { list ->
-            list.asLocalDataAvailability(query::isNotEmpty)
+            list.asRoomListLoadStatus(query::isNotEmpty)
         }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDataAvailability.DataFound(emptyList()))
+    }.stateIn(viewModelScope, SharingStarted.Lazily, RoomListLoadStatus.DataFound(emptyList()))
 
 
     fun isFacultySelected(courseOfStudiesId: String) = selectedFacultyIds.contains(courseOfStudiesId)

@@ -13,7 +13,7 @@ import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatch
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmLocalQuestionnaireFilterSelection.LocalQuestionnaireFilterSelectionEvent
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -26,7 +26,7 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle
-) : BaseViewModel<LocalQuestionnaireFilterSelectionEvent>() {
+) : EventViewModel<LocalQuestionnaireFilterSelectionEvent>() {
 
     private val selectedOrderByMutableStateFlow = state.getMutableStateFlow(SELECTED_ORDER_BY_KEY, runBlocking(IO) {
         preferencesRepository.getLocalQuestionnaireOrderBy()
@@ -88,27 +88,42 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
     private val selectedFacultiesIds get() = selectedFacultyIdsMutableStateFlow.value
 
 
+
+
+    private fun setAuthorIdList(ids: Set<String>) {
+        state.set(SELECTED_AUTHORS_KEY, ids)
+        selectedAuthorIdsMutableStateFlow.value = ids
+    }
+
+    private fun setCosIdList(ids: Set<String>) {
+        state.set(SELECTED_COS_IDS_KEY, ids)
+        selectedCosIdsMutableStateFlow.value = ids
+    }
+
+    private fun setFacultyIdList(ids: Set<String>) {
+        state.set(SELECTED_FACULTY_IDS_KEY, ids)
+        selectedFacultyIdsMutableStateFlow.value = ids
+    }
+
+
     fun removeFilteredAuthor(author: AuthorInfo) {
         selectedAuthorIds.toMutableSet().apply {
             remove(author.userId)
-            state.set(SELECTED_AUTHORS_KEY, this)
-            selectedAuthorIdsMutableStateFlow.value = this
+            setAuthorIdList(this)
         }
     }
 
     fun removeFilteredCourseOfStudies(courseOfStudies: CourseOfStudies) {
         selectedCosIds.toMutableSet().apply {
             remove(courseOfStudies.id)
-            state.set(SELECTED_COS_IDS_KEY, this)
-            selectedCosIdsMutableStateFlow.value = this
+            setCosIdList(this)
         }
     }
 
     fun removeFilteredFaculty(faculty: Faculty) {
         selectedFacultiesIds.toMutableSet().apply {
             remove(faculty.id)
-            state.set(SELECTED_AUTHORS_KEY, this)
-            selectedFacultyIdsMutableStateFlow.value = this
+            setFacultyIdList(this)
         }
     }
 
@@ -124,6 +139,19 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
         navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(selectedCosIds))
     }
 
+    fun onClearAuthorFilterClicked() {
+        setAuthorIdList(emptySet())
+    }
+
+    fun onClearCourseOfStudiesFilterClicked() {
+        setCosIdList(emptySet())
+    }
+
+    fun onClearFacultyFilterClicked() {
+        setFacultyIdList(emptySet())
+    }
+
+
     fun onOrderByCardClicked() = launch(IO) {
         navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.LocalOrderBySelection(selectedOrderBy)))
     }
@@ -134,24 +162,15 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
     }
 
     fun onAuthorsSelectionResultReceived(result: FragmentResult.LocalAuthorSelectionResult) {
-        result.authorIds.toSet().let {
-            state.set(SELECTED_AUTHORS_KEY, it)
-            selectedAuthorIdsMutableStateFlow.value = it
-        }
+        setAuthorIdList(result.authorIds.toSet())
     }
 
     fun onFacultiesSelectionResultReceived(result: FragmentResult.FacultySelectionResult) {
-        result.facultyIds.toSet().apply {
-            state.set(SELECTED_FACULTY_IDS_KEY, this)
-            selectedFacultyIdsMutableStateFlow.value = this
-        }
+        setFacultyIdList(result.facultyIds.toSet())
     }
 
     fun onCourseOfStudiesSelectionResultReceived(result: FragmentResult.CourseOfStudiesSelectionResult) {
-        result.courseOfStudiesIds.toSet().apply {
-            state.set(SELECTED_COS_IDS_KEY, this)
-            selectedCosIdsMutableStateFlow.value = this
-        }
+        setCosIdList(result.courseOfStudiesIds.toSet())
     }
 
     fun onOrderAscendingCardClicked() {

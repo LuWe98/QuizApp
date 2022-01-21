@@ -327,7 +327,7 @@
             android:id="@+id/bsdfRemoteAuthorSelection"
             android:name="com.example.quizapp.view.fragments.dialogs.authorselection.BsdfRemoteAuthorSelection"
             android:label="BsdfAuthorSelection"
-            tools:layout="@layout/bsdf_author_selection">
+            tools:layout="@layout/bsdf_author_selection_local">
         <argument
                 android:name="selectedAuthors"
                 app:argType="com.example.quizapp.model.databases.properties.AuthorInfo[]" />
@@ -471,7 +471,7 @@
             android:id="@+id/bsdfLocalAuthorSelection"
             android:name="com.example.quizapp.view.fragments.dialogs.authorselection.BsdfLocalAuthorSelection"
             android:label="BsdfLocalAuthorSelection"
-            tools:layout="@layout/bsdf_author_selection">
+            tools:layout="@layout/bsdf_author_selection_local">
         <argument
                 android:name="selectedAuthorIds"
                 app:argType="string[]" />

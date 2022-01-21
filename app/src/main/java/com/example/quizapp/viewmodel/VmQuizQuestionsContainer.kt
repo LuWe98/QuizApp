@@ -14,7 +14,7 @@ import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.Navig
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerArgs
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.*
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.FragmentQuizContainerEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -25,7 +25,7 @@ class VmQuizQuestionsContainer @Inject constructor(
     private val localRepository: LocalRepository,
     private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
-) : BaseViewModel<FragmentQuizContainerEvent>() {
+) : EventViewModel<FragmentQuizContainerEvent>() {
 
     private val args = FragmentQuizQuestionsContainerArgs.fromSavedStateHandle(state)
 

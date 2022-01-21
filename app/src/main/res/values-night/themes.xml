@@ -1,15 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Splash Theme -->
+    <style name="Theme.QuizApp.Splash" parent="Theme.QuizApp.Splash.Dark"/>
     <!-- Base theme -->
     <style name="Theme.QuizApp" parent="Theme.QuizApp.Dark"/>
     <!-- Base BottomSheetDialogTheme -->
     <style name="Theme.QuizApp.BottomSheetDialog" parent="Theme.QuizApp.BottomSheetDialog.Dark"/>
-    <!-- Base BottomSheetDialogTheme For Input -->
-    <style name="Theme.QuizApp.BottomSheetDialog.Resize" parent="Theme.QuizApp.BottomSheetDialog.Dark.Resize"/>
     <!-- Base DialogFragmentTheme -->
     <style name="Theme.QuizApp.DialogFragment" parent="Theme.QuizApp.DialogFragment.Dark"/>
     <!-- Base DialogFragmentLoadingTheme -->
     <style name="Theme.QuizApp.DialogFragment.Loading" parent="Theme.QuizApp.DialogFragment.Loading.Dark"/>
+
+
+    <!-- Light Splash Theme -->
+    <style name="Theme.QuizApp.Splash.Dark" parent="Theme.QuizApp.Splash.Light">
+        <item name="windowSplashScreenBackground">@color/hfuDarkGreen</item>
+    </style>
+
 
 
     <!-- Dark Base theme -->
@@ -17,6 +24,8 @@
         <!-- Colors -->
         <item name="colorPrimary">@color/darkColorPrimary</item>
         <item name="colorPrimaryVariant">@color/darkColorPrimaryVariant</item>
+
+
         <item name="colorOnPrimary">@color/darkColorOnPrimary</item>
 
         <item name="colorSecondary">@color/darkColorSecondary</item>
@@ -44,8 +53,8 @@
         <item name="invertedDefaultTextColor">@color/lightDefaultTextColor</item>
         <item name="invertedDominantTextColor">@color/lightDominantTextColor</item>
         <item name="headingTextColor">@color/white</item>
-
     </style>
+
 
 
     <!-- Dark BottomSheetDialogTheme -->
@@ -81,10 +90,6 @@
     </style>
 
 
-    <style name= "Theme.QuizApp.BottomSheetDialog.Dark.Resize"  parent="@style/Theme.QuizApp.BottomSheetDialog.Dark">
-        <item name="android:windowSoftInputMode">adjustResize</item>
-    </style>
-
 
     <!-- Dark DialogFragmentTheme -->
     <style name="Theme.QuizApp.DialogFragment.Dark" parent="Theme.QuizApp.DialogFragment.Light">
@@ -118,7 +123,10 @@
 
     </style>
 
+
+
     <!-- Light DialogFragmentLoadingTheme. -->
     <style name="Theme.QuizApp.DialogFragment.Loading.Dark" parent="Theme.QuizApp.DialogFragment.Loading.Light">
+
     </style>
 </resources>

@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminManageUsersBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.ListLoadItemType
+import com.example.quizapp.model.ktor.paging.PagingUiState
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.view.recyclerview.adapters.RvaAdminUser
@@ -66,7 +68,6 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
 
         vmAdmin.filteredPagedDataStateFlow.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitData(it)
-            binding.swipeRefreshLayout.isRefreshing = false
         }
 
         vmAdmin.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
@@ -75,8 +76,8 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
             }
         }
 
-        rvAdapter.addLoadStateListener {
-            vmAdmin.onListLoadStateChanged(it, rvAdapter.itemCount)
+        rvAdapter.loadStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            vmAdmin.onLoadStateChanged(it, rvAdapter.itemCount)
         }
 
         vmAdmin.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
@@ -91,16 +92,12 @@ class FragmentAdminManageUsers : BindingFragment<FragmentAdminManageUsersBinding
                 }
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
                 is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes)
-                is ChangeResultLayoutVisibility -> {
-                    log("STATE: ${event.state}")
-                    event.state.adjustVisibilities(
-                        binding.rv,
-                        binding.dataAvailability,
-                        R.string.noUserResultsFoundTitle,
-                        R.string.noUserResultsFoundText,
-                        R.string.noUserDataExistsTitle,
-                        R.string.noUserDataExistsText
-                    )
+                is NewPagingUiStateEvent -> {
+                    event.state.adjustUi(
+                        ListLoadItemType.USER,
+                        binding.swipeRefreshLayout,
+                        binding.dataAvailability
+                    ) { showSnackBar(R.string.errorCouldNotReachBackendTitle) }
                 }
             }
         }

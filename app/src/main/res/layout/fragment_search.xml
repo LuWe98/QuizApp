@@ -11,8 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/topLayout"
-            android:background="?colorOnPrimary"
-            android:elevation="2dp"
+            android:clipToPadding="false"
             android:paddingBottom="@dimen/grid_4"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -39,14 +38,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="@+id/btnBack" />
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/searchBarHeight"
                 android:id="@+id/clSearchBar"
+                android:elevation="1dp"
                 android:background="@drawable/search_bar_background"
-                android:backgroundTint="?android:colorBackground"
-                android:layout_marginHorizontal="@dimen/grid_4"
+                android:backgroundTint="?colorOnPrimary"
+                android:layout_marginHorizontal="@dimen/grid_6"
                 android:layout_marginTop="@dimen/grid_4"
                 app:layout_constraintTop_toBottomOf="@+id/btnBack">
 
@@ -108,10 +107,27 @@
                 android:id="@+id/rv"
                 tools:listitem="@layout/rvi_questionnaire_browse"
                 android:clipToPadding="false"
-                android:paddingTop="@dimen/grid_4"
-                android:paddingHorizontal="@dimen/grid_3"
+                android:paddingTop="@dimen/grid_2"
+                android:paddingHorizontal="@dimen/grid_6"
                 android:paddingBottom="100dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressTest"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:trackCornerRadius="45dp"
+            app:indicatorSize="90dp"
+            app:trackThickness="7.5dp"
+            android:indeterminateOnly="true"
+            android:indeterminate="true"
+            app:indicatorColor="@color/red" />
+
 
     <com.example.quizapp.view.customimplementations.DataAvailabilityLayout
             android:layout_width="match_parent"

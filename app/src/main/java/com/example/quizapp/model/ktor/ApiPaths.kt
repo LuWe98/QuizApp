@@ -2,47 +2,58 @@ package com.example.quizapp.model.ktor
 
 sealed class ApiPaths {
 
+    abstract val root: String
+
     object UserPaths : ApiPaths() {
-        const val LOGIN = "/user/login"
-        const val REGISTER = "/user/register"
-        const val CREATE = "/user/admin/create"
-        const val SYNC = "/user/sync"
-        const val REFRESH_TOKEN = "/user/token"
-        const val DELETE_SELF = "/user/delete"
-        const val DELETE_USER = "/user/admin/delete"
-        const val UPDATE_PASSWORD = "/user/update/password"
-        const val UPDATE_USERNAME = "/user/update/username"
-        const val UPDATE_ROLE = "/user/admin/update/role"
-        const val AUTHORS_PAGED = "/authors/paged"
-        const val USERS_PAGED_ADMIN = "/users/admin/paged"
+        override val root = "/user"
+
+        val LOGIN get() = "/user/login"
+        val REGISTER get() = "/user/register"
+        val CREATE get() = "/user/admin/create"
+        val SYNC get() = "/user/sync"
+        val REFRESH_TOKEN get() = "/user/token"
+        val DELETE_SELF get() = "/user/delete"
+        val DELETE_USER get() = "/user/admin/delete"
+        val UPDATE_PASSWORD get() = "/user/update/password"
+        val UPDATE_USERNAME get() = "/user/update/username"
+        val UPDATE_ROLE get() = "/user/admin/update/role"
+        val USERS_PAGED_ADMIN get() = "/users/admin/paged"
+        val AUTHORS_PAGED get() = "/authors/paged"
     }
 
     object QuestionnairePaths : ApiPaths() {
-        const val SYNC = "/questionnaire/sync"
-        const val INSERT = "/questionnaires/insert"
-        const val DELETE = "/questionnaire/delete"
-        const val PAGED = "/questionnaires/paged"
-        const val DOWNLOAD = "/questionnaire/download"
-        const val UPDATE_VISIBILITY = "/questionnaire/visibility"
-        const val SHARE = "/questionnaire/share"
+        override val root = "/questionnaire"
+
+        val SYNC get() = "/questionnaire/sync"
+        val INSERT get() = "/questionnaires/insert"
+        val DELETE get() = "/questionnaire/delete"
+        val PAGED get() = "/questionnaires/paged"
+        val DOWNLOAD get() = "/questionnaire/download"
+        val UPDATE_VISIBILITY get() = "/questionnaire/visibility"
+        val SHARE get() = "/questionnaire/share"
     }
 
     object FilledQuestionnairePaths : ApiPaths() {
-        const val INSERT_SINGLE = "/questionnaire/filled/insert"
-        const val INSERT_MULTIPLE = "/questionnaires/filled/insert"
-        const val DELETE = "/questionnaire/filled/delete"
+        override val root = "/filledQuestionnaire"
+
+        val INSERT_SINGLE get() = "/questionnaire/filled/insert"
+        val INSERT_MULTIPLE get() = "/questionnaires/filled/insert"
+        val DELETE get() = "/questionnaire/filled/delete"
     }
 
     object FacultyPaths : ApiPaths() {
-        const val SYNC = "/faculty/sync"
-        const val INSERT = "/faculty/admin/insert"
-        const val DELETE = "/faculty/admin/delete"
+        override val root = "/faculty"
+
+        val SYNC get() = "/faculty/sync"
+        val INSERT get() = "/faculty/admin/insert"
+        val DELETE get() = "/faculty/admin/delete"
     }
 
     object CourseOfStudiesPaths : ApiPaths() {
-        const val SYNC = "/courseOfStudies/sync"
-        const val INSERT = "/courseOfStudies/admin/insert"
-        const val DELETE = "/courseOfStudies/admin/delete"
-    }
+        override val root = "/courseOfStudies"
 
+        val SYNC get() = "/courseOfStudies/sync"
+        val INSERT get() = "/courseOfStudies/admin/insert"
+        val DELETE get() = "/courseOfStudies/admin/delete"
+    }
 }

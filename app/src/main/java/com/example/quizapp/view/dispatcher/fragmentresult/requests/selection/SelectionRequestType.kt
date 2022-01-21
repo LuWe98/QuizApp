@@ -12,6 +12,7 @@ import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.model.datastore.datawrappers.*
+import com.example.quizapp.model.ktor.status.DownloadStatus
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.*
 import kotlinx.parcelize.Parcelize
@@ -26,94 +27,98 @@ sealed class SelectionRequestType<T : Enum<T>>(
 
     @Parcelize
     data class RoleSelection(val currentRole: Role? = null) : SelectionRequestType<Role>(
-            recyclerViewList = Role.values().toList(),
-            titleProvider = { it.getString(R.string.roleSelection) },
-            resultProvider = { SelectionResult.RoleSelectionResult(it as Role) },
-            isItemSelectedProvider = { currentRole == it }
+        recyclerViewList = Role.values().toList(),
+        titleProvider = { it.getString(R.string.roleSelection) },
+        resultProvider = { SelectionResult.RoleSelectionResult(it as Role) },
+        isItemSelectedProvider = { currentRole == it }
     )
 
     @Parcelize
     data class DegreeSelection(val currentDegree: Degree? = null) : SelectionRequestType<Degree>(
-            recyclerViewList = Degree.values().toList(),
-            titleProvider = { it.getString(R.string.degreeSelection) },
-            resultProvider = { SelectionResult.DegreeSelectionResult(it as Degree) },
-            isItemSelectedProvider = { currentDegree == it }
+        recyclerViewList = Degree.values().toList(),
+        titleProvider = { it.getString(R.string.degreeSelection) },
+        resultProvider = { SelectionResult.DegreeSelectionResult(it as Degree) },
+        isItemSelectedProvider = { currentDegree == it }
     )
 
     @Parcelize
     data class ShuffleTypeSelection(val currentShuffleType: QuestionnaireShuffleType) : SelectionRequestType<QuestionnaireShuffleType>(
-            recyclerViewList = QuestionnaireShuffleType.values().toList(),
-            titleProvider = { it.getString(R.string.shuffleTypeSelection) },
-            resultProvider = { SelectionResult.ShuffleTypeSelectionResult(it as QuestionnaireShuffleType) },
-            isItemSelectedProvider = { currentShuffleType == it }
+        recyclerViewList = QuestionnaireShuffleType.values().toList(),
+        titleProvider = { it.getString(R.string.shuffleTypeSelection) },
+        resultProvider = { SelectionResult.ShuffleTypeSelectionResult(it as QuestionnaireShuffleType) },
+        isItemSelectedProvider = { currentShuffleType == it }
     )
 
     @Parcelize
     data class LanguageSelection(val currentLanguage: QuizAppLanguage) : SelectionRequestType<QuizAppLanguage>(
-            recyclerViewList = QuizAppLanguage.values().toList(),
-            titleProvider = { it.getString(R.string.languageSelection) },
-            resultProvider = { SelectionResult.LanguageSelectionResult(it as QuizAppLanguage) },
-            isItemSelectedProvider = { currentLanguage == it }
+        recyclerViewList = QuizAppLanguage.values().toList(),
+        titleProvider = { it.getString(R.string.languageSelection) },
+        resultProvider = { SelectionResult.LanguageSelectionResult(it as QuizAppLanguage) },
+        isItemSelectedProvider = { currentLanguage == it }
     )
 
     @Parcelize
     data class ThemeSelection(val currentTheme: QuizAppTheme) : SelectionRequestType<QuizAppTheme>(
-            recyclerViewList = QuizAppTheme.values().toList(),
-            titleProvider = { it.getString(R.string.themeSelection) },
-            resultProvider = { SelectionResult.ThemeSelectionResult(it as QuizAppTheme) },
-            isItemSelectedProvider = { currentTheme == it }
+        recyclerViewList = QuizAppTheme.values().toList(),
+        titleProvider = { it.getString(R.string.themeSelection) },
+        resultProvider = { SelectionResult.ThemeSelectionResult(it as QuizAppTheme) },
+        isItemSelectedProvider = { currentTheme == it }
     )
 
     @Parcelize
     data class UserMoreOptionsSelection(val user: User) : SelectionRequestType<UserMoreOptionsItem>(
-            recyclerViewList = UserMoreOptionsItem.values().toList(),
-            titleProvider = { it.getString(R.string._ph, user.userName) },
-            resultProvider = { SelectionResult.UserMoreOptionsSelectionResult(user, it as UserMoreOptionsItem) }
+        recyclerViewList = UserMoreOptionsItem.values().toList(),
+        titleProvider = { it.getString(R.string._ph, user.userName) },
+        resultProvider = { SelectionResult.UserMoreOptionsSelectionResult(user, it as UserMoreOptionsItem) }
     )
 
     @Parcelize
     data class CourseOfStudiesMoreOptionsSelection(val courseOfStudies: CourseOfStudies) : SelectionRequestType<CosMoreOptionsItem>(
-            recyclerViewList = CosMoreOptionsItem.values().toList(),
-            titleProvider = { it.getString(R.string._ph, courseOfStudies.name) },
-            resultProvider = { SelectionResult.CourseOfStudiesMoreOptionsResult(courseOfStudies, it as CosMoreOptionsItem) }
+        recyclerViewList = CosMoreOptionsItem.values().toList(),
+        titleProvider = { it.getString(R.string._ph, courseOfStudies.name) },
+        resultProvider = { SelectionResult.CourseOfStudiesMoreOptionsResult(courseOfStudies, it as CosMoreOptionsItem) }
     )
 
     @Parcelize
     data class FacultyMoreOptionsSelection(val faculty: Faculty) : SelectionRequestType<FacultyMoreOptionsItem>(
-            recyclerViewList = FacultyMoreOptionsItem.values().toList(),
-            titleProvider = { it.getString(R.string._ph, faculty.name) },
-            resultProvider = { SelectionResult.FacultyMoreOptionsSelectionResult(faculty, it as FacultyMoreOptionsItem) }
+        recyclerViewList = FacultyMoreOptionsItem.values().toList(),
+        titleProvider = { it.getString(R.string._ph, faculty.name) },
+        resultProvider = { SelectionResult.FacultyMoreOptionsSelectionResult(faculty, it as FacultyMoreOptionsItem) }
     )
 
     @Parcelize
     data class RemoteOrderBySelection(val currentValue: RemoteQuestionnaireOrderBy) : SelectionRequestType<RemoteQuestionnaireOrderBy>(
-            recyclerViewList = RemoteQuestionnaireOrderBy.values().toList(),
-            titleProvider = { it.getString(R.string.orderByTypeSelection) },
-            resultProvider = { SelectionResult.RemoteOrderBySelectionResult(it as RemoteQuestionnaireOrderBy) },
-            isItemSelectedProvider = { currentValue == it }
+        recyclerViewList = RemoteQuestionnaireOrderBy.values().toList(),
+        titleProvider = { it.getString(R.string.orderByTypeSelection) },
+        resultProvider = { SelectionResult.RemoteOrderBySelectionResult(it as RemoteQuestionnaireOrderBy) },
+        isItemSelectedProvider = { currentValue == it }
     )
 
     @Parcelize
     data class LocalOrderBySelection(val currentValue: LocalQuestionnaireOrderBy) : SelectionRequestType<LocalQuestionnaireOrderBy>(
-            recyclerViewList = LocalQuestionnaireOrderBy.values().toList(),
-            titleProvider = { it.getString(R.string.orderByTypeSelection) },
-            resultProvider = { SelectionResult.LocalOrderBySelectionResult(it as LocalQuestionnaireOrderBy) },
-            isItemSelectedProvider = { currentValue == it }
+        recyclerViewList = LocalQuestionnaireOrderBy.values().toList(),
+        titleProvider = { it.getString(R.string.orderByTypeSelection) },
+        resultProvider = { SelectionResult.LocalOrderBySelectionResult(it as LocalQuestionnaireOrderBy) },
+        isItemSelectedProvider = { currentValue == it }
     )
 
     @Parcelize
     data class ManageUsersOrderBySelection(val currentValue: ManageUsersOrderBy) : SelectionRequestType<ManageUsersOrderBy>(
-            recyclerViewList = ManageUsersOrderBy.values().toList(),
-            titleProvider = { it.getString(R.string.orderByTypeSelection) },
-            resultProvider = { SelectionResult.UsersOrderBySelectionResult(it as ManageUsersOrderBy) },
-            isItemSelectedProvider = { currentValue == it }
+        recyclerViewList = ManageUsersOrderBy.values().toList(),
+        titleProvider = { it.getString(R.string.orderByTypeSelection) },
+        resultProvider = { SelectionResult.UsersOrderBySelectionResult(it as ManageUsersOrderBy) },
+        isItemSelectedProvider = { currentValue == it }
     )
 
     @Parcelize
     data class BrowseQuestionnaireMoreOptionsSelection(val browsableQuestionnaire: BrowsableQuestionnaire) : SelectionRequestType<BrowseQuestionnaireMoreOptionsItem>(
-            recyclerViewList = BrowseQuestionnaireMoreOptionsItem.values().toList(),
-            titleProvider = { it.getString(R.string._ph, browsableQuestionnaire.title) },
-            resultProvider = { SelectionResult.RemoteQuestionnaireMoreOptionsSelectionResult(browsableQuestionnaire, it as BrowseQuestionnaireMoreOptionsItem) }
+        recyclerViewList = if (browsableQuestionnaire.downloadStatus == DownloadStatus.DOWNLOADED) {
+            BrowseQuestionnaireMoreOptionsItem.values().filter { it != BrowseQuestionnaireMoreOptionsItem.DOWNLOAD }.toList()
+        } else {
+            BrowseQuestionnaireMoreOptionsItem.values().filter { it != BrowseQuestionnaireMoreOptionsItem.DELETE }.toList()
+        },
+        titleProvider = { it.getString(R.string._ph, browsableQuestionnaire.title) },
+        resultProvider = { SelectionResult.RemoteQuestionnaireMoreOptionsSelectionResult(browsableQuestionnaire, it as BrowseQuestionnaireMoreOptionsItem) }
     )
 
     @Parcelize
@@ -129,9 +134,6 @@ sealed class SelectionRequestType<T : Enum<T>>(
         titleProvider = { null },
         resultProvider = { SelectionResult.AddEditQuestionMoreOptionsSelectionResult(questionWithAnswers, it as AddEditQuestionMoreOptionsItem) }
     )
-
-
-
 
 
     //    @Parcelize

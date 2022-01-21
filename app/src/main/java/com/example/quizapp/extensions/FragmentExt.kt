@@ -303,19 +303,19 @@ fun Fragment.initMaterialElevationScale(animationDuration: Long = resources.getI
 
 
 fun Fragment.initMaterialZAxisAnimationForCaller() {
-    exitTransition = MaterialSharedAxis(MaterialSharedAxis.Y, true).apply {
+    exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
         duration = resources.getInteger(R.integer.defaultAnimDuration).toLong()
     }
-    reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Y, false).apply {
+    reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
         duration = resources.getInteger(R.integer.defaultAnimDuration).toLong()
     }
 }
 
 fun Fragment.initMaterialZAxisAnimationForReceiver(){
-    enterTransition = MaterialSharedAxis(MaterialSharedAxis.Y, true).apply {
+    enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true).apply {
         duration = resources.getInteger(R.integer.defaultAnimDuration).toLong()
     }
-    returnTransition = MaterialSharedAxis(MaterialSharedAxis.Y, false).apply {
+    returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false).apply {
         duration = resources.getInteger(R.integer.defaultAnimDuration).toLong()
     }
 }

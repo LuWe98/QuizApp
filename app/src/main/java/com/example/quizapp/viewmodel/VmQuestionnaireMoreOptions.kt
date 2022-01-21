@@ -11,7 +11,7 @@ import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.Navig
 import com.example.quizapp.view.fragments.dialogs.localquestionnairemoreoptions.BsdfQuestionnaireMoreOptionsArgs
 import com.example.quizapp.viewmodel.VmQuestionnaireMoreOptions.QuestionnaireMoreOptionsEvent
 import com.example.quizapp.viewmodel.VmQuestionnaireMoreOptions.QuestionnaireMoreOptionsEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -22,7 +22,7 @@ class VmQuestionnaireMoreOptions @Inject constructor(
     private val localRepository: LocalRepository,
     preferencesRepository: PreferencesRepository,
     state: SavedStateHandle
-) : BaseViewModel<QuestionnaireMoreOptionsEvent>() {
+) : EventViewModel<QuestionnaireMoreOptionsEvent>() {
 
     private val args = BsdfQuestionnaireMoreOptionsArgs.fromSavedStateHandle(state)
 

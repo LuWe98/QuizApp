@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfCourseOfStudiesSelectionPageBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.ListLoadItemType
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaCourseOfStudiesSelection
@@ -57,10 +58,7 @@ class FragmentCourseOfStudiesSelectionPage: BindingFragment<BsdfCourseOfStudiesS
             it.adjustVisibilities(
                 binding.rv,
                 binding.dataAvailability,
-                R.string.noCourseOfStudiesResultsFoundTitle,
-                R.string.noCourseOfStudiesResultsFoundText,
-                R.string.noCourseOfStudiesDataExistsTitle,
-                R.string.noCourseOfStudiesDataExistsText
+                ListLoadItemType.COURSE_OF_STUDIES
             )
             rvAdapter.submitList(it.data)
         }

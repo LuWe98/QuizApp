@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.ListLoadItemType
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaHomeQuestionnaires
 import com.example.quizapp.viewmodel.VmHome
@@ -21,6 +22,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initViews()
         initListeners()
         initObservers()
@@ -46,9 +48,15 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
 
     private fun initListeners() {
         binding.apply {
-            cardSettings.onClick(vmHome::onSettingsButtonClicked)
-            cardSearch.onClick(vmHome::onRemoteSearchButtonClicked)
-            addCard.onClick(vmHome::onAddQuestionnaireButtonClicked)
+            ivSettings.onClick(vmHome::onSettingsButtonClicked)
+            ivSearch2.onClick(vmHome::onRemoteSearchButtonClicked)
+            btnAdd.onClick(vmHome::onAddQuestionnaireButtonClicked)
+//            cardSettings.onClick(vmHome::onSettingsButtonClicked)
+//            cardSearch.onClick(vmHome::onRemoteSearchButtonClicked)
+//            addCard.onClick(vmHome::onAddQuestionnaireButtonClicked)
+
+            ivFilter.onClick(vmHome::onFilterButtonClicked)
+
             btnSearch.onClick(vmHome::onClearSearchQueryClicked)
             btnFilter.onClick(vmHome::onFilterButtonClicked)
             etSearchQuery.onTextChanged(vmHome::onSearchQueryChanged)
@@ -61,10 +69,7 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
             it.adjustVisibilities(
                 binding.rv,
                 binding.dataAvailability,
-                R.string.noLocalQuestionnaireResultsFoundTitle,
-                R.string.noLocalQuestionnaireResultsFoundText,
-                R.string.noLocalQuestionnaireDataExistsTitle,
-                R.string.noLocalQuestionnaireDataExistsText
+                ListLoadItemType.LOCAL_QUESTIONNAIRE
             )
             rvAdapter.submitList(it.data)
         }
@@ -79,15 +84,15 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
             vmHome.onLocallyPresentAuthorsChanged(it)
         }
 
+        vmHome.userNameFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.tvHello.text = getString(R.string.helloHome, it)
+        }
+
         vmHome.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                is ShowMessageSnackBar -> showSnackBar(
-                    textRes = event.messageRes,
-                    anchorView = binding.bottomNavContainer
-                )
+                is ShowMessageSnackBar -> showSnackBar(textRes = event.messageRes)
                 is ShowUndoDeleteSnackBar -> showSnackBar(
                     textRes = event.messageRes,
-                    anchorView = binding.bottomNavContainer,
                     onDismissedAction = event::executeConfirmAction,
                     actionTextRes = R.string.undo,
                     actionClickEvent = event::executeUndoAction

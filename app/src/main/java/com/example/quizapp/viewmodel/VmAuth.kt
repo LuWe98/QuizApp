@@ -14,7 +14,7 @@ import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.Navig
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.viewmodel.VmAuth.*
 import com.example.quizapp.viewmodel.VmAuth.FragmentAuthEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -27,7 +27,7 @@ class VmAuth @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle,
-) : BaseViewModel<FragmentAuthEvent>() {
+) : EventViewModel<FragmentAuthEvent>() {
 
     fun checkIfLoggedIn() = launch(IO) {
         if (preferencesRepository.isUserLoggedIn()) {

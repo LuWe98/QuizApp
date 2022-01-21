@@ -11,10 +11,11 @@ import com.example.quizapp.model.ktor.client.KtorClientAuth
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.viewmodel.VmMainActivity.*
 import com.example.quizapp.viewmodel.VmMainActivity.MainViewModelEvent.ShowMessageSnackBar
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
@@ -25,7 +26,7 @@ class VmMainActivity @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val ktorClientAuth: KtorClientAuth,
     private val state: SavedStateHandle
-) : BaseViewModel<MainViewModelEvent>() {
+) : EventViewModel<MainViewModelEvent>() {
 
     val userFlow = preferencesRepository.userFlow
         .flowOn(IO)
@@ -59,5 +60,16 @@ class VmMainActivity @Inject constructor(
 
     companion object {
         private const val MANUAL_LOGOUT_FLAG_KEY = "manualLogoutFlagKey"
+    }
+
+
+
+    var test: Boolean = true
+
+    init {
+        launch(IO) {
+            delay(500)
+            test = false
+        }
     }
 }

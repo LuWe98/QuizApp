@@ -135,8 +135,8 @@ object AppModule {
         }
 
         engine {
-            connectTimeout = 15_000
-            socketTimeout = 15_000
+            connectTimeout = 20_000
+            socketTimeout = 20_000
         }
 
         HttpResponseValidator {

@@ -5,9 +5,9 @@
         android:layout_height="wrap_content"
         xmlns:tools="http://schemas.android.com/tools"
         app:cardBackgroundColor="?colorOnPrimary"
-        app:cardElevation="0dp"
-        android:layout_marginVertical="@dimen/grid_1"
-        app:cardCornerRadius="7.5dp">
+        app:cardElevation="2dp"
+        android:layout_marginTop="@dimen/grid_3"
+        app:cardCornerRadius="@dimen/itemCardCornerRadius">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

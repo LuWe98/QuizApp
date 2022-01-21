@@ -3,19 +3,21 @@ package com.example.quizapp.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.paging.cachedIn
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.utils.RemoteDataAvailability
-import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.model.ktor.paging.PagingUiState
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.FragmentResult
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.fragments.dialogs.authorselection.BsdfRemoteAuthorSelectionArgs
 import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent
-import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent.ClearSearchQueryEvent
+import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelectionEvent.NewPagingUiStateEvent
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -27,7 +29,7 @@ import javax.inject.Inject
 class VmRemoteAuthorSelection @Inject constructor(
     private val backendRepository: BackendRepository,
     private val state: SavedStateHandle
-) : BaseViewModel<RemoteAuthorSelectionEvent>() {
+) : EventViewModel<RemoteAuthorSelectionEvent>() {
 
     private val args = BsdfRemoteAuthorSelectionArgs.fromSavedStateHandle(state)
 
@@ -43,6 +45,8 @@ class VmRemoteAuthorSelection @Inject constructor(
     val selectedAuthorsStateFlow = selectedAuthorsMutableStateFlow.asStateFlow()
 
     private val selectedAuthors get() = selectedAuthorsMutableStateFlow.value
+
+    private var previousPagerRefreshState: LoadState? = null
 
 
     val filteredPagedDataStateFlow = searchQueryMutableStateFlow.flatMapLatest { query ->
@@ -90,25 +94,24 @@ class VmRemoteAuthorSelection @Inject constructor(
         navigationDispatcher.dispatch(NavigateBack)
     }
 
-    fun onListLoadStateChanged(loadStates: CombinedLoadStates, itemCount: Int) = launch(IO) {
-        if (loadStates.append.endOfPaginationReached) {
-            if (itemCount == 0 && searchQuery.isNotEmpty()) {
-                eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_FOUND))
-                return@launch
-            } else if(itemCount == 0 && searchQuery.isEmpty()) {
-                eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_EXIST))
-                return@launch
+    fun onLoadStateChanged(loadStates: CombinedLoadStates, itemCount: Int) = launch(IO) {
+        PagingUiState.fromCombinedLoadStates(
+            loadStates = loadStates,
+            previousLoadState = previousPagerRefreshState,
+            itemCount = itemCount,
+            isFilteredAction = searchQuery::isNotEmpty
+        ).also { state ->
+            state?.let(::NewPagingUiStateEvent)?.let {
+                eventChannel.send(it)
             }
         }
-
-        if(itemCount != 0) {
-            eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.ENTRIES_FOUND))
-        }
+        previousPagerRefreshState = loadStates.source.refresh
     }
 
     sealed class RemoteAuthorSelectionEvent: UiEventMarker {
         object ClearSearchQueryEvent : RemoteAuthorSelectionEvent()
-        class ChangeResultLayoutVisibility(val state: RemoteDataAvailability) : RemoteAuthorSelectionEvent()
+        class NewPagingUiStateEvent(val state: PagingUiState) : RemoteAuthorSelectionEvent()
+
     }
 
     companion object {

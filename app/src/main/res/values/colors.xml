@@ -16,9 +16,6 @@
 <!--    <color name="green">#078F45</color>-->
 <!--    <color name="red">#ff24</color>-->
 
-    <color name="niceLightGrey">#FAFAFA</color>
-
-
     <color name="niceWhite">#fcfbfc</color>
     <color name="whiteBackground">#f6f6f6</color>
     <color name="niceBlack">#262626</color>
@@ -44,6 +41,16 @@
 
 
 
+
+
+    <color name="hfuDarkerGreen">#009864</color>
+    <color name="hfuDarkGreen">#5bb28a</color>
+    <color name="hfuBrightGreen">#88c860</color>
+    <color name="hfuLightGreen">#bfe0ce</color>
+
+
+
+
     <color name="newBackgroundColor">#f5f8ff</color>
     <color name="newPrimaryColor">#212a72</color>
     <color name="newPrimaryColorLighter">#273078</color>
@@ -53,15 +60,18 @@
 
 
     <!-- Light Theme Colors -->
-    <color name="lightColorPrimary">#0070ba</color>
-    <color name="lightColorPrimaryVariant">#1570ab</color>
+    <color name="lightColorPrimary">@color/hfuDarkGreen</color>
+    <color name="lightColorPrimaryVariant">@color/hfuDarkerGreen</color>
     <color name="lightColorOnPrimary">#ffffff</color>
-    <color name="lightColorSecondary">#FF03DAC5</color>
+    <color name="lightColorSecondary">@color/hfuBrightGreen</color>
     <color name="lightColorSecondaryVariant">#FF018786</color>
     <color name="lightColorOnSecondary">@color/black</color>
-    <color name="lightColorAccent">#add8e6</color>
+    <color name="lightColorAccent">@color/hfuLightGreen</color>
     <color name="lightBackgroundColor">#FAFAFA</color>
-<!--    <color name="lightBackgroundColor">#f6f6f6</color>-->
+
+    <color name="lightBackgroundColorAlpha">#eeffffff</color>
+
+    <!--    <color name="lightBackgroundColor">#f6f6f6</color>-->
 
     <color name="lightColorControlActivated">#89000000</color>
     <color name="lightColorControlNormal"> #89000000</color>
@@ -76,13 +86,13 @@
 <!--    202020-->
 
     <!-- Dark Theme Colors -->
-    <color name="darkColorPrimary">#0070ba</color>
-    <color name="darkColorPrimaryVariant">#1570ab</color>
+    <color name="darkColorPrimary">@color/hfuDarkGreen</color>
+    <color name="darkColorPrimaryVariant">@color/hfuDarkerGreen</color>
     <color name="darkColorOnPrimary">#262626</color>
-    <color name="darkColorSecondary">#FF03DAC5</color>
+    <color name="darkColorSecondary">@color/hfuBrightGreen</color>
     <color name="darkColorSecondaryVariant">#FF018786</color>
     <color name="darkColorOnSecondary">@color/black</color>
-    <color name="darkColorAccent">#add8e6</color>
+    <color name="darkColorAccent">@color/hfuLightGreen</color>
     <color name="darkBackgroundColor">#464646</color>
 
     <color name="darkColorControlActivated">#89000000</color>
@@ -90,4 +100,18 @@
     <color name="darkDominantTextColor">#ffffff</color>
     <color name="darkDefaultTextColor">@color/darkColorControlNormal</color>
 
+
+
+
+<!--    &lt;!&ndash; Light Theme Colors &ndash;&gt;-->
+<!--    <color name="lightColorPrimary">#0070ba</color>-->
+<!--    <color name="lightColorPrimaryVariant">#1570ab</color>-->
+<!--    <color name="lightColorOnPrimary">#ffffff</color>-->
+<!--    <color name="lightColorSecondary">#FF03DAC5</color>-->
+<!--    <color name="lightColorSecondaryVariant">#FF018786</color>-->
+<!--    <color name="lightColorOnSecondary">@color/black</color>-->
+<!--    <color name="lightColorAccent">#add8e6</color>-->
+<!--    <color name="lightBackgroundColor">#FAFAFA</color>-->
+
+<!--    <color name="lightBackgroundColorAlpha">#eeffffff</color>-->
 </resources>

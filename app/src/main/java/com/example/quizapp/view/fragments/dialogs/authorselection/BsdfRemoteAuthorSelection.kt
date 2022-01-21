@@ -5,8 +5,10 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
-import com.example.quizapp.databinding.BsdfAuthorSelectionBinding
+import com.example.quizapp.databinding.BsdfAuthorSelectionRemoteBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.ListLoadItemType
+import com.example.quizapp.model.ktor.paging.PagingUiState
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaAuthorSelectionRemote
 import com.example.quizapp.viewmodel.VmRemoteAuthorSelection
@@ -14,7 +16,7 @@ import com.example.quizapp.viewmodel.VmRemoteAuthorSelection.RemoteAuthorSelecti
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BsdfRemoteAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSelectionBinding>() {
+class BsdfRemoteAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSelectionRemoteBinding>() {
 
     private val vmAuthor: VmRemoteAuthorSelection by viewModels()
 
@@ -52,13 +54,13 @@ class BsdfRemoteAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSele
             btnConfirm.onClick(vmAuthor::onConfirmButtonClicked)
             btnSearch.onClick(vmAuthor::onDeleteSearchQueryClicked)
             btnCollapse.onClick(vmAuthor::onCollapseButtonClicked)
+            swipeRefreshLayout.setOnRefreshListener(rvAdapter::refresh)
         }
     }
 
     private fun initObservers() {
-
-        rvAdapter.addLoadStateListener {
-            vmAuthor.onListLoadStateChanged(it, rvAdapter.itemCount)
+        rvAdapter.loadStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            vmAuthor.onLoadStateChanged(it, rvAdapter.itemCount)
         }
 
         vmAuthor.selectedAuthorsStateFlow.collectWhenStarted(viewLifecycleOwner) {
@@ -78,15 +80,14 @@ class BsdfRemoteAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSele
         vmAuthor.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when(event) {
                 ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
-                is ChangeResultLayoutVisibility -> {
-                    event.state.adjustVisibilities(
-                        binding.rv,
-                        binding.dataAvailability,
-                        R.string.noAuthorResultsFoundTitle,
-                        R.string.noAuthorResultsFoundText,
-                        R.string.noAuthorDataExistsTitle,
-                        R.string.noAuthorDataExistsText
-                    )
+                is NewPagingUiStateEvent -> {
+                    event.state.adjustUi(
+                        ListLoadItemType.REMOTE_AUTHOR,
+                        binding.swipeRefreshLayout,
+                        binding.dataAvailability
+                    ) {
+                        showSnackBar(R.string.errorCouldNotReachBackendTitle)
+                    }
                 }
             }
         }

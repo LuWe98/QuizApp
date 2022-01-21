@@ -4,7 +4,6 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:transitionGroup="true"
-        android:background="?android:colorBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -12,7 +11,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/topLayout"
-            android:background="?colorOnPrimary"
             android:elevation="2dp"
             android:clipToPadding="false"
             android:paddingBottom="@dimen/grid_4"
@@ -35,7 +33,7 @@
                 android:layout_height="0dp"
                 android:id="@+id/tvTitle"
                 style="@style/Style.QuizApp.Heading.TextAppearance"
-                android:text="@string/manageUsers"
+                android:text="@string/users"
                 android:layout_marginHorizontal="42dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -48,12 +46,12 @@
                 android:elevation="@dimen/searchBarElevation"
                 android:id="@+id/clSearchBar"
                 android:background="@drawable/search_bar_background"
-                android:backgroundTint="?android:colorBackground"
-                android:layout_marginHorizontal="@dimen/grid_4"
+                android:backgroundTint="?colorOnPrimary"
+                android:layout_marginHorizontal="@dimen/grid_6"
                 android:layout_marginTop="@dimen/grid_4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitle"
-                app:layout_constraintEnd_toStartOf="@+id/btnAdd">
+                app:layout_constraintEnd_toEndOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="35dp"
@@ -96,20 +94,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:id="@+id/btnAdd"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/clSearchBar"
-                app:layout_constraintBottom_toBottomOf="@id/clSearchBar"
-                app:srcCompat="@drawable/ic_add"
-                android:padding="10dp"
-                android:background="@drawable/ripple_round_corners_10_dp"
-                android:backgroundTint="?colorPrimary"
-                app:tint="@color/white"
-                android:layout_marginEnd="@dimen/grid_4" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -144,5 +128,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnAdd"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="@dimen/fabMargin"
+            android:src="@drawable/ic_add"
+            app:tint="@color/white"
+            app:backgroundTint="?colorPrimaryVariant"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

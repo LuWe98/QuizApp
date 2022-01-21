@@ -7,11 +7,11 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.RoomListLoadStatus
+import com.example.quizapp.model.databases.room.asRoomListLoadStatus
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.DeleteFacultyResponse.*
-import com.example.quizapp.utils.LocalDataAvailability
-import com.example.quizapp.utils.asLocalDataAvailability
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.FacultyMoreOptionsItem.DELETE
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.FacultyMoreOptionsItem.EDIT
@@ -22,7 +22,7 @@ import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.Sel
 import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent
 import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent.ClearSearchQueryEvent
 import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent.ShowMessageSnackBar
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -35,7 +35,7 @@ class VmAdminManageFaculties @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle
-) : BaseViewModel<ManageFacultiesEvent>() {
+) : EventViewModel<ManageFacultiesEvent>() {
 
     private val searchQueryMutableStateFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
@@ -46,9 +46,9 @@ class VmAdminManageFaculties @Inject constructor(
 
     val facultiesStateFlow = searchQueryMutableStateFlow.flatMapLatest { query ->
         localRepository.findFacultiesWithNameFlow(query).map { list ->
-            list.asLocalDataAvailability(query::isNotEmpty)
+            list.asRoomListLoadStatus(query::isNotEmpty)
         }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDataAvailability.DataFound(emptyList()))
+    }.stateIn(viewModelScope, SharingStarted.Lazily, RoomListLoadStatus.DataFound(emptyList()))
 
 
     fun onFacultyItemClicked(faculty: Faculty) = launch(IO) {

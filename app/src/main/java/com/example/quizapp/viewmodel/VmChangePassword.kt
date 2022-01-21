@@ -12,7 +12,7 @@ import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.Navig
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.viewmodel.VmChangePassword.*
 import com.example.quizapp.viewmodel.VmChangePassword.ChangePasswordEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -25,7 +25,7 @@ class VmChangePassword @Inject constructor(
     private val backendRepository: BackendRepository,
     private val auth: KtorClientAuth,
     private val state: SavedStateHandle
-): BaseViewModel<ChangePasswordEvent>() {
+): EventViewModel<ChangePasswordEvent>() {
 
     private var _currentPw = state.get<String>(CURRENT_PW_KEY) ?: ""
         set(value) {

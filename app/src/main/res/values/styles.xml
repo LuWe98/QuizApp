@@ -94,7 +94,7 @@
     </style>
 
     <style name="Style.QuizApp.FilterChip" parent="Widget.MaterialComponents.Chip.Choice">
-        <item name="chipBackgroundColor">?colorOnPrimary</item>
+        <item name="chipBackgroundColor">?android:colorBackground</item>
         <item name="chipIconTint">?colorPrimary</item>
         <item name="chipStartPadding">@dimen/grid_1_5</item>
         <item name="chipEndPadding">@dimen/grid_1</item>

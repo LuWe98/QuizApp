@@ -2,12 +2,11 @@ package com.example.quizapp.view.fragments.adminscreens.managefaculties
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminManageFacultiesBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.utils.LocalDataAvailability
+import com.example.quizapp.model.ListLoadItemType
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.view.recyclerview.adapters.RvaFaculty
@@ -66,10 +65,7 @@ class FragmentAdminManageFaculties: BindingFragment<FragmentAdminManageFaculties
             it.adjustVisibilities(
                 binding.rv,
                 binding.dataAvailability,
-                R.string.noFacultyResultsFoundTitle,
-                R.string.noFacultyResultsFoundText,
-                R.string.noFacultyDataExistsTitle,
-                R.string.noFacultyDataExistsText
+                ListLoadItemType.FACULTY
             )
             rvAdapter.submitList(it.data)
         }

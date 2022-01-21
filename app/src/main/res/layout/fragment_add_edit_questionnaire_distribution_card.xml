@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="?android:colorBackground"
+        app:cardBackgroundColor="?colorOnPrimary"
         app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,10 +40,10 @@
                     android:layout_height="0dp"
                     android:id="@+id/tvStatistic"
                     android:text="@string/questions"
+                    android:textColor="?dominantTextColor"
                     android:layout_marginStart="@dimen/grid_2"
-                    android:textStyle="bold"
                     android:gravity="center_vertical"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:ellipsize="end"
                     android:lines="1"
                     app:layout_constraintStart_toEndOf="@+id/statisticIcon"
@@ -57,7 +57,6 @@
                     android:id="@+id/btnListQuestions"
                     android:background="?actionBarItemBackground"
                     android:padding="6dp"
-                    app:tint="?colorPrimary"
                     android:layout_marginEnd="@dimen/grid_2"
                     app:layout_constraintEnd_toStartOf="@+id/btnAddQuestion"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -71,7 +70,6 @@
                     android:background="?actionBarItemBackground"
                     android:layout_marginEnd="@dimen/grid_1"
                     android:padding="5dp"
-                    app:tint="?colorPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -123,7 +121,7 @@
                     app:indicatorColor="?colorPrimary"
                     app:trackCornerRadius="50dp"
                     app:trackThickness="5dp"
-                    app:trackColor="?colorOnPrimary"
+                    app:trackColor="?android:colorBackground"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/allQuestionsLabel" />
@@ -159,10 +157,10 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginHorizontal="@dimen/grid_4"
                     android:layout_marginTop="@dimen/grid_1"
-                    app:indicatorColor="@color/multipleChoiceColor"
+                    app:indicatorColor="@color/hfuBrightGreen"
                     app:trackCornerRadius="50dp"
                     app:trackThickness="5dp"
-                    app:trackColor="?colorOnPrimary"
+                    app:trackColor="?android:colorBackground"
                     app:layout_constraintTop_toBottomOf="@+id/tvMultipleChoiceLabel" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -196,34 +194,12 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginHorizontal="@dimen/grid_4"
                     android:layout_marginTop="@dimen/grid_1"
-                    app:indicatorColor="@color/singleChoiceColor"
+                    app:indicatorColor="@color/hfuBrightGreen"
                     app:trackCornerRadius="50dp"
                     app:trackThickness="5dp"
-                    app:trackColor="?colorOnPrimary"
+                    app:trackColor="?android:colorBackground"
                     app:layout_constraintTop_toBottomOf="@+id/tvSingleChoiceLabel" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:text="@string/add"
-                android:visibility="gone"
-                android:id="@+id/btnAdd"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/statisticsContainer"
-                android:gravity="center"
-                android:textColor="?colorPrimary"
-                android:textStyle="bold"
-                android:textSize="17sp"
-                android:background="@drawable/background_round_corners_45dp"
-                android:backgroundTint="?colorPrimary"
-                app:tint="@color/white"
-                app:srcCompat="@drawable/ic_add"
-                android:padding="10dp"
-                android:layout_marginBottom="@dimen/grid_2"
-                app:layout_constraintWidth_percent="0.35"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

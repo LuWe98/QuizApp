@@ -13,7 +13,7 @@
             tools:listitem="@layout/rvi_course_of_studies"
             android:paddingTop="@dimen/grid_2"
             android:paddingBottom="150dp"
-            android:paddingHorizontal="@dimen/grid_4"
+            android:paddingHorizontal="@dimen/grid_6"
             android:id="@+id/rv" />
 
     <com.example.quizapp.view.customimplementations.DataAvailabilityLayout

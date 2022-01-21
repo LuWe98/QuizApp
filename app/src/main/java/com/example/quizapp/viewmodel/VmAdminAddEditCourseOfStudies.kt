@@ -21,7 +21,7 @@ import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringR
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.*
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.AddEditCourseOfStudiesEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.date.*
@@ -41,7 +41,7 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
     private val dataMapper: DataMapper,
     private val applicationScope: CoroutineScope,
     private val state: SavedStateHandle
-) : BaseViewModel<AddEditCourseOfStudiesEvent>() {
+) : EventViewModel<AddEditCourseOfStudiesEvent>() {
 
     private val args = FragmentAdminAddEditCourseOfStudiesArgs.fromSavedStateHandle(state)
 
@@ -90,6 +90,11 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
     private val cosDegree get() = cosDegreeMutableStateFlow.value
 
 
+    fun setFacultyIds(ids: List<String>) {
+        state.set(COS_FACULTY_IDS_KEY, ids)
+        cosFacultyIdsMutableStateFlow.value = ids
+    }
+
     fun onAbbreviationCardClicked() = launch(IO) {
         navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateCourseOfStudiesAbbreviationRequest(cosAbbreviation)))
     }
@@ -102,9 +107,12 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
         navigationDispatcher.dispatch(ToFacultySelectionDialog(cosFacultyIds))
     }
 
-
     fun onDegreeCardClicked() = launch(IO) {
         navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.DegreeSelection(cosDegree)))
+    }
+
+    fun onClearFacultiesClicked(){
+        setFacultyIds(emptyList())
     }
 
 
@@ -119,17 +127,13 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
     }
 
     fun onFacultySelectionResultReceived(result: FragmentResult.FacultySelectionResult) {
-        result.facultyIds.let {
-            state.set(COS_FACULTY_IDS_KEY, it)
-            cosFacultyIdsMutableStateFlow.value = it
-        }
+        setFacultyIds(result.facultyIds)
     }
 
     fun onFacultyChipClicked(faculty: Faculty) {
         cosFacultyIds.toMutableList().apply {
             remove(faculty.id)
-            state.set(COS_FACULTY_IDS_KEY, this)
-            cosFacultyIdsMutableStateFlow.value = this
+            setFacultyIds(this)
         }
     }
 

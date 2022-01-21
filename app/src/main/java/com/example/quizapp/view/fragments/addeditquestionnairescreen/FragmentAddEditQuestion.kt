@@ -75,7 +75,10 @@ class FragmentAddEditQuestion: BindingFragment<FragmentAddEditQuestionBinding>()
             btnBack.onClick(vmAddEditQuestion::onBackButtonClicked)
             tvSave.onClick(vmAddEditQuestion::onSaveButtonClicked)
             multipleChoiceCard.onClick(vmAddEditQuestion::onChangeQuestionTypeClicked)
-            answersCard.btnAddAnswer.onClick(vmAddEditQuestion::onAddAnswerButtonClicked)
+            answersCard.apply {
+                btnClearAnswers.onClick(vmAddEditQuestion::onClearAnswersButtonClicked)
+                btnAddAnswer.onClick(vmAddEditQuestion::onAddAnswerButtonClicked)
+            }
         }
     }
 

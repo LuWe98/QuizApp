@@ -18,4 +18,5 @@ class QuizApplication : Application(){
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(runBlocking(IO) { preferencesRepository.getTheme().appCompatId })
     }
+
 }

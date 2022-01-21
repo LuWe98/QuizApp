@@ -12,7 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class VmConfirmationDialog @Inject constructor(
     state: SavedStateHandle
-) : BaseViewModel<BaseViewModel.EmptyEventClass>(){
+) : BaseViewModel(){
 
     private val args = DfConfirmationArgs.fromSavedStateHandle(state)
 

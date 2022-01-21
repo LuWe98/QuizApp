@@ -9,11 +9,12 @@
     <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="100dp"
+            android:padding="5dp"
             app:tint="?colorPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/ic_search_no_results"
+            tools:srcCompat="@drawable/ic_wifi_tethering_error"
             android:id="@+id/ivIcon"/>
 
     <com.google.android.material.textview.MaterialTextView
@@ -21,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/grid_4"
             android:id="@+id/tvTitle"
-            tools:text="@string/noFacultyResultsFoundTitle"
+            tools:text="@string/errorCouldNotReachBackendTitle"
             app:layout_constraintTop_toBottomOf="@id/ivIcon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -35,7 +36,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/tvText"
-            tools:text="@string/noFacultyResultsFoundText"
+            tools:text="@string/errorCouldNotReachBackendText"
             android:layout_marginTop="@dimen/grid_2"
             app:layout_constraintWidth_percent="0.65"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"

@@ -12,7 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/appBarLayout"
-            android:backgroundTint="?colorOnPrimary"
+            android:backgroundTint="?android:colorBackground"
             app:liftOnScroll="true"
             app:liftOnScrollTargetViewId="@id/nestedScrollView">
 
@@ -146,6 +146,7 @@
                     android:letterSpacing="0.025"
                     android:textSize="30sp"
                     android:textStyle="bold"
+                    android:textColor="?dominantTextColor"
                     app:layout_constraintTop_toTopOf="@+id/progress"
                     app:layout_constraintStart_toStartOf="@id/progress"
                     app:layout_constraintEnd_toEndOf="@id/progress"
@@ -194,6 +195,8 @@
                     android:id="@+id/generalInfoCard"
                     android:layout_marginHorizontal="@dimen/grid_6"
                     android:layout_marginTop="@dimen/grid_6"
+                    android:layout_marginBottom="@dimen/grid_2"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/statisticsCard" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
@@ -210,6 +213,6 @@
             android:layout_gravity="bottom"
             android:layout_marginHorizontal="@dimen/grid_6"
             android:layout_marginBottom="@dimen/grid_6"
-            android:background="@drawable/background_round_corners_45dp"
-            android:backgroundTint="?colorPrimary" />
+            android:background="@drawable/background_round_corners_15dp"
+            android:backgroundTint="?colorPrimaryVariant" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

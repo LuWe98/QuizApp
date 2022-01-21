@@ -17,6 +17,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -221,7 +222,7 @@ inline fun View.onLongClick(crossinline action: () -> (Unit)) {
 }
 
 @SuppressLint("ClickableViewAccessibility")
-inline fun View.onTouch(crossinline  action: (MotionEvent) -> Unit) {
+inline fun View.onTouch(crossinline action: (MotionEvent) -> Unit) {
     setOnTouchListener { _, event ->
         action.invoke(event)
         return@setOnTouchListener true
@@ -267,3 +268,35 @@ inline fun <reified T> ChipGroup.setUpChipsForChipGroup(
         }
     }
 }
+
+
+fun View.animateShow(duration: Long = 250L, startAction: (() -> (Unit)) = {}, endAction : (() -> (Unit)) = {}) {
+    clearAnimation()
+    animate().alpha(1f)
+        .setDuration(duration)
+        .withStartAction {
+            isVisible = true
+            startAction()
+        }
+        .withEndAction(endAction)
+        .start()
+}
+
+fun View.animateHide(duration: Long = 250L, startAction: (() -> (Unit)) = {}, endAction : (() -> (Unit)) = {}) {
+    clearAnimation()
+    animate().alpha(0f)
+        .setDuration(duration)
+        .withStartAction(startAction)
+        .withEndAction {
+            isVisible = false
+            endAction()
+        }
+        .start()
+}
+
+
+fun View.applyStatusBarPaddingTop(){
+    setPadding(paddingLeft, paddingTop + context.statusBarHeight, paddingRight, paddingBottom)
+}
+
+fun applyStatusBarPaddingTop(vararg views: View) = views.forEach(View::applyStatusBarPaddingTop)

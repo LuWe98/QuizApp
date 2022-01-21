@@ -10,6 +10,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.CustomViewItemBottomTextDropdownBinding
 import com.example.quizapp.extensions.dp
 import com.example.quizapp.extensions.getThemeColor
+import com.example.quizapp.extensions.setDrawableTint
 
 class ItemBottomTextDropDownLayout constructor(
     context: Context,
@@ -35,7 +36,10 @@ class ItemBottomTextDropDownLayout constructor(
             typedArray.getDimension(R.styleable.ItemBottomTextDropDownLayout_iconPadding, 10.dp.toFloat()).toInt().let { padding ->
                 binding.icon.setPadding(padding, padding, padding, padding)
             }
-            typedArray.getColor(R.styleable.ItemBottomTextDropDownLayout_titleColor, getThemeColor(R.attr.defaultTextColor)).let { textColor ->
+            typedArray.getColor(R.styleable.ItemBottomTextDropDownLayout_iconTint, getThemeColor(R.attr.colorControlNormal)).let { iconTint ->
+                binding.icon.setDrawableTint(iconTint)
+            }
+            typedArray.getColor(R.styleable.ItemBottomTextDropDownLayout_titleColor, getThemeColor(R.attr.dominantTextColor)).let { textColor ->
                 binding.title.setTextColor(textColor)
             }
             typedArray.getColor(R.styleable.ItemBottomTextDropDownLayout_textColor, getThemeColor(R.attr.defaultTextColor)).let { textColor ->
@@ -43,6 +47,9 @@ class ItemBottomTextDropDownLayout constructor(
             }
             typedArray.getDimension(R.styleable.ItemBottomTextDropDownLayout_dropDownIconPadding, 5.dp.toFloat()).toInt().let { padding ->
                 binding.dropDownIcon.setPadding(padding, padding, padding, padding)
+            }
+            typedArray.getColor(R.styleable.ItemBottomTextDropDownLayout_dropDownIconTint, getThemeColor(R.attr.colorControlNormal)).let { iconTint ->
+                binding.dropDownIcon.setDrawableTint(iconTint)
             }
             typedArray.recycle()
         }

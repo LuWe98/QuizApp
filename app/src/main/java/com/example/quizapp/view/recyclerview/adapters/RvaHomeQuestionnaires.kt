@@ -44,7 +44,7 @@ class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuest
     override fun bindViews(binding: RviQuestionnaireBinding, item: CompleteQuestionnaire, position: Int) {
         binding.apply {
             tvTitle.text = item.questionnaire.title
-            tvDateAndQuestionAmount.text = item.questionnaire.authorInfo.userName
+            //tvDateAndQuestionAmount.text = item.questionnaire.authorInfo.userName
 
             tvDateAndQuestionAmount.text = context.getString(
                 R.string.cosAndSubject,
@@ -52,8 +52,8 @@ class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuest
                 item.questionnaire.timeStampAsDate
             )
 
-            tvCos.text = item.courseOfStudiesAbbreviations
-            tvSubject.text = item.questionnaire.subject
+//            tvCos.text = item.courseOfStudiesAbbreviations
+//            tvSubject.text = item.questionnaire.subject
 
 //            tvDateAndQuestionAmount.text = context.getString(
 //                R.string.authorNameDateAndQuestionAmount,
@@ -75,7 +75,8 @@ class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuest
 
             (item.areAllQuestionsCorrectlyAnswered && item.hasQuestions).let {
                 checkMarkIcon.isVisible = it
-                progressIndicator.setIndicatorColor(if(it) getColor(R.color.green) else getThemeColor(R.attr.colorAccent))
+                //getThemeColor(R.attr.colorAccent)
+                progressIndicator.setIndicatorColor(if(it) getColor(R.color.hfuDarkerGreen) else getColor(R.color.hfuBrightGreen))
             }
         }
     }

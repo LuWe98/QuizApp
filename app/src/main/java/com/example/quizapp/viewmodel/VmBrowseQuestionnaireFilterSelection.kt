@@ -13,7 +13,7 @@ import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatch
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.view.fragments.searchscreen.filterselection.BsdfBrowseQuestionnaireFilterSelectionArgs
 import com.example.quizapp.viewmodel.VmBrowseQuestionnaireFilterSelection.FilterEvent
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -28,7 +28,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     private val localRepository: LocalRepository,
     private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
-) : BaseViewModel<FilterEvent>() {
+) : EventViewModel<FilterEvent>() {
 
     private val args = BsdfBrowseQuestionnaireFilterSelectionArgs.fromSavedStateHandle(state)
 
@@ -76,27 +76,40 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     private val orderAscending get() = orderAscendingMutableStateFlow.value
 
 
+    private fun setAuthorIdList(ids: Set<AuthorInfo>) {
+        state.set(SELECTED_AUTHORS_KEY, ids)
+        selectedAuthorsMutableStateFlow.value = ids
+    }
+
+    private fun setCosIdList(ids: Set<String>) {
+        state.set(SELECTED_COURSE_OF_STUDIES_ID_KEY, ids)
+        selectedCourseOfStudiesIdsMutableStateFlow.value = ids
+    }
+
+    private fun setFacultyIdList(ids: Set<String>) {
+        state.set(SELECTED_FACULTY_ID_KEY, ids)
+        selectedFacultyIdsMutableStateFlow.value = ids
+    }
+
+
     fun removeFilteredFaculty(faculty: Faculty) {
         selectedFacultyIds.toMutableSet().apply {
             remove(faculty.id)
-            state.set(SELECTED_FACULTY_ID_KEY, this)
-            selectedFacultyIdsMutableStateFlow.value = this
+            setFacultyIdList(this)
         }
     }
 
     fun removeFilteredCourseOfStudies(courseOfStudies: CourseOfStudies) {
         selectedCourseOfStudiesIds.toMutableSet().apply {
             remove(courseOfStudies.id)
-            state.set(SELECTED_COURSE_OF_STUDIES_ID_KEY, this)
-            selectedCourseOfStudiesIdsMutableStateFlow.value = this
+            setCosIdList(this)
         }
     }
 
     fun removeFilteredAuthor(author: AuthorInfo) {
         selectedAuthors.toMutableSet().apply {
             remove(author)
-            state.set(SELECTED_AUTHORS_KEY, this)
-            selectedAuthorsMutableStateFlow.value = this
+            setAuthorIdList(this)
         }
     }
 
@@ -123,6 +136,20 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
         navigationDispatcher.dispatch(ToRemoteAuthorSelectionDialog(selectedAuthors))
     }
 
+
+    fun onClearAuthorFilterClicked() {
+        setAuthorIdList(emptySet())
+    }
+
+    fun onClearCourseOfStudiesFilterClicked() {
+        setCosIdList(emptySet())
+    }
+
+    fun onClearFacultyFilterClicked() {
+        setFacultyIdList(emptySet())
+    }
+
+
     fun onCollapseButtonClicked() =  launch(IO) {
         navigationDispatcher.dispatch(NavigateBack)
     }
@@ -133,24 +160,15 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     }
 
     fun onAuthorsSelectionResultReceived(result: FragmentResult.RemoteAuthorSelectionResult) {
-        result.authors.toSet().let {
-            state.set(SELECTED_AUTHORS_KEY, it)
-            selectedAuthorsMutableStateFlow.value = it
-        }
+        setAuthorIdList(result.authors.toSet())
     }
 
     fun onFacultiesSelectionResultReceived(result: FragmentResult.FacultySelectionResult) {
-        result.facultyIds.toSet().let {
-            state.set(SELECTED_FACULTY_ID_KEY, it)
-            selectedFacultyIdsMutableStateFlow.value = it
-        }
+        setFacultyIdList(result.facultyIds.toSet())
     }
 
     fun onCourseOfStudiesSelectionResultReceived(result: FragmentResult.CourseOfStudiesSelectionResult) {
-        result.courseOfStudiesIds.toSet().let {
-            state.set(SELECTED_COURSE_OF_STUDIES_ID_KEY, it)
-            selectedCourseOfStudiesIdsMutableStateFlow.value = it
-        }
+        setCosIdList(result.courseOfStudiesIds.toSet())
     }
 
     fun onApplyButtonClicked() = launch(IO) {

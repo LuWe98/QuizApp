@@ -1,22 +1,33 @@
 package com.example.quizapp.view.bindingsuperclasses
 
+import android.annotation.SuppressLint
+import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.updateLayoutParams
 import androidx.viewbinding.ViewBinding
 import com.example.quizapp.R
-import com.example.quizapp.extensions.log
 import com.example.quizapp.utils.BindingUtils.getBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlin.math.max
 import kotlin.math.min
+import android.view.WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR
+
+import android.view.WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+import androidx.core.view.marginTop
+import com.example.quizapp.extensions.log
+import com.example.quizapp.extensions.setBackgroundColorWithRes
+
 
 abstract class BindingBottomSheetDialogFragment <VB : ViewBinding> : BottomSheetDialogFragment() {
 
@@ -37,6 +48,7 @@ abstract class BindingBottomSheetDialogFragment <VB : ViewBinding> : BottomSheet
 
     override fun getTheme() = R.style.Theme_QuizApp_BottomSheetDialog
 
+
     fun enableFullscreenMode(){
         view?.updateLayoutParams<FrameLayout.LayoutParams> {
             height = resources.displayMetrics.heightPixels
@@ -47,6 +59,7 @@ abstract class BindingBottomSheetDialogFragment <VB : ViewBinding> : BottomSheet
     fun enableNonCollapsing() {
         bottomSheetBehaviour?.apply {
             skipCollapsed = true
+            isFitToContents = false
             state = BottomSheetBehavior.STATE_EXPANDED
         }
     }

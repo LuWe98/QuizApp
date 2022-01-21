@@ -32,7 +32,7 @@ class SettingsItemTextLayout constructor(
             typedArray.getDimension(R.styleable.SettingsItemTextLayout_iconPadding, 10.dp.toFloat()).toInt().let { padding ->
                 binding.icon.setPadding(padding, padding, padding, padding)
             }
-            typedArray.getColor(R.styleable.SettingsItemTextLayout_titleColor, getThemeColor(R.attr.defaultTextColor)).let { textColor ->
+            typedArray.getColor(R.styleable.SettingsItemTextLayout_titleColor, getThemeColor(R.attr.dominantTextColor)).let { textColor ->
                 binding.title.setTextColor(textColor)
             }
             typedArray.getColor(R.styleable.SettingsItemTextLayout_textColor, getThemeColor(R.attr.defaultTextColor)).let { textColor ->

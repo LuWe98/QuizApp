@@ -85,9 +85,13 @@ class BsdfLocalQuestionnaireFilterSelection: BindingBottomSheetDialogFragment<Bs
             tvHideCompleted.onClick(vmFilter::onHideCompletedCardClicked)
             btnCollapse.onClick(vmFilter::onCollapseButtonClicked)
 
-            btnBrowseAuthor.onClick(vmFilter::onAuthorAddButtonClicked)
-            btnBrowseCourseOfStudies.onClick(vmFilter::onCourseOfStudiesAddButtonClicked)
-            btnBrowseFaculty.onClick(vmFilter::onFacultyCardAddButtonClicked)
+            btnAddAuthor.onClick(vmFilter::onAuthorAddButtonClicked)
+            btnAddCos.onClick(vmFilter::onCourseOfStudiesAddButtonClicked)
+            btnAddFaculty.onClick(vmFilter::onFacultyCardAddButtonClicked)
+
+            btnClearAuthors.onClick(vmFilter::onClearAuthorFilterClicked)
+            btnClearCos.onClick(vmFilter::onClearCourseOfStudiesFilterClicked)
+            btnClearFaculty.onClick(vmFilter::onClearFacultyFilterClicked)
         }
     }
 

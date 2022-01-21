@@ -12,7 +12,7 @@ import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.DeleteUserResponse.*
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.utils.RemoteDataAvailability
+import com.example.quizapp.model.ktor.paging.PagingUiState
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
@@ -21,7 +21,7 @@ import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.Navig
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.viewmodel.VmAdminManageUsers.*
 import com.example.quizapp.viewmodel.VmAdminManageUsers.ManageUsersEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -34,7 +34,7 @@ class VmAdminManageUsers @Inject constructor(
     private val backendRepository: BackendRepository,
     preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
-) : BaseViewModel<ManageUsersEvent>() {
+) : EventViewModel<ManageUsersEvent>() {
 
     private val searchQueryMutableStatFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
@@ -47,6 +47,7 @@ class VmAdminManageUsers @Inject constructor(
 
     private val selectedRoles get() = selectedRolesMutableStateFlow.value
 
+    private var previousPagerRefreshState: LoadState? = null
 
     val filteredPagedDataStateFlow = combine(
         searchQueryMutableStatFlow,
@@ -130,13 +131,13 @@ class VmAdminManageUsers @Inject constructor(
 
     fun onLocalUserHidden(snapshot: ItemSnapshotList<User>) = launch(IO) {
         if(snapshot.all { it?.lastModifiedTimestamp == User.UNKNOWN_TIMESTAMP }){
-            eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_FOUND))
+            eventChannel.send(NewPagingUiStateEvent(PagingUiState.PageNotLoading.EmptyListFiltered))
         }
     }
 
     fun onLocalUserRoleUpdated(snapshot: ItemSnapshotList<User>) = launch(IO) {
         if(snapshot.none { it?.role in selectedRoles }){
-            eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_FOUND))
+            eventChannel.send(NewPagingUiStateEvent(PagingUiState.PageNotLoading.EmptyListFiltered))
         }
     }
 
@@ -147,21 +148,19 @@ class VmAdminManageUsers @Inject constructor(
         }
     }
 
-
-    fun onListLoadStateChanged(loadStates: CombinedLoadStates, itemCount: Int) = launch(IO) {
-        if (loadStates.append.endOfPaginationReached) {
-            val isListFiltered = searchQuery.isNotEmpty() || selectedRoles.isNotEmpty()
-            if (itemCount == 0 && isListFiltered) {
-                eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_FOUND))
-                return@launch
-            } else if(itemCount == 0 && !isListFiltered) {
-                eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_EXIST))
-                return@launch
+    fun onLoadStateChanged(loadStates: CombinedLoadStates, itemCount: Int) = launch(IO) {
+        PagingUiState.fromCombinedLoadStates(
+            loadStates = loadStates,
+            previousLoadState = previousPagerRefreshState,
+            itemCount = itemCount
+        ) {
+            searchQuery.isNotEmpty() || selectedRoles.isNotEmpty()
+        }.also { state ->
+            state?.let(::NewPagingUiStateEvent)?.let {
+                eventChannel.send(it)
             }
         }
-        if(itemCount != 0) {
-            eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.ENTRIES_FOUND))
-        }
+        previousPagerRefreshState = loadStates.source.refresh
     }
 
     sealed class ManageUsersEvent: UiEventMarker {
@@ -169,7 +168,7 @@ class VmAdminManageUsers @Inject constructor(
         class HideUserEvent(val userId: String) : ManageUsersEvent()
         class ShowMessageSnackBarEvent(@StringRes val messageRes: Int) : ManageUsersEvent()
         object ClearSearchQueryEvent : ManageUsersEvent()
-        class ChangeResultLayoutVisibility(val state: RemoteDataAvailability) : ManageUsersEvent()
+        class NewPagingUiStateEvent(val state: PagingUiState) : ManageUsersEvent()
     }
 
     companion object {

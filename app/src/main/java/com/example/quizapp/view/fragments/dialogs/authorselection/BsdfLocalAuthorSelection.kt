@@ -5,8 +5,9 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
-import com.example.quizapp.databinding.BsdfAuthorSelectionBinding
+import com.example.quizapp.databinding.BsdfAuthorSelectionLocalBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.ListLoadItemType
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaAuthorSelectionLocal
 import com.example.quizapp.viewmodel.VmLocalAuthorSelection
@@ -14,7 +15,7 @@ import com.example.quizapp.viewmodel.VmLocalAuthorSelection.LocalAuthorSelection
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BsdfLocalAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSelectionBinding>() {
+class BsdfLocalAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSelectionLocalBinding>() {
 
     private val vmAuthor: VmLocalAuthorSelection by viewModels()
 
@@ -64,10 +65,7 @@ class BsdfLocalAuthorSelection: BindingBottomSheetDialogFragment<BsdfAuthorSelec
             it.adjustVisibilities(
                 binding.rv,
                 binding.dataAvailability,
-                R.string.noAuthorResultsFoundTitle,
-                R.string.noAuthorResultsFoundText,
-                R.string.noAuthorDataExistsTitle,
-                R.string.noAuthorDataExistsText
+                ListLoadItemType.LOCAL_AUTHOR
             )
             rvAdapter.submitList(it.data)
         }

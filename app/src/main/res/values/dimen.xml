@@ -29,7 +29,11 @@
 
     <dimen name="backButtonMargin">@dimen/grid_2_5</dimen>
 
-    <dimen name="searchBarHeight">50dp</dimen>
+    <dimen name="searchBarHeight">55dp</dimen>
     <dimen name="searchBarHorizontalMargin">@dimen/grid_2_5</dimen>
-    <dimen name="searchBarElevation">1dp</dimen>
+    <dimen name="searchBarElevation">0dp</dimen>
+
+    <dimen name="itemCardCornerRadius">7.5dp</dimen>
+
+    <dimen name="fabMargin">@dimen/grid_8</dimen>
 </resources>

@@ -2,6 +2,7 @@ package com.example.quizapp.extensions
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.Point
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -110,10 +111,6 @@ val Context.navigationBarHeight: Int
             else -> 0
         }
     }
-
-
-val Fragment.isConnectedToInternet
-    get() = context?.isConnectedToInternet ?: false
 
 val Context.isConnectedToInternet
     get() = (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).let { manager ->

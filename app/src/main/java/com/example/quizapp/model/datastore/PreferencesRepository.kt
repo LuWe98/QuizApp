@@ -384,10 +384,13 @@ class PreferencesRepository @Inject constructor(
             cachedUser!!
         }
 
-    val userIdFlow
-        get() = dataFlow.map {
+    val userIdFlow = dataFlow.map {
             it[USER_ID_KEY]?.decrypt() ?: EMPTY_STRING
         }
+
+    val userNameFlow = dataFlow.map {
+        it[USER_NAME_KEY]?.decrypt() ?: EMPTY_STRING
+    }
 
     suspend fun getUserId() = userIdFlow.first()
 

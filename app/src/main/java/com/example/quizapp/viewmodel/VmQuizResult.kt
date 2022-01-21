@@ -6,7 +6,7 @@ import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.FromQuizResultToQuizContainerScreen
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.viewmodel.VmQuizResult.FragmentQuizResultEvent
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class VmQuizResult @Inject constructor(
     private val localRepository: LocalRepository
-) : BaseViewModel<FragmentQuizResultEvent>() {
+) : EventViewModel<FragmentQuizResultEvent>() {
 
     fun onShowSolutionsClicked() = launch(IO) {
         navigationDispatcher.dispatch(FromQuizResultToQuizContainerScreen( true))

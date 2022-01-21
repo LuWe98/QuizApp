@@ -7,7 +7,6 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminManageCourseOfStudiesBinding
 import com.example.quizapp.databinding.TabLayoutViewFacultyBinding
 import com.example.quizapp.extensions.*
-import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.view.viewpager.adapter.VpaManageCourseOfStudies
@@ -45,7 +44,6 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
             setPageTransformer(FadeOutPageTransformer())
             onPageSelected { position ->
                 updateTabs(position)
-                changeTitleWithAnimation(facultyList[position])
             }
         }
 
@@ -57,20 +55,6 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
                     binding.viewPager.setCurrentItem(index, false)
                 }
             }
-        }
-    }
-
-    private fun changeTitleWithAnimation(faculty: Faculty){
-        binding.tvFacultyName.apply {
-            val duration = if(text.isEmpty()) 0L else 150L
-            animate().setDuration(duration)
-                .alpha(0f)
-                .withEndAction {
-                    text = faculty.name
-                    animate().setDuration(duration)
-                        .alpha(1f)
-                        .start()
-                }.start()
         }
     }
 

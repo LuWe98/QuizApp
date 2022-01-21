@@ -1,17 +1,16 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:transitionGroup="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/background_round_corners_top_15dp"
-        android:backgroundTint="?colorOnPrimary">
+        android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/grid_4"
             android:id="@+id/appBarLayout"
-            android:background="?colorOnPrimary"
+            android:background="?android:colorBackground"
             app:liftOnScroll="true"
             app:liftOnScrollTargetViewId="@id/nestedScrollView">
 
@@ -99,7 +98,7 @@
                     app:dropDownIcon="@drawable/ic_arrow_down"
                     tools:text="Questionnaire Title"
                     android:background="@drawable/ripple_round_corners_10_dp"
-                    android:backgroundTint="?android:colorBackground" />
+                    android:backgroundTint="?colorOnPrimary" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -108,7 +107,7 @@
                     app:layout_constraintTop_toBottomOf="@id/questionTextCard"
                     android:layout_marginTop="@dimen/grid_6"
                     android:background="@drawable/ripple_round_corners_10_dp"
-                    android:backgroundTint="?android:colorBackground">
+                    android:backgroundTint="?colorOnPrimary">
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="40dp"
@@ -127,8 +126,7 @@
                         android:id="@+id/publishText"
                         android:text="@string/multipleChoice"
                         android:layout_marginStart="@dimen/grid_2"
-                        android:textColor="?defaultTextColor"
-                        android:textStyle="bold"
+                        android:textColor="?dominantTextColor"
                         android:gravity="center_vertical"
                         android:textSize="16sp"
                         android:ellipsize="end"
@@ -147,7 +145,6 @@
                         android:scaleX="0.75"
                         android:minWidth="0dp"
                         android:scaleY="0.75"
-                        app:buttonTint="?colorPrimary"
                         android:layout_marginEnd="@dimen/grid_1"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"

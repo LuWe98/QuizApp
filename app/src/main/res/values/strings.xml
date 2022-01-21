@@ -11,6 +11,7 @@
 
 
     <!-- ENTITY STRINGS-->
+    <string name="helloHome">Hello, %1$s</string>
     <string name="title">Title</string>
 
     <string name="name">Name</string>
@@ -42,6 +43,7 @@
     <string name="subject">Subject</string>
 
     <string name="user">User</string>
+    <string name="users">Users</string>
     <string name="userName">Username</string>
     <string name="author">Author</string>
     <string name="authors">Authors</string>
@@ -226,48 +228,49 @@
     <string name="noResultsFoundTitle">No results found</string>
     <string name="noResultsFoundText">Try another search query or select different filters</string>
 
+
     <string name="noInternetAvailableTitle">No internet available</string>
     <string name="noInternetAvailableText">Check your internet connection and try again</string>
 
-    <string name="errorCouldNotReachBackendTitle">Could not reach backend</string>
-    <string name="errorCouldNotReachBackendText">Check your internet connection, otherwise the server is not available</string>
+    <string name="errorCouldNotReachBackendTitle">Oops, something went wrong…</string>
+    <string name="errorCouldNotReachBackendText">Check your internet connection, or try again later</string>
 
     <string name="noLocalQuestionnaireResultsFoundTitle">No questionnaires found</string>
     <string name="noLocalQuestionnaireResultsFoundText">Try another search query or select different filters</string>
     <string name="noLocalQuestionnaireDataExistsTitle">No questionnaires available</string>
     <string name="noLocalQuestionnaireDataExistsText">Find questionnaires online or create your own to get started!</string>
 
-    <string name="noRemoteQuestionnaireResultsFoundTitle">No questionnaires found</string>
+    <string name="noRemoteQuestionnaireResultsFoundTitle">Nothing found</string>
     <string name="noRemoteQuestionnaireResultsFoundText">Try another search query or select different filters</string>
-    <string name="noRemoteQuestionnaireDataExistsTitle">No questionnaires available</string>
-    <string name="noRemoteQuestionnaireDataExistsText">There are no questionnaires available online</string>
+    <string name="noRemoteQuestionnaireDataExistsTitle">Nothing found</string>
+    <string name="noRemoteQuestionnaireDataExistsText">Seems like no one published a questionnaire yet</string>
 
-    <string name="noUserResultsFoundTitle">No users found</string>
+    <string name="noUserResultsFoundTitle">Nothing found</string>
     <string name="noUserResultsFoundText">Try another search query or select different filters</string>
     <string name="noUserDataExistsTitle">No users available</string>
     <string name="noUserDataExistsText">There are currently no users online</string>
 
-    <string name="noAuthorResultsFoundTitle">No authors found</string>
+    <string name="noAuthorResultsFoundTitle">Nothing found</string>
     <string name="noAuthorResultsFoundText">Try another search query or select different filters</string>
     <string name="noAuthorDataExistsTitle">No authors available</string>
     <string name="noAuthorDataExistsText">There are currently no authors online</string>
 
-    <string name="noFacultyResultsFoundTitle">No faculties found</string>
+    <string name="noFacultyResultsFoundTitle">Nothing found</string>
     <string name="noFacultyResultsFoundText">Try another search query or sync local faculties</string>
     <string name="noFacultyDataExistsTitle">No faculties available</string>
     <string name="noFacultyDataExistsText">Try to sync local faculties</string>
 
-    <string name="noCourseOfStudiesResultsFoundTitle">No Courses of Studies found</string>
+    <string name="noCourseOfStudiesResultsFoundTitle">Nothing found</string>
     <string name="noCourseOfStudiesResultsFoundText">Try another search query or sync local courses of studies</string>
     <string name="noCourseOfStudiesDataExistsTitle">No Courses of Studies available</string>
     <string name="noCourseOfStudiesDataExistsText">Try to sync local courses of studies</string>
 
-    <string name="noAddEditQuestionResultsFoundTitle">No questions found</string>
+    <string name="noAddEditQuestionResultsFoundTitle">Nothing found</string>
     <string name="noAddEditQuestionResultsFoundText">Try another search query or create a new question</string>
-    <string name="noAddEditQuestionDataExistsTitle">No questions created yet</string>
+    <string name="noAddEditQuestionDataExistsTitle">No questions created</string>
     <string name="noAddEditQuestionDataExistsText">There are no questions in this questionnaire yet</string>
 
-    <string name="noQuizQuestionResultsFoundTitle">No questions found</string>
+    <string name="noQuizQuestionResultsFoundTitle">Nothing found</string>
     <string name="noQuizQuestionResultsFoundText">Try another search query</string>
     <string name="noQuizQuestionDataExistsTitle">No questions available</string>
     <string name="noQuizQuestionDataExistsText">There are no questions in this questionnaire yet</string>

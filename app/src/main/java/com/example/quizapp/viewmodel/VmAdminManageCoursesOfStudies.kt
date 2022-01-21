@@ -8,12 +8,12 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.RoomListLoadStatus
+import com.example.quizapp.model.databases.room.asRoomListLoadStatus
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.DeleteCourseOfStudiesResponse.*
-import com.example.quizapp.utils.LocalDataAvailability
-import com.example.quizapp.utils.asLocalDataAvailability
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.CosMoreOptionsItem.DELETE
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.CosMoreOptionsItem.EDIT
@@ -24,7 +24,7 @@ import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.Sel
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent.ClearSearchQueryEvent
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies.ManageCourseOfStudiesEvent.ShowMessageSnackBar
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -38,7 +38,7 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle
-) : BaseViewModel<ManageCourseOfStudiesEvent>() {
+) : EventViewModel<ManageCourseOfStudiesEvent>() {
 
     private val searchQueryMutableStateFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
@@ -63,14 +63,14 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
     fun getCourseOfStudiesFlowWith(facultyId: String) = searchQueryMutableStateFlow.flatMapLatest { query ->
         if (facultyId == NO_FACULTY_ID) {
             localRepository.getCoursesOfStudiesNotAssociatedWithFacultyFlow(query).map { list ->
-                list.asLocalDataAvailability(query::isNotEmpty)
+                list.asRoomListLoadStatus(query::isNotEmpty)
             }
         } else {
             localRepository.getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId, query).map { list ->
-                list.asLocalDataAvailability(query::isNotEmpty)
+                list.asRoomListLoadStatus(query::isNotEmpty)
             }
         }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDataAvailability.DataFound(emptyList()))
+    }.stateIn(viewModelScope, SharingStarted.Lazily, RoomListLoadStatus.DataFound(emptyList()))
 
 
     fun onItemClicked(courseOfStudies: CourseOfStudies) = launch(IO) {

@@ -4,9 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:transitionName="@string/questionClickedTransitionName"
-        android:background="@drawable/background_round_corners_top_15dp"
-        android:backgroundTint="?colorOnPrimary">
+        android:transitionName="@string/questionClickedTransitionName">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -15,8 +13,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:background="?colorOnPrimary"
-            android:elevation="2dp">
+            android:elevation="0dp">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="35dp"
@@ -89,7 +86,6 @@
                 android:textStyle="bold"
                 android:textColor="?headingTextColor" />
 
-
         <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_height="45dp"
@@ -101,7 +97,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btnBack">
-
             <com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab.LazyQuestionTabLayout
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
@@ -110,28 +105,11 @@
                     android:layout_gravity="center" />
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:layout_width="match_parent"
-                android:layout_height="3.5dp"
-                android:progress="30"
-                android:layout_marginHorizontal="@dimen/grid_4"
-                android:layout_marginTop="@dimen/grid_6"
-                app:trackCornerRadius="50dp"
-                app:trackThickness="0dp"
-                app:trackColor="?android:colorBackground"
-                app:layout_constraintTop_toBottomOf="@id/lazyTabLayoutContainer"
-                android:id="@+id/prograssTest"
-                android:background="?android:colorBackground"
-                android:progressTint="?colorAccent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.viewpager2.widget.ViewPager2
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@drawable/background_round_corners_15dp"
-            android:backgroundTint="?android:colorBackground"
             android:id="@+id/viewPager"
             android:elevation="-1dp"
             android:layout_marginBottom="@dimen/grid_4"
@@ -145,7 +123,6 @@
             android:layout_height="00dp"
             android:id="@+id/bottomView"
             android:visibility="gone"
-            android:background="?colorOnPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">

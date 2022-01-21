@@ -14,6 +14,8 @@ import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
 import com.example.quizapp.model.databases.properties.QuestionnaireVisibility.PRIVATE
 import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.RoomListLoadStatus
+import com.example.quizapp.model.databases.room.asRoomListLoadStatus
 import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.entities.Questionnaire
@@ -27,13 +29,11 @@ import com.example.quizapp.model.ktor.BackendResponse.InsertFilledQuestionnaireR
 import com.example.quizapp.model.ktor.BackendResponse.InsertQuestionnairesResponse
 import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
 import com.example.quizapp.model.ktor.status.SyncStatus.*
-import com.example.quizapp.utils.LocalDataAvailability
-import com.example.quizapp.utils.asLocalDataAvailability
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.viewmodel.VmHome.*
 import com.example.quizapp.viewmodel.VmHome.FragmentHomeEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -53,14 +53,13 @@ class VmHome @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle,
     app: QuizApplication
-) : BaseViewModel<FragmentHomeEvent>() {
+) : EventViewModel<FragmentHomeEvent>() {
 
     init {
-        if (app.isConnectedToInternet) {
-            launch(IO, applicationScope) {
+        launch(IO, applicationScope) {
+            if (app.isConnectedToInternet) {
                 eventChannel.send(ChangeProgressVisibility(true))
                 backendSyncer.syncData()
-                delay(500)
                 eventChannel.send(ChangeProgressVisibility(false))
             }
         }
@@ -71,6 +70,8 @@ class VmHome @Inject constructor(
     val searchQueryStateFlow = searchQueryMutableStateFlow.asStateFlow()
 
     val searchQuery get() = searchQueryMutableStateFlow.value
+
+    val userNameFlow = preferencesRepository.userNameFlow.stateIn(viewModelScope, SharingStarted.Lazily, "")
 
 
     val locallyPresentAuthors = localRepository.getAllLocalAuthorsFlow()
@@ -104,11 +105,11 @@ class VmHome @Inject constructor(
             ascending = ascending,
             hideCompleted = hideCompleted
         ).map { list ->
-            list.asLocalDataAvailability {
+            list.asRoomListLoadStatus {
                 query.isNotEmpty() || authorIds.isNotEmpty() || cosIds.isNotEmpty() || facultyIds.isNotEmpty() || hideCompleted
             }
         }
-    }.flatMapLatest { it }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDataAvailability.DataFound(emptyList()))
+    }.flatMapLatest { it }.stateIn(viewModelScope, SharingStarted.Lazily, RoomListLoadStatus.DataFound(emptyList()))
 
 
     fun onSwipeRefreshTriggered() = launch(IO) {

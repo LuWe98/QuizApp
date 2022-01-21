@@ -3,6 +3,7 @@ package com.example.quizapp.model.ktor.backendsyncer
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
 import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
+import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
@@ -25,6 +26,14 @@ import javax.inject.Singleton
 //TODO -> Filled Questionnaires sollen vom backend runtergeladen werden, wenn lokal kein [LocallyFilledQuestionnaireToUpload] vorhanden ist
 // Wenn es vorhanden ist, werden stattdessen die Antworten hochgeladen
 
+//TODO ->
+// Wenn lokal ein unsynced Questionnaire ist:
+// Abgleich mit der Remote Datenbank, von dort wird auch der Timestamp zurückgegeben um den den Fragebögen zuzuordnen
+// Wenn lokal unsynced und der Timestamp gleich ist mit der online Datenbank dann soll der lokale hochgeladen werden
+// Wenn lokal unsynced und der Timestamp kleiner ist als in der online Datenbank dann soll der von der online Datenbank runtergeldaden werden und den lokalen überschreiben
+// Wenn lokal unsynced und der Timestamp größer als der in der online Datenbank --> Sollte eigentlich nie vorkommen.
+// Das mit dem synceden in Datenbankabfragen machen mit einer großen mapped Querie.
+
 @Singleton
 class BackendSyncer @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
@@ -45,7 +54,6 @@ class BackendSyncer @Inject constructor(
         Pair(facultyAndCursesOfStudiesAsync.await(), questionnaireAsync.await())
     }
 
-    //TODO -> Update funktioniert noch nicht richtig, anschauen!
     suspend fun syncFacultiesAndCoursesOfStudies(): SyncFacultyAndCourseOfStudiesResultType = withContext(IO) {
         val facultyAsync = async { getSyncFacultiesResponse() }
         val cosAsync = async { getSyncCourseOfStudiesResponse() }
@@ -197,6 +205,30 @@ class BackendSyncer @Inject constructor(
                         answers.map { it.copy(isAnswerSelected = false) }
                     } else {
                         answers.map { it.copy(isAnswerSelected = it.id in selectedAnswerIds) }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun mapToCompleteQuestionnaire2(
+        syncedQuestionnaires: List<CompleteQuestionnaire>,
+        receivedMongoQuestionnaires: List<MongoQuestionnaire>
+    ) {
+        val mappedReceived = receivedMongoQuestionnaires.map(dataMapper::mapMongoQuestionnaireToRoomCompleteQuestionnaire)
+
+        mappedReceived.onEach { cQ ->
+            val selectedAnswerIds = mappedReceived.firstOrNull { it.questionnaire.id == cQ.questionnaire.id }?.allSelectedAnswerIds
+                ?: syncedQuestionnaires.firstOrNull { it.questionnaire.id == cQ.questionnaire.id }?.allSelectedAnswerIds
+
+            selectedAnswerIds?.let {
+                cQ.questionsWithAnswers = cQ.questionsWithAnswers.map { qwa ->
+                    qwa.apply {
+                        answers = if (!question.isMultipleChoice && answers.count { it.id in selectedAnswerIds } > 1) {
+                            answers.map { it.copy(isAnswerSelected = false) }
+                        } else {
+                            answers.map { it.copy(isAnswerSelected = it.id in selectedAnswerIds) }
+                        }
                     }
                 }
             }

@@ -3,26 +3,23 @@ package com.example.quizapp.viewmodel
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.paging.CombinedLoadStates
-import androidx.paging.Pager
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
+import androidx.paging.*
 import com.example.quizapp.R
-import com.example.quizapp.extensions.combine
-import com.example.quizapp.extensions.getMutableStateFlow
-import com.example.quizapp.extensions.launch
+import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
 import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.BackendResponse
 import com.example.quizapp.model.ktor.BackendResponse.GetQuestionnaireResponse.*
 import com.example.quizapp.model.ktor.paging.PagingConfigValues
+import com.example.quizapp.model.ktor.paging.PagingUiState
 import com.example.quizapp.model.ktor.status.DownloadStatus
 import com.example.quizapp.model.ktor.status.DownloadStatus.*
-import com.example.quizapp.utils.RemoteDataAvailability
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.BrowseQuestionnaireMoreOptionsItem
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
@@ -30,7 +27,7 @@ import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmSearch.*
 import com.example.quizapp.viewmodel.VmSearch.SearchEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -45,7 +42,7 @@ class VmSearch @Inject constructor(
     private val dataMapper: DataMapper,
     private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
-) : BaseViewModel<SearchEvent>() {
+) : EventViewModel<SearchEvent>() {
 
     private val searchQueryMutableStateFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
 
@@ -56,6 +53,8 @@ class VmSearch @Inject constructor(
     private val selectedAuthorsMutableStateFlow = state.getMutableStateFlow(SELECTED_AUTHORS_KEY, emptySet<AuthorInfo>())
 
     private val selectedAuthors get() = selectedAuthorsMutableStateFlow.value
+
+    private var previousPagerRefreshState: LoadState? = null
 
 
     val filteredPagedData = combine(
@@ -101,7 +100,7 @@ class VmSearch @Inject constructor(
         }
     }
 
-    fun onBackButtonClicked() = launch(IO)  {
+    fun onBackButtonClicked() = launch(IO) {
         navigationDispatcher.dispatch(NavigateBack)
     }
 
@@ -109,13 +108,20 @@ class VmSearch @Inject constructor(
         navigationDispatcher.dispatch(ToRemoteQuestionnaireFilterDialog(selectedAuthorsMutableStateFlow.value))
     }
 
-    fun onRemoteQuestionnaireFilterUpdateReceived(result: FragmentResult.RemoteQuestionnaireFilterResult){
+    fun onRemoteQuestionnaireFilterUpdateReceived(result: FragmentResult.RemoteQuestionnaireFilterResult) {
         result.selectedAuthors.toSet().let {
             state.set(SELECTED_AUTHORS_KEY, it)
             selectedAuthorsMutableStateFlow.value = it
         }
     }
 
+    fun onQuestionnaireMoreOptionsSelectionResultReceived(result: SelectionResult.RemoteQuestionnaireMoreOptionsSelectionResult) {
+        when (result.selectedItem) {
+            BrowseQuestionnaireMoreOptionsItem.DOWNLOAD -> onItemDownLoadButtonClicked(result.calledOnRemoteQuestionnaire.id)
+            BrowseQuestionnaireMoreOptionsItem.OPEN -> onItemClicked(result.calledOnRemoteQuestionnaire)
+            BrowseQuestionnaireMoreOptionsItem.DELETE -> deleteDownloadedQuestionnaire(result.calledOnRemoteQuestionnaire.id)
+        }
+    }
 
     //TODO -> Ist nur temporär um zu testen wegen main screen
     fun onItemDownLoadButtonClicked(questionnaireId: String) = launch(IO) {
@@ -161,13 +167,19 @@ class VmSearch @Inject constructor(
         downLoadQuestionnaire(browsableQuestionnaire.id)
     }
 
-    fun onQuestionnaireMoreOptionsSelectionResultReceived(result: SelectionResult.RemoteQuestionnaireMoreOptionsSelectionResult) {
-        when (result.selectedItem) {
-            BrowseQuestionnaireMoreOptionsItem.DOWNLOAD -> onItemDownLoadButtonClicked(result.calledOnRemoteQuestionnaire.id)
-            BrowseQuestionnaireMoreOptionsItem.OPEN -> onItemClicked(result.calledOnRemoteQuestionnaire)
+    private fun deleteDownloadedQuestionnaire(questionnaireId: String) = launch(IO) {
+        localRepository.insert(LocallyDeletedQuestionnaire.notAsOwner(questionnaireId))
+        localRepository.deleteQuestionnaireWith(questionnaireId)
+        eventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, NOT_DOWNLOADED))
+
+        runCatching {
+            backendRepository.deleteFilledQuestionnaire(listOf(questionnaireId))
+        }.onSuccess {
+            if (it.responseType == BackendResponse.DeleteFilledQuestionnaireResponse.DeleteFilledQuestionnaireResponseType.SUCCESSFUL) {
+                localRepository.delete(LocallyDeletedQuestionnaire.notAsOwner(questionnaireId))
+            }
         }
     }
-
 
     private suspend fun downLoadQuestionnaire(questionnaireId: String) {
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.downloadingQuestionnaire))
@@ -202,34 +214,29 @@ class VmSearch @Inject constructor(
         }
     }
 
-
-    fun onListLoadStateChanged(loadStates: CombinedLoadStates, itemCount: Int) = launch(IO) {
-        if (loadStates.append.endOfPaginationReached) {
-            val isListFiltered = searchQuery.isNotEmpty()
+    fun onLoadStateChanged(loadStates: CombinedLoadStates, itemCount: Int) = launch(IO) {
+        PagingUiState.fromCombinedLoadStates(
+            loadStates = loadStates,
+            previousLoadState = previousPagerRefreshState,
+            itemCount = itemCount
+        ) {
+            searchQuery.isNotEmpty()
                     || selectedAuthors.isNotEmpty()
                     || preferencesRepository.getBrowsableCosIds().isNotEmpty()
                     || preferencesRepository.getBrowsableFacultyIds().isNotEmpty()
-
-            if (itemCount == 0 && isListFiltered) {
-                eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_FOUND))
-                return@launch
-            } else if(itemCount == 0 && !isListFiltered) {
-                eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.NO_ENTRIES_EXIST))
-                return@launch
+        }.also { state ->
+            state?.let(::NewPagingUiStateEvent)?.let {
+                eventChannel.send(it)
             }
         }
-
-        if(itemCount != 0) {
-            eventChannel.send(ChangeResultLayoutVisibility(RemoteDataAvailability.ENTRIES_FOUND))
-        }
+        previousPagerRefreshState = loadStates.source.refresh
     }
 
-    sealed class SearchEvent: UiEventMarker {
+    sealed class SearchEvent : UiEventMarker {
         object ClearSearchQueryEvent : SearchEvent()
         class ShowMessageSnackBar(@StringRes val messageRes: Int) : SearchEvent()
         class ChangeItemDownloadStatusEvent(val questionnaireId: String, val status: DownloadStatus) : SearchEvent()
-        class ChangeResultLayoutVisibility(val state: RemoteDataAvailability) : SearchEvent()
-
+        class NewPagingUiStateEvent(val state: PagingUiState) : SearchEvent()
     }
 
     companion object {

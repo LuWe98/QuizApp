@@ -3,15 +3,20 @@ package com.example.quizapp.view
 import android.animation.ValueAnimator
 import android.graphics.Color
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.viewModels
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.collectWhenStarted
+import com.example.quizapp.extensions.log
 import com.example.quizapp.extensions.navController
 import com.example.quizapp.extensions.showSnackBar
+import com.example.quizapp.utils.BindingUtils.getBinding
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher
@@ -36,15 +41,53 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
     @Inject
     lateinit var fragmentResultDispatcher: FragmentResultDispatcher
 
-
     private val vmQuizActivity: VmMainActivity by viewModels()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        playFadeInAnim(savedInstanceState)
+//        window.apply {
+//            WindowCompat.setDecorFitsSystemWindows(this, false)
+//            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+//        }
 
+        super.onCreate(savedInstanceState)
+        initSplashScreen(savedInstanceState)
+        initViews(savedInstanceState)
+    }
+
+    private fun initSplashScreen(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) {
+            installSplashScreen().apply {
+                setOnExitAnimationListener { splashScreenView ->
+                    log("VIEW: $splashScreenView")
+                }
+
+                setKeepVisibleCondition {
+                    vmQuizActivity.test
+                }
+
+                /*
+                    setOnExitAnimationListener { splashScreenView ->
+                     splashScreenView.view.animate()
+                    .translationY(-splashScreenView.view.height.toFloat())
+                    .setInterpolator(AnticipateInterpolator())
+                    .setDuration(2000L)
+                    .scaleX(0.5f)
+                    .scaleY(0.5f)
+                    .withEndAction(splashScreenView::remove)
+                    .start()
+                    }
+                */
+            }
+        } else {
+            setTheme(R.style.Theme_QuizApp)
+        }
+    }
+
+    private fun initViews(savedInstanceState: Bundle?) {
+        binding = getBinding(this).apply {
+            setContentView(root)
+        }
+        playFadeInAnim(savedInstanceState)
         navController.addOnDestinationChangedListener(this)
         registerObservers()
     }
@@ -82,7 +125,6 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 
     private fun playFadeInAnim(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) return
-
         binding.transitionView.apply {
             animate()
                 .setDuration(resources.getInteger(R.integer.recreateAnimDuration).toLong())

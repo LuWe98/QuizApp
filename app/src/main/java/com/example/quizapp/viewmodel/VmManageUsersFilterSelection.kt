@@ -11,7 +11,7 @@ import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.Navig
 import com.example.quizapp.view.fragments.adminscreens.manageusers.filterselection.BsdfManageUsersFilterSelectionArgs
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmManageUsersFilterSelection.ManageUsersFilterSelectionEvent
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class VmManageUsersFilterSelection @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
-) : BaseViewModel<ManageUsersFilterSelectionEvent>() {
+) : EventViewModel<ManageUsersFilterSelectionEvent>() {
 
     private val args = BsdfManageUsersFilterSelectionArgs.fromSavedStateHandle(state)
 

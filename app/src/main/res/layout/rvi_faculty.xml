@@ -7,8 +7,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         app:cardBackgroundColor="?colorOnPrimary"
         app:cardElevation="1dp"
-        app:cardCornerRadius="10dp"
-        android:layout_marginTop="@dimen/grid_2">
+        app:cardCornerRadius="@dimen/itemCardCornerRadius"
+        android:layout_marginTop="@dimen/grid_3">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -23,6 +23,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="WI"
                 android:textSize="14sp"
+                android:textColor="?colorPrimary"
                 android:background="@drawable/background_round_corners_45dp"
                 android:backgroundTint="?android:colorBackground"
                 android:textStyle="bold"
@@ -37,6 +38,7 @@
                 app:layout_constraintStart_toEndOf="@+id/tvAbbreviation"
                 tools:text="Wirtschaftsinformatik"
                 android:textSize="14sp"
+                android:textColor="?dominantTextColor"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:layout_marginHorizontal="@dimen/grid_2"

@@ -17,7 +17,7 @@ import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.Sel
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.AddEditAnswerMoreOptionsItem
 import com.example.quizapp.viewmodel.VmAddEditQuestion.*
 import com.example.quizapp.viewmodel.VmAddEditQuestion.FragmentAddEditQuestionEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -27,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class VmAddEditQuestion @Inject constructor(
     private val state: SavedStateHandle
-) : BaseViewModel<FragmentAddEditQuestionEvent>() {
+) : EventViewModel<FragmentAddEditQuestionEvent>() {
 
     private val args = FragmentAddEditQuestionArgs.fromSavedStateHandle(state)
 
@@ -123,11 +123,6 @@ class VmAddEditQuestion @Inject constructor(
     }
 
 
-/*
-            onCheckButtonClicked = vmAddEditQuestion::onAnswerCheckClicked
-            onDeleteButtonClick = vmAddEditQuestion::onAnswerDeleteClicked
- */
-
     fun onAnswerCheckClicked(answer: Answer) {
         answers.toMutableList().apply {
             if (!isQuestionMultipleChoice) {
@@ -159,6 +154,10 @@ class VmAddEditQuestion @Inject constructor(
 
     fun onAddAnswerButtonClicked() = launch(IO) {
         navigationDispatcher.dispatch(FromAddEditQuestionToAddEditAnswer(null))
+    }
+
+    fun onClearAnswersButtonClicked() {
+        setAnswerList(emptyList())
     }
 
     fun onAnswerItemDragged(from: Int, to: Int) {

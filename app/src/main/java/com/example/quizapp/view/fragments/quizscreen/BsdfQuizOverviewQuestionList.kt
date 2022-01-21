@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.BsdfQuizOverviewQuestionListBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.ListLoadItemType
 import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaQuestionQuiz
 import com.example.quizapp.viewmodel.VmQuiz
@@ -55,14 +56,11 @@ class BsdfQuizOverviewQuestionList: BindingBottomSheetDialogFragment<BsdfQuizOve
     //TODO -> noch durchmischeln lassen, da es noch nüt get -> Positionen der Fragen werden nicht richtig angezeigt
     private fun initObservers() {
         vmQuiz.questionsWithAnswersFilteredFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.tvQuestionsAmount.text = it.data?.size?.toString() ?: "0"
+            binding.tvQuestionsAmount.text = it.data.size.toString()
             it.adjustVisibilities(
                 binding.rv,
                 binding.dataAvailability,
-                R.string.noQuizQuestionResultsFoundTitle,
-                R.string.noQuizQuestionResultsFoundText,
-                R.string.noQuizQuestionDataExistsTitle,
-                R.string.noQuizQuestionDataExistsText
+                ListLoadItemType.QUESTION
             )
             rvAdapter.submitList(it.data)
         }

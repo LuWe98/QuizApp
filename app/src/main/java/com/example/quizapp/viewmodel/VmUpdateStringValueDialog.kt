@@ -5,7 +5,7 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.fragments.dialogs.stringupdatedialog.DfUpdateStringArgs
 import com.example.quizapp.viewmodel.VmUpdateStringValueDialog.UpdateStringEvent
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class VmUpdateStringValueDialog @Inject constructor(
     private val state: SavedStateHandle,
     private val applicationScope: CoroutineScope
-) : BaseViewModel<UpdateStringEvent>() {
+) : EventViewModel<UpdateStringEvent>() {
 
     private val args = DfUpdateStringArgs.fromSavedStateHandle(state)
 

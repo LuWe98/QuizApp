@@ -5,14 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.utils.LocalDataAvailability
-import com.example.quizapp.utils.asLocalDataAvailability
+import com.example.quizapp.model.databases.room.RoomListLoadStatus
+import com.example.quizapp.model.databases.room.asRoomListLoadStatus
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.fragments.dialogs.courseofstudiesselection.BsdfCourseOfStudiesSelectionArgs
 import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesSelectionEvent
 import com.example.quizapp.viewmodel.VmCourseOfStudiesSelection.CourseOfStudiesSelectionEvent.ClearSearchQueryEvent
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class VmCourseOfStudiesSelection @Inject constructor(
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle
-) : BaseViewModel<CourseOfStudiesSelectionEvent>() {
+) : EventViewModel<CourseOfStudiesSelectionEvent>() {
 
     private val args = BsdfCourseOfStudiesSelectionArgs.fromSavedStateHandle(state)
 
@@ -47,9 +47,9 @@ class VmCourseOfStudiesSelection @Inject constructor(
 
     fun getCourseOfStudiesFlow(facultyId: String) = searchQueryMutableStateFlow.flatMapLatest { query ->
         localRepository.getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId, query).map { cos ->
-            cos.asLocalDataAvailability(query::isNotEmpty)
+            cos.asRoomListLoadStatus(query::isNotEmpty)
         }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDataAvailability.DataFound(emptyList()))
+    }.stateIn(viewModelScope, SharingStarted.Lazily, RoomListLoadStatus.DataFound(emptyList()))
 
 
     fun onItemClicked(courseOfStudiesId: String) {

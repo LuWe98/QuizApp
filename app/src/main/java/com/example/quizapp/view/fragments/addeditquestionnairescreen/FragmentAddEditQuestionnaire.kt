@@ -66,7 +66,9 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
             btnMoreOptions.onClick(vmAddEdit::onMoreOptionsClicked)
 
             infoCard.apply {
-                addLayout.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
+                btnClearCos.onClick(vmAddEdit::onClearCourseOfStudiesClicked)
+                btnAddCos.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
+
                 titleCard.onClick(vmAddEdit::onTitleCardClicked)
                 subjectCard.onClick(vmAddEdit::onSubjectCardClicked)
                 publishLayout.onClick(vmAddEdit::onPublishCardClicked)

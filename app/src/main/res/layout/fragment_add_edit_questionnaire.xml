@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:background="@drawable/background_round_corners_top_15dp"
-        android:backgroundTint="?colorOnPrimary"
+        android:transitionGroup="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -18,7 +17,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/topLayout"
-                android:background="?colorOnPrimary"
+                android:background="?android:colorBackground"
                 android:elevation="0dp"
                 app:layout_constraintTop_toTopOf="parent"
                 android:paddingBottom="@dimen/grid_3">
@@ -102,13 +101,14 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingBottom="@dimen/grid_2">
 
             <include
                     android:id="@+id/infoCard"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/grid_6"
                     android:layout_marginTop="@dimen/grid_8"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -124,7 +124,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginHorizontal="@dimen/grid_6"
-                    android:layout_marginTop="@dimen/grid_6" />
+                    android:layout_marginTop="@dimen/grid_4" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

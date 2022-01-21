@@ -12,13 +12,17 @@ enum class BrowseQuestionnaireMoreOptionsItem(
     @DrawableRes override val iconRes: Int
 ) : SelectionTypeItemMarker<BrowseQuestionnaireMoreOptionsItem> {
 
+    OPEN(
+        iconRes = R.drawable.ic_open_in_new,
+        textRes = R.string.open
+    ),
     DOWNLOAD(
         iconRes = R.drawable.ic_download,
         textRes = R.string.download
     ),
-    OPEN(
-        iconRes = R.drawable.ic_open_in_new,
-        textRes = R.string.open
+    DELETE(
+        iconRes = R.drawable.ic_delete,
+        textRes = R.string.delete
     );
 
 }

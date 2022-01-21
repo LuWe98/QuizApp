@@ -2,15 +2,14 @@ package com.example.quizapp.view.fragments.adminscreens.managecourseofstudies
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminManageCourseOfStudiesPageBinding
 import com.example.quizapp.extensions.collectWhenStarted
 import com.example.quizapp.extensions.disableChangeAnimation
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
+import com.example.quizapp.model.ListLoadItemType
 import com.example.quizapp.model.databases.room.entities.Faculty
-import com.example.quizapp.utils.LocalDataAvailability
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaCourseOfStudies
 import com.example.quizapp.viewmodel.VmAdminManageCoursesOfStudies
@@ -60,10 +59,7 @@ class FragmentAdminManageCourseOfStudiesPage: BindingFragment<FragmentAdminManag
             it.adjustVisibilities(
                 binding.rv,
                 binding.dataAvailability,
-                R.string.noCourseOfStudiesResultsFoundTitle,
-                R.string.noCourseOfStudiesResultsFoundText,
-                R.string.noCourseOfStudiesDataExistsTitle,
-                R.string.noCourseOfStudiesDataExistsText
+                ListLoadItemType.COURSE_OF_STUDIES
             )
             rvAdapter.submitList(it.data)
         }

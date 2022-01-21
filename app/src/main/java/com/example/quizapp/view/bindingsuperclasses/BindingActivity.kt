@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
 import com.example.quizapp.extensions.setLocale
-import com.example.quizapp.utils.BindingUtils.getBinding
 import com.google.android.material.snackbar.Snackbar
 
 abstract class BindingActivity<VB : ViewBinding> : AppCompatActivity() {
@@ -22,6 +21,6 @@ abstract class BindingActivity<VB : ViewBinding> : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = getBinding(this)
+//        binding = getBinding(this)
     }
 }

@@ -2,8 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:paddingHorizontal="@dimen/grid_6"
+        android:paddingVertical="@dimen/grid_2"
+        android:clipToPadding="false"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
     <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
             android:layout_width="match_parent"
@@ -17,8 +20,7 @@
             app:dropDownIcon="@drawable/ic_arrow_down"
             tools:text="Questionnaire Title"
             android:background="@drawable/ripple_round_corners_10_dp"
-            android:backgroundTint="?android:colorBackground" />
-
+            android:backgroundTint="?colorOnPrimary" />
 
     <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
             android:layout_width="match_parent"
@@ -33,102 +35,7 @@
             tools:text="Promod"
             android:layout_marginTop="@dimen/grid_6"
             android:background="@drawable/ripple_round_corners_10_dp"
-            android:backgroundTint="?android:colorBackground" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="60dp"
-            android:layout_marginTop="@dimen/grid_6"
-            android:background="@drawable/background_round_corners_10dp"
-            android:backgroundTint="?android:colorBackground"
-            app:layout_constraintTop_toBottomOf="@+id/subjectCard"
-            android:id="@+id/cosLayout">
-
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/ic_course_of_studies"
-                android:layout_marginStart="@dimen/grid_1"
-                android:layout_marginTop="@dimen/grid_2_5"
-                android:padding="10dp"
-                app:layout_constraintTop_toTopOf="parent"
-                android:id="@+id/cosIcon" />
-
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:id="@+id/cosText"
-                android:text="@string/courseOfStudies"
-                android:layout_marginStart="@dimen/grid_2"
-                android:textColor="?defaultTextColor"
-                android:textStyle="bold"
-                android:gravity="center_vertical"
-                android:textSize="16sp"
-                android:ellipsize="end"
-                android:lines="1"
-                app:layout_constraintBottom_toBottomOf="@+id/cosIcon"
-                app:layout_constraintTop_toTopOf="@+id/cosIcon"
-                app:layout_constraintStart_toEndOf="@+id/cosIcon"
-                app:layout_constraintEnd_toStartOf="@+id/addLayout" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:id="@+id/addLayout"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
-
-            <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/cosTextAdd"
-                    android:text="@string/add"
-                    android:visibility="gone"
-                    android:layout_marginEnd="@dimen/grid_6"
-                    android:textColor="?colorPrimary"
-                    android:textStyle="bold"
-                    android:gravity="center_vertical"
-                    app:autoSizeMaxTextSize="15.5sp"
-                    app:autoSizeMinTextSize="8sp"
-                    app:autoSizeTextType="uniform"
-                    android:lines="1"
-                    app:autoSizeStepGranularity="0.25sp"
-                    android:layout_centerVertical="true"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="@dimen/grid_1"
-                    android:padding="5dp"
-                    app:layout_constraintTop_toTopOf="@id/cosTextAdd"
-                    app:layout_constraintBottom_toBottomOf="@id/cosTextAdd"
-                    app:layout_constraintStart_toEndOf="@id/cosTextAdd"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@drawable/ic_add"
-                    app:tint="?colorPrimary" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintHeight_max="300dp"
-                android:overScrollMode="never"
-                android:id="@+id/rvCos"
-                tools:listitem="@layout/rvi_course_of_studies_choice"
-                tools:itemCount="2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cosIcon"
-                android:clipToPadding="false"
-                android:paddingVertical="@dimen/grid_2_5"
-                android:paddingHorizontal="@dimen/grid_2_5" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:backgroundTint="?colorOnPrimary" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -136,10 +43,11 @@
             android:id="@+id/publishLayout"
             android:visibility="gone"
             tools:visibility="visible"
-            app:layout_constraintTop_toBottomOf="@id/cosLayout"
             android:layout_marginTop="@dimen/grid_6"
+            app:layout_constraintTop_toBottomOf="@+id/subjectCard"
             android:background="@drawable/ripple_round_corners_10_dp"
-            android:backgroundTint="?android:colorBackground">
+            android:backgroundTint="?colorOnPrimary"
+            tools:layout_editor_absoluteX="24dp">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="40dp"
@@ -158,10 +66,9 @@
                 android:id="@+id/publishText"
                 android:text="@string/shouldPublishQuestionnaire"
                 android:layout_marginStart="@dimen/grid_2"
-                android:textColor="?defaultTextColor"
-                android:textStyle="bold"
+                android:textColor="?dominantTextColor"
                 android:gravity="center_vertical"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:ellipsize="end"
                 android:lines="1"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -178,11 +85,103 @@
                 android:scaleX="0.75"
                 android:minWidth="0dp"
                 android:scaleY="0.75"
-                app:buttonTint="?colorPrimary"
                 android:layout_marginEnd="@dimen/grid_1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:layout_marginTop="@dimen/grid_6"
+            android:background="@drawable/background_round_corners_10dp"
+            android:backgroundTint="?colorOnPrimary"
+            app:layout_constraintTop_toBottomOf="@+id/publishLayout"
+            android:id="@+id/cosLayout">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:id="@+id/cosCardHeader"
+                app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:srcCompat="@drawable/ic_course_of_studies"
+                    android:layout_marginStart="@dimen/grid_1"
+                    android:layout_marginTop="@dimen/grid_2_5"
+                    android:padding="10dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:id="@+id/cosIcon" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:id="@+id/cosText"
+                    android:text="@string/courseOfStudies"
+                    android:layout_marginStart="@dimen/grid_2"
+                    android:textColor="?dominantTextColor"
+                    android:gravity="center_vertical"
+                    android:textSize="15sp"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    app:layout_constraintBottom_toBottomOf="@+id/cosIcon"
+                    app:layout_constraintTop_toTopOf="@+id/cosIcon"
+                    app:layout_constraintStart_toEndOf="@+id/cosIcon"
+                    app:layout_constraintEnd_toStartOf="@+id/btnClearCos" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="@dimen/grid_1"
+                    android:id="@+id/btnClearCos"
+                    android:padding="5dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:srcCompat="@drawable/ic_clear_all" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHeight_max="300dp"
+                android:overScrollMode="never"
+                android:id="@+id/rvCos"
+                tools:listitem="@layout/rvi_course_of_studies_choice"
+                tools:itemCount="2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cosCardHeader"
+                app:layout_constraintBottom_toTopOf="@id/btnAddCos"
+                android:layout_marginTop="-12dp"
+                android:layout_marginBottom="@dimen/grid_4"
+                android:clipToPadding="false"
+                android:paddingHorizontal="@dimen/grid_2_5" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="@string/add"
+                android:id="@+id/btnAddCos"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textColor="@color/hfuDarkGreen"
+                android:background="@drawable/ripple_dashed_corners_15dp"
+                app:layout_constraintTop_toBottomOf="@id/rvCos"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginHorizontal="@dimen/grid_4"
+                android:layout_marginBottom="@dimen/grid_4"
+                android:elevation="1dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

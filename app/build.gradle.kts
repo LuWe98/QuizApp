@@ -184,6 +184,12 @@ dependencies {
     implementation("org.mongodb:bson:$bsonVersion")
 
 
+    //Splash Screens
+    val splashScreenVersion: String by project
+    implementation("androidx.core:core-splashscreen:$splashScreenVersion")
+
+
+
     //Testing
     val jUnitVersion: String by project
     testImplementation("junit:junit:$jUnitVersion")

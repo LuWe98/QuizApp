@@ -16,7 +16,7 @@ import javax.inject.Inject
 class VmSelectionDialog @Inject constructor(
     state: SavedStateHandle,
     private val applicationScope: CoroutineScope
-) : BaseViewModel<BaseViewModel.EmptyEventClass>() {
+) : BaseViewModel() {
 
     private val args = BsdfSelectionArgs.fromSavedStateHandle(state)
 

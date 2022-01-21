@@ -21,7 +21,7 @@ import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmSettings.*
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -39,7 +39,7 @@ class VmSettings @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
     private val backendSyncer: BackendSyncer
-) : BaseViewModel<FragmentSettingsEvent>() {
+) : EventViewModel<FragmentSettingsEvent>() {
 
     private val userFlow = preferencesRepository.userFlow.flowOn(IO).distinctUntilChanged()
 

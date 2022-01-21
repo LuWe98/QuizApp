@@ -56,22 +56,22 @@ class RvaBrowsableQuestionnaires(
     override fun bindViews(binding: RviQuestionnaireBrowseBinding, item: BrowsableQuestionnaire, position: Int) {
         binding.apply {
             tvTitle.text = item.title
+
             tvDateAndQuestionAmount.text = context.getString(
-                R.string.authorNameDateAndQuestionAmount,
+                R.string.cosAndSubject,
                 item.authorInfo.userName,
-                item.timeStampAsDate,
-                item.questionCount.toString()
+                item.timeStampAsDate
             )
 
             vmSearch.viewModelScope.launch(IO) {
                 val courseOfStudiesAbbreviations = vmSearch.getCourseOfStudiesNameWithIds(item.courseOfStudiesIds).reduceOrNull { acc, s -> "$acc, $s" } ?: ""
 
-                withContext(Main){
-                    tvInfo.text = context.getString(
-                        R.string.cosAndSubject,
-                        courseOfStudiesAbbreviations,
-                        item.subject)
-                }
+//                withContext(Main){
+//                    tvInfo.text = context.getString(
+//                        R.string.cosAndSubject,
+//                        courseOfStudiesAbbreviations,
+//                        item.subject)
+//                }
             }
 
             when(item.downloadStatus){

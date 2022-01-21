@@ -17,7 +17,7 @@ import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.*
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.*
-import com.example.quizapp.viewmodel.customimplementations.BaseViewModel
+import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.date.*
@@ -35,7 +35,7 @@ class VmAdminAddEditFaculty @Inject constructor(
     private val dataMapper: DataMapper,
     private val applicationScope: CoroutineScope,
     private val state: SavedStateHandle
-) : BaseViewModel<AddEditFacultyEvent>() {
+) : EventViewModel<AddEditFacultyEvent>() {
 
     private val args = FragmentAdminAddEditFacultiesArgs.fromSavedStateHandle(state)
 

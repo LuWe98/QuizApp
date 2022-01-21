@@ -17,7 +17,7 @@ object PagingConfigValues {
     suspend inline fun <reified T: Any> getDefaultPager(crossinline getDataAction: suspend (Int) -> List<T>) = Pager(
         config = defaultPagingConfig,
         pagingSourceFactory = {
-            DefaultPagingSource { page ->
+            SimplePagingSource { page ->
                 getDataAction.invoke(page)
             }
         }

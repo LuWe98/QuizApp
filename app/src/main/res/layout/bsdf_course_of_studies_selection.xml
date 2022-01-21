@@ -6,7 +6,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
         android:background="@drawable/background_round_corners_top_15dp"
-        android:backgroundTint="?colorOnPrimary">
+        android:backgroundTint="?android:colorBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -15,8 +15,6 @@
             android:elevation="2dp"
             android:clipToPadding="false"
             android:paddingBottom="@dimen/grid_2"
-            android:background="@drawable/background_round_corners_top_15dp"
-            android:backgroundTint="?colorOnPrimary"
             app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -54,8 +52,8 @@
                 android:id="@+id/clSearchBar"
                 android:elevation="@dimen/searchBarElevation"
                 android:background="@drawable/search_bar_background"
-                android:backgroundTint="?android:colorBackground"
-                android:layout_marginHorizontal="@dimen/grid_4"
+                android:backgroundTint="?colorOnPrimary"
+                android:layout_marginHorizontal="@dimen/grid_6"
                 android:layout_marginTop="@dimen/grid_4"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitle">
 
@@ -125,9 +123,8 @@
             android:id="@+id/btnConfirm"
             app:layout_constraintBottom_toBottomOf="parent"
             android:background="@drawable/background_round_corners_15dp"
-            android:backgroundTint="?colorPrimary"
-            android:layout_marginHorizontal="@dimen/grid_4"
-            android:layout_marginBottom="@dimen/grid_4"
+            android:backgroundTint="?colorPrimaryVariant"
+            android:layout_margin="@dimen/grid_6"
             android:text="@string/confirm"
             android:gravity="center"
             android:textStyle="bold"

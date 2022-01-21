@@ -11,4 +11,5 @@ interface SelectionTypeItemMarker<T: Enum<T>> : Parcelable {
     companion object {
         val DIFF_CALLBACK = generateDiffItemCallback(SelectionTypeItemMarker<*>::textRes)
     }
+
 }
