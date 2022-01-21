@@ -133,8 +133,8 @@ class VmSettings @Inject constructor(
 
 
     fun syncUserDataClicked() = launch(IO, applicationScope) {
-        val user = preferencesRepository.user
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.syncingUserData))
+        val user = preferencesRepository.userFlow.first()
 
         runCatching {
             backendRepository.syncUserData(user.id)

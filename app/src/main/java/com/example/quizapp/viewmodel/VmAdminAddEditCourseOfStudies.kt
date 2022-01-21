@@ -14,11 +14,10 @@ import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesR
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.InsertCourseOfStudiesResponse.*
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.FragmentAdminAddEditCourseOfStudiesArgs
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType
-import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.*
 import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.AddEditCourseOfStudiesEvent.*
 import com.example.quizapp.viewmodel.customimplementations.EventViewModel
@@ -60,18 +59,22 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
     private val parsedFacultyIds get() = args.courseOfStudiesWithFaculties?.faculties?.map(Faculty::id) ?: emptyList()
 
 
-    private val cosAbbreviationMutableStateFlow = state.getMutableStateFlow(COS_ABBREVIATION_KEY, parsedCourseOfStudiesAbbreviation)
+    private var _cosAbbreviation = state.get<String>(COS_ABBREVIATION_KEY) ?:  parsedCourseOfStudiesAbbreviation
+        set(value) {
+            state.set(COS_ABBREVIATION_KEY, value)
+            field = value
+        }
 
-    val cosAbbreviationStateFlow = cosAbbreviationMutableStateFlow.asStateFlow()
-
-    private val cosAbbreviation get() = cosAbbreviationMutableStateFlow.value
+    val cosAbbreviation get() = _cosAbbreviation
 
 
-    private val cosNameMutableStateFlow = state.getMutableStateFlow(COS_NAME_KEY, parsedCourseOfStudiesName)
+    private var _cosName = state.get<String>(COS_NAME_KEY) ?: parsedCourseOfStudiesName
+    set(value) {
+        state.set(COS_NAME_KEY, value)
+        field = value
+    }
 
-    val cosNameStateFlow = cosNameMutableStateFlow.asStateFlow()
-
-    private val cosName get() = cosNameMutableStateFlow.value
+    val cosName get() = _cosName
 
 
     private val cosFacultyIdsMutableStateFlow = state.getMutableStateFlow(COS_FACULTY_IDS_KEY, parsedFacultyIds)
@@ -95,12 +98,12 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
         cosFacultyIdsMutableStateFlow.value = ids
     }
 
-    fun onAbbreviationCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateCourseOfStudiesAbbreviationRequest(cosAbbreviation)))
+    fun onAbbreviationUpdated(abbr: String) {
+        _cosAbbreviation = abbr
     }
 
-    fun onNameCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateCourseOfStudiesNameRequest(cosName)))
+    fun onNameChanged(name: String) {
+        _cosName = name
     }
 
     fun onFacultyCardClicked() = launch(IO) {
@@ -113,17 +116,6 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
 
     fun onClearFacultiesClicked(){
         setFacultyIds(emptyList())
-    }
-
-
-    fun onAbbreviationUpdateResultReceived(result: UpdateStringValueResult.AddEditCourseOfStudiesAbbreviationUpdateResult) {
-        state.set(COS_ABBREVIATION_KEY, result.updatedStringValue)
-        cosAbbreviationMutableStateFlow.value = result.updatedStringValue
-    }
-
-    fun onNameUpdateResultReceived(result: UpdateStringValueResult.AddEditCourseOfStudiesNameUpdateResult) {
-        state.set(COS_NAME_KEY, result.updatedStringValue)
-        cosNameMutableStateFlow.value = result.updatedStringValue
     }
 
     fun onFacultySelectionResultReceived(result: FragmentResult.FacultySelectionResult) {

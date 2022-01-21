@@ -9,11 +9,10 @@ import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.CreateUserResponse.*
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.manageusers.FragmentAdminAddEditUserArgs
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType
-import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmAdminAddEditUser.*
 import com.example.quizapp.viewmodel.VmAdminAddEditUser.AddEditUserEvent.*
 import com.example.quizapp.viewmodel.customimplementations.EventViewModel
@@ -41,18 +40,22 @@ class VmAdminAddEditUser @Inject constructor(
     private val parsedUserRole get() = args.user?.role ?: Role.USER
 
 
-    private val userNameMutableStateFlow = state.getMutableStateFlow(USER_NAME_KEY, parsedUserName)
+    private var _userName = state.get<String>(USER_NAME_KEY) ?: parsedUserName
+        set(value) {
+            state.set(USER_NAME_KEY, value)
+            field = value
+        }
 
-    val userNameStateFlow = userNameMutableStateFlow.asStateFlow()
-
-    private val userName get() = userNameMutableStateFlow.value
+    val userName get() = _userName
 
 
-    private val userPasswordMutableStateFlow = state.getMutableStateFlow(USER_PASSWORD_KEY, parsedUserPassword)
+    private var _userPassword = state.get<String>(USER_PASSWORD_KEY) ?: parsedUserPassword
+        set(value) {
+            state.set(USER_PASSWORD_KEY, value)
+            field = value
+        }
 
-    val userPasswordStateFlow = userPasswordMutableStateFlow.asStateFlow()
-
-    private val userPassword get() = userPasswordMutableStateFlow.value
+    val userPassword get() = _userPassword
 
 
     private val userRoleMutableStateFlow = state.getMutableStateFlow(USER_ROLE_KEY, parsedUserRole)
@@ -62,31 +65,16 @@ class VmAdminAddEditUser @Inject constructor(
     private val userRole get() = userRoleMutableStateFlow.value
 
 
-    fun onUserNameCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateUserNameRequest(userName)))
+    fun onUserNameChanged(newName: String) {
+        _userName = newName
     }
 
-    fun onUserPasswordCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateUserPasswordRequest(userPassword)))
+    fun onPasswordChanged(newPassword: String) {
+        _userPassword = newPassword
     }
 
     fun onUserRoleCardClicked() = launch(IO) {
         navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.RoleSelection(userRole)))
-    }
-
-
-    fun onUserNameUpdateResultReceived(result: UpdateStringValueResult.AddEditUserNameUpdateResult) {
-        result.updatedStringValue.trim().let { trimmed ->
-            state.set(USER_NAME_KEY, trimmed)
-            userNameMutableStateFlow.value = trimmed
-        }
-    }
-
-    fun onUserPasswordUpdateResultReceived(result: UpdateStringValueResult.AddEditUserPasswordUpdateResult) {
-        result.updatedStringValue.trim().let { trimmed ->
-            state.set(USER_PASSWORD_KEY, trimmed)
-            userPasswordMutableStateFlow.value = trimmed
-        }
     }
 
     fun onUserRoleSelectionResultReceived(result: SelectionResult.RoleSelectionResult) {

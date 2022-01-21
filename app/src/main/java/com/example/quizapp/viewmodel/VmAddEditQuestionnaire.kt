@@ -28,7 +28,6 @@ import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatch
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.AddEditQuestionMoreOptionsItem
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.*
@@ -100,19 +99,21 @@ class VmAddEditQuestionnaire @Inject constructor(
 
 
 
-    private var questionnaireTitleMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_TITLE_KEY, parsedQuestionnaireTitle)
+    private var _questionnaireTitle = state.get<String>(QUESTIONNAIRE_TITLE_KEY) ?: parsedQuestionnaireTitle
+        set(value) {
+            state.set(QUESTIONNAIRE_TITLE_KEY, value)
+            field = value
+        }
 
-    val questionnaireTitleStateFlow get() = questionnaireTitleMutableStateFlow.asStateFlow()
+    val questionnaireTitle get() = _questionnaireTitle
 
-    private val questionnaireTitle get() = questionnaireTitleStateFlow.value
+    private var _questionnaireSubject = state.get<String>(QUESTIONNAIRE_SUBJECT_KEY) ?: parsedQuestionnaireSubject
+        set(value) {
+            state.set(QUESTIONNAIRE_SUBJECT_KEY, value)
+            field = value
+        }
 
-
-
-    private var questionnaireSubjectMutableStateFlow = state.getMutableStateFlow(QUESTIONNAIRE_SUBJECT_KEY, parsedQuestionnaireSubject)
-
-    val questionnaireSubjectStateFlow get() = questionnaireSubjectMutableStateFlow.asStateFlow()
-
-    private val questionnaireSubject get() = questionnaireSubjectStateFlow.value
+    val questionnaireSubject get() = _questionnaireSubject
 
 
 
@@ -195,26 +196,17 @@ class VmAddEditQuestionnaire @Inject constructor(
         setCoursesOfStudiesIds(emptySet())
     }
 
-    fun onTitleCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateQuestionnaireTitleRequest(questionnaireTitle)))
-    }
-
-    fun onSubjectCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateQuestionnaireSubjectRequest(questionnaireSubject)))
-    }
-
     fun onPublishCardClicked() {
         state.set(QUESTIONNAIRE_PUBLISH_KEY, !publishQuestionnaire)
         publishQuestionMutableStateFlow.value = !publishQuestionnaire
     }
 
-
-    fun onTitleUpdateResultReceived(result: UpdateStringValueResult.QuestionnaireTitleUpdateResult) {
-        questionnaireTitleMutableStateFlow.value = result.updatedStringValue
+    fun onTitleUpdated(newTitle: String) {
+        _questionnaireTitle = newTitle
     }
 
-    fun onSubjectUpdateResultReceived(result: UpdateStringValueResult.QuestionnaireSubjectUpdateResult) {
-        questionnaireSubjectMutableStateFlow.value = result.updatedStringValue
+    fun onSubjectUpdated(newSubject: String) {
+        _questionnaireSubject = newSubject
     }
 
     fun onQuestionWithAnswerUpdated(position: Int, questionWithAnswers: QuestionWithAnswers) {
@@ -301,7 +293,7 @@ class VmAddEditQuestionnaire @Inject constructor(
         val questionnaire = Questionnaire(
             id = parsedQuestionnaireId,
             title = questionnaireTitle,
-            authorInfo = preferencesRepository.user.asAuthorInfo,
+            authorInfo = preferencesRepository.getOwnAuthorInfo(),
             subject = questionnaireSubject,
             syncStatus = SYNCING,
             visibility = if (publishQuestionnaire) PUBLIC else PRIVATE
@@ -385,8 +377,8 @@ class VmAddEditQuestionnaire @Inject constructor(
 
         when (result) {
             is CsvDocumentFilePickerResult.Success -> {
-                questionnaireTitleMutableStateFlow.value = result.questionnaire.title
-                questionnaireSubjectMutableStateFlow.value = result.questionnaire.subject
+                eventChannel.send(SetQuestionnaireTitle(result.questionnaire.title))
+                eventChannel.send(SetQuestionnaireSubject(result.questionnaire.subject))
                 setQuestionWithAnswers(result.qwa)
                 eventChannel.send(ShowMessageSnackBarEvent(R.string.successfullyLoadedCsvData))
             }
@@ -401,6 +393,8 @@ class VmAddEditQuestionnaire @Inject constructor(
         class ShowMessageSnackBarWithStringEvent(val message: String) : AddEditQuestionnaireEvent()
         object ShowPopupMenu : AddEditQuestionnaireEvent()
         object StartCsvDocumentFilePicker : AddEditQuestionnaireEvent()
+        class SetQuestionnaireTitle(val title: String) : AddEditQuestionnaireEvent()
+        class SetQuestionnaireSubject(val subject: String) : AddEditQuestionnaireEvent()
     }
 
     sealed class AddEditQuestionnaireQuestionListEvent {

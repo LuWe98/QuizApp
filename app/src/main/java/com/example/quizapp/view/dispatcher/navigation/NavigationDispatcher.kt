@@ -20,6 +20,7 @@ import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFrag
 import com.example.quizapp.view.bindingsuperclasses.BindingDialogFragment
 import com.example.quizapp.view.dispatcher.DispatchEvent
 import com.example.quizapp.view.dispatcher.Dispatcher
+import com.example.quizapp.view.dispatcher.DispatcherEventChannelContainer
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
@@ -40,7 +41,9 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 import javax.inject.Inject
 
 @ActivityRetainedScoped
-class NavigationDispatcher @Inject constructor() : Dispatcher<NavigationDispatcher.NavigationEvent>() {
+class NavigationDispatcher @Inject constructor(
+    private val eventQueue: DispatcherEventChannelContainer
+) : Dispatcher<NavigationDispatcher.NavigationEvent> {
 
     companion object {
         const val FIRST_QUESTION_POSITION = 0
@@ -53,6 +56,8 @@ class NavigationDispatcher @Inject constructor() : Dispatcher<NavigationDispatch
     private var _isLastDestinationDialog: Boolean = false
 
     val isLastDestinationDialog get() = _isLastDestinationDialog
+
+    override suspend fun dispatch(event: NavigationEvent) = eventQueue.dispatchToQueue(event)
 
     sealed class NavigationEvent(private val navAction: QuizActivity.() -> Unit) : DispatchEvent {
 
@@ -67,7 +72,7 @@ class NavigationDispatcher @Inject constructor() : Dispatcher<NavigationDispatch
                             navHostFragment.currentFragment is BindingBottomSheetDialogFragment<*>
                 }
                 navAction(quizActivity)
-            }.isSuccess
+            }
         }
 
         object NavigateBack : NavigationEvent({

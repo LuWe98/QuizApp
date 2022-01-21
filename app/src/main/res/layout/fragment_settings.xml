@@ -53,7 +53,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:id="@+id/nestedScrollView"
-            android:paddingTop="10dp"
+            android:paddingTop="@dimen/grid_4"
             android:paddingBottom="75dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 

@@ -25,13 +25,18 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
         super.onViewCreated(view, savedInstanceState)
         initMaterialZAxisAnimationForReceiver()
 
-        binding.pageTitle.setText(vmAddEdit.pageTitleRes)
         initViews()
         initListeners()
         initObservers()
     }
 
     private fun initViews(){
+        binding.apply {
+            pageTitle.setText(vmAddEdit.pageTitleRes)
+            abbreviationTextInput.text = vmAddEdit.cosAbbreviation
+            nameTextInput.text = vmAddEdit.cosName
+        }
+
         rvaFaculty = RvaFacultyChoice().apply {
             onDeleteButtonClicked = vmAddEdit::onFacultyChipClicked
         }
@@ -49,32 +54,21 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
             btnBack.onClick(vmAddEdit::onBackButtonClicked)
             btnSave.onClick(vmAddEdit::onSaveButtonClicked)
             tvSave.onClick(vmAddEdit::onSaveButtonClicked)
-            abbreviationCard.onClick(vmAddEdit::onAbbreviationCardClicked)
-            nameCard.onClick(vmAddEdit::onNameCardClicked)
             degreeCard.onClick(vmAddEdit::onDegreeCardClicked)
 
             btnAddFaculty.onClick(vmAddEdit::onFacultyCardClicked)
             btnClearFaculties.onClick(vmAddEdit::onClearFacultiesClicked)
+
+            abbreviationTextInput.onTextChanged(vmAddEdit::onAbbreviationUpdated)
+            nameTextInput.onTextChanged(vmAddEdit::onNameChanged)
         }
     }
 
     private fun initObservers(){
 
-        setFragmentResultEventListener(vmAddEdit::onNameUpdateResultReceived)
-
-        setFragmentResultEventListener(vmAddEdit::onAbbreviationUpdateResultReceived)
-
         setFragmentResultEventListener(vmAddEdit::onFacultySelectionResultReceived)
 
         setFragmentResultEventListener(vmAddEdit::onDegreeSelectionResultReceived)
-
-        vmAddEdit.cosAbbreviationStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.abbreviationCard.text = if(it.isBlank()) "-" else it
-        }
-
-        vmAddEdit.cosNameStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.nameCard.text = if(it.isBlank()) "-" else it
-        }
 
         vmAddEdit.cosFacultyIdsStateFlow.collectWhenStarted(viewLifecycleOwner) {
             rvaFaculty.submitList(it) {
@@ -83,7 +77,7 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
         }
 
         vmAddEdit.cosDegreeStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.degreeCard.text = getString(it.textRes)
+            binding.degreeText.text = getString(it.textRes)
         }
 
         vmAddEdit.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->

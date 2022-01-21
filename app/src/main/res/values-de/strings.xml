@@ -58,7 +58,7 @@
     <string name="answerText">Antworttext</string>
     <string name="clickToWriteCourAnswer">Klicken um die Antwort zu schreiben!</string>
 
-    <string name="shouldPublishQuestionnaire">Fragebogen veröffentlichen?</string>
+    <string name="shouldPublishQuestionnaire">Veröffentlichen?</string>
 
     <string name="errorSelectOneCorrectAnswer">Es wurde keine richtige Antwort ausgewählt!</string>
     <string name="errorQuestionnaireHasNoTitle">Der Fragebogen hat keinen Titel!</string>
@@ -308,9 +308,9 @@
 
 
     <string name="synchronization">Synchronisation</string>
-    <string name="syncUserData">Userdaten synchronisiren</string>
-    <string name="syncQuestionnaires">Fragebögen synchronisiren</string>
-    <string name="syncCoursesOfStudiesAndFaculties">Fakultäten und Studiengänge synchronisiren</string>
+    <string name="syncUserData">Userdaten</string>
+    <string name="syncQuestionnaires">Fragebögen</string>
+    <string name="syncCoursesOfStudiesAndFaculties">Fakultäten und Studiengänge</string>
 
 
     <string name="adminSettings">Admin-Einstellungen</string>

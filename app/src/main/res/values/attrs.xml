@@ -7,8 +7,6 @@
     <attr name="invertedDefaultTextColor" format="color"/>
     <attr name="headingTextColor" format="color"/>
 
-
-
     <declare-styleable name="BackdropLayout">
         <attr name="frontLayerTopMargin" format="dimension"/>
         <attr name="frontLayerExpandedOffset" format="dimension"/>
@@ -73,6 +71,11 @@
         <attr name="dropDownIconTint"/>
         <attr name="dropDownIconPadding"/>
         <attr name="maxLines" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="CustomTextInput">
+        <attr name="titleText" format="string"/>
+        <attr name="hintText" format="string"/>
     </declare-styleable>
 
     <declare-styleable name="DataAvailabilityLayout">

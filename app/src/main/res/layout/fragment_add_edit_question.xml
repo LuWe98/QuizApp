@@ -86,25 +86,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
+            <com.example.quizapp.view.customimplementations.CustomTextInput
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/questionTextCard"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:id="@+id/questionTextInput"
+                    app:titleText="@string/questionText"
+                    app:hintText="Your Question Text"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:icon="@drawable/ic_title"
-                    app:title="@string/questionText"
-                    app:dropDownIcon="@drawable/ic_arrow_down"
-                    tools:text="Questionnaire Title"
-                    android:background="@drawable/ripple_round_corners_10_dp"
-                    android:backgroundTint="?colorOnPrimary" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:id="@+id/multipleChoiceCard"
-                    app:layout_constraintTop_toBottomOf="@id/questionTextCard"
+                    app:layout_constraintTop_toBottomOf="@id/questionTextInput"
                     android:layout_marginTop="@dimen/grid_6"
                     android:background="@drawable/ripple_round_corners_10_dp"
                     android:backgroundTint="?colorOnPrimary">
@@ -112,6 +108,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:srcCompat="@drawable/ic_check_circle"
                         android:layout_marginStart="@dimen/grid_1"
@@ -125,12 +122,13 @@
                         android:layout_height="0dp"
                         android:id="@+id/publishText"
                         android:text="@string/multipleChoice"
-                        android:layout_marginStart="@dimen/grid_2"
-                        android:textColor="?dominantTextColor"
+                        android:layout_marginStart="@dimen/grid_5"
+                        android:textColor="@color/hfuBrightGreen"
                         android:gravity="center_vertical"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:ellipsize="end"
                         android:lines="1"
+                        android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/publishIcon"
@@ -145,7 +143,7 @@
                         android:scaleX="0.75"
                         android:minWidth="0dp"
                         android:scaleY="0.75"
-                        android:layout_marginEnd="@dimen/grid_1"
+                        android:layout_marginEnd="@dimen/grid_3"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent" />

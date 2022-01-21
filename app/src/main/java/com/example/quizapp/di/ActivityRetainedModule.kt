@@ -1,5 +1,6 @@
 package com.example.quizapp.di
 
+import com.example.quizapp.view.dispatcher.DispatcherEventChannelContainer
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher
 import dagger.Module
@@ -14,10 +15,14 @@ object ActivityRetainedModule {
 
     @Provides
     @ActivityRetainedScoped
-    fun provideNavigationDispatcher() = NavigationDispatcher()
+    fun provideDispatcherEventQueue() = DispatcherEventChannelContainer()
 
     @Provides
     @ActivityRetainedScoped
-    fun provideFragmentResultDispatcher() = FragmentResultDispatcher()
+    fun provideNavigationDispatcher(queue: DispatcherEventChannelContainer) = NavigationDispatcher(queue)
+
+    @Provides
+    @ActivityRetainedScoped
+    fun provideFragmentResultDispatcher(queue: DispatcherEventChannelContainer) = FragmentResultDispatcher(queue)
 
 }

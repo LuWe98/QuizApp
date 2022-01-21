@@ -24,6 +24,7 @@
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:srcCompat="@drawable/ic_answer"
                     android:background="@drawable/shape_circle"
@@ -39,15 +40,16 @@
                     android:layout_height="0dp"
                     android:id="@+id/tvAnswers"
                     android:text="@string/answers"
-                    android:layout_marginStart="@dimen/grid_2"
-                    android:textColor="?dominantTextColor"
+                    android:layout_marginStart="@dimen/grid_5"
+                    android:textColor="@color/hfuBrightGreen"
                     android:gravity="center_vertical"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:ellipsize="end"
+                    android:textStyle="bold"
                     android:lines="1"
                     app:layout_constraintStart_toEndOf="@+id/statisticIcon"
-                    app:layout_constraintBottom_toBottomOf="@+id/statisticIcon"
-                    app:layout_constraintTop_toTopOf="@+id/statisticIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btnClearAnswers" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -55,7 +57,7 @@
                     android:layout_height="35dp"
                     android:id="@+id/btnClearAnswers"
                     android:background="?actionBarItemBackground"
-                    android:layout_marginEnd="@dimen/grid_1"
+                    android:layout_marginEnd="@dimen/grid_3"
                     android:padding="7.5dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"

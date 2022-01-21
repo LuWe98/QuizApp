@@ -12,7 +12,6 @@ import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.addeditquestionnairescreen.FragmentAddEditQuestionArgs
-import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.AddEditAnswerMoreOptionsItem
 import com.example.quizapp.viewmodel.VmAddEditQuestion.*
@@ -37,22 +36,22 @@ class VmAddEditQuestion @Inject constructor(
 
     val pageTitleRes get() = if (args.questionWithAnswers == null) R.string.add else R.string.edit
 
-    private var questionTextMutableStateFlow = state.getMutableStateFlow(QUESTION_TEXT_KEY, parsedQuestion.questionText)
+    private var _questionText = state.get<String>(QUESTION_TEXT_KEY) ?: parsedQuestion.questionText
         set(value) {
             state.set(QUESTION_TEXT_KEY, value)
             field = value
         }
 
-    val questionTextStateFlow = questionTextMutableStateFlow.asStateFlow()
-
-    private val questionText get() = questionTextMutableStateFlow.value
+    val questionText get() = _questionText
 
 
     private var isQuestionMultipleChoiceMutableStateFlow = state.getMutableStateFlow(QUESTION_TYPE_KEY, parsedQuestion.isMultipleChoice)
 
     val isQuestionMultipleChoiceStateFlow get() = isQuestionMultipleChoiceMutableStateFlow.asStateFlow()
 
-    val isQuestionMultipleChoice get() = isQuestionMultipleChoiceStateFlow.value
+    private val isQuestionMultipleChoice get() = isQuestionMultipleChoiceStateFlow.value
+
+
 
     private var answersMutableStateFlow = state.getMutableStateFlow(ANSWERS_KEY, parsedAnswers)
 
@@ -86,15 +85,10 @@ class VmAddEditQuestion @Inject constructor(
         }
     }
 
-
-    fun onQuestionTextCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateAddEditQuestionTextRequest(questionText)))
+    fun onQuestionTextChanged(newText: String) {
+        _questionText = newText
     }
 
-    fun onQuestionTextUpdateReceived(result: UpdateStringValueResult.AddEditQuestionTextUpdateResult) {
-        state.set(QUESTION_TEXT_KEY, result.updatedStringValue)
-        questionTextMutableStateFlow.value = result.updatedStringValue
-    }
 
     fun onAnswerClicked(answer: Answer) = launch(IO) {
         navigationDispatcher.dispatch(FromAddEditQuestionToAddEditAnswer(answer))

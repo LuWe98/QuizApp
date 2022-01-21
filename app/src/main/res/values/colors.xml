@@ -88,30 +88,16 @@
     <!-- Dark Theme Colors -->
     <color name="darkColorPrimary">@color/hfuDarkGreen</color>
     <color name="darkColorPrimaryVariant">@color/hfuDarkerGreen</color>
-    <color name="darkColorOnPrimary">#262626</color>
+    <color name="darkColorOnPrimary">#2f3034</color>
     <color name="darkColorSecondary">@color/hfuBrightGreen</color>
     <color name="darkColorSecondaryVariant">#FF018786</color>
     <color name="darkColorOnSecondary">@color/black</color>
     <color name="darkColorAccent">@color/hfuLightGreen</color>
-    <color name="darkBackgroundColor">#464646</color>
+    <color name="darkBackgroundColor">#1b1b1b</color>
 
     <color name="darkColorControlActivated">#89000000</color>
     <color name="darkColorControlNormal">#bebebe</color>
     <color name="darkDominantTextColor">#ffffff</color>
     <color name="darkDefaultTextColor">@color/darkColorControlNormal</color>
 
-
-
-
-<!--    &lt;!&ndash; Light Theme Colors &ndash;&gt;-->
-<!--    <color name="lightColorPrimary">#0070ba</color>-->
-<!--    <color name="lightColorPrimaryVariant">#1570ab</color>-->
-<!--    <color name="lightColorOnPrimary">#ffffff</color>-->
-<!--    <color name="lightColorSecondary">#FF03DAC5</color>-->
-<!--    <color name="lightColorSecondaryVariant">#FF018786</color>-->
-<!--    <color name="lightColorOnSecondary">@color/black</color>-->
-<!--    <color name="lightColorAccent">#add8e6</color>-->
-<!--    <color name="lightBackgroundColor">#FAFAFA</color>-->
-
-<!--    <color name="lightBackgroundColorAlpha">#eeffffff</color>-->
 </resources>

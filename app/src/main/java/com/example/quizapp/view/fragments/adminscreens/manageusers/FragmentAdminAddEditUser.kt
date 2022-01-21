@@ -26,38 +26,31 @@ class FragmentAdminAddEditUser: BindingFragment<FragmentAdminAddEditUserBinding>
     }
 
     private fun initViews(){
-        binding.pageTitle.setText(vmAdmin.pageTitleRes)
+        binding.apply {
+            pageTitle.setText(vmAdmin.pageTitleRes)
+            nameTextInput.text = vmAdmin.userName
+            passwordTextInput.text = vmAdmin.userPassword
+        }
     }
 
     private fun initListeners(){
         binding.apply {
-            nameCard.onClick(vmAdmin::onUserNameCardClicked)
-            passwordCard.onClick(vmAdmin::onUserPasswordCardClicked)
             roleCard.onClick(vmAdmin::onUserRoleCardClicked)
             btnSave.onClick(vmAdmin::onSaveButtonClicked)
             tvSave.onClick(vmAdmin::onSaveButtonClicked)
             btnBack.onClick(vmAdmin::onBackButtonClicked)
+
+            nameTextInput.onTextChanged(vmAdmin::onUserNameChanged)
+            passwordTextInput.onTextChanged(vmAdmin::onPasswordChanged)
         }
     }
 
     private fun initObservers() {
 
-        setFragmentResultEventListener(vmAdmin::onUserNameUpdateResultReceived)
-
-        setFragmentResultEventListener(vmAdmin::onUserPasswordUpdateResultReceived)
-
         setFragmentResultEventListener(vmAdmin::onUserRoleSelectionResultReceived)
 
-        vmAdmin.userNameStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.nameCard.text = if(it.isBlank()) "-" else it
-        }
-
-        vmAdmin.userPasswordStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.passwordCard.text = if(it.isBlank()) "-" else it
-        }
-
         vmAdmin.userRoleStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.roleCard.setTextWithRes(it.textRes)
+            binding.roleText.setText(it.textRes)
         }
 
         vmAdmin.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->

@@ -19,11 +19,11 @@ import com.example.quizapp.model.datastore.datawrappers.*
 import com.example.quizapp.view.QuizActivity
 import com.example.quizapp.view.dispatcher.DispatchEvent
 import com.example.quizapp.view.dispatcher.Dispatcher
+import com.example.quizapp.view.dispatcher.DispatcherEventChannelContainer
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.Companion.getResultKey
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionTypeItemMarker
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.*
-import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
@@ -41,7 +41,9 @@ inline fun <reified ResultType : FragmentResult> Fragment.setFragmentResultEvent
 }
 
 @ActivityRetainedScoped
-class FragmentResultDispatcher @Inject constructor() : Dispatcher<FragmentResult>() {
+class FragmentResultDispatcher @Inject constructor(
+    private val eventQueue: DispatcherEventChannelContainer
+) : Dispatcher<FragmentResult> {
 
     companion object {
 
@@ -50,6 +52,9 @@ class FragmentResultDispatcher @Inject constructor() : Dispatcher<FragmentResult
         fun <ResultType : FragmentResult> getResultKey(clazz: KClass<ResultType>) = clazz.simpleName.plus(FRAGMENT_RESULT_KEY_SUFFIX)
 
     }
+
+    override suspend fun dispatch(event: FragmentResult) = eventQueue.dispatchToQueue(event)
+
 
     sealed class FragmentResult : Parcelable, DispatchEvent {
 
@@ -108,42 +113,18 @@ class FragmentResultDispatcher @Inject constructor() : Dispatcher<FragmentResult
 
     }
 
+    /**
+     * Used for Updating a String with a Dialog
+     */
     sealed class UpdateStringValueResult : FragmentResult() {
 
         abstract val updatedStringValue: String
 
-        @Parcelize
-        data class QuestionnaireTitleUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
-
-        @Parcelize
-        data class QuestionnaireSubjectUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
-
-        @Parcelize
-        data class AddEditQuestionAnswerTextUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
-
-        @Parcelize
-        data class AddEditQuestionTextUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
-
-        @Parcelize
-        data class AddEditFacultyAbbreviationUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
-
-        @Parcelize
-        data class AddEditFacultyNameUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
-
-        @Parcelize
-        data class AddEditCourseOfStudiesAbbreviationUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
-
-        @Parcelize
-        data class AddEditCourseOfStudiesNameUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
-
-        @Parcelize
-        data class AddEditUserNameUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
-
-        @Parcelize
-        data class AddEditUserPasswordUpdateResult(override val updatedStringValue: String) : UpdateStringValueResult()
-
     }
 
+    /**
+     * Used for Selection Results of different Types
+     */
     sealed class SelectionResult<SelectedItemType : Enum<SelectedItemType>> : FragmentResult() {
 
         abstract val selectedItem: SelectionTypeItemMarker<SelectedItemType>

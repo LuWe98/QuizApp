@@ -15,6 +15,8 @@ import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +32,9 @@ class VmQuestionnaireMoreOptions @Inject constructor(
 
     private val questionnaireId get() = args.questionnaire.id
 
-    private val user = preferencesRepository.user
+    private val user = runBlocking(IO) {
+        preferencesRepository.userFlow.first()
+    }
 
     fun onMenuItemClicked(menuItemId: Int) {
         when (menuItemId) {

@@ -21,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 //TODO -> Long Click auf answer einbauen
 
 @AndroidEntryPoint
-class FragmentAddEditQuestion: BindingFragment<FragmentAddEditQuestionBinding>() {
+class FragmentAddEditQuestion : BindingFragment<FragmentAddEditQuestionBinding>() {
 
     private val vmAddEditQuestionnaire: VmAddEditQuestionnaire by hiltNavDestinationViewModels(R.id.fragmentAddEditQuestionnaire)
 
@@ -43,8 +43,12 @@ class FragmentAddEditQuestion: BindingFragment<FragmentAddEditQuestionBinding>()
         initObservers()
     }
 
-    private fun initViews(){
-        binding.pageTitle.setText(vmAddEditQuestion.pageTitleRes)
+    private fun initViews() {
+        binding.apply {
+            pageTitle.setText(vmAddEditQuestion.pageTitleRes)
+            questionTextInput.text = vmAddEditQuestion.questionText
+        }
+
 
         itemTouchHelper = SimpleItemTouchHelper(false).apply {
             attachToRecyclerView(binding.answersCard.rv)
@@ -64,14 +68,11 @@ class FragmentAddEditQuestion: BindingFragment<FragmentAddEditQuestionBinding>()
             setHasFixedSize(true)
             disableChangeAnimation()
         }
-
-        binding.apply {
-            questionTextCard.onClick(vmAddEditQuestion::onQuestionTextCardClicked)
-        }
     }
 
-    private fun initListeners(){
+    private fun initListeners() {
         binding.apply {
+            questionTextInput.onTextChanged(vmAddEditQuestion::onQuestionTextChanged)
             btnBack.onClick(vmAddEditQuestion::onBackButtonClicked)
             tvSave.onClick(vmAddEditQuestion::onSaveButtonClicked)
             multipleChoiceCard.onClick(vmAddEditQuestion::onChangeQuestionTypeClicked)
@@ -82,9 +83,7 @@ class FragmentAddEditQuestion: BindingFragment<FragmentAddEditQuestionBinding>()
         }
     }
 
-    private fun initObservers(){
-
-        setFragmentResultEventListener(vmAddEditQuestion::onQuestionTextUpdateReceived)
+    private fun initObservers() {
 
         setFragmentResultEventListener(vmAddEditQuestion::onAnswerMoreOptionsSelectionResultReceived)
 
@@ -103,12 +102,8 @@ class FragmentAddEditQuestion: BindingFragment<FragmentAddEditQuestionBinding>()
             binding.checkBox.isChecked = it
         }
 
-        vmAddEditQuestion.questionTextStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.questionTextCard.text = if(it.isNotBlank()) it else "-"
-        }
-
         vmAddEditQuestion.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
-            when(event) {
+            when (event) {
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
                 is SaveQuestionWithAnswersEvent -> vmAddEditQuestionnaire.onQuestionWithAnswerUpdated(event.questionPosition, event.questionWithAnswers)
                 is ShowAnswerDeletedSnackBar -> {

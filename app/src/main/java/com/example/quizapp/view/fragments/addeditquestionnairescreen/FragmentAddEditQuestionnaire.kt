@@ -16,7 +16,6 @@ import com.example.quizapp.utils.CsvDocumentFilePicker
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.view.recyclerview.adapters.RvaCourseOfStudiesChoice
-import com.example.quizapp.view.recyclerview.impl.SimpleItemTouchHelper
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.AddEditQuestionnaireEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,6 +45,10 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
     private fun initViews() {
         binding.pageTitle.setText(vmAddEdit.pageTitleRes)
+        binding.infoCard.apply {
+            titleTextInput.text = vmAddEdit.questionnaireTitle
+            subjectTextInput.text = vmAddEdit.questionnaireSubject
+        }
 
         rvaCos = RvaCourseOfStudiesChoice().apply {
             onDeleteButtonClicked = vmAddEdit::onCourseOfStudiesDeleteButtonClicked
@@ -68,10 +71,9 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
             infoCard.apply {
                 btnClearCos.onClick(vmAddEdit::onClearCourseOfStudiesClicked)
                 btnAddCos.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
-
-                titleCard.onClick(vmAddEdit::onTitleCardClicked)
-                subjectCard.onClick(vmAddEdit::onSubjectCardClicked)
                 publishLayout.onClick(vmAddEdit::onPublishCardClicked)
+                titleTextInput.onTextChanged(vmAddEdit::onTitleUpdated)
+                subjectTextInput.onTextChanged(vmAddEdit::onSubjectUpdated)
             }
 
             //TODO -> Question Dialog nochmal Testen aber mit Look von dem jetzigen BottomSheet
@@ -86,24 +88,12 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
         setFragmentResultEventListener(vmAddEdit::onCourseOfStudiesSelectionResultReceived)
 
-        setFragmentResultEventListener(vmAddEdit::onTitleUpdateResultReceived)
-
-        setFragmentResultEventListener(vmAddEdit::onSubjectUpdateResultReceived)
-
         setFragmentResultEventListener(vmAddEdit::onCsvLoadingConfirmationResultReceived)
 
         vmAddEdit.coursesOfStudiesStateFlow.collectWhenStarted(viewLifecycleOwner) {
             rvaCos.submitList(it) {
                 binding.infoCard.rvCos.isVisible = it.isNotEmpty()
             }
-        }
-
-        vmAddEdit.questionnaireTitleStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.infoCard.titleCard.text = if (it.isBlank()) "-" else it
-        }
-
-        vmAddEdit.questionnaireSubjectStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.infoCard.subjectCard.text = if (it.isBlank()) "-" else it
         }
 
         vmAddEdit.publishQuestionStateFlow.collectWhenStarted(viewLifecycleOwner) {
@@ -147,6 +137,8 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
                     vmAddEdit::onValidCsvFileSelected,
                     vmAddEdit::onCsvFilePickerResultReceived
                 )
+                is SetQuestionnaireSubject -> binding.infoCard.subjectTextInput.text = event.subject
+                is SetQuestionnaireTitle -> binding.infoCard.titleTextInput.text = event.title
             }
         }
     }

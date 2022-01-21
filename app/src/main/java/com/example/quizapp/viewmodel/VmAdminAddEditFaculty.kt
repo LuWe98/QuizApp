@@ -3,7 +3,6 @@ package com.example.quizapp.viewmodel
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import com.example.quizapp.R
-import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.room.LocalRepository
@@ -14,7 +13,6 @@ import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatch
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminAddEditFacultiesArgs
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.*
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.*
 import com.example.quizapp.viewmodel.customimplementations.EventViewModel
@@ -24,7 +22,6 @@ import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asStateFlow
 import org.bson.types.ObjectId
 import javax.inject.Inject
 
@@ -48,37 +45,24 @@ class VmAdminAddEditFaculty @Inject constructor(
     private val parsedFacultyId = args.faculty?.id ?: ObjectId().toHexString()
 
 
-    private var facultyAbbreviationMutableStateFlow = state.getMutableStateFlow(FACULTY_ABBREVIATION_KEY, parsedFacultyAbbreviation)
+    private var _facultyAbbreviation = state.get<String>(FACULTY_ABBREVIATION_KEY) ?: parsedFacultyAbbreviation
 
-    val facultyAbbreviationStateFlow = facultyAbbreviationMutableStateFlow.asStateFlow()
-
-    private val facultyAbbreviation get() = facultyAbbreviationMutableStateFlow.value
+    val facultyAbbreviation get() = _facultyAbbreviation
 
 
-    private var facultyNamMutableStateFlow = state.getMutableStateFlow(FACULTY_NAME_KEY, parsedFacultyName)
+    private var _facultyName = state.get<String>(FACULTY_NAME_KEY) ?: parsedFacultyName
 
-    val facultyNameStateFlow = facultyNamMutableStateFlow.asStateFlow()
-
-    private val facultyName get() = facultyNamMutableStateFlow.value
+    val facultyName get() = _facultyName
 
 
-    fun onAbbreviationCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateFacultyAbbreviationRequest(facultyAbbreviation)))
+    fun onAbbreviationUpdated(abbr: String) {
+        _facultyAbbreviation = abbr
     }
 
-    fun onNameCardClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToStringUpdateDialog(UpdateStringRequestType.UpdateFacultyNameRequest(facultyName)))
+    fun onNameChanged(name: String) {
+        _facultyName = name
     }
 
-    fun onAbbreviationUpdateResultReceived(result: UpdateStringValueResult.AddEditFacultyAbbreviationUpdateResult) {
-        state.set(FACULTY_ABBREVIATION_KEY, result.updatedStringValue)
-        facultyAbbreviationMutableStateFlow.value = result.updatedStringValue
-    }
-
-    fun onNameUpdateResultReceived(result: UpdateStringValueResult.AddEditFacultyNameUpdateResult) {
-        state.set(FACULTY_NAME_KEY, result.updatedStringValue)
-        facultyNamMutableStateFlow.value = result.updatedStringValue
-    }
 
     fun onBackButtonClicked() = launch(IO) {
         navigationDispatcher.dispatch(NavigateBack)

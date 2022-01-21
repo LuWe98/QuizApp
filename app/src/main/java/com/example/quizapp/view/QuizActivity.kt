@@ -3,22 +3,17 @@ package com.example.quizapp.view
 import android.animation.ValueAnimator
 import android.graphics.Color
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import com.example.quizapp.R
 import com.example.quizapp.databinding.ActivityQuizBinding
-import com.example.quizapp.extensions.collectWhenStarted
-import com.example.quizapp.extensions.log
-import com.example.quizapp.extensions.navController
-import com.example.quizapp.extensions.showSnackBar
+import com.example.quizapp.extensions.*
 import com.example.quizapp.utils.BindingUtils.getBinding
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
-import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher
+import com.example.quizapp.view.dispatcher.DispatcherEventChannelContainer
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher
 import com.example.quizapp.viewmodel.VmMainActivity
 import com.example.quizapp.viewmodel.VmMainActivity.MainViewModelEvent.ShowMessageSnackBar
@@ -36,10 +31,11 @@ import kotlin.math.min
 class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDestinationChangedListener {
 
     @Inject
-    lateinit var navigationDispatcher: NavigationDispatcher
+    lateinit var eventQueue: DispatcherEventChannelContainer
 
     @Inject
-    lateinit var fragmentResultDispatcher: FragmentResultDispatcher
+    lateinit var navigationDispatcher: NavigationDispatcher
+
 
     private val vmQuizActivity: VmMainActivity by viewModels()
 
@@ -55,31 +51,15 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
     }
 
     private fun initSplashScreen(savedInstanceState: Bundle?) {
-        if (savedInstanceState == null) {
-            installSplashScreen().apply {
-                setOnExitAnimationListener { splashScreenView ->
-                    log("VIEW: $splashScreenView")
-                }
-
-                setKeepVisibleCondition {
-                    vmQuizActivity.test
-                }
-
-                /*
-                    setOnExitAnimationListener { splashScreenView ->
-                     splashScreenView.view.animate()
-                    .translationY(-splashScreenView.view.height.toFloat())
-                    .setInterpolator(AnticipateInterpolator())
-                    .setDuration(2000L)
-                    .scaleX(0.5f)
-                    .scaleY(0.5f)
-                    .withEndAction(splashScreenView::remove)
-                    .start()
-                    }
-                */
-            }
-        } else {
+        if (savedInstanceState != null) {
             setTheme(R.style.Theme_QuizApp)
+            return
+        }
+
+        installSplashScreen().apply {
+            setKeepVisibleCondition {
+                vmQuizActivity.test
+            }
         }
     }
 
@@ -105,11 +85,7 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             vmQuizActivity.onUserDataChanged(it, navController.currentDestination?.id)
         }
 
-        navigationDispatcher.dispatchEventChannelFlow.collectWhenStarted(this) { event ->
-            event.execute(this)
-        }
-
-        fragmentResultDispatcher.dispatchEventChannelFlow.collectWhenStarted(this) { event ->
+        eventQueue.eventChannelFlow.collectWhenStarted(this) { event ->
             event.execute(this)
         }
 

@@ -99,50 +99,74 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent">
 
-                    <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
+                    <com.example.quizapp.view.customimplementations.CustomTextInput
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/abbreviationCard"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            android:id="@+id/abbreviationTextInput"
+                            app:titleText="@string/abbreviation"
+                            app:hintText="-"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:icon="@drawable/ic_title"
-                            app:title="@string/abbreviation"
-                            app:dropDownIcon="@drawable/ic_arrow_down"
-                            tools:text="WIB"
-                            android:background="@drawable/ripple_round_corners_10_dp"
-                            android:backgroundTint="?colorOnPrimary" />
-
-                    <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/nameCard"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/abbreviationCard"
-                            app:icon="@drawable/ic_course_of_studies"
-                            app:title="@string/name"
-                            app:dropDownIcon="@drawable/ic_arrow_down"
-                            tools:text="Wirtschaftsinformatik"
-                            android:layout_marginTop="@dimen/grid_6"
-                            android:background="@drawable/ripple_round_corners_10_dp"
-                            android:backgroundTint="?colorOnPrimary"/>
+                            app:layout_constraintEnd_toEndOf="parent" />
 
-                    <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
+                    <com.example.quizapp.view.customimplementations.CustomTextInput
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:id="@+id/nameTextInput"
+                            app:titleText="@string/name"
+                            app:hintText="-"
+                            android:layout_marginTop="@dimen/grid_6"
+                            app:layout_constraintTop_toBottomOf="@id/abbreviationTextInput"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
                             android:id="@+id/degreeCard"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/nameCard"
-                            app:icon="@drawable/ic_certificate"
-                            app:iconPadding="8dp"
-                            app:title="@string/degree"
-                            app:dropDownIcon="@drawable/ic_arrow_down"
-                            tools:text="Bachelor"
-                            android:layout_marginTop="@dimen/grid_6"
                             android:background="@drawable/ripple_round_corners_10_dp"
-                            android:backgroundTint="?colorOnPrimary" />
+                            app:layout_constraintTop_toBottomOf="@id/nameTextInput"
+                            android:layout_marginTop="@dimen/grid_6">
+
+                        <com.google.android.material.textview.MaterialTextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                android:text="@string/degree"
+                                android:gravity="center_vertical"
+                                android:layout_marginStart="@dimen/grid_5"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/hfuBrightGreen"
+                                app:layout_constraintEnd_toStartOf="@+id/degreeText" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:srcCompat="@drawable/ic_arrow_down"
+                                android:padding="5dp"
+                                android:layout_marginEnd="@dimen/grid_3"
+                                android:id="@+id/appCompatImageView4" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:id="@+id/degreeText"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                tools:text="Bachelor"
+                                android:gravity="center_vertical"
+                                android:layout_marginStart="@dimen/grid_5"
+                                android:textSize="15sp"
+                                android:layout_marginEnd="@dimen/grid_2"
+                                app:layout_constraintEnd_toStartOf="@+id/appCompatImageView4" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
@@ -163,6 +187,7 @@
                             <androidx.appcompat.widget.AppCompatImageView
                                     android:layout_width="40dp"
                                     android:layout_height="40dp"
+                                    android:visibility="gone"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:srcCompat="@drawable/ic_faculty"
                                     android:layout_marginStart="@dimen/grid_1"
@@ -176,17 +201,14 @@
                                     android:layout_height="0dp"
                                     android:id="@+id/facultyText"
                                     android:text="@string/faculties"
-                                    android:layout_marginStart="@dimen/grid_2"
-                                    android:textColor="?defaultTextColor"
-                                    android:textStyle="bold"
+                                    android:layout_marginStart="@dimen/grid_5"
+                                    android:textColor="@color/hfuBrightGreen"
                                     android:gravity="center_vertical"
-                                    app:autoSizeMaxTextSize="15.5sp"
-                                    app:autoSizeMinTextSize="8sp"
-                                    app:autoSizeTextType="uniform"
-                                    app:autoSizeStepGranularity="0.25sp"
+                                    android:textSize="15sp"
                                     android:lines="1"
-                                    app:layout_constraintBottom_toBottomOf="@+id/facultyIcon"
-                                    app:layout_constraintTop_toTopOf="@+id/facultyIcon"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
                                     app:layout_constraintStart_toEndOf="@+id/facultyIcon"
                                     app:layout_constraintEnd_toStartOf="@+id/btnClearFaculties" />
 
@@ -194,7 +216,7 @@
                                     android:layout_width="30dp"
                                     android:layout_height="30dp"
                                     android:id="@+id/btnClearFaculties"
-                                    android:layout_marginEnd="@dimen/grid_1"
+                                    android:layout_marginEnd="@dimen/grid_3"
                                     android:padding="5dp"
                                     app:layout_constraintTop_toTopOf="@+id/facultyText"
                                     app:layout_constraintEnd_toEndOf="parent"

@@ -9,7 +9,6 @@ import com.example.quizapp.extensions.initMaterialZAxisAnimationForReceiver
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.showSnackBar
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
-import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.ShowMessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,9 +22,17 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
         initMaterialZAxisAnimationForReceiver()
         super.onViewCreated(view, savedInstanceState)
 
-        binding.pageTitle.setText(vmAddEdit.pageTitleRes)
+        initViews()
         initListeners()
         initObservers()
+    }
+
+    private fun initViews(){
+        binding.apply {
+            pageTitle.setText(vmAddEdit.pageTitleRes)
+            abbreviationTextInput.text = vmAddEdit.facultyAbbreviation
+            nameTextInput.text = vmAddEdit.facultyName
+        }
     }
 
     private fun initListeners() {
@@ -33,25 +40,13 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
             btnBack.onClick(vmAddEdit::onBackButtonClicked)
             btnSave.onClick(vmAddEdit::onSaveButtonClicked)
             tvSave.onClick(vmAddEdit::onSaveButtonClicked)
-            abbreviationCard.onClick(vmAddEdit::onAbbreviationCardClicked)
-            nameCard.onClick(vmAddEdit::onNameCardClicked)
+
+            abbreviationTextInput.onTextChanged(vmAddEdit::onAbbreviationUpdated)
+            nameTextInput.onTextChanged(vmAddEdit::onNameChanged)
         }
     }
 
     private fun initObservers() {
-
-        setFragmentResultEventListener(vmAddEdit::onAbbreviationUpdateResultReceived)
-
-        setFragmentResultEventListener(vmAddEdit::onNameUpdateResultReceived)
-
-        vmAddEdit.facultyAbbreviationStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.abbreviationCard.text = if(it.isBlank()) "-" else it
-        }
-
-        vmAddEdit.facultyNameStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.nameCard.text = if(it.isBlank()) "-" else it
-        }
-
         vmAddEdit.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)

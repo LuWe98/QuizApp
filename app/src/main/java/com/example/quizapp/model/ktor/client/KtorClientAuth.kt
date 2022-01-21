@@ -32,7 +32,6 @@ class KtorClientAuth @Inject constructor(
     private val client get() = ktorClientProvider.get()
     private val clientAuth get() = client.feature(Auth)
     private val userApi get() = userApiProvider.get()
-    private val cachedUser get() = preferencesRepository.user
 
     fun registerJwtAuth(auth: Auth) {
         auth.bearer {
@@ -44,7 +43,10 @@ class KtorClientAuth @Inject constructor(
 
             refreshTokens {
                 runCatching {
-                    userApi.refreshJwtToken(cachedUser.userName, cachedUser.password)
+                    userApi.refreshJwtToken(
+                        preferencesRepository.getUserName(),
+                        preferencesRepository.getUserPassword()
+                    )
                 }.onSuccess { response ->
                     log("NEW TOKEN: ${response.token}")
                     updateUserRole(response.token)

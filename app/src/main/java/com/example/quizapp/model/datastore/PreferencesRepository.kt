@@ -5,18 +5,15 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.quizapp.extensions.dataStore
 import com.example.quizapp.extensions.dataflow
-import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.databases.mongodb.documents.User
+import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.datastore.datawrappers.*
 import com.example.quizapp.utils.EncryptionUtil.decrypt
 import com.example.quizapp.utils.EncryptionUtil.encrypt
 import io.ktor.util.date.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.random.Random
@@ -68,7 +65,6 @@ class PreferencesRepository @Inject constructor(
 
     suspend fun clearPreferenceDataOnLogout() {
         dataStore.edit { preferences ->
-            cachedUser = null
             preferences[USER_NAME_KEY] = EMPTY_STRING
             preferences[USER_PASSWORD_KEY] = EMPTY_STRING
             preferences[USER_ROLE_KEY] = EMPTY_STRING
@@ -78,7 +74,6 @@ class PreferencesRepository @Inject constructor(
 
     suspend fun wipePreferenceData() {
         dataStore.edit { preferences ->
-            cachedUser = null
             preferences[USER_NAME_KEY] = EMPTY_STRING
             preferences[USER_PASSWORD_KEY] = EMPTY_STRING
             preferences[USER_ROLE_KEY] = EMPTY_STRING
@@ -197,10 +192,6 @@ class PreferencesRepository @Inject constructor(
             preferences[BROWSABLE_QUESTIONNAIRE_FILTER_FACULTY_IDS] = facultyIds.toSet()
         }
     }
-
-
-
-
 
 
     //LOCAL QUESTIONNAIRE FILTERS
@@ -334,76 +325,67 @@ class PreferencesRepository @Inject constructor(
     }
 
 
-    private var cachedUser: User? = null
-
-    val userFlow = dataFlow.map { preferences ->
-        withContext(IO) {
-            val id = async {
-                preferences[USER_ID_KEY]?.let {
-                    if (it.isEmpty()) EMPTY_STRING else it.decrypt()
-                } ?: EMPTY_STRING
-            }
-            val userName = async {
-                preferences[USER_NAME_KEY]?.let {
-                    if (it.isEmpty()) EMPTY_STRING else it.decrypt()
-                } ?: EMPTY_STRING
-            }
-            val password = async {
-                preferences[USER_PASSWORD_KEY]?.let {
-                    if (it.isEmpty()) EMPTY_STRING else it.decrypt()
-                } ?: EMPTY_STRING
-            }
-            val role = async {
-                preferences[USER_ROLE_KEY]?.let {
-                    if (it.isEmpty()) DEFAULT_ROLE else Role.valueOf(it.decrypt())
-                } ?: DEFAULT_ROLE
-            }
-            val lastModifiedTimestamp = async {
-                preferences[USER_LAST_MODIFIED_TIMESTAMP_KEY] ?: UNKNOWN_TIMESTAMP
-            }
-
-            User(
-                id = id.await(),
-                userName = userName.await(),
-                password = password.await(),
-                role = role.await(),
-                lastModifiedTimestamp = lastModifiedTimestamp.await()
-            ).also {
-                cachedUser = it
-            }
-        }
+    val userIdFlow = dataFlow.map { preferences ->
+        preferences[USER_ID_KEY]?.let {
+            if (it.isEmpty()) EMPTY_STRING else it.decrypt()
+        } ?: EMPTY_STRING
     }
 
-    suspend fun isUserLoggedIn() = userFlow.first().isNotEmpty
+    val userNameFlow = dataFlow.map { preferences ->
+        preferences[USER_NAME_KEY]?.let {
+            if (it.isEmpty()) EMPTY_STRING else it.decrypt()
+        } ?: EMPTY_STRING
+    }
 
-    val user
-        get() = run {
-            if (cachedUser == null) {
-                cachedUser = runBlocking(IO) { userFlow.first() }
-            }
-            cachedUser!!
-        }
+    val userPasswordFlow = dataFlow.map { preferences ->
+        preferences[USER_PASSWORD_KEY]?.let {
+            if (it.isEmpty()) EMPTY_STRING else it.decrypt()
+        } ?: EMPTY_STRING
+    }
 
-    val userIdFlow = dataFlow.map {
-            it[USER_ID_KEY]?.decrypt() ?: EMPTY_STRING
-        }
+    val userRoleFlow = dataFlow.map { preferences ->
+        preferences[USER_ROLE_KEY]?.let {
+            if (it.isEmpty()) DEFAULT_ROLE else Role.valueOf(it.decrypt())
+        } ?: DEFAULT_ROLE
+    }
 
-    val userNameFlow = dataFlow.map {
-        it[USER_NAME_KEY]?.decrypt() ?: EMPTY_STRING
+    val userLastModifiedTimestampFlow = dataFlow.map { preferences ->
+        preferences[USER_LAST_MODIFIED_TIMESTAMP_KEY] ?: UNKNOWN_TIMESTAMP
+    }
+
+    val userFlow = combine(
+        userIdFlow,
+        userNameFlow,
+        userPasswordFlow,
+        userRoleFlow,
+        userLastModifiedTimestampFlow
+    ) { id, name, password, role, timestamp ->
+        User(
+            id = id,
+            userName = name,
+            password = password,
+            role = role,
+            lastModifiedTimestamp = timestamp
+        )
     }
 
     suspend fun getUserId() = userIdFlow.first()
 
-    suspend fun getUserPassword() = userFlow.first().password
+    suspend fun getUserName() = userNameFlow.first()
+
+    suspend fun getUserPassword() = userPasswordFlow.first()
 
     suspend fun getOwnAuthorInfo() = userFlow.first().asAuthorInfo
 
+    suspend fun isUserLoggedIn() = userFlow.first().isNotEmpty
+
+
+
     suspend fun updateUserCredentials(user: User) {
         dataStore.edit { preferences ->
-            cachedUser = user
-            preferences[USER_ID_KEY] = if (user.id.isEmpty()) "" else user.id.encrypt()
-            preferences[USER_NAME_KEY] = if (user.userName.isEmpty()) "" else user.userName.encrypt()
-            preferences[USER_PASSWORD_KEY] = if (user.password.isEmpty()) "" else user.password.encrypt()
+            preferences[USER_ID_KEY] = if (user.id.isEmpty()) EMPTY_STRING else user.id.encrypt()
+            preferences[USER_NAME_KEY] = if (user.userName.isEmpty()) EMPTY_STRING else user.userName.encrypt()
+            preferences[USER_PASSWORD_KEY] = if (user.password.isEmpty()) EMPTY_STRING else user.password.encrypt()
             preferences[USER_ROLE_KEY] = user.role.name.encrypt()
             preferences[USER_LAST_MODIFIED_TIMESTAMP_KEY] = user.lastModifiedTimestamp
         }
@@ -411,14 +393,12 @@ class PreferencesRepository @Inject constructor(
 
     suspend fun updateUserRole(newRole: Role) {
         dataStore.edit { preferences ->
-            cachedUser?.apply { role = newRole }
             preferences[USER_ROLE_KEY] = newRole.name.encrypt()
         }
     }
 
     suspend fun updateUserPassword(newPassword: String) {
         dataStore.edit { preferences ->
-            cachedUser = cachedUser?.copy(password = newPassword)
             preferences[USER_PASSWORD_KEY] = newPassword.encrypt()
         }
     }

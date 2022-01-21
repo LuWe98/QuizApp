@@ -97,35 +97,26 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent">
 
-                    <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
+                    <com.example.quizapp.view.customimplementations.CustomTextInput
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/abbreviationCard"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            android:id="@+id/abbreviationTextInput"
+                            app:titleText="@string/abbreviation"
+                            app:hintText="-"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:icon="@drawable/ic_title"
-                            app:title="@string/abbreviation"
-                            app:dropDownIcon="@drawable/ic_arrow_down"
-                            tools:text="WI"
-                            android:background="@drawable/background_round_corners_10dp"
-                            android:backgroundTint="?colorOnPrimary"
-                            />
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
 
-                    <com.example.quizapp.view.customimplementations.ItemBottomTextDropDownLayout
+                    <com.example.quizapp.view.customimplementations.CustomTextInput
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/nameCard"
+                            android:id="@+id/nameTextInput"
+                            app:titleText="@string/name"
+                            app:hintText="-"
+                            android:layout_marginTop="@dimen/grid_6"
+                            app:layout_constraintTop_toBottomOf="@id/abbreviationTextInput"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/abbreviationCard"
-                            app:icon="@drawable/ic_faculty"
-                            app:title="@string/name"
-                            app:dropDownIcon="@drawable/ic_arrow_down"
-                            tools:text="Wirtschaftsinformatik"
-                            android:background="@drawable/background_round_corners_10dp"
-                            android:backgroundTint="?colorOnPrimary"
-                            android:layout_marginTop="@dimen/grid_6" />
+                            app:layout_constraintEnd_toEndOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
