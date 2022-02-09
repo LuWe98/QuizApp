@@ -1,6 +1,5 @@
 package com.example.quizapp.view.recyclerview.adapters
 
-import androidx.core.view.isVisible
 import com.example.quizapp.R
 import com.example.quizapp.databinding.RviQuestionnaireBinding
 import com.example.quizapp.extensions.*
@@ -11,9 +10,11 @@ import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
 
 class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuestionnaireBinding>(CompleteQuestionnaire.DIFF_CALLBACK) {
 
-    var onItemClick: ((String) -> (Unit))? = null
+    var onItemClick: ((CompleteQuestionnaire) -> (Unit))? = null
 
     var onItemLongClick: ((Questionnaire) -> (Unit))? = null
+
+    var onPlayButtonClick: ((CompleteQuestionnaire) -> (Unit))? = null
 
     var onSyncClick: ((String) -> (Unit))? = null
 
@@ -21,13 +22,19 @@ class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuest
         binding.apply {
             root.onClick {
                 getItem(vh).let {
-                    onItemClick?.invoke(it.questionnaire.id)
+                    onItemClick?.invoke(it)
                 }
             }
 
             root.onLongClick {
                 getItem(vh).let {
                     onItemLongClick?.invoke(it.questionnaire)
+                }
+            }
+
+            btnPlay.onClick {
+                getItem(vh).let {
+                    onPlayButtonClick?.invoke(it)
                 }
             }
 
@@ -44,16 +51,11 @@ class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuest
     override fun bindViews(binding: RviQuestionnaireBinding, item: CompleteQuestionnaire, position: Int) {
         binding.apply {
             tvTitle.text = item.questionnaire.title
-            //tvDateAndQuestionAmount.text = item.questionnaire.authorInfo.userName
-
             tvDateAndQuestionAmount.text = context.getString(
                 R.string.cosAndSubject,
                 item.questionnaire.authorInfo.userName,
                 item.questionnaire.timeStampAsDate
             )
-
-//            tvCos.text = item.courseOfStudiesAbbreviations
-//            tvSubject.text = item.questionnaire.subject
 
 //            tvDateAndQuestionAmount.text = context.getString(
 //                R.string.authorNameDateAndQuestionAmount,
@@ -71,12 +73,9 @@ class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuest
                 btnSync.setDrawableTintWithRes((if(isSynced) R.color.green else R.color.unselectedColor))
             }
 
-            progressIndicator.progress = item.answeredQuestionsPercentage
-
-            (item.areAllQuestionsCorrectlyAnswered && item.hasQuestions).let {
-                checkMarkIcon.isVisible = it
-                //getThemeColor(R.attr.colorAccent)
-                progressIndicator.setIndicatorColor(if(it) getColor(R.color.hfuDarkerGreen) else getColor(R.color.hfuBrightGreen))
+            (item.areAllQuestionsCorrectlyAnswered && item.hasQuestions).let { isCompleted ->
+                btnPlay.setImageDrawable(if(isCompleted) R.drawable.ic_done_all else if(item.areAllQuestionsAnswered) R.drawable.ic_done else R.drawable.ic_play_arrow)
+                btnPlay.setBackgroundTintWithRes(if(isCompleted) R.color.hfuBrightGreen else R.color.hfuLightGreen)
             }
         }
     }

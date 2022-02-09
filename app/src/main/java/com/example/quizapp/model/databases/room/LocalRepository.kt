@@ -2,15 +2,16 @@ package com.example.quizapp.model.databases.room
 
 import androidx.room.withTransaction
 import com.example.quizapp.extensions.div
-import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.room.dao.*
-import com.example.quizapp.model.databases.room.entities.*
-import com.example.quizapp.model.databases.room.entities.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.databases.room.entities.Answer
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
+import com.example.quizapp.model.databases.room.entities.EntityMarker
+import com.example.quizapp.model.databases.room.entities.Faculty
+import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
+import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.entities.Question
 import com.example.quizapp.model.databases.room.entities.Questionnaire
-import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.entities.QuestionnaireCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.datastore.datawrappers.LocalQuestionnaireOrderBy
@@ -18,6 +19,7 @@ import com.example.quizapp.model.ktor.status.SyncStatus
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.reflect.KClass
+
 
 @Singleton
 class LocalRepository @Inject constructor(
@@ -33,6 +35,7 @@ class LocalRepository @Inject constructor(
     private val locallyFilledQuestionnaireToUploadDao: LocallyFilledQuestionnaireToUploadDao
 ) {
 
+    //Das nicht inline machen
     suspend inline fun <reified T : EntityMarker> insert(entity: T) = getBaseDaoWith(T::class).insert(entity)
 
     suspend inline fun <reified T : EntityMarker> insert(entity: Collection<T>) = getBaseDaoWith(T::class).insert(entity)
@@ -44,6 +47,7 @@ class LocalRepository @Inject constructor(
     suspend inline fun <reified T : EntityMarker> delete(entity: T) = getBaseDaoWith(T::class).delete(entity)
 
     suspend inline fun <reified T : EntityMarker> delete(entity: Collection<T>) = getBaseDaoWith(T::class).delete(entity)
+
 
     /**
      * This method returns the DAO object for the given Entity Class
@@ -61,6 +65,7 @@ class LocalRepository @Inject constructor(
         LocallyFilledQuestionnaireToUpload::class -> locallyFilledQuestionnaireToUploadDao
         else -> throw IllegalArgumentException("Entity DAO for entity class '${entity.simpleName}' could not be found! Did you add it to the 'getBaseDaoWith' Method?")
     } as BaseDao<T>
+
 
     suspend fun deleteAllUserData() {
         localDatabase.withTransaction {
@@ -94,6 +99,8 @@ class LocalRepository @Inject constructor(
     private suspend fun deleteQuestionnairesWith(questionnaireIds: List<String>) {
         delete(findQuestionnairesWith(questionnaireIds))
     }
+
+    val allCompleteQuestionnairesFlow = questionnaireDao.allCompleteQuestionnairesFlow
 
     suspend fun getAllQuestionnaireIds() = questionnaireDao.getAllQuestionnaireIds()
 

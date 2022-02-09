@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+            android:top="10dp"
+            android:drawable="@drawable/ic_hfu_logo_with_text"
+            android:width="100dp"
+            android:height="59dp"
+            android:gravity="center" />
+    <item
+            android:drawable="@color/transparent"
+            android:width="100dp"
+            android:height="100dp"
+            android:gravity="center" />
+</layer-list>

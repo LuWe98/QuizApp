@@ -6,6 +6,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
@@ -26,27 +27,27 @@ object EncryptionUtil {
 
     fun String.decrypt() = decryptInternal(this)
 
-    fun String.encrypt() = encryptInternal(this)
+    fun String.encrypt(): String = encryptInternal(this)
+
+    inline fun <reified T> T.encryptObject(): String = Json.encodeToString(this).decrypt()
+
+    inline fun <reified T> String.decryptToObject(): T = Json.decodeFromString(encrypt())
 
 
-    @ExperimentalSerializationApi
-    inline fun <reified T> encryptObject(value: T) = Json.encodeToString(value).decrypt()
+    private fun encryptInternal(strToEncrypt: String) = Base64.encodeToString(
+        useCipher(strToEncrypt, Cipher.ENCRYPT_MODE),
+        Base64.DEFAULT
+    )
 
-    @ExperimentalSerializationApi
-    inline fun <reified T> decryptToObject(strToDecrypt: String) = Json.decodeFromString<T>(strToDecrypt.encrypt())
+    private fun decryptInternal(strToDecrypt: String) = useCipher(
+        Base64.decode(strToDecrypt, Base64.DEFAULT),
+        Cipher.DECRYPT_MODE
+    ).decodeToString()
 
 
-    private fun encryptInternal(strToEncrypt: String): String {
-        val cipher = initCipher(Cipher.ENCRYPT_MODE)
-        return Base64.encodeToString(cipher.doFinal(strToEncrypt.toByteArray(Charsets.UTF_8)), Base64.DEFAULT)
-    }
+    private fun useCipher(input: String, cipherMode: Int) = useCipher(input.toByteArray(Charsets.UTF_8), cipherMode)
 
-    private fun decryptInternal(strToDecrypt: String): String {
-        val cipher = initCipher(Cipher.DECRYPT_MODE)
-        return String(cipher.doFinal(Base64.decode(strToDecrypt, Base64.DEFAULT)))
-    }
-
-    private fun initCipher(mode: Int): Cipher {
+    private fun useCipher(input: ByteArray, cipherMode: Int): ByteArray {
         val factory = SecretKeyFactory.getInstance(ALGORITHM)
         val spec = PBEKeySpec(secretKey.toCharArray(), Base64.decode(salt, Base64.DEFAULT), ITERATION_COUNT, KEY_LENGTH)
         val tmp = factory.generateSecret(spec)
@@ -54,7 +55,29 @@ object EncryptionUtil {
         val ivParameterSpec = IvParameterSpec(Base64.decode(iv, Base64.DEFAULT))
 
         return Cipher.getInstance(TRANSFORMATION).apply {
-            init(mode, secretKey, ivParameterSpec)
-        }
+            init(cipherMode, secretKey, ivParameterSpec)
+        }.doFinal(input)
     }
+
+
+
+//    private fun initCipher(mode: Int): Cipher {
+//        val factory = SecretKeyFactory.getInstance(ALGORITHM)
+//        val spec = PBEKeySpec(secretKey.toCharArray(), Base64.decode(salt, Base64.DEFAULT), ITERATION_COUNT, KEY_LENGTH)
+//        val tmp = factory.generateSecret(spec)
+//        val secretKey = SecretKeySpec(tmp.encoded, KeyProperties.KEY_ALGORITHM_AES)
+//        val ivParameterSpec = IvParameterSpec(Base64.decode(iv, Base64.DEFAULT))
+//
+//        return Cipher.getInstance(TRANSFORMATION).apply {
+//            init(mode, secretKey, ivParameterSpec)
+//        }
+//    }
+//    private fun encryptInternal(strToEncrypt: String): String {
+//        val cipher = initCipher(Cipher.ENCRYPT_MODE)
+//        return Base64.encodeToString(cipher.doFinal(strToEncrypt.toByteArray(Charsets.UTF_8)), Base64.DEFAULT)
+//    }
+//    private fun decryptInternal(strToDecrypt: String): String {
+//        val cipher = initCipher(Cipher.DECRYPT_MODE)
+//        return cipher.doFinal(Base64.decode(strToDecrypt, Base64.DEFAULT)).decodeToString()
+//    }
 }

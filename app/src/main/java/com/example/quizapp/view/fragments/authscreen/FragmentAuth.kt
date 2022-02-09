@@ -57,7 +57,8 @@ class FragmentAuth : BindingFragment<FragmentAuthBinding>() {
                 }
                 ShowLoginScreen -> binding.apply {
                     viewPager.isVisible = true
-                    tvAppLogo.isVisible = true
+                    tvAppName.isVisible = true
+                    //ivLogo.isVisible = true
                 }
             }
         }

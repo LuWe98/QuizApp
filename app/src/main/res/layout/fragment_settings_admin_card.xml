@@ -3,18 +3,18 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_round_corners_10dp"
+        android:background="@drawable/background_round_corners_15dp"
         android:backgroundTint="?colorOnPrimary"
         app:layout_constraintTop_toBottomOf="@+id/statisticsCard">
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:id="@+id/adminFunctionalityHeader"
             android:text="@string/adminSettings"
-            android:textColor="@color/hfuDarkGreen"
+            android:textColor="@color/hfuBrightGreen"
             android:gravity="center_vertical"
-            android:paddingHorizontal="@dimen/grid_4"
+            android:layout_marginStart="@dimen/grid_4"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent" />

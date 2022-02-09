@@ -2,7 +2,6 @@ package com.example.quizapp.model.ktor.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.quizapp.extensions.log
 
 open class SimplePagingSource<T : Any>(
     private val getRefreshKeyAction: (PagingState<Int, T>) -> (Int?) = getDefaultRefreshKeyAction(),
@@ -12,11 +11,11 @@ open class SimplePagingSource<T : Any>(
     override fun getRefreshKey(state: PagingState<Int, T>) = getRefreshKeyAction.invoke(state)
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> = try {
-        val page = params.key ?: PagingConfigValues.DEFAULT_INITIAL_PAGE_INDEX
+        val page = params.key ?: PagingConfigUtil.DEFAULT_INITIAL_PAGE_INDEX
         val response = getDataAction.invoke(page)
         LoadResult.Page(
             data = response,
-            prevKey = if (page == PagingConfigValues.DEFAULT_INITIAL_PAGE_INDEX) null else page - 1,
+            prevKey = if (page == PagingConfigUtil.DEFAULT_INITIAL_PAGE_INDEX) null else page - 1,
             nextKey = if (response.isEmpty()) null else page + 1
         )
     } catch (e: Exception) {

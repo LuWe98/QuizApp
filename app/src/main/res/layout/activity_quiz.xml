@@ -14,7 +14,6 @@
             android:background="@color/black"
             android:elevation="100dp"
             android:visibility="gone"/>
-
     <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -22,5 +21,4 @@
             app:defaultNavHost="true"
             app:navGraph="@navigation/main_nav_graph"
             android:id="@+id/navHost" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

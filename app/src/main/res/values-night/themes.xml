@@ -25,7 +25,6 @@
         <item name="colorPrimary">@color/darkColorPrimary</item>
         <item name="colorPrimaryVariant">@color/darkColorPrimaryVariant</item>
 
-
         <item name="colorOnPrimary">@color/darkColorOnPrimary</item>
 
         <item name="colorSecondary">@color/darkColorSecondary</item>
@@ -126,7 +125,8 @@
 
 
     <!-- Light DialogFragmentLoadingTheme. -->
-    <style name="Theme.QuizApp.DialogFragment.Loading.Dark" parent="Theme.QuizApp.DialogFragment.Loading.Light">
-
+    <style name="Theme.QuizApp.DialogFragment.Loading.Dark" parent="Theme.QuizApp.DialogFragment.Dark">
+        <item name="android:windowMinWidthMinor">85%</item>
+        <item name="android:windowMinWidthMajor">85%</item>
     </style>
 </resources>

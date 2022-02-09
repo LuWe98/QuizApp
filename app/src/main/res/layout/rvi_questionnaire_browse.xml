@@ -1,91 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        xmlns:tools="http://schemas.android.com/tools"
         app:cardBackgroundColor="?colorOnPrimary"
         app:cardElevation="2dp"
         android:layout_marginTop="@dimen/grid_3"
-        app:cardCornerRadius="@dimen/itemCardCornerRadius">
+        app:cardCornerRadius="17.5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="90dp">
+            android:layout_height="wrap_content">
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:id="@+id/progressIndicator"
-                app:indicatorSize="42.5dp"
-                app:indicatorColor="?colorAccent"
-                app:trackColor="@color/unselectedColor"
-                app:trackThickness="5dp"
-                android:indeterminateOnly="true"
-                tools:visibility="visible"
-                app:trackCornerRadius="45dp"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="@+id/btnDownload"
-                app:layout_constraintTop_toTopOf="@+id/btnDownload"
-                app:layout_constraintBottom_toBottomOf="@+id/btnDownload"
-                app:layout_constraintEnd_toEndOf="@+id/btnDownload" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:id="@+id/topLayout"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:id="@+id/btnDownload"
-                app:srcCompat="@drawable/ic_cloud_download"
-                android:layout_marginStart="@dimen/grid_3"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:tint="@color/white"
-                android:padding="8dp"
-                android:background="@drawable/shape_circle"
-                android:backgroundTint="@color/unselectedColor"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="42.5dp"
+                    android:layout_height="42.5dp"
+                    android:background="@drawable/background_round_corners_20dp"
+                    android:backgroundTint="@color/hfuLightGreen"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:srcCompat="@drawable/ic_cloud_download"
+                    android:padding="12.5dp"
+                    app:tint="?colorOnPrimary"
+                    android:layout_marginStart="@dimen/grid_3"
+                    android:id="@+id/btnDownload"/>
 
-        <RelativeLayout
-                android:layout_width="0dp"
-                android:id="@+id/textLayout"
-                android:layout_marginStart="@dimen/grid_3"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@+id/btnDownload"
-                app:layout_constraintTop_toTopOf="@+id/btnDownload"
-                app:layout_constraintBottom_toBottomOf="@+id/btnDownload"
-                app:layout_constraintEnd_toStartOf="@+id/btnExpand">
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    app:indicatorSize="30dp"
+                    android:id="@+id/downLoadProgress"
+                    app:layout_constraintTop_toTopOf="@id/btnDownload"
+                    app:layout_constraintStart_toStartOf="@id/btnDownload"
+                    app:layout_constraintEnd_toEndOf="@id/btnDownload"
+                    app:layout_constraintBottom_toBottomOf="@id/btnDownload"
+                    android:indeterminate="true"
+                    app:trackCornerRadius="50dp"
+                    app:trackColor="@color/hfuLightGreen"
+                    app:indicatorColor="@color/hfuDarkerGreen"/>
 
-            <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="match_parent"
+
+            <RelativeLayout
+                    android:layout_width="0dp"
+                    android:id="@+id/textLayout"
+                    android:layout_marginHorizontal="@dimen/grid_3"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvTitle"
-                    android:gravity="center_vertical"
-                    tools:text="Questionnaire Title"
-                    android:textSize="17sp"
-                    android:textColor="?dominantTextColor" />
+                    app:layout_constraintStart_toEndOf="@+id/btnDownload"
+                    app:layout_constraintTop_toTopOf="@+id/btnDownload"
+                    app:layout_constraintBottom_toBottomOf="@+id/btnDownload"
+                    app:layout_constraintEnd_toStartOf="@+id/btnSync">
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvTitle"
+                        android:gravity="center_vertical"
+                        tools:text="Questionnaire Title"
+                        android:textSize="16sp"
+                        android:textColor="?dominantTextColor" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:id="@+id/tvDateAndQuestionAmount"
+                        tools:text="Prof. Oliver Tamine  -  03.01.2022"
+                        android:textSize="13sp"
+                        android:layout_below="@id/tvTitle" />
+
+            </RelativeLayout>
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:id="@+id/btnSync"
+                    tools:tint="@color/green"
+                    app:layout_constraintTop_toTopOf="@+id/textLayout"
+                    app:srcCompat="@drawable/ic_cloud_done"
+                    android:padding="4dp"
+                    android:visibility="invisible"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    android:background="@drawable/shape_circle"
+                    android:backgroundTint="?android:colorBackground"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/textLayout" />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="?attr/actionBarItemBackground"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_down"
+                    android:padding="7.5dp"
+                    android:elevation="1dp"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:visibility="gone"
+                android:background="@drawable/background_round_corners_15dp"
+                android:backgroundTint="?android:colorBackground"
+                android:layout_marginHorizontal="@dimen/grid_4"
+                android:layout_marginBottom="@dimen/grid_4"
+                android:paddingVertical="@dimen/grid_4"
+                app:layout_constraintTop_toBottomOf="@id/topLayout"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/bottomLayout">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:id="@+id/facultyIcon"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="?colorOnPrimary"
+                    app:srcCompat="@drawable/ic_faculty"
+                    android:padding="6dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="@dimen/grid_4"/>
 
             <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:id="@+id/tvDateAndQuestionAmount"
-                    tools:text="Prof. Oliver Tamine  -  03.01.2022"
                     android:textSize="13sp"
-                    android:layout_below="@id/tvTitle" />
+                    android:textColor="?dominantTextColor"
+                    app:layout_constraintTop_toTopOf="@id/facultyIcon"
+                    app:layout_constraintBottom_toBottomOf="@id/facultyIcon"
+                    app:layout_constraintStart_toEndOf="@id/facultyIcon"
+                    android:layout_marginStart="@dimen/grid_3"
+                    android:text="Wirtschaftsinformatik"
+                    android:id="@+id/materialTextView" />
 
-        </RelativeLayout>
+            <View
+                    android:layout_width="3dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintTop_toTopOf="@id/facultyIcon"
+                    app:layout_constraintBottom_toBottomOf="@id/cosIcon"
+                    android:background="?colorOnPrimary"
+                    app:layout_constraintStart_toStartOf="@id/facultyIcon"
+                    app:layout_constraintEnd_toEndOf="@id/facultyIcon"
+                    android:elevation="-1dp" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="35dp"
-                android:layout_height="match_parent"
-                android:id="@+id/btnExpand"
-                android:layout_marginEnd="@dimen/grid_2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_arrow_right"
-                app:tint="@color/hfuDarkerGreen"
-                android:padding="7.5dp"
-                android:elevation="1dp"
-                app:layout_constraintBottom_toBottomOf="parent" />
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:id="@+id/cosIcon"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="?colorOnPrimary"
+                    app:srcCompat="@drawable/ic_course_of_studies"
+                    android:padding="5dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="@dimen/grid_4"
+                    android:layout_marginTop="@dimen/grid_3"
+                    app:layout_constraintTop_toBottomOf="@+id/facultyIcon" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="?dominantTextColor"
+                    app:layout_constraintTop_toTopOf="@+id/cosIcon"
+                    app:layout_constraintBottom_toBottomOf="@id/cosIcon"
+                    app:layout_constraintStart_toEndOf="@id/facultyIcon"
+                    android:layout_marginStart="@dimen/grid_3"
+                    android:text="Wirtschaftsinformatik" />
+
+            <View
+                    android:layout_width="3dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintTop_toTopOf="@id/cosIcon"
+                    app:layout_constraintBottom_toBottomOf="@id/subjectIcon"
+                    android:background="?colorOnPrimary"
+                    app:layout_constraintStart_toStartOf="@id/facultyIcon"
+                    app:layout_constraintEnd_toEndOf="@id/facultyIcon"
+                    android:elevation="-1dp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:id="@+id/subjectIcon"
+                    android:background="@drawable/background_round_corners_45dp"
+                    android:backgroundTint="?colorOnPrimary"
+                    app:srcCompat="@drawable/ic_subject"
+                    android:padding="6dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="@dimen/grid_4"
+                    android:layout_marginTop="@dimen/grid_3"
+                    app:layout_constraintTop_toBottomOf="@+id/cosIcon"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="?dominantTextColor"
+                    app:layout_constraintTop_toTopOf="@id/subjectIcon"
+                    app:layout_constraintBottom_toBottomOf="@id/subjectIcon"
+                    app:layout_constraintStart_toEndOf="@id/facultyIcon"
+                    android:layout_marginStart="@dimen/grid_3"
+                    android:text="Datenbanken" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

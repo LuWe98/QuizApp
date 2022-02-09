@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/questionTextInput"
+            android:hint="@string/question"
+            app:startIconDrawable="@drawable/ic_title"
+            android:background="@drawable/background_round_corners_10dp"
+            android:backgroundTint="?colorOnPrimary"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:id="@+id/etQuestionText"
+                android:background="@color/transparent"
+                android:inputType="textMultiLine" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/multipleChoiceCard"
+            app:layout_constraintTop_toBottomOf="@id/questionTextInput"
+            android:layout_marginTop="@dimen/grid_6"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            android:background="@drawable/ripple_round_corners_10_dp"
+            android:backgroundTint="?colorOnPrimary">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/ic_check_circle"
+                android:layout_marginStart="@dimen/grid_1"
+                android:padding="10dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/publishIcon" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/publishText"
+                android:text="@string/isMultipleChoice"
+                android:layout_marginStart="@dimen/grid_2"
+                android:gravity="center_vertical"
+                android:textSize="15sp"
+                android:ellipsize="end"
+                android:lines="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/publishIcon"
+                app:layout_constraintEnd_toStartOf="@+id/checkBox" />
+
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:id="@+id/checkBox"
+                android:clickable="false"
+                android:visibility="invisible"
+                android:scaleX="0.75"
+                android:minWidth="0dp"
+                android:scaleY="0.75"
+                android:layout_marginEnd="@dimen/grid_3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/multipleChoiceSwitch"
+                android:scaleX="0.75"
+                android:scaleY="0.75"
+                android:clickable="false"
+                android:layout_marginEnd="@dimen/grid_1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/answers"
+            android:id="@+id/tvQuestionnaires"
+            android:textStyle="bold"
+            android:textColor="@color/hfuBrightGreen"
+            android:gravity="center_vertical"
+            android:textSize="17.5sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/multipleChoiceCard"
+            android:layout_marginTop="@dimen/grid_10"
+            android:layout_marginStart="@dimen/grid_8" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:text="@string/add"
+            android:id="@+id/btnAddAnswer"
+            android:textStyle="bold"
+            android:textColor="@color/hfuDarkerGreen"
+            android:drawableTint="?dominantTextColor"
+            android:gravity="center_vertical|end"
+            app:layout_constraintTop_toTopOf="@+id/tvQuestionnaires"
+            app:layout_constraintBottom_toBottomOf="@id/tvQuestionnaires"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/grid_8" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rvContainer"
+            app:layout_constraintTop_toBottomOf="@+id/tvQuestionnaires"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/grid_2">
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:overScrollMode="never"
+                android:id="@+id/rvAnswer"
+                tools:listitem="@layout/rvi_answer_add_edit"
+                tools:itemCount="3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:paddingBottom="@dimen/grid_2"
+                android:paddingHorizontal="@dimen/grid_6"
+                android:clipToPadding="false" />
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:id="@+id/tvNoAssigned"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginHorizontal="@dimen/grid_8"
+                android:background="@drawable/background_round_dashed_corners_15dp"
+                android:text="Nothing assigned"
+                android:gravity="center"
+                android:fontFamily="@font/mallanna_regular"
+                android:textSize="15sp"
+                android:textColor="@color/hfuDarkerGreen"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/grid_3" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

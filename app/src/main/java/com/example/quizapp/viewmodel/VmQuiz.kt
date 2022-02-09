@@ -51,14 +51,10 @@ class VmQuiz @Inject constructor(
     val questionListEventChannelFlow = questionListEventChannel.receiveAsFlow()
 
 
-    private val completeQuestionnaireNullableStateFlow = localRepository.findCompleteQuestionnaireAsFlowWith(args.questionnaireId)
-        .stateIn(viewModelScope, SharingStarted.Lazily, null)
+     val completeQuestionnaireFlow = localRepository.findCompleteQuestionnaireAsFlowWith(args.completeQuestionnaire.questionnaire.id)
+        .stateIn(viewModelScope, SharingStarted.Lazily, args.completeQuestionnaire)
 
-    val completeQuestionnaireFlow = completeQuestionnaireNullableStateFlow
-        .mapNotNull { it }
-        .distinctUntilChanged()
-
-    val completeQuestionnaire get() = completeQuestionnaireNullableStateFlow.value
+    val completeQuestionnaire get() = completeQuestionnaireFlow.value
 
     fun getQuestionWithAnswersFlow(questionId: String) = completeQuestionnaireFlow
         .map { it.getQuestionWithAnswers(questionId) }
@@ -72,9 +68,10 @@ class VmQuiz @Inject constructor(
         .map(CompleteQuestionnaire::toQuizStatisticNumbers::get)
         .distinctUntilChanged()
 
-    val areAllQuestionsAnswered get() = runBlocking(IO) {
-        questionStatisticsFlow.first().areAllQuestionsAnswered
-    }
+    val areAllQuestionsAnswered
+        get() = runBlocking(IO) {
+            questionStatisticsFlow.first().areAllQuestionsAnswered
+        }
 
 
     private val questionSearchQueryMutableStateFlow = state.getMutableStateFlow(QUESTION_SEARCH_QUERY_KEY, "")
@@ -105,9 +102,7 @@ class VmQuiz @Inject constructor(
     val shuffleType get() = shuffleTypeStateFlow.value
 
 
-
-
-    private val questionsWithAnswersCombinedStateFlow = combine(
+    val questionsCombinedStateFlow = combine(
         questionsWithAnswersFlow,
         shuffleTypeStateFlow,
         shuffleSeedStateFlow
@@ -115,10 +110,10 @@ class VmQuiz @Inject constructor(
         when (shuffleType) {
             SHUFFLED_QUESTIONS, SHUFFLED_QUESTIONS_AND_ANSWERS -> qwa.shuffled(Random(shuffleSeed))
             else -> qwa
-        }
+        }.map(QuestionWithAnswers::question)
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    val questionsShuffled get() = questionsWithAnswersCombinedStateFlow.value.map(QuestionWithAnswers::question)
+    val questionsShuffled get() = questionsCombinedStateFlow.value
 
 
     fun onMenuItemOrderSelected(shuffleType: QuestionnaireShuffleType) = launch(IO) {
@@ -128,12 +123,10 @@ class VmQuiz @Inject constructor(
 
 
     fun onMenuItemShowSolutionClicked() = launch(IO) {
-        completeQuestionnaire?.let {
-            if (it.areAllQuestionsAnswered) {
-                navigationDispatcher.dispatch(FromQuizToQuizContainerScreen(true))
-            } else {
-                eventChannel.send(ShowMessageSnackBar(R.string.pleaseAnswerAllQuestionsText))
-            }
+        if (completeQuestionnaire.areAllQuestionsAnswered) {
+            navigationDispatcher.dispatch(FromQuizToQuizContainerScreen(true))
+        } else {
+            eventChannel.send(ShowMessageSnackBar(R.string.pleaseAnswerAllQuestionsText))
         }
     }
 
@@ -154,13 +147,13 @@ class VmQuiz @Inject constructor(
     }
 
     fun onClearSearchQueryClicked() = launch(IO) {
-        if(questionSearchQuery.isNotEmpty()) {
+        if (questionSearchQuery.isNotEmpty()) {
             questionListEventChannel.send(QuizOverviewQuestionListEvent.ClearQuestionQueryEvent)
         }
     }
 
     fun onMenuItemClearGivenAnswersClicked() = launch(IO, applicationScope) {
-        completeQuestionnaire?.apply {
+        completeQuestionnaire.apply {
             localRepository.insert(LocallyFilledQuestionnaireToUpload(questionnaire.id))
             eventChannel.send(ShowUndoDeleteGivenAnswersSnackBack(allAnswers))
             allAnswers.map { it.copy(isAnswerSelected = false) }.let {
@@ -182,19 +175,17 @@ class VmQuiz @Inject constructor(
     }
 
     fun onAnswerItemClicked(selectedAnswerId: String, questionId: String) = launch(IO) {
-        completeQuestionnaire?.let {
-            val question = it.getQuestionWithAnswers(questionId)
+        val question = completeQuestionnaire.getQuestionWithAnswers(questionId)
 
-            if (question.question.isMultipleChoice) {
-                question.answers.firstOrNull { answer -> answer.id == selectedAnswerId }?.let { answer ->
-                    localRepository.update(answer.copy(isAnswerSelected = !answer.isAnswerSelected))
-                }
-            } else {
-                localRepository.update(question.answers.map { answer -> answer.copy(isAnswerSelected = answer.id == selectedAnswerId) })
+        if (question.question.isMultipleChoice) {
+            question.answers.firstOrNull { answer -> answer.id == selectedAnswerId }?.let { answer ->
+                localRepository.update(answer.copy(isAnswerSelected = !answer.isAnswerSelected))
             }
-
-            localRepository.insert(LocallyFilledQuestionnaireToUpload(it.questionnaire.id))
+        } else {
+            localRepository.update(question.answers.map { answer -> answer.copy(isAnswerSelected = answer.id == selectedAnswerId) })
         }
+
+        localRepository.insert(LocallyFilledQuestionnaireToUpload(completeQuestionnaire.questionnaire.id))
     }
 
     fun onBackButtonClicked() = launch(IO) {
@@ -208,7 +199,7 @@ class VmQuiz @Inject constructor(
     }
 
     private fun uploadFilledQuestionnaire() = launch(IO, applicationScope) {
-        completeQuestionnaire?.let {
+        completeQuestionnaire.let {
             if (it.questionnaire.syncStatus != SyncStatus.SYNCED) return@launch
             if (!localRepository.isLocallyFilledQuestionnaireToUploadPresent(it.questionnaire.id)) return@launch
 
@@ -225,14 +216,14 @@ class VmQuiz @Inject constructor(
     }
 
 
-    sealed class FragmentQuizEvent: UiEventMarker {
+    sealed class FragmentQuizEvent : UiEventMarker {
         class ShowUndoDeleteGivenAnswersSnackBack(val lastAnswerValues: List<Answer>) : FragmentQuizEvent()
         class ShowMessageSnackBar(val messageRes: Int) : FragmentQuizEvent()
         object ShowPopupMenu : FragmentQuizEvent()
     }
 
-    sealed class QuizOverviewQuestionListEvent: UiEventMarker {
-        object ClearQuestionQueryEvent: QuizOverviewQuestionListEvent()
+    sealed class QuizOverviewQuestionListEvent : UiEventMarker {
+        object ClearQuestionQueryEvent : QuizOverviewQuestionListEvent()
     }
 
     companion object {

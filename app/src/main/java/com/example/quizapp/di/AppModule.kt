@@ -1,8 +1,12 @@
 package com.example.quizapp.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.quizapp.QuizApplication
+import com.example.quizapp.extensions.dataStore
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
@@ -46,9 +50,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePreferencesRepository(
-        @ApplicationContext context: Context
-    ) = PreferencesRepository(context)
+    fun providePreferencesRepository(@ApplicationContext context: Context) = PreferencesRepository(context.dataStore)
 
 
     @Provides

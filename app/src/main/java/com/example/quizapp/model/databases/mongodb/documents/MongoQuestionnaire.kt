@@ -1,6 +1,5 @@
 package com.example.quizapp.model.databases.mongodb.documents
 
-import com.example.quizapp.extensions.generateDiffItemCallback
 import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
 import com.example.quizapp.model.databases.properties.AuthorInfo
 import io.ktor.util.date.*
@@ -17,10 +16,7 @@ data class MongoQuestionnaire(
     val facultyIds: List<String> = emptyList(),
     val courseOfStudiesIds: List<String> = emptyList(),
     val subject: String,
+    val questionCount: Int,
     val questions : List<MongoQuestion> = emptyList(),
     val lastModifiedTimestamp: Long = getTimeMillis()
-) {
-    companion object {
-        val DIFF_CALLBACK = generateDiffItemCallback(MongoQuestionnaire::id)
-    }
-}
+)

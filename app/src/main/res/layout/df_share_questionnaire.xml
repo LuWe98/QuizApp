@@ -66,7 +66,7 @@
                 android:layout_width="0dp"
                 android:layout_height="53dp"
                 android:text="@string/confirm"
-                android:background="?colorOnPrimary"
+                android:background="@drawable/ripple_background"
                 android:id="@+id/btnConfirm"
                 android:gravity="center"
                 android:textSize="16sp"
@@ -84,7 +84,7 @@
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
                 android:layout_height="53dp"
-                android:background="?colorOnPrimary"
+                android:background="@drawable/ripple_background"
                 android:text="@string/cancel"
                 android:id="@+id/btnCancel"
                 android:gravity="center"

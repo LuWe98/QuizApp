@@ -19,6 +19,7 @@ import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.Navig
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher
 import com.example.quizapp.viewmodel.VmSettings.*
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import com.example.quizapp.viewmodel.customimplementations.EventViewModel
@@ -139,8 +140,7 @@ class VmSettings @Inject constructor(
         runCatching {
             backendRepository.syncUserData(user.id)
         }.also {
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             when (response.responseType) {
                 SyncUserDataResponseType.DATA_UP_TO_DATE -> {
@@ -168,8 +168,7 @@ class VmSettings @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.syncingQuestionnaires))
 
         backendSyncer.synAllQuestionnaireData().let { resultType ->
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
             eventChannel.send(ShowMessageSnackBarEvent(resultType.messageRes))
         }
     }
@@ -178,8 +177,7 @@ class VmSettings @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.syncingFacultiesAndCourseOfStudies))
 
         backendSyncer.syncFacultiesAndCoursesOfStudies().let { resultType ->
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
             eventChannel.send(ShowMessageSnackBarEvent(resultType.messageRes))
         }
     }

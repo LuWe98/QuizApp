@@ -11,14 +11,15 @@ import com.example.quizapp.model.databases.room.RoomListLoadStatus
 import com.example.quizapp.model.databases.room.asRoomListLoadStatus
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.BackendResponse.DeleteFacultyResponse.*
-import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.model.ktor.BackendResponse.DeleteFacultyResponse.DeleteFacultyResponseType
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.ConfirmationResult
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.SelectionResult
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
+import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.FacultyMoreOptionsItem.DELETE
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.datawrappers.FacultyMoreOptionsItem.EDIT
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
-import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
-import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent
 import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent.ClearSearchQueryEvent
 import com.example.quizapp.viewmodel.VmAdminManageFaculties.ManageFacultiesEvent.ShowMessageSnackBar
@@ -26,7 +27,6 @@ import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -71,8 +71,7 @@ class VmAdminManageFaculties @Inject constructor(
         runCatching {
             backendRepository.deleteFaculty(result.faculty.id)
         }.also {
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             when (response.responseType) {
                 DeleteFacultyResponseType.SUCCESSFUL -> {

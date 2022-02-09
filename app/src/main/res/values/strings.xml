@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">QFU</string>
-    <string name="app_name_abbr" translatable="false">Q</string>
     <string name="roleUser" translatable="false">User</string>
     <string name="roleCreator" translatable="false">Creator</string>
     <string name="roleAdmin" translatable="false">Admin</string>
@@ -25,6 +24,7 @@
     <string name="questionText">Question text</string>
     <string name="questionsOfQuestionnaire">Questions of questionnaire</string>
     <string name="multipleChoice">Multiple choice</string>
+    <string name="isMultipleChoice">Is multiple choice?</string>
     <string name="singleChoice">Single choice</string>
 
     <string name="answers">Answers</string>
@@ -49,6 +49,9 @@
     <string name="authors">Authors</string>
     <string name="authorName">Author name</string>
 
+
+    <string name="percentageCompleted">% completed</string>
+    <string name="questionnairesPresent">%1$s Questionnaires present</string>
 
 
     <!-- ADD EDIT STRINGS -->
@@ -135,8 +138,8 @@
     <string name="confirmPassword">Confirm Password</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
-    <string name="registerHere">Register here</string>
-    <string name="alreadyGotAccount">Already got an account? Login</string>
+    <string name="loginHere">Already got an account? Login</string>
+    <string name="registerHere">Don\'t have an account? Register</string>
     <string name="errorPasswordsDoNotMatch">Passwords do not match</string>
     <string name="errorOccurredWhileRegisteringUser">Error occurred while registering User!</string>
     <string name="errorOccurredWhileLoggingInUser">Error occurred while logging in User!</string>
@@ -432,7 +435,7 @@
     <string name="multipleChoiceQuestionInfo">This question is multiple choice</string>
     <string name="singleChoiceQuestionInfo">This question is single choice</string>
 
-
+    <string name="startQuiz">Start Quiz</string>
 
 
     <!-- CSV LOADING STRINGS -->

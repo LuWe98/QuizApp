@@ -45,16 +45,16 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
     private fun initViews() {
         binding.pageTitle.setText(vmAddEdit.pageTitleRes)
-        binding.infoCard.apply {
-            titleTextInput.text = vmAddEdit.questionnaireTitle
-            subjectTextInput.text = vmAddEdit.questionnaireSubject
+        binding.contentLayout.apply {
+            editTextTitle.setText(vmAddEdit.questionnaireTitle)
+            editTextSubject.setText(vmAddEdit.questionnaireSubject)
         }
 
         rvaCos = RvaCourseOfStudiesChoice().apply {
             onDeleteButtonClicked = vmAddEdit::onCourseOfStudiesDeleteButtonClicked
         }
 
-        binding.infoCard.rvCos.apply {
+        binding.contentLayout.rvCos.apply {
             adapter = rvaCos
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(false)
@@ -68,16 +68,16 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
             btnBack.onClick(vmAddEdit::onBackButtonClicked)
             btnMoreOptions.onClick(vmAddEdit::onMoreOptionsClicked)
 
-            infoCard.apply {
-                btnClearCos.onClick(vmAddEdit::onClearCourseOfStudiesClicked)
+            contentLayout.apply {
+                //btnClearCos.onClick(vmAddEdit::onClearCourseOfStudiesClicked)
                 btnAddCos.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
                 publishLayout.onClick(vmAddEdit::onPublishCardClicked)
-                titleTextInput.onTextChanged(vmAddEdit::onTitleUpdated)
-                subjectTextInput.onTextChanged(vmAddEdit::onSubjectUpdated)
+                editTextTitle.onTextChanged(vmAddEdit::onTitleUpdated)
+                editTextSubject.onTextChanged(vmAddEdit::onSubjectUpdated)
             }
 
             //TODO -> Question Dialog nochmal Testen aber mit Look von dem jetzigen BottomSheet
-            questionDistributionCard.apply {
+            contentLayout.apply {
                 btnAddQuestion.onClick(vmAddEdit::onAddQuestionButtonClicked)
                 btnListQuestions.onClick(vmAddEdit::onQuestionCardClicked)
             }
@@ -92,22 +92,23 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
 
         vmAddEdit.coursesOfStudiesStateFlow.collectWhenStarted(viewLifecycleOwner) {
             rvaCos.submitList(it) {
-                binding.infoCard.rvCos.isVisible = it.isNotEmpty()
+                binding.contentLayout.tvNoAssigned.isVisible = it.isEmpty()
             }
         }
 
         vmAddEdit.publishQuestionStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.infoCard.checkBox.isChecked = it
+            binding.contentLayout.checkBox.isChecked = it
+            binding.contentLayout.publishSwitch.isChecked = it
         }
 
         vmAddEdit.userRoleFlow.collectWhenStarted(viewLifecycleOwner) { role ->
-            binding.infoCard.publishLayout.isVisible = role != Role.USER
+            binding.contentLayout.publishLayout.isVisible = role != Role.USER
         }
 
 
         vmAddEdit.questionsWithAnswersStateFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.apply {
-                questionDistributionCard.apply {
+                contentLayout.apply {
                     allQuestions.setProgressWithAnimation(if (it.isEmpty()) 0 else 100)
                     allQuestionsNumber.text = it.size.toString()
 
@@ -137,8 +138,8 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
                     vmAddEdit::onValidCsvFileSelected,
                     vmAddEdit::onCsvFilePickerResultReceived
                 )
-                is SetQuestionnaireSubject -> binding.infoCard.subjectTextInput.text = event.subject
-                is SetQuestionnaireTitle -> binding.infoCard.titleTextInput.text = event.title
+                is SetQuestionnaireSubject -> binding.contentLayout.editTextSubject.setText(event.subject)
+                is SetQuestionnaireTitle -> binding.contentLayout.editTextTitle.setText(event.title)
             }
         }
     }

@@ -9,54 +9,29 @@
     <color name="green">#bb73ba73</color>
     <color name="lightGreen">#87A96B </color>
 
+    <!--    #42000000-->
+    <!--    Not enabled-->
+    <!--    #89000000-->
+    <!--    Default-->
+    <!--    202020-->
 <!--    <color name="red">#de1738</color>-->
 <!--    <color name="green">#73ba73</color>-->
-
 
 <!--    <color name="green">#078F45</color>-->
 <!--    <color name="red">#ff24</color>-->
 
-    <color name="niceWhite">#fcfbfc</color>
-    <color name="whiteBackground">#f6f6f6</color>
-    <color name="niceBlack">#262626</color>
-    <color name="niceBlackTwo">#202020</color>
-    <color name="niceBlackThree">#1f1b24</color>
+    <color name="niceBlack">#202020</color>
 
     <color name="unselectedColor">#DDDDDD</color>
     <color name="transparent">#00000000</color>
 
-
-    <color name="colorAccentLighter">#99add8e6</color>
-
-
-    <color name="blueTest">#3670e5</color>
-    <color name="lightBlueTest">#4f84ef</color>
-
-    <color name="baige">#e6d8cf</color>
-    <color name="violet">#443b8a</color>
-
-
-    <color name="multipleChoiceColor">#443b8a</color>
-    <color name="singleChoiceColor">#e6d8cf</color>
-
-
-
-
-
+    <!-- Für Interaktionen  -->
     <color name="hfuDarkerGreen">#009864</color>
     <color name="hfuDarkGreen">#5bb28a</color>
+    <!-- Für richtig oder Falsch beim Quiz -->
     <color name="hfuBrightGreen">#88c860</color>
+    <!-- Für beantwortet beim Quiz -->
     <color name="hfuLightGreen">#bfe0ce</color>
-
-
-
-
-    <color name="newBackgroundColor">#f5f8ff</color>
-    <color name="newPrimaryColor">#212a72</color>
-    <color name="newPrimaryColorLighter">#273078</color>
-    <color name="testColor">#171a51</color>
-    <color name="testColorTwo">#72c0de</color>
-    <color name="newTestColor">#1a2332</color>
 
 
     <!-- Light Theme Colors -->
@@ -71,19 +46,10 @@
 
     <color name="lightBackgroundColorAlpha">#eeffffff</color>
 
-    <!--    <color name="lightBackgroundColor">#f6f6f6</color>-->
-
     <color name="lightColorControlActivated">#89000000</color>
     <color name="lightColorControlNormal"> #89000000</color>
     <color name="lightDominantTextColor">#000000</color>
     <color name="lightDefaultTextColor">@color/lightColorControlNormal</color>
-
-    <!--    #42000000-->
-<!--    Not enabled-->
-<!--    #89000000-->
-<!--    Default-->
-
-<!--    202020-->
 
     <!-- Dark Theme Colors -->
     <color name="darkColorPrimary">@color/hfuDarkGreen</color>
@@ -99,5 +65,4 @@
     <color name="darkColorControlNormal">#bebebe</color>
     <color name="darkDominantTextColor">#ffffff</color>
     <color name="darkDefaultTextColor">@color/darkColorControlNormal</color>
-
 </resources>

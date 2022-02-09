@@ -79,93 +79,125 @@
     <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="130dp"
+            android:paddingTop="@dimen/grid_8"
+            android:paddingBottom="100dp"
             android:clipToPadding="false"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            android:paddingTop="@dimen/grid_4">
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+            <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tilUserName"
+                    android:hint="@string/userName"
+                    app:startIconDrawable="@drawable/ic_person"
+                    android:background="@drawable/background_round_corners_10dp"
+                    android:backgroundTint="?colorOnPrimary"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
+                    android:layout_marginHorizontal="@dimen/grid_6"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="60dp"
+                        android:id="@+id/etUserName"
+                        android:background="@color/transparent"
+                        android:inputType="textMultiLine" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tilPassword"
+                    android:hint="@string/password"
+                    app:startIconDrawable="@drawable/ic_password"
+                    android:background="@drawable/background_round_corners_10dp"
+                    android:backgroundTint="?colorOnPrimary"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
+                    android:layout_marginTop="@dimen/grid_6"
+                    android:layout_marginHorizontal="@dimen/grid_6"
+                    app:layout_constraintTop_toBottomOf="@id/tilUserName"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="60dp"
+                        android:id="@+id/etPassword"
+                        android:background="@color/transparent"
+                        android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
+                    android:id="@+id/roleCard"
+                    android:background="@drawable/ripple_round_corners_10_dp"
                     android:layout_marginHorizontal="@dimen/grid_6"
-                    android:layout_marginTop="@dimen/grid_8"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
+                    app:layout_constraintTop_toBottomOf="@id/tilPassword"
+                    android:layout_marginTop="@dimen/grid_6">
 
-                <com.example.quizapp.view.customimplementations.CustomTextInput
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/nameTextInput"
-                        app:titleText="@string/userName"
-                        app:hintText="-"
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:srcCompat="@drawable/ic_role_badge"
+                        android:layout_marginStart="@dimen/grid_1"
+                        android:padding="10dp"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:id="@+id/roleIcon" />
 
-                <com.example.quizapp.view.customimplementations.CustomTextInput
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/passwordTextInput"
-                        app:titleText="@string/password"
-                        app:hintText="Type in the password"
-                        android:layout_marginTop="@dimen/grid_6"
-                        app:layout_constraintTop_toBottomOf="@id/nameTextInput"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginStart="@dimen/grid_2"
+                        android:text="@string/role"
+                        android:gravity="center_vertical"
+                        android:textSize="15sp"
+                        app:layout_constraintEnd_toStartOf="@+id/roleText"
+                        android:id="@+id/materialTextView2"
+                        app:layout_constraintStart_toEndOf="@+id/roleIcon" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:id="@+id/roleCard"
-                        android:background="@drawable/ripple_round_corners_10_dp"
-                        app:layout_constraintTop_toBottomOf="@id/passwordTextInput"
-                        android:layout_marginTop="@dimen/grid_6">
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:srcCompat="@drawable/ic_arrow_down"
+                        android:padding="5dp"
+                        android:layout_marginEnd="@dimen/grid_3"
+                        android:id="@+id/appCompatImageView4" />
 
-                    <com.google.android.material.textview.MaterialTextView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            android:text="@string/role"
-                            android:gravity="center_vertical"
-                            android:layout_marginStart="@dimen/grid_5"
-                            android:textSize="15sp"
-                            android:textColor="@color/hfuBrightGreen"
-                            android:textStyle="bold"
-                            app:layout_constraintEnd_toStartOf="@+id/roleText" />
+                <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/roleText"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:text="Admin"
+                        android:gravity="center_vertical"
+                        android:layout_marginStart="@dimen/grid_5"
+                        android:textSize="15sp"
+                        android:textColor="@color/hfuDarkGreen"
+                        android:layout_marginEnd="@dimen/grid_2"
+                        app:layout_constraintEnd_toStartOf="@+id/appCompatImageView4" />
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:srcCompat="@drawable/ic_arrow_down"
-                            android:padding="5dp"
-                            android:layout_marginEnd="@dimen/grid_3"
-                            android:id="@+id/appCompatImageView4" />
-
-                    <com.google.android.material.textview.MaterialTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:id="@+id/roleText"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            tools:text="Admin"
-                            android:gravity="center_vertical"
-                            android:layout_marginStart="@dimen/grid_5"
-                            android:textSize="15sp"
-                            android:layout_marginEnd="@dimen/grid_2"
-                            app:layout_constraintEnd_toStartOf="@+id/appCompatImageView4" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

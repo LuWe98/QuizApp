@@ -41,6 +41,26 @@ val DataStore<Preferences>.dataflow
         if (exception is IOException) emit(emptyPreferences()) else throw exception
     }
 
+fun Context.setLocale() = setLocale(runBlocking(Dispatchers.IO) {
+    dataStore.dataflow.map { preferences ->
+        preferences[PreferencesRepository.LANGUAGE_KEY]?.let {
+            QuizAppLanguage.valueOf(it)
+        } ?: QuizAppLanguage.ENGLISH
+    }.first()
+})
+
+fun Context.setLocale(quizAppLanguage: QuizAppLanguage): Context {
+    val newLocale = quizAppLanguage.locale
+    Locale.setDefault(newLocale)
+    val config = resources.configuration.apply {
+        setLocale(newLocale)
+        setLayoutDirection(newLocale)
+    }
+    return createConfigurationContext(config)
+}
+
+
+
 @MainThread
 fun Context.showToast(text: String, duration: Int = Toast.LENGTH_LONG) {
     Toast.makeText(this, text, duration).show()
@@ -66,23 +86,6 @@ fun Context.hideKeyboard(view: View) {
     }
 }
 
-fun Context.setLocale() = setLocale(runBlocking(Dispatchers.IO) {
-    dataStore.dataflow.map { preferences ->
-        preferences[PreferencesRepository.LANGUAGE_KEY]?.let {
-            QuizAppLanguage.valueOf(it)
-        } ?: QuizAppLanguage.ENGLISH
-    }.first()
-})
-
-fun Context.setLocale(quizAppLanguage: QuizAppLanguage): Context {
-    val newLocale = quizAppLanguage.locale
-    Locale.setDefault(newLocale)
-    val config = resources.configuration.apply {
-        setLocale(newLocale)
-        setLayoutDirection(newLocale)
-    }
-    return createConfigurationContext(config)
-}
 
 
 val Context.statusBarHeight: Int

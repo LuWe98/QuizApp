@@ -9,7 +9,7 @@ import com.example.quizapp.model.databases.room.dao.*
 import com.example.quizapp.model.databases.room.entities.*
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Answer
-import com.example.quizapp.model.databases.room.typeconverter.LocalDatabaseTypeConverter
+import com.example.quizapp.model.databases.room.typeconverter.RoomTypeConverters
 import com.example.quizapp.utils.Constants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +33,7 @@ import javax.inject.Singleton
     version = Constants.ROOM_DATABASE_VERSION,
     exportSchema = false
 )
-@TypeConverters(LocalDatabaseTypeConverter::class)
+@TypeConverters(RoomTypeConverters::class)
 abstract class LocalDatabase : RoomDatabase() {
 
     abstract fun getQuestionaryDao(): QuestionnaireDao

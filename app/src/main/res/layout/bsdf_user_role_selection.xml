@@ -16,15 +16,12 @@
             style="@style/Style.QuizApp.BottomSheetHeading.TextAppearance"
             android:textStyle="bold"
             tools:text="Change Role for:\nUsername"
-            android:drawableStart="@drawable/ic_role_badge"
-            android:drawablePadding="@dimen/grid_3"
             android:gravity="center_vertical"
-            android:paddingHorizontal="@dimen/grid_3"
             android:lines="2"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginHorizontal="@dimen/grid_3" />
+            android:layout_marginHorizontal="@dimen/grid_6" />
 
     <RadioGroup
             android:layout_width="match_parent"

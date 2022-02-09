@@ -46,7 +46,7 @@ data class CompleteQuestionnaire(
 
     val hasQuestions get() = questionsAmount != 0
 
-    private val answeredQuestionsAmount get() = questionsWithAnswers.filter(QuestionWithAnswers::isAnswered).size
+    private val answeredQuestionsAmount get() = questionsWithAnswers.count(QuestionWithAnswers::isAnswered)
 
     val answeredQuestionsPercentage get() = (answeredQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
 
@@ -54,11 +54,11 @@ data class CompleteQuestionnaire(
 
     val isAnyQuestionNotAnswered get() = !areAllQuestionsAnswered
 
-    private val correctQuestionsAmount get() = questionsWithAnswers.filter(QuestionWithAnswers::isAnsweredCorrectly).size
+    private val correctQuestionsAmount get() = questionsWithAnswers.count(QuestionWithAnswers::isAnsweredCorrectly)
 
     val correctQuestionsPercentage get() = (correctQuestionsAmount * 100 / questionsAmount.toFloat()).toInt()
 
-    val areAllQuestionsCorrectlyAnswered get() = questionsWithAnswers.size == correctQuestionsAmount
+    val areAllQuestionsCorrectlyAnswered get() = questionsWithAnswers.isNotEmpty() && (questionsWithAnswers.size == correctQuestionsAmount)
 
     val isAnyQuestionNotCorrectlyAnswered get() = !areAllQuestionsCorrectlyAnswered
 
@@ -67,30 +67,29 @@ data class CompleteQuestionnaire(
     val toQuizStatisticNumbers get() = QuizStatisticNumbers(questionsAmount, answeredQuestionsAmount, correctQuestionsAmount)
 
 
+    //COS AND FACULTY
+    val allCoursesOfStudies
+        get() = coursesOfStudiesWithFaculties
+            .map(CourseOfStudiesWithFaculties::courseOfStudies)
+            .distinctBy(CourseOfStudies::id)
+
+    val allFaculties
+        get() = coursesOfStudiesWithFaculties
+            .flatMap(CourseOfStudiesWithFaculties::faculties)
+            .distinctBy(Faculty::id)
+
+    val courseOfStudiesAbbreviations
+        get() = allCoursesOfStudies.map(CourseOfStudies::abbreviation).reduceOrNull { acc, s -> "$acc, $s" } ?: ""
 
 
-    //COS AND FACULTY STUFF
-    val asQuestionnaireCourseOfStudiesRelations get() = run {
-        coursesOfStudiesWithFaculties.map {
+    val facultiesAbbreviations
+        get() = allFaculties.map(Faculty::abbreviation).reduceOrNull { acc, s -> "$acc, $s" } ?: ""
+
+
+    val asQuestionnaireCourseOfStudiesRelations
+        get() = coursesOfStudiesWithFaculties.map {
             QuestionnaireCourseOfStudiesRelation(questionnaire.id, it.courseOfStudies.id)
         }
-    }
-
-    val allCoursesOfStudies get() = coursesOfStudiesWithFaculties
-        .map(CourseOfStudiesWithFaculties::courseOfStudies)
-        .distinctBy(CourseOfStudies::id)
-
-    val allFaculties get() = coursesOfStudiesWithFaculties
-        .flatMap(CourseOfStudiesWithFaculties::faculties)
-        .distinctBy(Faculty::id)
-
-    val courseOfStudiesAbbreviations get() = run {
-        allCoursesOfStudies.map(CourseOfStudies::abbreviation).reduceOrNull { acc, s -> "$acc, $s" } ?: ""
-    }
-
-    val facultiesAbbreviations get() = run {
-        allFaculties.map(Faculty::abbreviation).reduceOrNull { acc, s -> "$acc, $s" } ?: ""
-    }
 
 
 
@@ -109,7 +108,8 @@ data class CompleteQuestionnaire(
 
         val answeredQuestionsPercentage = (answeredQuestionsAmount * 100f / questionsAmount).toInt()
         val correctQuestionsPercentage = (correctQuestionsAmount * 100f / questionsAmount).toInt()
-        val incorrectQuestionsPercentage = if (answeredQuestionsPercentage == 100) 100 - correctQuestionsPercentage else (incorrectQuestionsAmount * 100f / questionsAmount).toInt()
+        val incorrectQuestionsPercentage =
+            if (answeredQuestionsPercentage == 100) 100 - correctQuestionsPercentage else (incorrectQuestionsAmount * 100f / questionsAmount).toInt()
         val incorrectQuestionsPercentageDiff get() = 100 - correctQuestionsPercentage
 
         val hasQuestions get() = questionsAmount != 0

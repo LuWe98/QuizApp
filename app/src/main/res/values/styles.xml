@@ -110,12 +110,16 @@
 
     <style name="Style.QuizApp.Heading.TextAppearance" parent="TextAppearance.AppCompat">
         <item name="android:textColor">?headingTextColor</item>
-        <item name="autoSizeMaxTextSize">19sp</item>
+        <item name="autoSizeMaxTextSize">20sp</item>
         <item name="autoSizeMinTextSize">17sp</item>
         <item name="autoSizeStepGranularity">0.5dp</item>
         <item name="autoSizeTextType">uniform</item>
         <item name="android:gravity">center</item>
         <item name="maxLines">1</item>
+
+
+        <item name="fontFamily">@font/mallanna_regular</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="Style.QuizApp.BottomSheetHeading.TextAppearance" parent="TextAppearance.AppCompat">
@@ -127,5 +131,8 @@
         <item name="android:gravity">center</item>
         <item name="maxLines">1</item>
         <item name="android:ellipsize">end</item>
+
+        <item name="fontFamily">@font/mallanna_regular</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

@@ -71,11 +71,10 @@
                         android:background="@drawable/background_round_corners_10dp"
                         android:backgroundTint="@color/transparent"
                         android:gravity="center_vertical"
-                        android:paddingHorizontal="@dimen/grid_4"
-                        android:layout_marginHorizontal="@dimen/grid_2"
+                        android:layout_marginHorizontal="@dimen/grid_6"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="@color/hfuDarkGreen"
+                        android:textColor="@color/hfuBrightGreen"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -167,11 +166,10 @@
                         android:background="@drawable/background_round_corners_10dp"
                         android:backgroundTint="@color/transparent"
                         android:gravity="center_vertical"
-                        android:paddingHorizontal="@dimen/grid_4"
-                        android:layout_marginHorizontal="@dimen/grid_2"
+                        android:layout_marginHorizontal="@dimen/grid_6"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="@color/hfuDarkGreen"
+                        android:textColor="@color/hfuBrightGreen"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.chip.ChipGroup

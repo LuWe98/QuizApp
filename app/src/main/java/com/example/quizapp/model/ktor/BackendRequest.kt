@@ -10,7 +10,8 @@ import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestion
 import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
 import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.datastore.datawrappers.ManageUsersOrderBy
-import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
+import com.example.quizapp.model.datastore.datawrappers.BrowsableQuestionnaireOrderBy
+import com.example.quizapp.model.ktor.paging.BrowsableQuestionnairePageKeys
 import kotlinx.serialization.Serializable
 
 sealed class BackendRequest {
@@ -94,7 +95,20 @@ sealed class BackendRequest {
         val facultyIds: List<String>,
         val courseOfStudiesIds: List<String>,
         val authorIds: List<String>,
-        val remoteQuestionnaireOrderBy: RemoteQuestionnaireOrderBy,
+        val orderBy: BrowsableQuestionnaireOrderBy,
+        val ascending: Boolean
+    ): BackendRequest()
+
+    @Serializable
+    data class GetPagedQuestionnairesWithPageKeysRequest(
+        val lastPageKeys: BrowsableQuestionnairePageKeys,
+        val limit: Int,
+        val searchString: String,
+        val questionnaireIdsToIgnore: List<String>,
+        val facultyIds: List<String>,
+        val courseOfStudiesIds: List<String>,
+        val authorIds: List<String>,
+        val orderBy: BrowsableQuestionnaireOrderBy,
         val ascending: Boolean
     ): BackendRequest()
 

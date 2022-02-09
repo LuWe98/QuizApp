@@ -78,6 +78,9 @@ abstract class QuestionnaireDao : BaseDao<Questionnaire>(Questionnaire.TABLE_NAM
     @Query("SELECT DISTINCT userId, userName FROM questionnaireTable")
     abstract fun getAllLocalAuthorsFlow(): Flow<List<AuthorInfo>>
 
+    @get:Query("SELECT * FROM questionnaireTable")
+    abstract val allCompleteQuestionnairesFlow: Flow<List<CompleteQuestionnaire>>
+
     @Transaction
     @RawQuery(
         observedEntities = [

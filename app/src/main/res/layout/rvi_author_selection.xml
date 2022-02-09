@@ -7,28 +7,29 @@
         app:cardBackgroundColor="?colorOnPrimary"
         app:cardElevation="1dp"
         android:layout_marginTop="@dimen/grid_3"
-        app:cardCornerRadius="@dimen/itemCardCornerRadius">
+        app:cardCornerRadius="@dimen/defaultCardCornerRadius">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="65dp">
+            android:layout_height="75dp">
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="40sp"
+                android:layout_height="40sp"
                 app:srcCompat="@drawable/ic_person"
-                android:background="@drawable/shape_circle"
-                android:backgroundTint="?android:colorBackground"
-                android:layout_marginStart="@dimen/grid_2"
+                android:background="@drawable/background_round_corners_18_5dp"
+                android:backgroundTint="@color/hfuLightGreen"
+                android:layout_marginStart="@dimen/grid_3"
+                app:tint="?colorOnPrimary"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:padding="8dp"
+                android:padding="12.5dp"
                 android:id="@+id/roleIcon" />
 
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/tvName"
                 android:gravity="center_vertical"
                 android:lines="1"
@@ -54,7 +55,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="@dimen/grid_2"
+                android:layout_marginEnd="@dimen/grid_3"
                 android:id="@+id/checkBox" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

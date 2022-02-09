@@ -1,5 +1,6 @@
 package com.example.quizapp.model.ktor.backendsyncer
 
+import com.example.quizapp.extensions.log
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
 import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
@@ -251,13 +252,15 @@ class BackendSyncer @Inject constructor(
         unsyncedQuestionnaireIdsProvider().let { unsyncedQuestionnaireIds ->
             if (unsyncedQuestionnaireIds.isEmpty()) return@withContext true
 
+            val mongoQuestionnaires = localRepository.findCompleteQuestionnairesWith(
+                unsyncedQuestionnaireIds,
+                preferencesRepository.getUserId()
+            ).map(dataMapper::mapRoomQuestionnaireToMongoQuestionnaire)
+
+            if (mongoQuestionnaires.isEmpty()) return@withContext true
+
             runCatching {
-                localRepository.findCompleteQuestionnairesWith(
-                    unsyncedQuestionnaireIds,
-                    preferencesRepository.getUserId()
-                ).map(dataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
-                    backendRepository.insertQuestionnaires(it)
-                }
+                backendRepository.insertQuestionnaires(mongoQuestionnaires)
             }.onSuccess { response ->
                 if (response.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) {
                     localRepository.setStatusToSynced(unsyncedQuestionnaireIds)

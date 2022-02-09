@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import com.example.quizapp.extensions.currentNavHostFragment
-import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
+import com.example.quizapp.model.databases.dto.MongoBrowsableQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.properties.Degree
@@ -19,7 +19,7 @@ import com.example.quizapp.model.datastore.datawrappers.*
 import com.example.quizapp.view.QuizActivity
 import com.example.quizapp.view.dispatcher.DispatchEvent
 import com.example.quizapp.view.dispatcher.Dispatcher
-import com.example.quizapp.view.dispatcher.DispatcherEventChannelContainer
+import com.example.quizapp.view.dispatcher.DispatchEventQueueContainer
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.Companion.getResultKey
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionTypeItemMarker
@@ -42,7 +42,7 @@ inline fun <reified ResultType : FragmentResult> Fragment.setFragmentResultEvent
 
 @ActivityRetainedScoped
 class FragmentResultDispatcher @Inject constructor(
-    private val eventQueue: DispatcherEventChannelContainer
+    private val eventQueue: DispatchEventQueueContainer
 ) : Dispatcher<FragmentResult> {
 
     companion object {
@@ -145,7 +145,7 @@ class FragmentResultDispatcher @Inject constructor(
         data class ThemeSelectionResult(override val selectedItem: QuizAppTheme) : SelectionResult<QuizAppTheme>()
 
         @Parcelize
-        data class RemoteOrderBySelectionResult(override val selectedItem: RemoteQuestionnaireOrderBy) : SelectionResult<RemoteQuestionnaireOrderBy>()
+        data class RemoteOrderBySelectionResult(override val selectedItem: BrowsableQuestionnaireOrderBy) : SelectionResult<BrowsableQuestionnaireOrderBy>()
 
         @Parcelize
         data class LocalOrderBySelectionResult(override val selectedItem: LocalQuestionnaireOrderBy) : SelectionResult<LocalQuestionnaireOrderBy>()
@@ -173,7 +173,7 @@ class FragmentResultDispatcher @Inject constructor(
 
         @Parcelize
         data class RemoteQuestionnaireMoreOptionsSelectionResult(
-            val calledOnRemoteQuestionnaire: BrowsableQuestionnaire,
+            val calledOnRemoteQuestionnaire: MongoBrowsableQuestionnaire,
             override val selectedItem: BrowseQuestionnaireMoreOptionsItem
         ) : SelectionResult<BrowseQuestionnaireMoreOptionsItem>()
 

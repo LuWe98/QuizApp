@@ -16,7 +16,8 @@ data class User(
     val userName: String,
     val password: String = "",
     var role: Role = Role.USER,
-    var lastModifiedTimestamp : Long
+    var lastModifiedTimestamp: Long,
+    val canShareQuestionnairesWith: Boolean = false
 ) : Parcelable {
 
     val isNotEmpty get() = id.isNotEmpty() && userName.isNotEmpty() && password.isNotEmpty()

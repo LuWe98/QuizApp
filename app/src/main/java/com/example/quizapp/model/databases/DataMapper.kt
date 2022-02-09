@@ -63,6 +63,7 @@ class DataMapper @Inject constructor() {
         subject = completeQuestionnaire.questionnaire.subject,
         visibility = completeQuestionnaire.questionnaire.visibility,
         lastModifiedTimestamp = completeQuestionnaire.questionnaire.lastModifiedTimestamp,
+        questionCount = completeQuestionnaire.questionsWithAnswers.size,
         questions = completeQuestionnaire.questionsWithAnswers.map { qwa ->
             qwa.question.let { question ->
                 MongoQuestion(

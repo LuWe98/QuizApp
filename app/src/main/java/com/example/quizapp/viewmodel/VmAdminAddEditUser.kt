@@ -97,8 +97,7 @@ class VmAdminAddEditUser @Inject constructor(
         runCatching {
             backendRepository.createUser(userName, userPassword, userRole)
         }.also {
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             if (response.responseType == CreateUserResponseType.CREATION_SUCCESSFUL) {
                 navigationDispatcher.dispatch(NavigateBack)

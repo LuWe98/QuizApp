@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:paddingVertical="@dimen/grid_2"
+        android:clipToPadding="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tilTitle"
+            android:hint="@string/title"
+            app:startIconDrawable="@drawable/ic_title"
+            android:background="@drawable/background_round_corners_10dp"
+            android:backgroundTint="?colorOnPrimary"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:id="@+id/editTextTitle"
+                android:background="@color/transparent"
+                android:inputType="textMultiLine" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tilSubject"
+            android:hint="@string/subject"
+            android:layout_marginTop="@dimen/grid_6"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            app:startIconDrawable="@drawable/ic_subject"
+            android:background="@drawable/background_round_corners_10dp"
+            android:backgroundTint="?colorOnPrimary"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:layout_constraintTop_toBottomOf="@id/tilTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:id="@+id/editTextSubject"
+                android:background="@color/transparent"
+                android:inputType="textMultiLine" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/publishLayout"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_marginTop="@dimen/grid_6"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            app:layout_constraintTop_toBottomOf="@+id/tilSubject"
+            android:background="@drawable/ripple_round_corners_10_dp"
+            android:backgroundTint="?colorOnPrimary"
+            tools:layout_editor_absoluteX="24dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/ic_publish"
+                android:layout_marginStart="@dimen/grid_1"
+                android:padding="10dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/publishIcon" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/publishText"
+                android:text="@string/shouldPublishQuestionnaire"
+                android:layout_marginStart="@dimen/grid_2"
+                android:gravity="center_vertical"
+                android:textSize="15sp"
+                android:ellipsize="end"
+                android:lines="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/publishIcon"
+                app:layout_constraintEnd_toStartOf="@+id/checkBox" />
+
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/checkBox"
+                android:clickable="false"
+                android:visibility="invisible"
+                android:scaleX="0.75"
+                android:minWidth="0dp"
+                android:scaleY="0.75"
+                android:layout_marginEnd="@dimen/grid_3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/publishSwitch"
+                android:scaleX="0.75"
+                android:scaleY="0.75"
+                android:clickable="false"
+                android:layout_marginEnd="@dimen/grid_1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/coursesOfStudies"
+            android:id="@+id/tvQuestionnaires"
+            android:textStyle="bold"
+            android:textColor="@color/hfuBrightGreen"
+            android:gravity="center_vertical"
+            android:textSize="17.5sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/publishLayout"
+            android:layout_marginTop="@dimen/grid_10"
+            android:layout_marginStart="@dimen/grid_8" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:text="@string/add"
+            android:id="@+id/btnAddCos"
+            android:textStyle="bold"
+            android:textColor="@color/hfuDarkerGreen"
+            android:drawableTint="?dominantTextColor"
+            android:gravity="center_vertical|end"
+            app:layout_constraintTop_toTopOf="@+id/tvQuestionnaires"
+            app:layout_constraintBottom_toBottomOf="@id/tvQuestionnaires"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/grid_8" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="103dp"
+            android:id="@+id/rvContainer"
+            app:layout_constraintTop_toBottomOf="@+id/tvQuestionnaires"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/grid_2">
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:overScrollMode="never"
+                android:id="@+id/rvCos"
+                tools:listitem="@layout/rvi_course_of_studies_choice_new"
+                tools:itemCount="2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:paddingBottom="@dimen/grid_2"
+                android:paddingHorizontal="@dimen/grid_6"
+                android:clipToPadding="false" />
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:id="@+id/tvNoAssigned"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginHorizontal="@dimen/grid_8"
+                android:background="@drawable/background_round_dashed_corners_15dp"
+                android:text="Nothing assigned"
+                android:gravity="center"
+                android:fontFamily="@font/mallanna_regular"
+                android:textSize="15sp"
+                android:textColor="@color/hfuDarkerGreen"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/grid_3" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/questions"
+            android:id="@+id/tvQuestions"
+            android:textStyle="bold"
+            android:textColor="@color/hfuBrightGreen"
+            android:gravity="center_vertical"
+            android:textSize="17.5sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvContainer"
+            android:layout_marginTop="@dimen/grid_6"
+            android:layout_marginStart="@dimen/grid_8" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="45dp"
+            android:layout_height="40dp"
+            android:text="@string/add"
+            android:id="@+id/btnAddQuestion"
+            android:textStyle="bold"
+            android:textColor="@color/hfuDarkerGreen"
+            android:drawableTint="?dominantTextColor"
+            android:gravity="center_vertical|end"
+            app:layout_constraintTop_toTopOf="@+id/tvQuestions"
+            app:layout_constraintBottom_toBottomOf="@id/tvQuestions"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/grid_8" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/btnListQuestions"
+            android:background="?actionBarItemBackground"
+            android:padding="6dp"
+            app:layout_constraintTop_toTopOf="@+id/btnAddQuestion"
+            app:srcCompat="@drawable/ic_list"
+            app:tint="@color/hfuDarkerGreen"
+            app:layout_constraintBottom_toBottomOf="@+id/btnAddQuestion"
+            app:layout_constraintEnd_toStartOf="@+id/btnAddQuestion" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/grid_8"
+            android:paddingHorizontal="@dimen/grid_2"
+            android:layout_marginTop="@dimen/grid_5"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            android:id="@+id/statisticsContainer"
+            android:visibility="visible"
+            tools:visibility="visible"
+            android:background="@drawable/background_round_corners_15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvQuestions">
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/totalQuestions"
+                android:textSize="15sp"
+                android:id="@+id/allQuestionsLabel"
+                app:layout_constraintStart_toStartOf="@+id/allQuestions"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="20"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:id="@+id/allQuestionsNumber"
+                android:layout_marginTop="@dimen/grid_4"
+                android:layout_marginBottom="@dimen/grid_1"
+                app:layout_constraintEnd_toEndOf="@+id/allQuestions"
+                app:layout_constraintBottom_toTopOf="@+id/allQuestions" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:layout_width="0dp"
+                android:layout_height="5dp"
+                tools:progress="100"
+                android:id="@+id/allQuestions"
+                android:layout_marginHorizontal="@dimen/grid_4"
+                android:layout_marginTop="@dimen/grid_1"
+                app:indicatorColor="?colorPrimary"
+                app:trackCornerRadius="50dp"
+                app:trackThickness="5dp"
+                app:trackColor="?android:colorBackground"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/allQuestionsLabel" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/multipleChoice"
+                android:textSize="15sp"
+                android:id="@+id/tvMultipleChoiceLabel"
+                android:layout_marginTop="@dimen/grid_8"
+                app:layout_constraintStart_toStartOf="@+id/allQuestions"
+                app:layout_constraintTop_toBottomOf="@+id/allQuestions" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="15"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:id="@+id/tvMultipleChoiceAmount"
+                android:layout_marginTop="@dimen/grid_6"
+                android:layout_marginBottom="@dimen/grid_1"
+                app:layout_constraintEnd_toEndOf="@+id/progressMultipleChoice"
+                app:layout_constraintBottom_toTopOf="@+id/progressMultipleChoice" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:layout_width="0dp"
+                android:layout_height="5dp"
+                tools:progress="60"
+                android:id="@+id/progressMultipleChoice"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginHorizontal="@dimen/grid_4"
+                android:layout_marginTop="@dimen/grid_1"
+                app:indicatorColor="@color/hfuBrightGreen"
+                app:trackCornerRadius="50dp"
+                app:trackThickness="5dp"
+                app:trackColor="?android:colorBackground"
+                app:layout_constraintTop_toBottomOf="@+id/tvMultipleChoiceLabel" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/singleChoice"
+                android:textSize="15sp"
+                android:id="@+id/tvSingleChoiceLabel"
+                android:layout_marginTop="@dimen/grid_8"
+                app:layout_constraintStart_toStartOf="@+id/allQuestions"
+                app:layout_constraintTop_toBottomOf="@+id/progressMultipleChoice" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="5"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:id="@+id/tvSingleChoiceAmount"
+                android:layout_marginTop="@dimen/grid_6"
+                android:layout_marginBottom="@dimen/grid_1"
+                app:layout_constraintEnd_toEndOf="@+id/progressSingleChoice"
+                app:layout_constraintBottom_toTopOf="@+id/progressSingleChoice" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:layout_width="0dp"
+                android:layout_height="5dp"
+                tools:progress="40"
+                android:id="@+id/progressSingleChoice"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginHorizontal="@dimen/grid_4"
+                android:layout_marginTop="@dimen/grid_1"
+                app:indicatorColor="@color/hfuBrightGreen"
+                app:trackCornerRadius="50dp"
+                app:trackThickness="5dp"
+                app:trackColor="?android:colorBackground"
+                app:layout_constraintTop_toBottomOf="@+id/tvSingleChoiceLabel" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

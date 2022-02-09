@@ -20,7 +20,7 @@ import com.example.quizapp.view.bindingsuperclasses.BindingBottomSheetDialogFrag
 import com.example.quizapp.view.bindingsuperclasses.BindingDialogFragment
 import com.example.quizapp.view.dispatcher.DispatchEvent
 import com.example.quizapp.view.dispatcher.Dispatcher
-import com.example.quizapp.view.dispatcher.DispatcherEventChannelContainer
+import com.example.quizapp.view.dispatcher.DispatchEventQueueContainer
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.UpdateStringRequestType
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
@@ -31,6 +31,7 @@ import com.example.quizapp.view.fragments.adminscreens.managecourseofstudies.Fra
 import com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminManageFacultiesDirections
 import com.example.quizapp.view.fragments.adminscreens.manageusers.FragmentAdminManageUsersDirections
 import com.example.quizapp.view.fragments.authscreen.FragmentAuthDirections
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.homescreen.FragmentHomeDirections
 import com.example.quizapp.view.fragments.quizscreen.BsdfQuizOverviewQuestionListDirections
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizOverviewDirections
@@ -38,11 +39,15 @@ import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContai
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizResultDirections
 import com.example.quizapp.view.fragments.settingsscreen.FragmentSettingsDirections
 import dagger.hilt.android.scopes.ActivityRetainedScoped
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @ActivityRetainedScoped
 class NavigationDispatcher @Inject constructor(
-    private val eventQueue: DispatcherEventChannelContainer
+    private val eventQueue: DispatchEventQueueContainer
 ) : Dispatcher<NavigationDispatcher.NavigationEvent> {
 
     companion object {
@@ -59,6 +64,11 @@ class NavigationDispatcher @Inject constructor(
 
     override suspend fun dispatch(event: NavigationEvent) = eventQueue.dispatchToQueue(event)
 
+    suspend fun dispatchDelayed(event: NavigationEvent, delay: Long) {
+        delay(delay)
+        dispatch(event)
+    }
+
     sealed class NavigationEvent(private val navAction: QuizActivity.() -> Unit) : DispatchEvent {
 
         /**
@@ -68,8 +78,8 @@ class NavigationDispatcher @Inject constructor(
             runCatching {
                 quizActivity.apply {
                     navigationDispatcher._lastDestination = navController.currentDestination
-                    navigationDispatcher._isLastDestinationDialog = navHostFragment.currentFragment is BindingDialogFragment<*> ||
-                            navHostFragment.currentFragment is BindingBottomSheetDialogFragment<*>
+                    navigationDispatcher._isLastDestinationDialog =
+                        navHostFragment.currentFragment is BindingDialogFragment<*> || navHostFragment.currentFragment is BindingBottomSheetDialogFragment<*>
                 }
                 navAction(quizActivity)
             }
@@ -138,8 +148,13 @@ class NavigationDispatcher @Inject constructor(
             navController.navigate(FragmentAddEditQuestionnaireDirections.actionFragmentAddEditQuestionnaireToBsdfAddEditQuestionnaireQuestionList())
         })
 
-        class ToQuizScreen(private val questionnaireId: String) : NavigationEvent({
-            navController.navigate(MainNavGraphDirections.actionGlobalGoToQuizScreen(questionnaireId))
+        class ToQuizScreen(private val completeQuestionnaire: CompleteQuestionnaire) : NavigationEvent({
+            navController.navigate(MainNavGraphDirections.actionGlobalGoToQuizScreen(completeQuestionnaire))
+        })
+
+        class ToQuizQuestionnaireContainerDeep(private val completeQuestionnaire: CompleteQuestionnaire): NavigationEvent({
+            navController.navigate(MainNavGraphDirections.actionGlobalGoToQuizScreen(completeQuestionnaire))
+            navController.navigate(FragmentQuizOverviewDirections.actionFragmentQuizOverviewToFragmentQuizContainer(0, false))
         })
 
         object FromQuizToQuestionListDialog : NavigationEvent({
@@ -297,6 +312,14 @@ class NavigationDispatcher @Inject constructor(
             if (navController.backQueue[navController.backQueue.size - 1].destination.id == R.id.dfLoading) {
                 navController.popBackStack()
             }
+        })
+
+        object FromHomeToStatisticsScreen: NavigationEvent({
+            navController.navigate(FragmentHomeDirections.actionFragmentHomeToFragmentStatistics())
+        })
+
+        object ToVoiceSearchDialog: NavigationEvent({
+            navController.navigate(MainNavGraphDirections.actionGlobalDialogFragmentVoiceSearch())
         })
     }
 }

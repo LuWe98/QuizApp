@@ -11,6 +11,7 @@ import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentQuizQuestionsContainerBinding
 import com.example.quizapp.extensions.*
+import com.example.quizapp.model.databases.room.entities.Question
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.customimplementations.quizscreen.lazyquestiontab.LazyQuestionTab
@@ -18,12 +19,9 @@ import com.example.quizapp.view.recyclerview.adapters.RvaLazyQuestionTabsLayout
 import com.example.quizapp.view.viewpager.adapter.VpaQuiz
 import com.example.quizapp.view.viewpager.pagetransformer.FadeOutPageTransformer
 import com.example.quizapp.viewmodel.VmQuiz
-import com.example.quizapp.viewmodel.VmQuiz.*
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer
 import com.example.quizapp.viewmodel.VmQuizQuestionsContainer.FragmentQuizContainerEvent.*
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.util.date.*
-import java.util.*
 
 @AndroidEntryPoint
 class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsContainerBinding>(), PopupMenu.OnMenuItemClickListener {
@@ -39,54 +37,67 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initMaterialZAxisAnimationForReceiver()
-        binding.bottomView.isVisible = !vmContainer.isShowSolutionScreen
 
-        initVpaAdapter()
-        initViewPager()
+        initViews()
         initClickListeners()
         initObservers()
     }
 
-    private fun initVpaAdapter(reset: Boolean = false) {
+    private fun initViews() {
+        binding.apply {
+            bottomView.isVisible = !vmContainer.isShowSolutionScreen
+            viewPager.apply {
+                setPageTransformer(FadeOutPageTransformer())
+                onPageSelected { position ->
+                    vmContainer.onViewPagerPageSelected(position)
+                    binding.btnQuestionType.changeIconOnCondition(R.drawable.ic_check_circle, R.drawable.ic_radio_button) {
+                        vpaAdapter.createFragment(position).isMultipleChoice
+                    }
+                }
+            }
+
+            lazyTabLayout.apply {
+                disableChangeAnimation()
+                setHasFixedSize(true)
+                lazyQuestionTabAdapter = RvaLazyQuestionTabsLayout(binding.lazyTabLayout, vmContainer.isShowSolutionScreen) { questionId ->
+                    if (vmContainer.isShowSolutionScreen) {
+                        vmQuiz.completeQuestionnaire.isQuestionAnsweredCorrectly(questionId)
+                    } else {
+                        vmQuiz.completeQuestionnaire.isQuestionAnswered(questionId)
+                    }
+                }.apply {
+                    onItemClicked = {
+                        binding.viewPager.setCurrentItem(it, false)
+                    }
+                }
+                adapter = lazyQuestionTabAdapter
+                attachToViewPager(binding.viewPager)
+            }
+        }
+    }
+
+    private fun initViewPager(questions: List<Question>, reset: Boolean = false) {
         if (reset) {
-            val indexToSelect = vmQuiz.questionsShuffled.indexOfFirst {
+            val indexToSelect = questions.indexOfFirst {
                 it.id == vpaAdapter.createFragment(binding.viewPager.currentItem).questionId
             }
+            vmContainer.onViewPagerPageSelected(indexToSelect)
+        }
+        vpaAdapter = VpaQuiz(this, questions)
 
-            vpaAdapter = VpaQuiz(this, vmQuiz.questionsShuffled).apply {
-                binding.viewPager.adapter = this
-                vmContainer.onViewPagerPageSelected(indexToSelect)
-            }
-        } else {
-            vpaAdapter = VpaQuiz(this, vmQuiz.questionsShuffled)
+        binding.viewPager.apply {
+            adapter = vpaAdapter
+            initLazyQuestionTabs(questions)
+            setCurrentItem(vmContainer.lastAdapterPosition, false)
         }
     }
 
-    private fun initViewPager() {
-        binding.apply {
-            viewPager.apply {
-                adapter = vpaAdapter
-                onPageSelected(::onPageSelected)
-                setPageTransformer(FadeOutPageTransformer())
-            }
-
-            initLazyQuestionTabs()
-
-            viewPager.setCurrentItem(vmContainer.lastAdapterPosition, false)
-        }
-    }
-
-    private fun resetViewPager() {
-        initVpaAdapter(true)
-        initViewPager()
-    }
-
-    private fun initLazyQuestionTabs() {
+    private fun initLazyQuestionTabs(questions: List<Question>) {
         lazyQuestionTabAdapter = RvaLazyQuestionTabsLayout(binding.lazyTabLayout, vmContainer.isShowSolutionScreen) { questionId ->
             if (vmContainer.isShowSolutionScreen) {
-                vmQuiz.completeQuestionnaire?.isQuestionAnsweredCorrectly(questionId) ?: false
+                vmQuiz.completeQuestionnaire.isQuestionAnsweredCorrectly(questionId)
             } else {
-                vmQuiz.completeQuestionnaire?.isQuestionAnswered(questionId) ?: false
+                vmQuiz.completeQuestionnaire.isQuestionAnswered(questionId)
             }
         }.apply {
             onItemClicked = {
@@ -95,13 +106,16 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
         }
 
         binding.lazyTabLayout.apply {
-            disableChangeAnimation()
-            setHasFixedSize(true)
             adapter = lazyQuestionTabAdapter
-            attachToViewPager(binding.viewPager) { index ->
-                LazyQuestionTab(vmQuiz.questionsShuffled[index].id)
+            attachToViewPagerAndPopulate(binding.viewPager) { index ->
+                LazyQuestionTab(questions[index].id)
             }
         }
+
+//        populateTabsFromPagerAdapter { index ->
+//            LazyQuestionTab(questions[index].id)
+//        }
+//        lazyTabAdapter.submitList(questions as List<Nothing>?)
     }
 
     private fun initClickListeners() {
@@ -110,11 +124,15 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
             btnMoreOptions.onClick(vmContainer::onMoreOptionsClicked)
             btnShuffle.onClick(vmContainer::onShuffleButtonClicked)
             btnQuestionType.onClick(vmContainer::onQuestionTypeInfoButtonClicked)
-            btnSubmit.onClick { vmContainer.onSubmitButtonClicked(vmQuiz.completeQuestionnaire?.areAllQuestionsAnswered) }
+            btnSubmit.onClick { vmContainer.onSubmitButtonClicked(vmQuiz.completeQuestionnaire.areAllQuestionsAnswered) }
         }
     }
 
     private fun initObservers() {
+        vmQuiz.questionsCombinedStateFlow.collectWhenStarted(viewLifecycleOwner) {
+            initViewPager(it)
+        }
+
         vmQuiz.questionStatisticsFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.apply {
                 answeredQuestionsProgress.setProgressWithAnimation(it.answeredQuestionsPercentage, 200)
@@ -130,7 +148,6 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
             binding.btnShuffle.apply {
                 if (tag == (shuffleType == NONE)) return@collectWhenStarted
                 tag = shuffleType == NONE
-
                 clearAnimation()
                 animate()
                     .scaleX(if (shuffleType != NONE) 1f else 0f)
@@ -168,27 +185,18 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
                     showSnackBar(textRes, anchorView = binding.bottomView)
                 }
                 is ShowMessageSnackBarEvent -> showSnackBar(event.messageRes, anchorView = binding.bottomView)
-                ResetViewPagerEvent -> resetViewPager()
+                ResetViewPagerEvent -> initViewPager(vmQuiz.questionsShuffled, true)
             }
         }
     }
 
-    private fun changeSubmitButtonVisibility(isEverythingAnswered: Boolean) {
-        binding.btnSubmit.apply {
-            if ((isEverythingAnswered && translationY == 0.dp.toFloat()) || (!isEverythingAnswered && translationY == 60.dp.toFloat())) return
-            clearAnimation()
-            animate().translationY((if (isEverythingAnswered) 0.dp else 60.dp).toFloat())
-                .setInterpolator(DecelerateInterpolator())
-                .setDuration(350)
-                .start()
-        }
-    }
-
-    private fun onPageSelected(position: Int) {
-        vmContainer.onViewPagerPageSelected(position)
-        binding.btnQuestionType.changeIconOnCondition(R.drawable.ic_check_circle, R.drawable.ic_radio_button) {
-            vpaAdapter.createFragment(position).isMultipleChoice
-        }
+    private fun changeSubmitButtonVisibility(isEverythingAnswered: Boolean) = binding.btnSubmit.apply {
+        if ((isEverythingAnswered && translationY == 0.dp.toFloat()) || (!isEverythingAnswered && translationY == 60.dp.toFloat())) return@apply
+        clearAnimation()
+        animate().translationY((if (isEverythingAnswered) 0.dp else 60.dp).toFloat())
+            .setInterpolator(DecelerateInterpolator())
+            .setDuration(350)
+            .start()
     }
 
     override fun onMenuItemClick(item: MenuItem?) = item?.let {

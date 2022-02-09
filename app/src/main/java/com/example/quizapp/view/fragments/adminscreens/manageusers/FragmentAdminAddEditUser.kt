@@ -28,8 +28,8 @@ class FragmentAdminAddEditUser: BindingFragment<FragmentAdminAddEditUserBinding>
     private fun initViews(){
         binding.apply {
             pageTitle.setText(vmAdmin.pageTitleRes)
-            nameTextInput.text = vmAdmin.userName
-            passwordTextInput.text = vmAdmin.userPassword
+            etUserName.setText(vmAdmin.userName)
+            etPassword.setText(vmAdmin.userPassword)
         }
     }
 
@@ -40,8 +40,8 @@ class FragmentAdminAddEditUser: BindingFragment<FragmentAdminAddEditUserBinding>
             tvSave.onClick(vmAdmin::onSaveButtonClicked)
             btnBack.onClick(vmAdmin::onBackButtonClicked)
 
-            nameTextInput.onTextChanged(vmAdmin::onUserNameChanged)
-            passwordTextInput.onTextChanged(vmAdmin::onPasswordChanged)
+            etUserName.onTextChanged(vmAdmin::onUserNameChanged)
+            etPassword.onTextChanged(vmAdmin::onPasswordChanged)
         }
     }
 

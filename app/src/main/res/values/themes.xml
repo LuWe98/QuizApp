@@ -11,15 +11,12 @@
     <!-- Base DialogFragmentLoadingTheme -->
     <style name="Theme.QuizApp.DialogFragment.Loading" parent="Theme.QuizApp.DialogFragment.Loading.Light"/>
 
-
-
     <!-- Light Splash Theme -->
     <style name="Theme.QuizApp.Splash.Light" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/hfuDarkGreen</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_hfu_logo_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.QuizApp</item>
     </style>
-
 
 
     <!-- Light Base Theme -->

@@ -77,7 +77,6 @@
             android:layout_height="match_parent"
             android:id="@+id/nestedScrollView"
             android:clipToPadding="false"
-            android:paddingHorizontal="@dimen/grid_6"
             android:paddingTop="@dimen/grid_8"
             android:paddingBottom="100dp"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
@@ -86,76 +85,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            <com.example.quizapp.view.customimplementations.CustomTextInput
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/questionTextInput"
-                    app:titleText="@string/questionText"
-                    app:hintText="Your Question Text"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:id="@+id/multipleChoiceCard"
-                    app:layout_constraintTop_toBottomOf="@id/questionTextInput"
-                    android:layout_marginTop="@dimen/grid_6"
-                    android:background="@drawable/ripple_round_corners_10_dp"
-                    android:backgroundTint="?colorOnPrimary">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:visibility="gone"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:srcCompat="@drawable/ic_check_circle"
-                        android:layout_marginStart="@dimen/grid_1"
-                        android:padding="10dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:id="@+id/publishIcon" />
-
-                <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:id="@+id/publishText"
-                        android:text="@string/multipleChoice"
-                        android:layout_marginStart="@dimen/grid_5"
-                        android:textColor="@color/hfuBrightGreen"
-                        android:gravity="center_vertical"
-                        android:textSize="15sp"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/publishIcon"
-                        app:layout_constraintEnd_toStartOf="@+id/checkBox" />
-
-
-                <com.google.android.material.checkbox.MaterialCheckBox
-                        android:layout_width="30dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/checkBox"
-                        android:clickable="false"
-                        android:scaleX="0.75"
-                        android:minWidth="0dp"
-                        android:scaleY="0.75"
-                        android:layout_marginEnd="@dimen/grid_3"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
             <include
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    layout="@layout/fragment_add_edit_question_answer_card"
-                    android:id="@+id/answersCard"
-                    android:layout_marginTop="@dimen/grid_6"
-                    app:layout_constraintTop_toBottomOf="@id/multipleChoiceCard"
+                    layout="@layout/fragment_add_edit_question_content"
+                    android:id="@+id/contentLayout"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>

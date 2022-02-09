@@ -113,8 +113,8 @@
     <string name="confirmPassword">Password bestätigen</string>
     <string name="login">Einloggen</string>
     <string name="register">Registrieren</string>
-    <string name="registerHere">Hier registrieren</string>
-    <string name="alreadyGotAccount">Du hast schon einen Account? Einloggen</string>
+    <string name="loginHere">Du hast schon einen Account? Einloggen</string>
+    <string name="registerHere">Du hast noch keinen Account? Registrieren</string>
     <string name="errorPasswordsDoNotMatch">Passwort stimmt nicht überein</string>
     <string name="errorOccurredWhileRegisteringUser">Es ist ein Fehler bei der Registrierung aufgetretetn!</string>
     <string name="errorOccurredWhileLoggingInUser">Es ist ein Fehler beim Einloggen aufgetreten!</string>

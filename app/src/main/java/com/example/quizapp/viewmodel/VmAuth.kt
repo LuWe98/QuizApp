@@ -70,8 +70,7 @@ class VmAuth @Inject constructor(
         runCatching {
             backendRepository.loginUser(currentLoginUserName, currentLoginPassword)
         }.also {
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             if (response.responseType == LoginUserResponseType.LOGIN_SUCCESSFUL) {
                 User(
@@ -154,8 +153,7 @@ class VmAuth @Inject constructor(
         runCatching {
             backendRepository.registerUser(currentRegisterUserName, currentRegisterPassword)
         }.also {
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             if (response.responseType == RegisterUserResponse.RegisterUserResponseType.REGISTER_SUCCESSFUL) {
                 eventChannel.send(SetLoginCredentials(currentRegisterUserName, currentRegisterPassword))

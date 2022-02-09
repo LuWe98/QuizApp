@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.QuizApp.Splash.Light" parent="Theme.SplashScreen">
+        <item name="android:windowSplashScreenBackground">@color/hfuDarkGreen</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_hfu_logo_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.QuizApp</item>
+    </style>
+</resources>

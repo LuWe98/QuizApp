@@ -13,7 +13,7 @@
             android:id="@+id/topLayout"
             android:elevation="2dp"
             android:clipToPadding="false"
-            android:paddingBottom="@dimen/grid_4"
+            android:paddingBottom="@dimen/grid_2"
             app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -86,6 +86,7 @@
                     android:id="@+id/btnFilter"
                     android:background="?attr/actionBarItemBackground"
                     app:srcCompat="@drawable/ic_sort"
+                    app:tint="@color/hfuDarkerGreen"
                     android:padding="7.5dp"
                     android:layout_marginEnd="@dimen/grid_3"
                     app:layout_constraintTop_toTopOf="@id/etSearchQuery"
@@ -95,6 +96,13 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fadeOutViewHeight"
+            android:background="@drawable/list_fade_out_gradient"
+            android:elevation="1dp"
+            app:layout_constraintTop_toBottomOf="@+id/topLayout" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
@@ -108,7 +116,7 @@
                 android:layout_height="match_parent"
                 tools:listitem="@layout/rvi_user"
                 android:paddingHorizontal="@dimen/grid_6"
-                android:paddingTop="@dimen/grid_1"
+                android:paddingTop="@dimen/grid_4"
                 android:clipToPadding="false"
                 android:paddingBottom="150dp"
                 android:id="@+id/rv" />

@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentAdminAddEditFacultyBinding
-import com.example.quizapp.extensions.collectWhenStarted
-import com.example.quizapp.extensions.initMaterialZAxisAnimationForReceiver
-import com.example.quizapp.extensions.onClick
-import com.example.quizapp.extensions.showSnackBar
+import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty
 import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.ShowMessageSnackBar
@@ -30,8 +27,8 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
     private fun initViews(){
         binding.apply {
             pageTitle.setText(vmAddEdit.pageTitleRes)
-            abbreviationTextInput.text = vmAddEdit.facultyAbbreviation
-            nameTextInput.text = vmAddEdit.facultyName
+            etAbbreviation.setText(vmAddEdit.facultyAbbreviation)
+            etName.setText(vmAddEdit.facultyName)
         }
     }
 
@@ -41,8 +38,8 @@ class FragmentAdminAddEditFaculties : BindingFragment<FragmentAdminAddEditFacult
             btnSave.onClick(vmAddEdit::onSaveButtonClicked)
             tvSave.onClick(vmAddEdit::onSaveButtonClicked)
 
-            abbreviationTextInput.onTextChanged(vmAddEdit::onAbbreviationUpdated)
-            nameTextInput.onTextChanged(vmAddEdit::onNameChanged)
+            etAbbreviation.onTextChanged(vmAddEdit::onAbbreviationUpdated)
+            etName.onTextChanged(vmAddEdit::onNameChanged)
         }
     }
 

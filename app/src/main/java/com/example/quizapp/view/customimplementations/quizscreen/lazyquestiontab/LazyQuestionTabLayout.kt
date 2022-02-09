@@ -73,7 +73,15 @@ class LazyQuestionTabLayout(
         getChildAt(childPosition)?.let { child -> getChildViewHolder(child)?.bindingAdapterPosition } ?: 0
 
 
-    fun <T : Any> attachToViewPager(viewPager: ViewPager2, provideTabAction: ((Int) -> T)) {
+    fun attachToViewPager(viewPager: ViewPager2) {
+        attachedViewPagerRef = WeakReference(viewPager)
+
+        onPageChangedCallback = LazyQuestionTabLayoutOnPageChangedCallback().also { callback ->
+            viewPager.registerOnPageChangeCallback(callback)
+        }
+    }
+
+    fun <T : Any> attachToViewPagerAndPopulate(viewPager: ViewPager2, provideTabAction: ((Int) -> T)) {
         attachedViewPagerRef = WeakReference(viewPager)
 
         populateTabsFromPagerAdapter(provideTabAction)
@@ -92,7 +100,7 @@ class LazyQuestionTabLayout(
     }
 
 
-    private fun <T : Any> populateTabsFromPagerAdapter(provideTabAction: ((Int) -> T)) {
+    fun <T : Any> populateTabsFromPagerAdapter(provideTabAction: ((Int) -> T)) {
         clearTabList()
         setTabList(MutableList(attachedViewPagerItemCount, provideTabAction::invoke))
     }

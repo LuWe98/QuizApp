@@ -14,13 +14,13 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.DfVoiceSearchBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.view.bindingsuperclasses.BindingDialogFragment
-import com.example.quizapp.viewmodel.VmMainActivity
+import com.example.quizapp.viewmodel.VmVoiceSearch
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class DialogFragmentVoiceSearch : BindingDialogFragment<DfVoiceSearchBinding>(), RecognitionListener {
 
-    private val viewModel: VmMainActivity by viewModels()
+    private val vm: VmVoiceSearch by viewModels()
 
     private val speechRecognizer : SpeechRecognizer by lazy { SpeechRecognizer.createSpeechRecognizer(requireContext()) }
 
@@ -47,14 +47,17 @@ class DialogFragmentVoiceSearch : BindingDialogFragment<DfVoiceSearchBinding>(),
     }
 
     private val resultLauncher: ActivityResultLauncher<String> = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if (granted) initSpeechRecognizer() else 1
-    //navigator.popBackStack()
+        if (granted) {
+            initSpeechRecognizer()
+        } else {
+            vm.onVoiceSearchDone()
+        }
     }
 
     private fun initSpeechRecognizer() {
         if (!SpeechRecognizer.isRecognitionAvailable(requireContext())) {
             showToast(getString(R.string.voiceSearchSpeechRecognizerNotAvailable))
-            //navigator.popBackStack()
+            vm.onVoiceSearchDone()
             return
         }
 
@@ -65,6 +68,9 @@ class DialogFragmentVoiceSearch : BindingDialogFragment<DfVoiceSearchBinding>(),
     }
 
 
+
+
+    //THIS
     override fun onReadyForSpeech(params: Bundle?) {
         binding.apply {
             searchQuery.setTextColor(getColor(R.color.black))
@@ -73,6 +79,7 @@ class DialogFragmentVoiceSearch : BindingDialogFragment<DfVoiceSearchBinding>(),
         }
     }
 
+    //THIS
     override fun onBeginningOfSpeech() {
         binding.apply {
             searchQuery.setTextColor(getColor(R.color.black))
@@ -81,6 +88,7 @@ class DialogFragmentVoiceSearch : BindingDialogFragment<DfVoiceSearchBinding>(),
         }
     }
 
+    //THIS
     override fun onPartialResults(partialResults: Bundle?) {
         partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.run {
             if (size != 0 && get(0).isNotEmpty()) {
@@ -89,6 +97,7 @@ class DialogFragmentVoiceSearch : BindingDialogFragment<DfVoiceSearchBinding>(),
         }
     }
 
+    //THIS
     override fun onResults(results: Bundle?) {
         binding.progressBar.visibility = View.GONE
         results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.run {
@@ -102,7 +111,6 @@ class DialogFragmentVoiceSearch : BindingDialogFragment<DfVoiceSearchBinding>(),
                         text = get(0)
                         setTextColor(getColorStateListWithRes(R.color.green))
                     }
-                    showToast("Ist Korrekt so!")
                 }
             } else {
                 launch(startDelay = 500) {
@@ -158,7 +166,6 @@ class DialogFragmentVoiceSearch : BindingDialogFragment<DfVoiceSearchBinding>(),
             R.color.black
         }
     }
-
 
     override fun onRmsChanged(p0: Float) {}
 

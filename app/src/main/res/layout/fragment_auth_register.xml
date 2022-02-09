@@ -5,22 +5,45 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvLRegisterTitle"
+            android:text="@string/register"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:textColor="?dominantTextColor"
+            android:fontFamily="@font/work_sans_medium"
+            android:layout_marginTop="@dimen/grid_6"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvLRegisterSubText"
+            android:text="Please fill in all the required information"
+            android:textSize="16sp"
+            android:layout_marginTop="@dimen/grid_2"
+            android:layout_marginHorizontal="@dimen/grid_6"
+            app:layout_constraintTop_toBottomOf="@+id/tvLRegisterTitle" />
+
     <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/tilUserName"
             android:hint="@string/userName"
             android:layout_marginHorizontal="@dimen/grid_6"
-            android:layout_marginTop="@dimen/grid_16"
+            android:layout_marginTop="@dimen/grid_10"
             app:boxBackgroundColor="@color/transparent"
-            android:background="@drawable/background_round_corners_45dp"
-            android:backgroundTint="?android:colorBackground"
+            android:background="@drawable/background_round_corners_15dp"
+            android:backgroundTint="?colorOnPrimary"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
             app:startIconDrawable="@drawable/ic_person"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/tvLRegisterSubText">
 
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -36,10 +59,10 @@
             android:id="@+id/tilPassword"
             android:hint="@string/password"
             android:layout_marginHorizontal="@dimen/grid_6"
-            android:layout_marginTop="@dimen/grid_4"
+            android:layout_marginTop="@dimen/grid_6"
             app:boxBackgroundColor="@color/transparent"
-            android:background="@drawable/background_round_corners_45dp"
-            android:backgroundTint="?android:colorBackground"
+            android:background="@drawable/background_round_corners_15dp"
+            android:backgroundTint="?colorOnPrimary"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
             app:startIconDrawable="@drawable/ic_password"
@@ -62,11 +85,11 @@
             android:id="@+id/tilConfirmPassword"
             android:hint="@string/confirmPassword"
             android:layout_marginHorizontal="@dimen/grid_6"
-            android:layout_marginTop="@dimen/grid_4"
+            android:layout_marginTop="@dimen/grid_6"
             app:startIconDrawable="@drawable/ic_password"
             app:boxBackgroundColor="@color/transparent"
-            android:background="@drawable/background_round_corners_45dp"
-            android:backgroundTint="?android:colorBackground"
+            android:background="@drawable/background_round_corners_15dp"
+            android:backgroundTint="?colorOnPrimary"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
             app:passwordToggleEnabled="true"
@@ -84,32 +107,31 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:id="@+id/btnRegister"
             android:text="@string/register"
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:background="@drawable/background_round_corners_45dp"
-            android:backgroundTint="?colorPrimary"
-            android:layout_marginTop="@dimen/grid_6"
+            android:background="@drawable/background_round_corners_15dp"
+            android:backgroundTint="@color/hfuDarkerGreen"
+            android:layout_marginBottom="@dimen/grid_2"
             android:layout_marginHorizontal="@dimen/grid_6"
-            app:layout_constraintTop_toBottomOf="@id/tilConfirmPassword"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/btnGoToLogin" />
 
     <com.google.android.material.textview.MaterialTextView
-            android:layout_width="250dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
             android:id="@+id/btnGoToLogin"
-            android:text="@string/alreadyGotAccount"
+            android:text="@string/loginHere"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:textColor="?colorPrimary"
             android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@id/btnRegister"
             app:layout_constraintStart_toStartOf="@+id/btnRegister"
             app:layout_constraintEnd_toEndOf="@+id/btnRegister"
-            android:layout_marginTop="@dimen/grid_2" />
+            android:layout_marginBottom="@dimen/grid_4"
+            app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

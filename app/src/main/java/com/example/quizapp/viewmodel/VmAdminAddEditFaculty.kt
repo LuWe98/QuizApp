@@ -87,8 +87,7 @@ class VmAdminAddEditFaculty @Inject constructor(
                 backendRepository.insertFaculty(mongoFaculty)
             }
         }.also {
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             if (response.responseType == InsertFacultyResponseType.SUCCESSFUL) {
                 if (args.faculty == null) {

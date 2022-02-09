@@ -95,7 +95,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/nestedScrollView"
-            android:paddingBottom="175dp"
+            android:paddingTop="@dimen/grid_8"
+            android:paddingBottom="100dp"
             android:clipToPadding="false"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
@@ -106,25 +107,14 @@
                 android:paddingBottom="@dimen/grid_2">
 
             <include
-                    android:id="@+id/infoCard"
-                    android:layout_width="0dp"
+                    android:id="@+id/contentLayout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/grid_8"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    layout="@layout/fragment_add_edit_questionnaire_info_card" />
+                    layout="@layout/fragment_add_edit_questionnaire_content" />
 
-            <include
-                    android:id="@+id/questionDistributionCard"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    layout="@layout/fragment_add_edit_questionnaire_distribution_card"
-                    app:layout_constraintTop_toBottomOf="@id/infoCard"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginHorizontal="@dimen/grid_6"
-                    android:layout_marginTop="@dimen/grid_4" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

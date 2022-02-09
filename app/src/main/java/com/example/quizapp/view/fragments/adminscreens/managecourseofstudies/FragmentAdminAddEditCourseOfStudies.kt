@@ -33,15 +33,15 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
     private fun initViews(){
         binding.apply {
             pageTitle.setText(vmAddEdit.pageTitleRes)
-            abbreviationTextInput.text = vmAddEdit.cosAbbreviation
-            nameTextInput.text = vmAddEdit.cosName
+            contentLayout.etAbbreviation.setText(vmAddEdit.cosAbbreviation)
+            contentLayout.etName.setText(vmAddEdit.cosName)
         }
 
         rvaFaculty = RvaFacultyChoice().apply {
             onDeleteButtonClicked = vmAddEdit::onFacultyChipClicked
         }
 
-        binding.rvFaculty.apply {
+        binding.contentLayout.rvFaculties.apply {
             adapter = rvaFaculty
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(false)
@@ -54,13 +54,15 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
             btnBack.onClick(vmAddEdit::onBackButtonClicked)
             btnSave.onClick(vmAddEdit::onSaveButtonClicked)
             tvSave.onClick(vmAddEdit::onSaveButtonClicked)
-            degreeCard.onClick(vmAddEdit::onDegreeCardClicked)
+            contentLayout.apply {
+                degreeCard.onClick(vmAddEdit::onDegreeCardClicked)
 
-            btnAddFaculty.onClick(vmAddEdit::onFacultyCardClicked)
-            btnClearFaculties.onClick(vmAddEdit::onClearFacultiesClicked)
+                btnAddFaculty.onClick(vmAddEdit::onFacultyCardClicked)
+                //btnClearFaculties.onClick(vmAddEdit::onClearFacultiesClicked)
 
-            abbreviationTextInput.onTextChanged(vmAddEdit::onAbbreviationUpdated)
-            nameTextInput.onTextChanged(vmAddEdit::onNameChanged)
+                etAbbreviation.onTextChanged(vmAddEdit::onAbbreviationUpdated)
+                etName.onTextChanged(vmAddEdit::onNameChanged)
+            }
         }
     }
 
@@ -72,12 +74,15 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
 
         vmAddEdit.cosFacultyIdsStateFlow.collectWhenStarted(viewLifecycleOwner) {
             rvaFaculty.submitList(it) {
-                binding.rvFaculty.isVisible = it.isNotEmpty()
+                binding.contentLayout.apply {
+                    rvFaculties.isVisible = it.isNotEmpty()
+                    tvNoAssigned.isVisible = it.isEmpty()
+                }
             }
         }
 
         vmAddEdit.cosDegreeStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.degreeText.text = getString(it.textRes)
+            binding.contentLayout.degreeText.text = getString(it.textRes)
         }
 
         vmAddEdit.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->

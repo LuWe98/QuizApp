@@ -3,14 +3,12 @@ package com.example.quizapp.view.fragments.settingsscreen
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.example.quizapp.databinding.FragmentSettingsBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
-import com.example.quizapp.viewmodel.VmMainActivity
 import com.example.quizapp.viewmodel.VmSettings
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,8 +17,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
     private val vmSettings: VmSettings by viewModels()
-
-    private val vmQuizActivity: VmMainActivity by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -103,7 +99,7 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
         vmSettings.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
             when (event) {
-                LogoutEvent -> vmQuizActivity.onLogoutConfirmed()
+                LogoutEvent -> quizActivity.logoutUser()
                 is ShowMessageSnackBarEvent -> showSnackBar(textRes = event.messageRes)
                 RecreateActivityEvent -> requireActivity().recreate()
             }

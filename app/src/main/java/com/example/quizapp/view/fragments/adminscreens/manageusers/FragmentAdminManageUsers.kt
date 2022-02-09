@@ -7,7 +7,6 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAdminManageUsersBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.ListLoadItemType
-import com.example.quizapp.model.ktor.paging.PagingUiState
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.dispatcher.fragmentresult.setFragmentResultEventListener
 import com.example.quizapp.view.recyclerview.adapters.RvaAdminUser

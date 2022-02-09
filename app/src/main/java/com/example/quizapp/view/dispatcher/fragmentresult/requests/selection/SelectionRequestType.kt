@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Parcelable
 import com.example.quizapp.R
 import com.example.quizapp.model.databases.properties.Degree
-import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
+import com.example.quizapp.model.databases.dto.MongoBrowsableQuestionnaire
 import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.room.entities.Answer
@@ -87,10 +87,10 @@ sealed class SelectionRequestType<T : Enum<T>>(
     )
 
     @Parcelize
-    data class RemoteOrderBySelection(val currentValue: RemoteQuestionnaireOrderBy) : SelectionRequestType<RemoteQuestionnaireOrderBy>(
-        recyclerViewList = RemoteQuestionnaireOrderBy.values().toList(),
+    data class RemoteOrderBySelection(val currentValue: BrowsableQuestionnaireOrderBy) : SelectionRequestType<BrowsableQuestionnaireOrderBy>(
+        recyclerViewList = BrowsableQuestionnaireOrderBy.values().toList(),
         titleProvider = { it.getString(R.string.orderByTypeSelection) },
-        resultProvider = { SelectionResult.RemoteOrderBySelectionResult(it as RemoteQuestionnaireOrderBy) },
+        resultProvider = { SelectionResult.RemoteOrderBySelectionResult(it as BrowsableQuestionnaireOrderBy) },
         isItemSelectedProvider = { currentValue == it }
     )
 
@@ -111,7 +111,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     )
 
     @Parcelize
-    data class BrowseQuestionnaireMoreOptionsSelection(val browsableQuestionnaire: BrowsableQuestionnaire) : SelectionRequestType<BrowseQuestionnaireMoreOptionsItem>(
+    data class BrowseQuestionnaireMoreOptionsSelection(val browsableQuestionnaire: MongoBrowsableQuestionnaire) : SelectionRequestType<BrowseQuestionnaireMoreOptionsItem>(
         recyclerViewList = if (browsableQuestionnaire.downloadStatus == DownloadStatus.DOWNLOADED) {
             BrowseQuestionnaireMoreOptionsItem.values().filter { it != BrowseQuestionnaireMoreOptionsItem.DOWNLOAD }.toList()
         } else {

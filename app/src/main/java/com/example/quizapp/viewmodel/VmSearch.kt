@@ -7,17 +7,16 @@ import androidx.paging.*
 import com.example.quizapp.R
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.DataMapper
-import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
+import com.example.quizapp.model.databases.dto.MongoBrowsableQuestionnaire
 import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
+import com.example.quizapp.model.datastore.datawrappers.BrowsableQuestionnaireOrderBy
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse
 import com.example.quizapp.model.ktor.BackendResponse.GetQuestionnaireResponse.*
-import com.example.quizapp.model.ktor.paging.PagingConfigValues
-import com.example.quizapp.model.ktor.paging.PagingUiState
+import com.example.quizapp.model.ktor.paging.*
 import com.example.quizapp.model.ktor.status.DownloadStatus
 import com.example.quizapp.model.ktor.status.DownloadStatus.*
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
@@ -64,25 +63,44 @@ class VmSearch @Inject constructor(
         selectedAuthorsMutableStateFlow,
         preferencesRepository.browsableCosIdsFlow,
         preferencesRepository.browsableFacultyIdsFlow,
-    ) { remoteQuestionnaireOrderBy: RemoteQuestionnaireOrderBy,
+    ) { orderBy: BrowsableQuestionnaireOrderBy,
         ascending: Boolean,
         searchQuery: String,
         authors: Set<AuthorInfo>,
         cosIds: Set<String>,
         facultyIds: Set<String> ->
-        PagingConfigValues.getDefaultPager { page ->
-            backendRepository.getPagedQuestionnaires(
-                page = page,
-                searchString = searchQuery,
-                questionnaireIdsToIgnore = localRepository.getAllQuestionnaireIds(),
-                facultyIds = facultyIds.toList(),
-                courseOfStudiesIds = cosIds.toList(),
-                authorIds = authors.map(AuthorInfo::userId),
-                remoteQuestionnaireOrderBy = remoteQuestionnaireOrderBy,
-                ascending = ascending
-            )
-        }
-    }.flatMapLatest(Pager<Int, BrowsableQuestionnaire>::flow::get)
+//        PagingConfigValues.getDefaultPager { page ->
+//            backendRepository.getPagedQuestionnaires(
+//                page = page,
+//                searchString = searchQuery,
+//                questionnaireIdsToIgnore = localRepository.getAllQuestionnaireIds(),
+//                facultyIds = facultyIds.toList(),
+//                courseOfStudiesIds = cosIds.toList(),
+//                authorIds = authors.map(AuthorInfo::userId),
+//                orderBy = orderBy,
+//                ascending = ascending
+//            )
+//        }
+
+        val questionnairesToIgnore = localRepository.getAllQuestionnaireIds()
+
+        Pager(
+            config = PagingConfigUtil.defaultPagingConfig,
+            pagingSourceFactory = {
+                BrowseQuestionnairePagingSource(
+                    backendRepository,
+                    limit = 30,
+                    searchString = searchQuery,
+                    questionnaireIdsToIgnore = questionnairesToIgnore,
+                    facultyIds = facultyIds.toList(),
+                    courseOfStudiesIds = cosIds.toList(),
+                    authorIds = authors.map(AuthorInfo::userId),
+                    orderBy = orderBy,
+                    ascending = ascending
+                )
+            }
+        )
+    }.flatMapLatest(Pager<BrowsableQuestionnairePageKeys, MongoBrowsableQuestionnaire>::flow::get)
         .cachedIn(viewModelScope)
         .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
 
@@ -95,6 +113,8 @@ class VmSearch @Inject constructor(
     }
 
     fun onClearSearchQueryClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToVoiceSearchDialog)
+
         if (searchQuery.isNotEmpty()) {
             eventChannel.send(ClearSearchQueryEvent)
         }
@@ -155,13 +175,13 @@ class VmSearch @Inject constructor(
         }
     }
 
-    fun onItemLongClicked(browsableQuestionnaire: BrowsableQuestionnaire) = launch(IO) {
+    fun onItemLongClicked(browsableQuestionnaire: MongoBrowsableQuestionnaire) = launch(IO) {
         navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.BrowseQuestionnaireMoreOptionsSelection(browsableQuestionnaire)))
     }
 
-    fun onItemClicked(browsableQuestionnaire: BrowsableQuestionnaire) = launch(IO) {
+    fun onItemClicked(browsableQuestionnaire: MongoBrowsableQuestionnaire) = launch(IO) {
         localRepository.findCompleteQuestionnaireWith(browsableQuestionnaire.id)?.let {
-            navigationDispatcher.dispatch(ToQuizScreen(it.questionnaire.id))
+            navigationDispatcher.dispatch(ToQuizScreen(it))
             return@launch
         }
         downLoadQuestionnaire(browsableQuestionnaire.id)
@@ -187,8 +207,7 @@ class VmSearch @Inject constructor(
         runCatching {
             backendRepository.downloadQuestionnaire(questionnaireId)
         }.also {
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             when (response.responseType) {
                 GetQuestionnaireResponseType.SUCCESSFUL -> {
@@ -201,7 +220,8 @@ class VmSearch @Inject constructor(
                         }
 
                         eventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, DOWNLOADED))
-                        navigationDispatcher.dispatch(ToQuizScreen(questionnaireId))
+
+                        navigationDispatcher.dispatch(ToQuizScreen(completeQuestionnaire))
                     }
                 }
                 GetQuestionnaireResponseType.QUESTIONNAIRE_NOT_FOUND -> {

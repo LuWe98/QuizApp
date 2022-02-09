@@ -4,8 +4,6 @@ import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 
-@Dao
-@Suppress("UNCHECKED_CAST")
 abstract class BaseDao<T>(private val tableName: String) {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

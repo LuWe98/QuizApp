@@ -1,9 +1,7 @@
 package com.example.quizapp.model.datastore
 
-import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
-import com.example.quizapp.extensions.dataStore
 import com.example.quizapp.extensions.dataflow
 import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.properties.Role
@@ -20,10 +18,8 @@ import kotlin.random.Random
 
 @Singleton
 class PreferencesRepository @Inject constructor(
-    context: Context
+    private val dataStore: DataStore<Preferences>
 ) {
-
-    private val dataStore: DataStore<Preferences> = context.dataStore
 
     companion object PreferencesKeys {
         val LANGUAGE_KEY = stringPreferencesKey("languageKey")
@@ -55,6 +51,7 @@ class PreferencesRepository @Inject constructor(
         private val USER_PASSWORD_KEY = stringPreferencesKey("userPasswordKey")
         private val USER_ROLE_KEY = stringPreferencesKey("userRoleKey")
         private val USER_LAST_MODIFIED_TIMESTAMP_KEY = longPreferencesKey("userLastModifiedTimeStampKey")
+        private val USER_CAN_SHARE_QUESTIONNAIRES_WITH_KEY = booleanPreferencesKey("userCanShareQuestionnaireWithKey")
 
         const val EMPTY_STRING = ""
         const val UNKNOWN_TIMESTAMP = -1L
@@ -81,7 +78,7 @@ class PreferencesRepository @Inject constructor(
             preferences[LANGUAGE_KEY] = QuizAppLanguage.ENGLISH.name
             preferences[THEME_KEY] = QuizAppTheme.LIGHT.name
             preferences[SHUFFLE_TYPE_KEY] = QuestionnaireShuffleType.NONE.name
-            preferences[BROWSABLE_ORDER_BY_KEY] = RemoteQuestionnaireOrderBy.TITLE.name
+            preferences[BROWSABLE_ORDER_BY_KEY] = BrowsableQuestionnaireOrderBy.TITLE.name
             preferences[BROWSABLE_ASCENDING_ORDER_KEY] = true
             preferences[MANAGE_USER_ORDER_BY_KEY] = ManageUsersOrderBy.USER_NAME.name
             preferences[MANAGE_USER_ASCENDING_ORDER_KEY] = true
@@ -151,7 +148,7 @@ class PreferencesRepository @Inject constructor(
 
     //BROWSE QUESTIONNAIRE FILTERS
     val browsableOrderByFlow = dataFlow.map { preferences ->
-        preferences[BROWSABLE_ORDER_BY_KEY]?.let { RemoteQuestionnaireOrderBy.valueOf(it) } ?: RemoteQuestionnaireOrderBy.TITLE
+        preferences[BROWSABLE_ORDER_BY_KEY]?.let { BrowsableQuestionnaireOrderBy.valueOf(it) } ?: BrowsableQuestionnaireOrderBy.TITLE
     }
 
     suspend fun getBrowsableOrderBy() = browsableOrderByFlow.first()
@@ -179,7 +176,7 @@ class PreferencesRepository @Inject constructor(
 
 
     suspend fun updateRemoteFilters(
-        remoteQuestionnaireOrderBy: RemoteQuestionnaireOrderBy,
+        remoteQuestionnaireOrderBy: BrowsableQuestionnaireOrderBy,
         ascending: Boolean,
         cosIds: Collection<String>,
         facultyIds: Collection<String>,

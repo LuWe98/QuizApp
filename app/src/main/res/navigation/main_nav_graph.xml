@@ -20,7 +20,11 @@
             android:id="@+id/fragmentHome"
             android:name="com.example.quizapp.view.fragments.homescreen.FragmentHome"
             android:label="FragmentHome"
-            tools:layout="@layout/fragment_home" />
+            tools:layout="@layout/fragment_home" >
+        <action
+                android:id="@+id/action_fragmentHome_to_fragmentStatistics"
+                app:destination="@id/fragmentStatistics" />
+    </fragment>
 
     <!--DIALOGS-->
     <dialog
@@ -52,8 +56,8 @@
             android:id="@+id/quiz_nav_graph"
             app:startDestination="@id/fragmentQuizOverview">
         <argument
-                android:name="questionnaireId"
-                app:argType="string" />
+                android:name="completeQuestionnaire"
+                app:argType="com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire" />
 
         <fragment
                 android:id="@+id/fragmentQuizOverview"
@@ -496,5 +500,19 @@
     <action
             android:id="@+id/action_global_dfLoading"
             app:destination="@id/dfLoading" />
+
+    <fragment
+            android:id="@+id/fragmentStatistics"
+            android:name="com.example.quizapp.view.fragments.statisticsscreen.FragmentStatistics"
+            android:label="FragmentStatistics"
+            tools:layout="@layout/fragment_statistics"/>
+    <dialog
+            android:id="@+id/dialogFragmentVoiceSearch"
+            android:name="com.example.quizapp.view.fragments.voiceSearch.DialogFragmentVoiceSearch"
+            android:label="DialogFragmentVoiceSearch"
+            tools:layout="@layout/df_voice_search"/>
+
+    <action android:id="@+id/action_global_dialogFragmentVoiceSearch"
+            app:destination="@id/dialogFragmentVoiceSearch"/>
 
 </navigation>

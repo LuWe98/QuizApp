@@ -7,6 +7,7 @@ import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentHomeBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.ListLoadItemType
+import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.view.bindingsuperclasses.BindingFragment
 import com.example.quizapp.view.recyclerview.adapters.RvaHomeQuestionnaires
 import com.example.quizapp.viewmodel.VmHome
@@ -30,11 +31,10 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
 
     private fun initViews() {
         binding.apply {
-            etSearchQuery.setText(vmHome.searchQuery)
-
             rvAdapter = RvaHomeQuestionnaires().apply {
                 onItemClick = vmHome::onQuestionnaireClicked
                 onItemLongClick = vmHome::onQuestionnaireLongClicked
+                onPlayButtonClick = vmHome::onQuestionnairePlayButtonClicked
             }
 
             rv.apply {
@@ -49,18 +49,11 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
     private fun initListeners() {
         binding.apply {
             ivSettings.onClick(vmHome::onSettingsButtonClicked)
-            ivSearch2.onClick(vmHome::onRemoteSearchButtonClicked)
+            ivSearch.onClick(vmHome::onRemoteSearchButtonClicked)
             btnAdd.onClick(vmHome::onAddQuestionnaireButtonClicked)
-//            cardSettings.onClick(vmHome::onSettingsButtonClicked)
-//            cardSearch.onClick(vmHome::onRemoteSearchButtonClicked)
-//            addCard.onClick(vmHome::onAddQuestionnaireButtonClicked)
-
             ivFilter.onClick(vmHome::onFilterButtonClicked)
-
-            btnSearch.onClick(vmHome::onClearSearchQueryClicked)
-            btnFilter.onClick(vmHome::onFilterButtonClicked)
-            etSearchQuery.onTextChanged(vmHome::onSearchQueryChanged)
             swipeRefreshLayout.setOnRefreshListener(vmHome::onSwipeRefreshTriggered)
+            statisticsCard.onClick(vmHome::onStatisticsCardClicked)
         }
     }
 
@@ -74,10 +67,22 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
             rvAdapter.submitList(it.data)
         }
 
-        vmHome.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.btnSearch.changeIconOnCondition {
-                it.isEmpty()
+        vmHome.allQuestionnairesFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.apply {
+                val percentage = it.count(CompleteQuestionnaire::areAllQuestionsCorrectlyAnswered).let { correctCount ->
+                    ((correctCount / it.size.toFloat())*100f).toInt()
+                }
+                tvCardTitle.text = getString(R.string.questionnairesPresent, it.size.toString())
+                tvProgressText.text = percentage.toString().plus(getString(R.string.percentageCompleted))
+                first.setBackgroundTintWithRes(if(percentage >= 25) R.color.white else R.color.unselectedColor)
+                second.setBackgroundTintWithRes(if(percentage >= 50) R.color.white else R.color.unselectedColor)
+                third.setBackgroundTintWithRes(if(percentage >= 75) R.color.white else R.color.unselectedColor)
+                fourth.setBackgroundTintWithRes(if(percentage >= 100) R.color.white else R.color.unselectedColor)
             }
+        }
+
+        vmHome.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
+
         }
 
         vmHome.locallyPresentAuthors.collectWhenStarted(viewLifecycleOwner) {
@@ -98,7 +103,9 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
                     actionClickEvent = event::executeUndoAction
                 )
                 is ChangeProgressVisibility -> binding.swipeRefreshLayout.isRefreshing = event.visible
-                ClearSearchQueryEvent -> binding.etSearchQuery.setText("")
+                ClearSearchQueryEvent -> {
+
+                }
             }
         }
     }

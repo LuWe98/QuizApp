@@ -80,189 +80,23 @@
         <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="130dp"
+                android:paddingTop="@dimen/grid_8"
+                android:paddingBottom="100dp"
                 android:clipToPadding="false"
-                app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-                android:paddingTop="@dimen/grid_4">
+                app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <include
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:paddingHorizontal="@dimen/grid_6"
-                        android:paddingTop="@dimen/grid_8"
-                        android:paddingBottom="@dimen/grid_2"
+                        layout="@layout/fragment_admin_add_edit_course_of_studies_content"
+                        android:id="@+id/contentLayout"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent">
+                        app:layout_constraintEnd_toEndOf="parent" />
 
-                    <com.example.quizapp.view.customimplementations.CustomTextInput
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/abbreviationTextInput"
-                            app:titleText="@string/abbreviation"
-                            app:hintText="-"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
-
-                    <com.example.quizapp.view.customimplementations.CustomTextInput
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/nameTextInput"
-                            app:titleText="@string/name"
-                            app:hintText="-"
-                            android:layout_marginTop="@dimen/grid_6"
-                            app:layout_constraintTop_toBottomOf="@id/abbreviationTextInput"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="60dp"
-                            android:id="@+id/degreeCard"
-                            android:background="@drawable/ripple_round_corners_10_dp"
-                            app:layout_constraintTop_toBottomOf="@id/nameTextInput"
-                            android:layout_marginTop="@dimen/grid_6">
-
-                        <com.google.android.material.textview.MaterialTextView
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                android:text="@string/degree"
-                                android:gravity="center_vertical"
-                                android:layout_marginStart="@dimen/grid_5"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/hfuBrightGreen"
-                                app:layout_constraintEnd_toStartOf="@+id/degreeText" />
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:srcCompat="@drawable/ic_arrow_down"
-                                android:padding="5dp"
-                                android:layout_marginEnd="@dimen/grid_3"
-                                android:id="@+id/appCompatImageView4" />
-
-                        <com.google.android.material.textview.MaterialTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:id="@+id/degreeText"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                tools:text="Bachelor"
-                                android:gravity="center_vertical"
-                                android:layout_marginStart="@dimen/grid_5"
-                                android:textSize="15sp"
-                                android:layout_marginEnd="@dimen/grid_2"
-                                app:layout_constraintEnd_toStartOf="@+id/appCompatImageView4" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/grid_6"
-                            android:minHeight="60dp"
-                            android:background="@drawable/background_round_corners_10dp"
-                            android:backgroundTint="?colorOnPrimary"
-                            app:layout_constraintTop_toBottomOf="@+id/degreeCard"
-                            android:id="@+id/facultyCard">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="60dp"
-                                android:id="@+id/facultyCardHeader"
-                                app:layout_constraintTop_toTopOf="parent">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                    android:layout_width="40dp"
-                                    android:layout_height="40dp"
-                                    android:visibility="gone"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:srcCompat="@drawable/ic_faculty"
-                                    android:layout_marginStart="@dimen/grid_1"
-                                    android:layout_marginTop="10dp"
-                                    android:padding="10dp"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:id="@+id/facultyIcon" />
-
-                            <com.google.android.material.textview.MaterialTextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="0dp"
-                                    android:id="@+id/facultyText"
-                                    android:text="@string/faculties"
-                                    android:layout_marginStart="@dimen/grid_5"
-                                    android:textColor="@color/hfuBrightGreen"
-                                    android:gravity="center_vertical"
-                                    android:textSize="15sp"
-                                    android:lines="1"
-                                    android:textStyle="bold"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintStart_toEndOf="@+id/facultyIcon"
-                                    app:layout_constraintEnd_toStartOf="@+id/btnClearFaculties" />
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:id="@+id/btnClearFaculties"
-                                    android:layout_marginEnd="@dimen/grid_3"
-                                    android:padding="5dp"
-                                    app:layout_constraintTop_toTopOf="@+id/facultyText"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:srcCompat="@drawable/ic_clear_all"
-                                    app:layout_constraintBottom_toBottomOf="@+id/facultyText" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <androidx.recyclerview.widget.RecyclerView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                app:layout_constraintHeight_max="300dp"
-                                android:overScrollMode="never"
-                                android:id="@+id/rvFaculty"
-                                tools:listitem="@layout/rvi_faculty_choice"
-                                tools:itemCount="2"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/facultyCardHeader"
-                                app:layout_constraintBottom_toTopOf="@id/btnAddFaculty"
-                                android:clipToPadding="false"
-                                android:layout_marginBottom="@dimen/grid_4"
-                                android:layout_marginTop="-12dp"
-                                android:paddingHorizontal="@dimen/grid_2_5" />
-
-                        <com.google.android.material.textview.MaterialTextView
-                                android:layout_width="match_parent"
-                                android:layout_height="45dp"
-                                android:text="@string/add"
-                                android:id="@+id/btnAddFaculty"
-                                android:gravity="center"
-                                android:textStyle="bold"
-                                android:textColor="@color/hfuDarkGreen"
-                                android:background="@drawable/ripple_dashed_corners_15dp"
-                                app:layout_constraintTop_toBottomOf="@id/rvFaculty"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                android:layout_marginHorizontal="@dimen/grid_4"
-                                android:layout_marginBottom="@dimen/grid_4"
-                                android:elevation="1dp"/>
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 

@@ -64,8 +64,8 @@ class FragmentQuizOverview : BindingFragment<FragmentQuizOverviewBinding>(), Pop
 
                 tvQuestionsAnswered.text = it.answeredQuestionsPercentage.toString()
                 ivResultIcon.isVisible = visibilityToggle
-                ivResultIcon.setImageDrawable(if (it.correctQuestionsPercentage > 80) R.drawable.ic_check else R.drawable.ic_cross)
-                ivResultIcon.setDrawableTintWithRes(if (it.correctQuestionsPercentage > 80) R.color.green else R.color.red)
+                ivResultIcon.setImageDrawable(if (it.correctQuestionsPercentage == 100) R.drawable.ic_check else R.drawable.ic_cross)
+                ivResultIcon.setDrawableTintWithRes(if (it.correctQuestionsPercentage == 100) R.color.hfuBrightGreen else R.color.red)
 
                 tvQuestionsAnswered.isVisible = !visibilityToggle
                 tvQuestionsAnsweredLabel.isVisible = !visibilityToggle

@@ -22,7 +22,7 @@ data class QuestionWithAnswers(
     var answers: List<Answer>
 ) : Parcelable {
 
-    val isAnsweredCorrectly: Boolean get() = answers.all { it.isAnswerCorrect == it.isAnswerSelected }
+    val isAnsweredCorrectly: Boolean get() = answers.isNotEmpty() && answers.any(Answer::isAnswerSelected) && answers.all { it.isAnswerCorrect == it.isAnswerSelected }
 
     val isAnswered: Boolean get() = answers.any(Answer::isAnswerSelected)
 
@@ -34,10 +34,5 @@ data class QuestionWithAnswers(
 
     companion object {
         val DIFF_CALLBACK = generateDiffItemCallback(QuestionWithAnswers::question / Question::id)
-
-        fun createEmptyQuestionWithAnswers() = QuestionWithAnswers(
-            Question(questionnaireId = "", questionText = "", isMultipleChoice = true, questionPosition = getTimeMillis().toInt()),
-            emptyList()
-        )
     }
 }

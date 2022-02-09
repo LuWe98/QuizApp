@@ -1,9 +1,13 @@
 package com.example.quizapp.view.fragments.authscreen
 
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentAuthLoginBinding
+import com.example.quizapp.extensions.getColor
 import com.example.quizapp.extensions.hiltNavDestinationViewModels
 import com.example.quizapp.extensions.onClick
 import com.example.quizapp.extensions.onTextChanged
@@ -26,6 +30,16 @@ class FragmentAuthLogin : BindingFragment<FragmentAuthLoginBinding>() {
         binding.apply {
             etUserName.setText(viewModel.currentLoginUserName)
             etPassword.setText(viewModel.currentLoginPassword)
+
+            SpannableString(getString(R.string.registerHere)).let { spannableText ->
+                spannableText.setSpan(
+                    ForegroundColorSpan(getColor(R.color.hfuDarkerGreen)),
+                    spannableText.indexOf("?") + 1,
+                    spannableText.length,
+                    Spannable.SPAN_EXCLUSIVE_INCLUSIVE
+                )
+                btnGoToRegister.text = spannableText
+            }
         }
     }
 

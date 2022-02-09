@@ -3,25 +3,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:transitionGroup="true"
+        android:background="?android:colorBackground"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="?dominantTextColor"
-            android:gravity="center"
-            android:textSize="100sp"
-            tools:visibility="visible"
-            android:visibility="gone"
-            android:fontFamily="@font/rampart_one_regular"
-            app:layout_constraintVertical_bias="0.135"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="0dp"
+            android:layout_height="125dp"
+            android:visibility="invisible"
+            tools:visibility="invisible"
+            app:srcCompat="@drawable/ic_hfu_logo"
+            app:tint="@color/hfuBrightGreen"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/tvAppLogo" />
+            android:layout_marginTop="@dimen/grid_10"
+            android:id="@+id/ivLogo"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvAppName"
+            android:text="@string/app_name"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            android:gravity="center"
+            android:textSize="70sp"
+            android:textColor="@color/hfuDarkerGreen"
+            android:fontFamily="@font/expletus_sans_regular"
+            android:layout_marginBottom="@dimen/grid_4"
+            app:layout_constraintBottom_toBottomOf="@+id/ivLogo" />
 
     <androidx.viewpager2.widget.ViewPager2
             android:layout_height="0dp"
@@ -29,10 +40,9 @@
             tools:visibility="visible"
             android:visibility="gone"
             android:id="@+id/viewPager"
-            android:layout_marginTop="@dimen/grid_4"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvAppLogo" />
+            app:layout_constraintTop_toBottomOf="@+id/ivLogo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,7 +20,7 @@
     <dimen name="grid_32">128dp</dimen>
 
     <dimen name="quizTopLayoutHeight">265dp</dimen>
-    <dimen name="defaultMinCardHeight">67.5dp</dimen>
+    <dimen name="defaultMinCardHeight">70dp</dimen>
     <dimen name="defaultMinQuestionnaireCardHeight">75dp</dimen>
 
     <dimen name="maxHeaderTextSize">18sp</dimen>
@@ -31,9 +31,13 @@
 
     <dimen name="searchBarHeight">55dp</dimen>
     <dimen name="searchBarHorizontalMargin">@dimen/grid_2_5</dimen>
-    <dimen name="searchBarElevation">0dp</dimen>
+    <dimen name="searchBarElevation">1dp</dimen>
 
     <dimen name="itemCardCornerRadius">7.5dp</dimen>
 
     <dimen name="fabMargin">@dimen/grid_8</dimen>
+
+    <dimen name="fadeOutViewHeight">35dp</dimen>
+
+    <dimen name="defaultCardCornerRadius">15dp</dimen>
 </resources>

@@ -13,7 +13,7 @@ import com.example.quizapp.databinding.ActivityQuizBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.utils.BindingUtils.getBinding
 import com.example.quizapp.view.bindingsuperclasses.BindingActivity
-import com.example.quizapp.view.dispatcher.DispatcherEventChannelContainer
+import com.example.quizapp.view.dispatcher.DispatchEventQueueContainer
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher
 import com.example.quizapp.viewmodel.VmMainActivity
 import com.example.quizapp.viewmodel.VmMainActivity.MainViewModelEvent.ShowMessageSnackBar
@@ -31,7 +31,7 @@ import kotlin.math.min
 class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDestinationChangedListener {
 
     @Inject
-    lateinit var eventQueue: DispatcherEventChannelContainer
+    lateinit var eventQueue: DispatchEventQueueContainer
 
     @Inject
     lateinit var navigationDispatcher: NavigationDispatcher
@@ -95,6 +95,8 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             }
         }
     }
+
+    fun logoutUser() = vmQuizActivity.onLogoutConfirmed()
 
 
     override fun recreate() = playFadeOutAnim()

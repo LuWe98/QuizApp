@@ -85,8 +85,7 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
         runCatching {
             backendRepository.deleteCourseOfStudies(result.courseOfStudies.id)
         }.also {
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             when (response.responseType) {
                 DeleteCourseOfStudiesResponseType.SUCCESSFUL -> {

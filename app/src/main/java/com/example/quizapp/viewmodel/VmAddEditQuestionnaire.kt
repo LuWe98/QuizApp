@@ -63,7 +63,6 @@ class VmAddEditQuestionnaire @Inject constructor(
 
     val questionListEventChannelFlow = questionListEventChannel.receiveAsFlow()
 
-
     val pageTitleRes
         get() = when {
             args.completeQuestionnaire == null -> R.string.create
@@ -303,6 +302,7 @@ class VmAddEditQuestionnaire @Inject constructor(
             val questionId = if (args.copy) ObjectId().toHexString() else qwa.question.id
             val setIsSelectedToFalse = (!qwa.question.isMultipleChoice && qwa.selectedAnswerIds.size > 1) || args.copy
 
+            log("QUESTIONNAIRE ID: ${questionId}")
             qwa.apply {
                 question = qwa.question.copy(
                     id = questionId,
@@ -372,8 +372,7 @@ class VmAddEditQuestionnaire @Inject constructor(
     }
 
     fun onCsvFilePickerResultReceived(result: CsvDocumentFilePickerResult) = launch(IO) {
-        delay(DfLoading.LOADING_DIALOG_LONG_DISMISS_DELAY)
-        navigationDispatcher.dispatch(PopLoadingDialog)
+        navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
 
         when (result) {
             is CsvDocumentFilePickerResult.Success -> {

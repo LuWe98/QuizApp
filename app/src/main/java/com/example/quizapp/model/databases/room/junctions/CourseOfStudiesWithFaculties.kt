@@ -7,6 +7,7 @@ import androidx.room.Relation
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
+import com.example.quizapp.model.databases.room.entities.QuestionnaireCourseOfStudiesRelation
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -21,6 +22,8 @@ data class CourseOfStudiesWithFaculties(
     var faculties: List<Faculty>
 ): Parcelable {
 
-    val facultyCount get() = faculties.size
+    fun asFacultyCourseOfStudiesRelations() = faculties.map { faculty ->
+        FacultyCourseOfStudiesRelation(courseOfStudiesId = courseOfStudies.id, facultyId = faculty.id)
+    }
 
 }

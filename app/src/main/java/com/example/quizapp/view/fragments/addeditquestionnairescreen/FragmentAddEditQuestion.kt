@@ -46,12 +46,12 @@ class FragmentAddEditQuestion : BindingFragment<FragmentAddEditQuestionBinding>(
     private fun initViews() {
         binding.apply {
             pageTitle.setText(vmAddEditQuestion.pageTitleRes)
-            questionTextInput.text = vmAddEditQuestion.questionText
+            contentLayout.etQuestionText.setText(vmAddEditQuestion.questionText)
         }
 
 
         itemTouchHelper = SimpleItemTouchHelper(false).apply {
-            attachToRecyclerView(binding.answersCard.rv)
+            attachToRecyclerView(binding.contentLayout.rvAnswer)
             onDrag = vmAddEditQuestion::onAnswerItemDragged
             onSwiped = vmAddEditQuestion::onAnswerItemSwiped
         }
@@ -62,7 +62,7 @@ class FragmentAddEditQuestion : BindingFragment<FragmentAddEditQuestionBinding>(
             onDragHandleTouched = itemTouchHelper::startDrag
         }
 
-        binding.answersCard.rv.apply {
+        binding.contentLayout.rvAnswer.apply {
             adapter = rvAdapter
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
@@ -72,12 +72,12 @@ class FragmentAddEditQuestion : BindingFragment<FragmentAddEditQuestionBinding>(
 
     private fun initListeners() {
         binding.apply {
-            questionTextInput.onTextChanged(vmAddEditQuestion::onQuestionTextChanged)
+            contentLayout.etQuestionText.onTextChanged(vmAddEditQuestion::onQuestionTextChanged)
             btnBack.onClick(vmAddEditQuestion::onBackButtonClicked)
             tvSave.onClick(vmAddEditQuestion::onSaveButtonClicked)
-            multipleChoiceCard.onClick(vmAddEditQuestion::onChangeQuestionTypeClicked)
-            answersCard.apply {
-                btnClearAnswers.onClick(vmAddEditQuestion::onClearAnswersButtonClicked)
+            contentLayout.multipleChoiceCard.onClick(vmAddEditQuestion::onChangeQuestionTypeClicked)
+            contentLayout.apply {
+                //btnClearAnswers.onClick(vmAddEditQuestion::onClearAnswersButtonClicked)
                 btnAddAnswer.onClick(vmAddEditQuestion::onAddAnswerButtonClicked)
             }
         }
@@ -91,15 +91,17 @@ class FragmentAddEditQuestion : BindingFragment<FragmentAddEditQuestionBinding>(
 
         vmAddEditQuestion.answersStateFlow.collectWhenStarted(viewLifecycleOwner) {
             rvAdapter.submitList(it) {
-                binding.answersCard.rv.apply {
+                binding.contentLayout.rvAnswer.apply {
                     isVisible = it.isNotEmpty()
                     requestLayout()
                 }
+                binding.contentLayout.tvNoAssigned.isVisible = it.isEmpty()
             }
         }
 
         vmAddEditQuestion.isQuestionMultipleChoiceStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.checkBox.isChecked = it
+            binding.contentLayout.checkBox.isChecked = it
+            binding.contentLayout.multipleChoiceSwitch.isChecked = it
         }
 
         vmAddEditQuestion.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->

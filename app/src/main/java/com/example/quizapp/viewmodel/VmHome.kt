@@ -111,6 +111,10 @@ class VmHome @Inject constructor(
         }
     }.flatMapLatest { it }.stateIn(viewModelScope, SharingStarted.Lazily, RoomListLoadStatus.DataFound(emptyList()))
 
+    val allQuestionnairesFlow = localRepository.allCompleteQuestionnairesFlow
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+
 
     fun onSwipeRefreshTriggered() = launch(IO) {
         backendSyncer.synAllQuestionnaireData()
@@ -130,6 +134,10 @@ class VmHome @Inject constructor(
 
     fun onFilterButtonClicked() = launch(IO) {
         navigationDispatcher.dispatch(ToLocalQuestionnaireFilterDialog)
+    }
+
+    fun onStatisticsCardClicked() = launch(IO) {
+        navigationDispatcher.dispatch(FromHomeToStatisticsScreen)
     }
 
 
@@ -264,8 +272,7 @@ class VmHome @Inject constructor(
         runCatching {
             backendRepository.changeQuestionnaireVisibility(questionnaireId, newVisibility)
         }.also {
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             if (response.responseType == ChangeQuestionnaireVisibilityResponseType.SUCCESSFUL) {
                 localRepository.findQuestionnaireWith(questionnaireId)?.let {
@@ -282,12 +289,16 @@ class VmHome @Inject constructor(
         }
     }
 
-    fun onQuestionnaireClicked(questionnaireId: String) = launch(IO) {
-        navigationDispatcher.dispatch(ToQuizScreen(questionnaireId))
+    fun onQuestionnaireClicked(completeQuestionnaire: CompleteQuestionnaire) = launch(IO) {
+        navigationDispatcher.dispatch(ToQuizScreen(completeQuestionnaire))
     }
 
     fun onQuestionnaireLongClicked(questionnaire: Questionnaire) = launch(IO) {
         navigationDispatcher.dispatch(ToQuestionnaireMoreOptionsDialog(questionnaire))
+    }
+
+    fun onQuestionnairePlayButtonClicked(completeQuestionnaire: CompleteQuestionnaire) = launch(IO) {
+        navigationDispatcher.dispatch(ToQuizQuestionnaireContainerDeep(completeQuestionnaire))
     }
 
     fun onAddQuestionnaireButtonClicked() = launch(IO) {

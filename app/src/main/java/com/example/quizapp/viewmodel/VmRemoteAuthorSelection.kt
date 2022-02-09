@@ -4,13 +4,15 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
+import androidx.paging.Pager
 import androidx.paging.cachedIn
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.paging.PagingConfigValues
+import com.example.quizapp.model.ktor.paging.PagingConfigUtil
 import com.example.quizapp.model.ktor.paging.PagingUiState
+import com.example.quizapp.model.ktor.paging.SimplePagingSource
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.FragmentResult
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.fragments.dialogs.authorselection.BsdfRemoteAuthorSelectionArgs
@@ -50,12 +52,17 @@ class VmRemoteAuthorSelection @Inject constructor(
 
 
     val filteredPagedDataStateFlow = searchQueryMutableStateFlow.flatMapLatest { query ->
-        PagingConfigValues.getDefaultPager { page ->
-            backendRepository.getPagedAuthors(
-                page = page,
-                searchString = query
-            )
-        }.flow
+        Pager(
+            config = PagingConfigUtil.defaultPagingConfig,
+            pagingSourceFactory = {
+                SimplePagingSource { page ->
+                    backendRepository.getPagedAuthors(
+                        page = page,
+                        searchString = query
+                    )
+                }
+            }
+        ).flow
     }.cachedIn(viewModelScope)
 
 

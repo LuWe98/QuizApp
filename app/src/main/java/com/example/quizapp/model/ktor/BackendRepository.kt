@@ -11,9 +11,10 @@ import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
 import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.datastore.datawrappers.ManageUsersOrderBy
-import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
+import com.example.quizapp.model.datastore.datawrappers.BrowsableQuestionnaireOrderBy
 import com.example.quizapp.model.ktor.apiclasses.*
-import com.example.quizapp.model.ktor.paging.PagingConfigValues
+import com.example.quizapp.model.ktor.paging.PagingConfigUtil
+import com.example.quizapp.model.ktor.paging.BrowsableQuestionnairePageKeys
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,7 +32,7 @@ class BackendRepository @Inject constructor(
 
     suspend fun registerUser(userName: String, password: String) = userApi.registerUser(userName, password)
 
-    suspend fun getPagedAuthors(limit: Int = PagingConfigValues.DEFAULT_PAGE_SIZE, page: Int, searchString: String) = userApi.getPagedAuthors(limit, page, searchString)
+    suspend fun getPagedAuthors(limit: Int = PagingConfigUtil.DEFAULT_PAGE_SIZE, page: Int, searchString: String) = userApi.getPagedAuthors(limit, page, searchString)
 
     suspend fun updateUsername(newUserName: String) = userApi.updateUsername(newUserName)
 
@@ -40,7 +41,7 @@ class BackendRepository @Inject constructor(
     suspend fun updateUserRole(userId: String, newRole: Role) = userApi.updateUserRole(userId, newRole)
 
     suspend fun getPagedUsersAdmin(
-        limit: Int = PagingConfigValues.DEFAULT_PAGE_SIZE,
+        limit: Int = PagingConfigUtil.DEFAULT_PAGE_SIZE,
         page: Int, searchString: String,
         roles: Set<Role>,
         orderBy: ManageUsersOrderBy,
@@ -54,7 +55,6 @@ class BackendRepository @Inject constructor(
     suspend fun createUser(userName: String, password: String, role: Role) = userApi.createUser(userName, password, role)
 
     suspend fun updateUserPassword(newPassword: String) = userApi.updateUserPassword(newPassword)
-
 
 
     // QUESTIONNAIRES
@@ -73,14 +73,14 @@ class BackendRepository @Inject constructor(
     suspend fun deleteQuestionnaire(questionnaireIds: List<String>) = questionnaireApi.deleteQuestionnaire(questionnaireIds)
 
     suspend fun getPagedQuestionnaires(
-        limit: Int = PagingConfigValues.DEFAULT_PAGE_SIZE,
+        limit: Int = PagingConfigUtil.DEFAULT_PAGE_SIZE,
         page: Int,
         searchString: String,
         questionnaireIdsToIgnore: List<String>,
         facultyIds: List<String>,
         courseOfStudiesIds: List<String>,
         authorIds: List<String>,
-        remoteQuestionnaireOrderBy: RemoteQuestionnaireOrderBy,
+        orderBy: BrowsableQuestionnaireOrderBy,
         ascending: Boolean
     ) = questionnaireApi.getPagedQuestionnaires(
         limit = limit,
@@ -90,9 +90,32 @@ class BackendRepository @Inject constructor(
         facultyIds = facultyIds,
         courseOfStudiesIds = courseOfStudiesIds,
         authorIds = authorIds,
-        remoteQuestionnaireOrderBy = remoteQuestionnaireOrderBy,
+        orderBy = orderBy,
         ascending = ascending
     )
+
+    suspend fun getPagedQuestionnairesWithPageKeys(
+        lastPageKeys: BrowsableQuestionnairePageKeys,
+        limit: Int,
+        searchString: String,
+        questionnaireIdsToIgnore: List<String>,
+        facultyIds: List<String>,
+        courseOfStudiesIds: List<String>,
+        authorIds: List<String>,
+        orderBy: BrowsableQuestionnaireOrderBy,
+        ascending: Boolean
+    ) = questionnaireApi.getPagedQuestionnairesWithPageKeys(
+        lastPageKeys = lastPageKeys,
+        limit = limit,
+        searchString = searchString,
+        questionnaireIdsToIgnore = questionnaireIdsToIgnore,
+        facultyIds = facultyIds,
+        courseOfStudiesIds = courseOfStudiesIds,
+        authorIds = authorIds,
+        orderBy = orderBy,
+        ascending = ascending
+    )
+
 
     suspend fun downloadQuestionnaire(questionnaireId: String) = questionnaireApi.downloadQuestionnaire(questionnaireId)
 
@@ -101,7 +124,6 @@ class BackendRepository @Inject constructor(
 
     suspend fun shareQuestionnaireWithUser(questionnaireId: String, userName: String, canEdit: Boolean) =
         questionnaireApi.shareQuestionnaireWithUser(questionnaireId, userName, canEdit)
-
 
 
     // FILLED QUESTIONNAIRES
@@ -118,7 +140,6 @@ class BackendRepository @Inject constructor(
         filledQuestionnaireApi.deleteFilledQuestionnaire(questionnaireIds)
 
 
-
     // FACULTY
     suspend fun getFacultySynchronizationData(localFacultyIdsWithTimeStamp: List<FacultyIdWithTimeStamp>) =
         facultyApi.getFacultySynchronizationData(localFacultyIdsWithTimeStamp)
@@ -126,7 +147,6 @@ class BackendRepository @Inject constructor(
     suspend fun insertFaculty(faculty: MongoFaculty) = facultyApi.insertFaculty(faculty)
 
     suspend fun deleteFaculty(facultyId: String) = facultyApi.deleteFaculty(facultyId)
-
 
 
     // COURSE OF STUDIES

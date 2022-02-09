@@ -15,7 +15,6 @@ import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,8 +42,7 @@ class VmShareQuestionnaire @Inject constructor(
         runCatching {
             backendRepository.shareQuestionnaireWithUser(args.questionnaireId, userName, false)
         }.also {
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             eventChannel.send(ShowMessageSnackBar(response.responseType.getMessage(userName, app)))
         }.onFailure {

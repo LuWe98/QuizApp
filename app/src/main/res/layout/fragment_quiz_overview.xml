@@ -86,8 +86,8 @@
                     android:layout_height="150dp"
                     android:id="@+id/progress"
                     app:indicatorSize="150dp"
-                    app:indicatorColor="?colorAccent"
-                    app:trackColor="@color/whiteBackground"
+                    app:indicatorColor="@color/hfuLightGreen"
+                    app:trackColor="?colorOnPrimary"
                     app:trackThickness="10dp"
                     app:trackCornerRadius="5dp"
                     tools:progress="60"
@@ -101,7 +101,7 @@
                     android:layout_height="150dp"
                     android:id="@+id/progressCorrect"
                     app:indicatorSize="150dp"
-                    app:indicatorColor="@color/green"
+                    app:indicatorColor="@color/hfuBrightGreen"
                     app:trackColor="@android:color/transparent"
                     app:trackThickness="10dp"
                     app:layout_constraintTop_toTopOf="@id/progress"
@@ -134,7 +134,7 @@
                     app:layout_constraintEnd_toEndOf="@id/progress"
                     app:layout_constraintBottom_toBottomOf="@id/progress"
                     app:srcCompat="@drawable/ic_check"
-                    app:tint="@color/green" />
+                    app:tint="@color/hfuDarkerGreen" />
 
 
             <com.google.android.material.textview.MaterialTextView
@@ -205,9 +205,9 @@
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:id="@+id/btnStartQuiz"
-            android:text="Start Quiz"
+            android:text="@string/startQuiz"
             android:textStyle="bold"
-            android:textColor="?invertedDominantTextColor"
+            android:textColor="@color/white"
             android:textSize="17sp"
             android:gravity="center"
             android:layout_gravity="bottom"

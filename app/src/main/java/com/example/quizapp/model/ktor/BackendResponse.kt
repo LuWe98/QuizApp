@@ -3,17 +3,25 @@ package com.example.quizapp.model.ktor
 import android.content.Context
 import androidx.annotation.StringRes
 import com.example.quizapp.R
+import com.example.quizapp.model.databases.dto.MongoBrowsableQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.MongoCourseOfStudies
 import com.example.quizapp.model.databases.mongodb.documents.MongoFaculty
 import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
 import com.example.quizapp.model.databases.properties.Role
+import com.example.quizapp.model.ktor.paging.BrowsableQuestionnairePageKeys
 import kotlinx.serialization.Serializable
 
 sealed class BackendResponse {
 
     @Serializable
     class BasicResponse(val isSuccessful: Boolean): BackendResponse()
+
+    @Serializable
+    data class GetPagedQuestionnairesWithPageKeysResponse(
+        val previousKeys: BrowsableQuestionnairePageKeys?,
+        val questionnaires: List<MongoBrowsableQuestionnaire>
+    )
 
 
     @Serializable
@@ -158,7 +166,6 @@ sealed class BackendResponse {
     ): BackendResponse() {
         enum class  InsertFilledQuestionnaireResponseType {
             SUCCESSFUL,
-            EMPTY_INSERTION_SKIPPED,
             QUESTIONNAIRE_DOES_NOT_EXIST_ANYMORE,
             NOT_ACKNOWLEDGED
         }

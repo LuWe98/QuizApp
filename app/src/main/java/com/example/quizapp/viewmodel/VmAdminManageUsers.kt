@@ -11,8 +11,9 @@ import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.datastore.PreferencesRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.DeleteUserResponse.*
-import com.example.quizapp.model.ktor.paging.PagingConfigValues
+import com.example.quizapp.model.ktor.paging.PagingConfigUtil
 import com.example.quizapp.model.ktor.paging.PagingUiState
+import com.example.quizapp.model.ktor.paging.SimplePagingSource
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
@@ -55,15 +56,20 @@ class VmAdminManageUsers @Inject constructor(
         preferencesRepository.manageUsersOrderByFlow,
         preferencesRepository.manageUsersAscendingOrderFlow
     ) { query, roles, orderBy, ascending ->
-        PagingConfigValues.getDefaultPager { page ->
-            backendRepository.getPagedUsersAdmin(
-                page = page,
-                searchString = query,
-                roles = roles,
-                orderBy = orderBy,
-                ascending = ascending
-            )
-        }
+        Pager(
+            config = PagingConfigUtil.defaultPagingConfig,
+            pagingSourceFactory = {
+                SimplePagingSource { page ->
+                    backendRepository.getPagedUsersAdmin(
+                        page = page,
+                        searchString = query,
+                        roles = roles,
+                        orderBy = orderBy,
+                        ascending = ascending
+                    )
+                }
+            }
+        )
     }.flatMapLatest(Pager<Int, User>::flow::get).cachedIn(viewModelScope)
 
 
@@ -98,9 +104,6 @@ class VmAdminManageUsers @Inject constructor(
         when (result.selectedItem) {
             CHANGE_ROLE -> navigationDispatcher.dispatch(FromManageUsersToChangeUserRoleDialog(result.calledOnUser))
             DELETE -> navigationDispatcher.dispatch(ToConfirmationDialog(ConfirmationRequestType.DeleteUserConfirmationRequest(result.calledOnUser)))
-            VIEW_CREATED_QUESTIONNAIRES -> {
-                //TODO -> Browse die questionnaires
-            }
         }
     }
 
@@ -117,8 +120,7 @@ class VmAdminManageUsers @Inject constructor(
         runCatching {
             backendRepository.deleteUser(result.user.id)
         }.also {
-            delay(DfLoading.LOADING_DIALOG_DISMISS_DELAY)
-            navigationDispatcher.dispatch(PopLoadingDialog)
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             if (response.responseType == DeleteUserResponseType.SUCCESSFUL) {
                 eventChannel.send(HideUserEvent(result.user.id))

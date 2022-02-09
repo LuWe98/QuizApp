@@ -1,14 +1,15 @@
 package com.example.quizapp.model.ktor.apiclasses
 
 import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
-import com.example.quizapp.model.databases.dto.BrowsableQuestionnaire
+import com.example.quizapp.model.databases.dto.MongoBrowsableQuestionnaire
 import com.example.quizapp.model.databases.dto.QuestionnaireIdWithTimestamp
 import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
 import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.datastore.datawrappers.RemoteQuestionnaireOrderBy
+import com.example.quizapp.model.datastore.datawrappers.BrowsableQuestionnaireOrderBy
 import com.example.quizapp.model.ktor.ApiPaths.QuestionnairePaths
 import com.example.quizapp.model.ktor.BackendRequest.*
 import com.example.quizapp.model.ktor.BackendResponse.*
+import com.example.quizapp.model.ktor.paging.BrowsableQuestionnairePageKeys
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject
@@ -50,9 +51,9 @@ class QuestionnaireApi @Inject constructor(
         facultyIds: List<String>,
         courseOfStudiesIds: List<String>,
         authorIds: List<String>,
-        remoteQuestionnaireOrderBy: RemoteQuestionnaireOrderBy,
+        orderBy: BrowsableQuestionnaireOrderBy,
         ascending: Boolean
-    ) : List<BrowsableQuestionnaire> =
+    ) : List<MongoBrowsableQuestionnaire> =
         client.post(QuestionnairePaths.PAGED){
             body = GetPagedQuestionnairesRequest(
                 limit = limit,
@@ -62,7 +63,32 @@ class QuestionnaireApi @Inject constructor(
                 facultyIds = facultyIds,
                 courseOfStudiesIds = courseOfStudiesIds,
                 authorIds = authorIds,
-                remoteQuestionnaireOrderBy = remoteQuestionnaireOrderBy,
+                orderBy = orderBy,
+                ascending = ascending
+            )
+        }
+
+    suspend fun getPagedQuestionnairesWithPageKeys(
+        lastPageKeys: BrowsableQuestionnairePageKeys,
+        limit: Int,
+        searchString: String,
+        questionnaireIdsToIgnore: List<String>,
+        facultyIds: List<String>,
+        courseOfStudiesIds: List<String>,
+        authorIds: List<String>,
+        orderBy: BrowsableQuestionnaireOrderBy,
+        ascending: Boolean
+    ) : GetPagedQuestionnairesWithPageKeysResponse =
+        client.post(QuestionnairePaths.PAGED){
+            body = GetPagedQuestionnairesWithPageKeysRequest(
+                lastPageKeys = lastPageKeys,
+                limit = limit,
+                searchString = searchString,
+                questionnaireIdsToIgnore = questionnaireIdsToIgnore,
+                facultyIds = facultyIds,
+                courseOfStudiesIds = courseOfStudiesIds,
+                authorIds = authorIds,
+                orderBy = orderBy,
                 ascending = ascending
             )
         }
