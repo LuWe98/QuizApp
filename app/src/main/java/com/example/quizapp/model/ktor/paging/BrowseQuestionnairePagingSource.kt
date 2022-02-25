@@ -4,18 +4,11 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.quizapp.model.databases.dto.MongoBrowsableQuestionnaire
 import com.example.quizapp.model.datastore.datawrappers.BrowsableQuestionnaireOrderBy
-import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.BackendResponse
 
 class BrowseQuestionnairePagingSource(
-    private val backendRepository: BackendRepository,
-    private val limit: Int,
-    private val searchString: String,
-    private val questionnaireIdsToIgnore: List<String>,
-    private val facultyIds: List<String>,
-    private val courseOfStudiesIds: List<String>,
-    private val authorIds: List<String>,
     private val orderBy: BrowsableQuestionnaireOrderBy,
-    private val ascending: Boolean
+    private val getQuestionnaireAction: suspend (BrowsableQuestionnairePageKeys) -> (BackendResponse.GetPagedQuestionnairesWithPageKeysResponse),
 ) : PagingSource<BrowsableQuestionnairePageKeys, MongoBrowsableQuestionnaire>() {
 
     override fun getRefreshKey(state: PagingState<BrowsableQuestionnairePageKeys, MongoBrowsableQuestionnaire>): BrowsableQuestionnairePageKeys? {
@@ -24,18 +17,7 @@ class BrowseQuestionnairePagingSource(
 
     override suspend fun load(params: LoadParams<BrowsableQuestionnairePageKeys>): LoadResult<BrowsableQuestionnairePageKeys, MongoBrowsableQuestionnaire> = try {
         val pageKeys = params.key ?: EMPTY_KEY
-
-        val response = backendRepository.getPagedQuestionnairesWithPageKeys(
-            lastPageKeys = pageKeys,
-            limit = limit,
-            searchString = searchString,
-            questionnaireIdsToIgnore = questionnaireIdsToIgnore,
-            facultyIds = facultyIds,
-            courseOfStudiesIds = courseOfStudiesIds,
-            authorIds = authorIds,
-            orderBy = orderBy,
-            ascending = ascending
-        )
+        val response = getQuestionnaireAction(pageKeys)
 
         LoadResult.Page(
             data = response.questionnaires,

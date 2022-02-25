@@ -5,10 +5,11 @@ import androidx.lifecycle.*
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
 import com.example.quizapp.model.databases.room.entities.Answer
 import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.quizscreen.FragmentQuizQuestionsContainerArgs
@@ -23,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class VmQuizQuestionsContainer @Inject constructor(
     private val localRepository: LocalRepository,
-    private val preferencesRepository: PreferencesRepository,
+    private val preferenceRepository: PreferenceRepository,
     private val state: SavedStateHandle
 ) : EventViewModel<FragmentQuizContainerEvent>() {
 
@@ -58,16 +59,16 @@ class VmQuizQuestionsContainer @Inject constructor(
     }
 
     fun onMenuItemOrderSelected(shuffleType: QuestionnaireShuffleType) = launch(IO) {
-        if (preferencesRepository.getShuffleType() != shuffleType) {
-            preferencesRepository.updateShuffleSeed()
-            preferencesRepository.updateShuffleType(shuffleType)
+        if (preferenceRepository.getShuffleType() != shuffleType) {
+            preferenceRepository.updateShuffleSeed()
+            preferenceRepository.updateShuffleType(shuffleType)
             eventChannel.send(ShowMessageSnackBarEvent(R.string.shuffleTypeChanged))
             eventChannel.send(ResetViewPagerEvent)
         }
     }
 
     fun onShuffleButtonClicked() = launch(IO) {
-        preferencesRepository.updateShuffleSeed()
+        preferenceRepository.updateShuffleSeed()
         eventChannel.send(ResetViewPagerEvent)
     }
 

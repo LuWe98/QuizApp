@@ -446,9 +446,9 @@
     <!-- REMOTE/BROWSE SEARCH FILTER SCREEN-->
     <dialog
             android:id="@+id/bsdfBrowseQuestionnaireFilterSelection"
-            android:name="com.example.quizapp.view.fragments.searchscreen.filterselection.BsdfBrowseQuestionnaireFilterSelection"
+            android:name="com.example.quizapp.view.fragments.searchscreen.BsdfSearchQuestionnaireFilterSelection"
             android:label="BsdfBrowseQuestionnaireFilterSelection"
-            tools:layout="@layout/bsdf_browse_questionnaire_filter_selection">
+            tools:layout="@layout/bsdf_search_questionnaire_filter_selection">
         <argument
                 android:name="selectedAuthors"
                 app:argType="com.example.quizapp.model.databases.properties.AuthorInfo[]" />
@@ -462,9 +462,9 @@
     <!-- LOCAL SEARCH FILTER SCREEN -->
     <dialog
             android:id="@+id/bsdfLocalQuestionnaireFilterSelection"
-            android:name="com.example.quizapp.view.fragments.homescreen.filterselection.BsdfLocalQuestionnaireFilterSelection"
+            android:name="com.example.quizapp.view.fragments.homescreen.BsdfHomeQuestionnaireFilterSelection"
             android:label="BsdfLocalQuestionnaireFilterSelection"
-            tools:layout="@layout/bsdf_local_questionnaire_filter_selection" />
+            tools:layout="@layout/bsdf_home_questionnaire_filter_selection" />
 
     <action
             android:id="@+id/action_global_bsdfLocalQuestionnaireFilterSelection"

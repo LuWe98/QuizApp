@@ -68,7 +68,7 @@ sealed class SelectionRequestType<T : Enum<T>>(
     @Parcelize
     data class UserMoreOptionsSelection(val user: User) : SelectionRequestType<UserMoreOptionsItem>(
         recyclerViewList = UserMoreOptionsItem.values().toList(),
-        titleProvider = { it.getString(R.string._ph, user.userName) },
+        titleProvider = { it.getString(R.string._ph, user.name) },
         resultProvider = { SelectionResult.UserMoreOptionsSelectionResult(user, it as UserMoreOptionsItem) }
     )
 

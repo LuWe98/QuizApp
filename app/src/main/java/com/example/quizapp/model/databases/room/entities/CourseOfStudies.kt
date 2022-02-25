@@ -43,5 +43,4 @@ data class CourseOfStudies(
         const val DEGREE_COLUMN = "degree"
         const val LAST_MODIFIED_TIMESTAMP_COLUMN = "lastModifiedTimestamp"
     }
-
 }

@@ -47,8 +47,8 @@ class BsdfManageUsersFilterSelection: BindingBottomSheetDialogFragment<BsdfManag
 
     private fun initListeners(){
         binding.apply {
-            tvOrderBy.onClick(vmFilter::onOrderByCardClicked)
-            tvOrderAscending.onClick(vmFilter::onOrderAscendingCardClicked)
+            orderByCard.onClick(vmFilter::onOrderByCardClicked)
+            ascendingLayout.onClick(vmFilter::onOrderAscendingCardClicked)
             btnApply.onClick(vmFilter::onApplyButtonClicked)
         }
     }
@@ -64,20 +64,11 @@ class BsdfManageUsersFilterSelection: BindingBottomSheetDialogFragment<BsdfManag
         }
 
         vmFilter.selectedOrderAscendingStateFlow.collectWhenStarted(viewLifecycleOwner) { ascending ->
-            binding.apply {
-                tvOrderAscending.setText(if(ascending) R.string.orderAscending else R.string.orderDescending)
-                ivOrderAscending.animate()
-                    .rotation(if(ascending) 0f else 180f)
-                    .setDuration(300)
-                    .start()
-            }
+            binding.ascendingSwitch.isChecked = ascending
         }
 
         vmFilter.selectedOrderByStateFlow.collectWhenStarted(viewLifecycleOwner) {
-            binding.apply {
-                tvOrderBy.setText(it.textRes)
-                ivOrderBy.setImageDrawable(it.iconRes)
-            }
+            binding.orderByText.setText(it.textRes)
         }
     }
 }

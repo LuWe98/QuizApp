@@ -4,8 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.example.quizapp.R
 
-//TODO -> String array machen
-
 enum class ListLoadItemType(
     @StringRes val noResultsTitleRes: Int,
     @StringRes val noResultsTextRes: Int,
@@ -14,51 +12,51 @@ enum class ListLoadItemType(
     @DrawableRes val icon: Int = R.drawable.ic_search_no_results
 ) {
     REMOTE_QUESTIONNAIRE(
-        R.string.noRemoteQuestionnaireResultsFoundTitle,
-        R.string.noRemoteQuestionnaireResultsFoundText,
-        R.string.noRemoteQuestionnaireDataExistsTitle,
+        R.string.noResults,
+        R.string.tryAnotherSearchQuery,
+        R.string.noResults,
         R.string.noRemoteQuestionnaireDataExistsText
     ),
     LOCAL_QUESTIONNAIRE(
-        R.string.noLocalQuestionnaireResultsFoundTitle,
-        R.string.noLocalQuestionnaireResultsFoundText,
-        R.string.noLocalQuestionnaireDataExistsTitle,
+        R.string.noResults,
+        R.string.tryAnotherSearchQuery,
+        R.string.noResults,
         R.string.noLocalQuestionnaireDataExistsText
     ),
     REMOTE_AUTHOR(
-        R.string.noAuthorResultsFoundTitle,
-        R.string.noAuthorResultsFoundText,
-        R.string.noAuthorDataExistsTitle,
-        R.string.noAuthorDataExistsText
+        R.string.noResults,
+        R.string.tryAnotherSearchQuery,
+        R.string.noResults,
+        R.string.tryAnotherSearchQuery
     ),
     LOCAL_AUTHOR(
-        R.string.noAuthorResultsFoundTitle,
-        R.string.noAuthorResultsFoundText,
-        R.string.noAuthorDataExistsTitle,
-        R.string.noAuthorDataExistsText
+        R.string.noResults,
+        R.string.tryAnotherSearchQuery,
+        R.string.noResults,
+        R.string.tryAnotherSearchQuery
     ),
     USER(
-        R.string.noUserResultsFoundTitle,
-        R.string.noUserResultsFoundText,
-        R.string.noUserDataExistsTitle,
-        R.string.noUserDataExistsText
+        R.string.noResults,
+        R.string.tryAnotherSearchQuery,
+        R.string.noResults,
+        R.string.tryAnotherSearchQuery
     ),
     FACULTY(
-        R.string.noFacultyResultsFoundTitle,
+        R.string.noResults,
         R.string.noFacultyResultsFoundText,
-        R.string.noFacultyDataExistsTitle,
+        R.string.noResults,
         R.string.noFacultyDataExistsText
     ),
     COURSE_OF_STUDIES(
-        R.string.noCourseOfStudiesResultsFoundTitle,
+        R.string.noResults,
         R.string.noCourseOfStudiesResultsFoundText,
-        R.string.noCourseOfStudiesDataExistsTitle,
+        R.string.noResults,
         R.string.noCourseOfStudiesDataExistsText
     ),
     QUESTION(
-        R.string.noQuizQuestionResultsFoundTitle,
+        R.string.noResults,
         R.string.noQuizQuestionResultsFoundText,
-        R.string.noQuizQuestionDataExistsTitle,
+        R.string.noResults,
         R.string.noQuizQuestionDataExistsText
     )
 }

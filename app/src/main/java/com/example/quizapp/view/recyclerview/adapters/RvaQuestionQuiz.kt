@@ -31,7 +31,7 @@ class RvaQuestionQuiz(
 
             val backgroundTint = if (item.isAnswered) {
                 if (vmQuiz.areAllQuestionsAnswered) {
-                    getColor(if (item.isAnsweredCorrectly) R.color.green else R.color.red)
+                    getColor(if (item.isAnsweredCorrectly) R.color.hfuBrightGreen else R.color.red)
                 } else {
                     context.getThemeColor(R.attr.colorAccent)
                 }

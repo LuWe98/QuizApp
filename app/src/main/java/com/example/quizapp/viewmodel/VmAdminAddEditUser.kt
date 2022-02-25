@@ -7,6 +7,7 @@ import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.BackendRepositoryImpl
 import com.example.quizapp.model.ktor.BackendResponse.CreateUserResponse.*
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
@@ -19,7 +20,6 @@ import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
@@ -33,7 +33,7 @@ class VmAdminAddEditUser @Inject constructor(
 
     val pageTitleRes get() = if (args.user == null) R.string.create else R.string.edit
 
-    private val parsedUserName get() = args.user?.userName ?: ""
+    private val parsedUserName get() = args.user?.name ?: ""
 
     private val parsedUserPassword get() = args.user?.password ?: ""
 
@@ -95,7 +95,7 @@ class VmAdminAddEditUser @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.savingUser))
 
         runCatching {
-            backendRepository.createUser(userName, userPassword, userRole)
+            backendRepository.userApi.createUser(userName, userPassword, userRole)
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->

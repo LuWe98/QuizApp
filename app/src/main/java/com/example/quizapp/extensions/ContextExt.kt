@@ -2,7 +2,6 @@ package com.example.quizapp.extensions
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.graphics.Point
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -19,8 +18,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.documentfile.provider.DocumentFile
-import androidx.fragment.app.Fragment
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepositoryImpl
 import com.example.quizapp.model.datastore.datawrappers.QuizAppLanguage
 import com.example.quizapp.utils.Constants
 import kotlinx.coroutines.Dispatchers
@@ -43,9 +41,7 @@ val DataStore<Preferences>.dataflow
 
 fun Context.setLocale() = setLocale(runBlocking(Dispatchers.IO) {
     dataStore.dataflow.map { preferences ->
-        preferences[PreferencesRepository.LANGUAGE_KEY]?.let {
-            QuizAppLanguage.valueOf(it)
-        } ?: QuizAppLanguage.ENGLISH
+        preferences[PreferenceRepositoryImpl.LANGUAGE_KEY]?.let(QuizAppLanguage::valueOf) ?: QuizAppLanguage.ENGLISH
     }.first()
 })
 
@@ -127,11 +123,3 @@ val Context.isConnectedToInternet
             else -> false
         }
     }
-
-fun DocumentFile.reader(context: Context) = BufferedReader(
-    InputStreamReader(
-        context.contentResolver.openInputStream(uri), StandardCharsets.UTF_8
-    )
-)
-
-fun DocumentFile.readLines(context: Context) = reader(context).readLines()

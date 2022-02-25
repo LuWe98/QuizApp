@@ -5,11 +5,8 @@ import com.example.quizapp.databinding.RviAnswerAddEditBinding
 import com.example.quizapp.extensions.*
 import com.example.quizapp.model.databases.room.entities.Answer
 import com.example.quizapp.view.recyclerview.impl.BindingListAdapter
-import com.example.quizapp.viewmodel.VmAddEditQuestion
 
-class RvaAddEditAnswer(
-    private val vmEditQuestion: VmAddEditQuestion
-) : BindingListAdapter<Answer, RviAnswerAddEditBinding>(Answer.DIFF_CALLBACK) {
+class RvaAddEditAnswer: BindingListAdapter<Answer, RviAnswerAddEditBinding>(Answer.DIFF_CALLBACK) {
 
     var onItemClick: ((Answer) -> (Unit))? = null
 
@@ -29,21 +26,7 @@ class RvaAddEditAnswer(
         binding.apply {
             tvAnswerText.text = item.answerText
             tvQuestionIndex.text = Char(position + 65).toString()
-
-//            answerCorrectLine.setBackgroundColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.red)
-
-            val color = if (item.isAnswerCorrect) R.color.green else R.color.red
-            //tvAnswerText.setTextColorWithRes(color)
-            tvQuestionIndex.setBackgroundTintWithRes(color)
-
-
-//            btnCheck.setBackgroundTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
-//            etAnswer.setTextColorWithRes(if (item.isAnswerCorrect) R.color.green else R.color.black)
-//            ivSelectedIcon.apply {
-//                isVisible = item.isAnswerCorrect
-//                setImageDrawable(if (vmEditQuestion.isQuestionMultipleChoice) R.drawable.ic_check else R.drawable.ic_circle)
-//                setDrawableTintWithRes(if (item.isAnswerCorrect) R.color.green else R.color.unselectedColor)
-//            }
+            tvQuestionIndex.setBackgroundTintWithRes(if (item.isAnswerCorrect) R.color.hfuLightGreen else R.color.red)
         }
     }
 }

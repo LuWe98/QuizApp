@@ -8,6 +8,7 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.properties.Degree
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
@@ -23,10 +24,8 @@ import com.example.quizapp.viewmodel.VmAdminAddEditCourseOfStudies.AddEditCourse
 import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -114,10 +113,6 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
         navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.DegreeSelection(cosDegree)))
     }
 
-    fun onClearFacultiesClicked(){
-        setFacultyIds(emptyList())
-    }
-
     fun onFacultySelectionResultReceived(result: FragmentResult.FacultySelectionResult) {
         setFacultyIds(result.facultyIds)
     }
@@ -160,7 +155,7 @@ class VmAdminAddEditCourseOfStudies @Inject constructor(
 
         runCatching {
             dataMapper.mapRoomCourseOfStudiesToMongoCourseOfStudies(updatedCourseOfStudies, cosFacultyIds).let { mongoCourseOfStudies ->
-                backendRepository.insertCourseOfStudies(mongoCourseOfStudies)
+                backendRepository.courseOfStudiesApi.insertCourseOfStudies(mongoCourseOfStudies)
             }
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)

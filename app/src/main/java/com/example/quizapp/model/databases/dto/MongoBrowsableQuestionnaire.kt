@@ -18,9 +18,9 @@ data class MongoBrowsableQuestionnaire(
     val id: String,
     val title: String,
     val authorInfo: AuthorInfo,
-    val facultyIds: List<String>,
-    val courseOfStudiesIds: List<String>,
-    val subject: String,
+    val facultyIds: List<String> = emptyList(),
+    val courseOfStudiesIds: List<String> = emptyList(),
+    val subject: String = "",
     val questionCount: Int = 0,
     val lastModifiedTimestamp: Long,
     var downloadStatus: DownloadStatus = DownloadStatus.NOT_DOWNLOADED

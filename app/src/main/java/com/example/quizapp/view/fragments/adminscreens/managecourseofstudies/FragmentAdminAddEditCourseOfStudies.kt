@@ -56,10 +56,8 @@ class FragmentAdminAddEditCourseOfStudies: BindingFragment<FragmentAdminAddEditC
             tvSave.onClick(vmAddEdit::onSaveButtonClicked)
             contentLayout.apply {
                 degreeCard.onClick(vmAddEdit::onDegreeCardClicked)
-
                 btnAddFaculty.onClick(vmAddEdit::onFacultyCardClicked)
-                //btnClearFaculties.onClick(vmAddEdit::onClearFacultiesClicked)
-
+                tvNoAssigned.onClick(vmAddEdit::onFacultyCardClicked)
                 etAbbreviation.onTextChanged(vmAddEdit::onAbbreviationUpdated)
                 etName.onTextChanged(vmAddEdit::onNameChanged)
             }

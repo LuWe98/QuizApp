@@ -1,38 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Standard Colors -->
-    <color name="black">#FF000000</color>
-    <color name="blackAlpha">#bb000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="whiteAlpha">#bbffffff</color>
-    <color name="red">#bbde1738</color>
-    <color name="green">#bb73ba73</color>
-    <color name="lightGreen">#87A96B </color>
-
-    <!--    #42000000-->
-    <!--    Not enabled-->
-    <!--    #89000000-->
-    <!--    Default-->
-    <!--    202020-->
-<!--    <color name="red">#de1738</color>-->
-<!--    <color name="green">#73ba73</color>-->
-
-<!--    <color name="green">#078F45</color>-->
-<!--    <color name="red">#ff24</color>-->
-
-    <color name="niceBlack">#202020</color>
-
-    <color name="unselectedColor">#DDDDDD</color>
+    <color name="black">#FF000000</color>
     <color name="transparent">#00000000</color>
+    <color name="niceBlack">#202020</color>
+    <color name="unselectedColor">#DDDDDD</color>
 
-    <!-- Für Interaktionen  -->
     <color name="hfuDarkerGreen">#009864</color>
     <color name="hfuDarkGreen">#5bb28a</color>
-    <!-- Für richtig oder Falsch beim Quiz -->
     <color name="hfuBrightGreen">#88c860</color>
-    <!-- Für beantwortet beim Quiz -->
     <color name="hfuLightGreen">#bfe0ce</color>
-
+    <color name="red">#ED4D4D</color>
 
     <!-- Light Theme Colors -->
     <color name="lightColorPrimary">@color/hfuDarkGreen</color>

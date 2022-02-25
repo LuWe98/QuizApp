@@ -53,7 +53,6 @@ class BsdfQuizOverviewQuestionList: BindingBottomSheetDialogFragment<BsdfQuizOve
         }
     }
 
-    //TODO -> noch durchmischeln lassen, da es noch nüt get -> Positionen der Fragen werden nicht richtig angezeigt
     private fun initObservers() {
         vmQuiz.questionsWithAnswersFilteredFlow.collectWhenStarted(viewLifecycleOwner) {
             binding.tvQuestionsAmount.text = it.data.size.toString()

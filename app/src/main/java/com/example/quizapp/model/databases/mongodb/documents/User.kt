@@ -13,18 +13,18 @@ import org.bson.types.ObjectId
 @Parcelize
 data class User(
     @BsonId val id: String = ObjectId().toHexString(),
-    val userName: String,
+    val name: String,
     val password: String = "",
     var role: Role = Role.USER,
     var lastModifiedTimestamp: Long,
     val canShareQuestionnairesWith: Boolean = false
 ) : Parcelable {
 
-    val isNotEmpty get() = id.isNotEmpty() && userName.isNotEmpty() && password.isNotEmpty()
+    val isNotEmpty get() = id.isNotEmpty() && name.isNotEmpty() && password.isNotEmpty()
 
     val isEmpty get() = !isNotEmpty
 
-    val asAuthorInfo get() = AuthorInfo(id, userName)
+    val asAuthorInfo get() = AuthorInfo(id, name)
 
     companion object {
         val DIFF_CALLBACK = generateDiffItemCallback(User::id)

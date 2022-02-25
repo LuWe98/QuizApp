@@ -33,15 +33,6 @@
     </style>
 
 
-    <style name="Style.QuizApp.FilterChipOld" parent="Widget.MaterialComponents.Chip.Filter">
-        <item name="android:textSize">12sp</item>
-        <item name="chipIconSize">15dp</item>
-        <item name="chipBackgroundColor">@color/chip_background_color_selector</item>
-        <item name="android:textColor">@color/chip_text_color_selector</item>
-        <item name="checkedIconTint">@color/white</item>
-        <item name="chipMinTouchTargetSize">46dp</item>
-    </style>
-
     <style name="WindowAnimationTransition">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
@@ -94,7 +85,7 @@
     </style>
 
     <style name="Style.QuizApp.FilterChip" parent="Widget.MaterialComponents.Chip.Choice">
-        <item name="chipBackgroundColor">?android:colorBackground</item>
+        <item name="chipBackgroundColor">?colorOnPrimary</item>
         <item name="chipIconTint">?colorPrimary</item>
         <item name="chipStartPadding">@dimen/grid_1_5</item>
         <item name="chipEndPadding">@dimen/grid_1</item>

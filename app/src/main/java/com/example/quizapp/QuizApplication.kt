@@ -2,7 +2,7 @@ package com.example.quizapp
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.runBlocking
@@ -12,11 +12,11 @@ import javax.inject.Inject
 class QuizApplication : Application(){
 
     @Inject
-    lateinit var preferencesRepository: PreferencesRepository
+    lateinit var preferenceRepository: PreferenceRepository
 
     override fun onCreate() {
         super.onCreate()
-        AppCompatDelegate.setDefaultNightMode(runBlocking(IO) { preferencesRepository.getTheme().appCompatId })
+        AppCompatDelegate.setDefaultNightMode(runBlocking(IO) { preferenceRepository.getTheme().appCompatId })
     }
 
 }

@@ -1,20 +1,14 @@
 package com.example.quizapp.model.databases.room
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.quizapp.model.databases.room.dao.*
 import com.example.quizapp.model.databases.room.entities.*
-import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Answer
+import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.typeconverter.RoomTypeConverters
 import com.example.quizapp.utils.Constants
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import javax.inject.Inject
-import javax.inject.Provider
 import javax.inject.Singleton
 
 @Singleton
@@ -45,16 +39,6 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun getFacultyCourseOfStudiesRelationDao(): FacultyCourseOfStudiesRelationDao
     abstract fun getLocallyDeletedQuestionnaireDao(): LocallyDeletedQuestionnaireDao
     abstract fun getLocallyAnsweredQuestionnairesDao(): LocallyFilledQuestionnaireToUploadDao
-
-    class Callback @Inject constructor(
-        private val repoProvider: Provider<LocalRepository>,
-        @ApplicationContext val context: Context,
-        private val scope: CoroutineScope
-    ) : RoomDatabase.Callback() {
-        override fun onCreate(db: SupportSQLiteDatabase) {
-            super.onCreate(db)
-        }
-    }
 
     companion object {
         const val PLACEHOLDER = "?"

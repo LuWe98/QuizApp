@@ -57,7 +57,12 @@ class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuest
                 item.questionnaire.timeStampAsDate
             )
 
-//            tvDateAndQuestionAmount.text = context.getString(
+            (item.areAllQuestionsCorrectlyAnswered && item.hasQuestions).let { isCompleted ->
+                btnPlay.setImageDrawable(if(isCompleted) R.drawable.ic_done_all else if(item.areAllQuestionsAnswered) R.drawable.ic_done else R.drawable.ic_play_arrow)
+                btnPlay.setBackgroundTintWithRes(if(isCompleted) R.color.hfuBrightGreen else R.color.hfuLightGreen)
+            }
+
+            //            tvDateAndQuestionAmount.text = context.getString(
 //                R.string.authorNameDateAndQuestionAmount,
 //                item.questionnaire.authorInfo.userName,
 //                item.questionnaire.timeStampAsDate,
@@ -68,15 +73,10 @@ class RvaHomeQuestionnaires : BindingListAdapter<CompleteQuestionnaire, RviQuest
 //                item.questionnaire.subject)
 //            syncProgress.isVisible = item.questionnaire.syncStatus == SyncStatus.SYNCING
 
-            (item.questionnaire.syncStatus == SyncStatus.SYNCED).let { isSynced ->
-                btnSync.setImageDrawable(if (isSynced) R.drawable.ic_cloud_done else R.drawable.ic_cloud_upload)
-                btnSync.setDrawableTintWithRes((if(isSynced) R.color.green else R.color.unselectedColor))
-            }
-
-            (item.areAllQuestionsCorrectlyAnswered && item.hasQuestions).let { isCompleted ->
-                btnPlay.setImageDrawable(if(isCompleted) R.drawable.ic_done_all else if(item.areAllQuestionsAnswered) R.drawable.ic_done else R.drawable.ic_play_arrow)
-                btnPlay.setBackgroundTintWithRes(if(isCompleted) R.color.hfuBrightGreen else R.color.hfuLightGreen)
-            }
+//            (item.questionnaire.syncStatus == SyncStatus.SYNCED).let { isSynced ->
+//                btnSync.setImageDrawable(if (isSynced) R.drawable.ic_cloud_done else R.drawable.ic_cloud_upload)
+//                btnSync.setDrawableTintWithRes((if(isSynced) R.color.green else R.color.unselectedColor))
+//            }
         }
     }
 }

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AccelerateInterpolator
-import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
@@ -111,11 +110,6 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
                 LazyQuestionTab(questions[index].id)
             }
         }
-
-//        populateTabsFromPagerAdapter { index ->
-//            LazyQuestionTab(questions[index].id)
-//        }
-//        lazyTabAdapter.submitList(questions as List<Nothing>?)
     }
 
     private fun initClickListeners() {
@@ -191,12 +185,25 @@ class FragmentQuizQuestionsContainer : BindingFragment<FragmentQuizQuestionsCont
     }
 
     private fun changeSubmitButtonVisibility(isEverythingAnswered: Boolean) = binding.btnSubmit.apply {
-        if ((isEverythingAnswered && translationY == 0.dp.toFloat()) || (!isEverythingAnswered && translationY == 60.dp.toFloat())) return@apply
-        clearAnimation()
-        animate().translationY((if (isEverythingAnswered) 0.dp else 60.dp).toFloat())
-            .setInterpolator(DecelerateInterpolator())
-            .setDuration(350)
-            .start()
+        val showSubmitButton = isEverythingAnswered && !vmContainer.isShowSolutionScreen
+        if ((showSubmitButton && !isVisible) || (!showSubmitButton && isVisible)) {
+            animate()
+                .alpha(if (showSubmitButton) 1f else 0f)
+                .withEndAction {
+                    if (!showSubmitButton) {
+                        isVisible = false
+                        isClickable = false
+                        isFocusable = false
+                    }
+                }.withStartAction {
+                    if (showSubmitButton) {
+                        isVisible = true
+                        isClickable = true
+                        isFocusable = true
+
+                    }
+                }.setDuration(500).start()
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem?) = item?.let {

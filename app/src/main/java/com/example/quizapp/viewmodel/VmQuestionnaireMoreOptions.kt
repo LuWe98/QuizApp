@@ -4,7 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
+import com.example.quizapp.model.datastore.PreferenceRepository
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.MenuIntIdItem
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.MenuItemDataModel
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
@@ -22,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class VmQuestionnaireMoreOptions @Inject constructor(
     private val localRepository: LocalRepository,
-    preferencesRepository: PreferencesRepository,
+    preferenceRepository: PreferenceRepository,
     state: SavedStateHandle
 ) : EventViewModel<QuestionnaireMoreOptionsEvent>() {
 
@@ -33,7 +34,7 @@ class VmQuestionnaireMoreOptions @Inject constructor(
     private val questionnaireId get() = args.questionnaire.id
 
     private val user = runBlocking(IO) {
-        preferencesRepository.userFlow.first()
+        preferenceRepository.userFlow.first()
     }
 
     fun onMenuItemClicked(menuItemId: Int) {

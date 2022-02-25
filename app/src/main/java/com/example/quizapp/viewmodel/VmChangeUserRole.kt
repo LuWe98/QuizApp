@@ -5,6 +5,7 @@ import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.properties.Role
 import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.BackendRepositoryImpl
 import com.example.quizapp.model.ktor.BackendResponse.UpdateUserResponse.*
 import com.example.quizapp.model.ktor.status.Resource
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
@@ -34,7 +35,7 @@ class VmChangeUserRole @Inject constructor(
 
         runCatching {
             eventChannel.send(StateTest(Resource.Loading()))
-            backendRepository.updateUserRole(args.user.id, newRole)
+            backendRepository.userApi.updateUserRole(args.user.id, newRole)
         }.onFailure {
             eventChannel.send(StateTest(Resource.Error()))
         }.onSuccess { response ->

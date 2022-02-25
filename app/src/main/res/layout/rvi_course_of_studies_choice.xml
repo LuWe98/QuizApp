@@ -5,43 +5,44 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         xmlns:tools="http://schemas.android.com/tools"
-        app:cardBackgroundColor="?android:colorBackground"
+        app:cardBackgroundColor="?colorOnPrimary"
         app:cardElevation="0dp"
-        app:cardCornerRadius="@dimen/itemCardCornerRadius"
+        app:cardCornerRadius="@dimen/defaultCardCornerRadius"
         android:layout_marginTop="@dimen/grid_3">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp">
+            android:layout_height="75dp">
 
         <com.google.android.material.textview.MaterialTextView
-                android:layout_width="55dp"
-                android:layout_height="25dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:id="@+id/tvAbbreviation"
                 android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="WING"
-                android:textSize="14sp"
-                android:background="@drawable/background_round_corners_45dp"
-                android:backgroundTint="?android:colorBackground"
+                tools:text="WI"
+                android:textSize="12.5sp"
+                android:fontFamily="@font/mallanna_regular"
+                android:background="@drawable/background_round_corners_18_5dp"
+                android:backgroundTint="@color/hfuLightGreen"
                 android:textStyle="bold"
-                android:layout_marginStart="@dimen/grid_2"
+                android:textColor="?colorOnPrimary"
+                android:layout_marginStart="@dimen/grid_3"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/tvName"
                 android:gravity="center_vertical"
                 android:lines="1"
                 android:ellipsize="end"
                 app:layout_constraintStart_toEndOf="@+id/tvAbbreviation"
                 tools:text="Wirtschaftsinformatik"
-                android:textColor="?dominantTextColor"
                 android:textSize="14sp"
-                android:layout_marginStart="@dimen/grid_2"
-                android:layout_marginEnd="@dimen/grid_1"
+                android:textColor="?dominantTextColor"
+                android:layout_marginHorizontal="@dimen/grid_3"
                 app:layout_constraintTop_toTopOf="@+id/tvAbbreviation"
                 app:layout_constraintBottom_toBottomOf="@+id/tvAbbreviation"
                 app:layout_constraintEnd_toStartOf="@+id/btnRemove" />

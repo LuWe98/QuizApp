@@ -7,7 +7,7 @@
         app:cardBackgroundColor="?colorOnPrimary"
         app:cardElevation="0dp"
         android:layout_marginTop="@dimen/grid_3"
-        app:cardCornerRadius="12.5dp">
+        app:cardCornerRadius="@dimen/defaultBackgroundCardCornerRadius">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -19,7 +19,7 @@
                 android:layout_height="27.5dp"
                 android:id="@+id/tvQuestionIndex"
                 android:background="@drawable/shape_circle"
-                android:backgroundTint="@color/green"
+                android:backgroundTint="@color/hfuLightGreen"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -32,7 +32,7 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:minHeight="30dp"
                 android:id="@+id/tvAnswerText"
                 android:gravity="center_vertical"

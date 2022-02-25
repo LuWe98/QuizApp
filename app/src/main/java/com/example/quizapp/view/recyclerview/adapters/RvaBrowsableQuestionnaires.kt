@@ -1,7 +1,5 @@
 package com.example.quizapp.view.recyclerview.adapters
 
-import android.content.res.ColorStateList
-import androidx.core.view.isVisible
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.R
@@ -58,8 +56,8 @@ class RvaBrowsableQuestionnaires(
             )
 
             btnDownload.setBackgroundTintWithRes(if(item.downloadStatus == DownloadStatus.DOWNLOADED) R.color.hfuBrightGreen else R.color.hfuLightGreen)
-            //btnDownload.setImageDrawable(if(item.downloadStatus == DownloadStatus.DOWNLOADED) R.drawable.ic_cloud_done else R.drawable.ic_cloud_download)
-            btnDownload.setImageDrawable(null)
+            btnDownload.setImageDrawable(if(item.downloadStatus == DownloadStatus.DOWNLOADED) R.drawable.ic_downloaded else R.drawable.ic_download)
+            //btnDownload.setImageDrawable(null)
 
 
             vmSearch.viewModelScope.launch(IO) {

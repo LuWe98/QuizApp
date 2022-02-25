@@ -7,6 +7,7 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
 import com.example.quizapp.model.databases.room.RoomListLoadStatus
 import com.example.quizapp.model.databases.room.asRoomListLoadStatus
 import com.example.quizapp.model.databases.room.entities.Faculty
@@ -69,7 +70,7 @@ class VmAdminManageFaculties @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.deletingFaculty))
 
         runCatching {
-            backendRepository.deleteFaculty(result.faculty.id)
+            backendRepository.facultyApi.deleteFaculty(result.faculty.id)
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->

@@ -8,12 +8,13 @@ import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
 import com.example.quizapp.model.databases.room.asRoomListLoadStatus
 import com.example.quizapp.model.databases.room.entities.Answer
 import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionnaireToUpload
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType.*
 import com.example.quizapp.model.ktor.BackendRepository
@@ -25,7 +26,6 @@ import com.example.quizapp.viewmodel.VmQuiz.FragmentQuizEvent.*
 import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
@@ -37,7 +37,7 @@ import javax.inject.Inject
 @HiltViewModel
 class VmQuiz @Inject constructor(
     private val applicationScope: CoroutineScope,
-    private val preferencesRepository: PreferencesRepository,
+    private val preferenceRepository: PreferenceRepository,
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
     private val dataMapper: DataMapper,
@@ -90,14 +90,14 @@ class VmQuiz @Inject constructor(
     }.distinctUntilChanged()
 
 
-    private var shuffleSeedStateFlow = preferencesRepository.shuffleSeedFlow
-        .stateIn(viewModelScope, SharingStarted.Eagerly, runBlocking(IO) { preferencesRepository.getShuffleSeed() })
+    private var shuffleSeedStateFlow = preferenceRepository.shuffleSeedFlow
+        .stateIn(viewModelScope, SharingStarted.Eagerly, runBlocking(IO) { preferenceRepository.getShuffleSeed() })
 
     val shuffleSeed get() = shuffleSeedStateFlow.value
 
 
-    val shuffleTypeStateFlow = preferencesRepository.shuffleTypeFlow
-        .stateIn(viewModelScope, SharingStarted.Eagerly, runBlocking(IO) { preferencesRepository.getShuffleType() })
+    val shuffleTypeStateFlow = preferenceRepository.shuffleTypeFlow
+        .stateIn(viewModelScope, SharingStarted.Eagerly, runBlocking(IO) { preferenceRepository.getShuffleType() })
 
     val shuffleType get() = shuffleTypeStateFlow.value
 
@@ -117,8 +117,8 @@ class VmQuiz @Inject constructor(
 
 
     fun onMenuItemOrderSelected(shuffleType: QuestionnaireShuffleType) = launch(IO) {
-        preferencesRepository.updateShuffleSeed()
-        preferencesRepository.updateShuffleType(shuffleType)
+        preferenceRepository.updateShuffleSeed()
+        preferenceRepository.updateShuffleType(shuffleType)
     }
 
 
@@ -205,7 +205,7 @@ class VmQuiz @Inject constructor(
 
             runCatching {
                 dataMapper.mapRoomQuestionnaireToMongoFilledQuestionnaire(it).let { mongoFilledQuestionnaire ->
-                    backendRepository.insertFilledQuestionnaire(mongoFilledQuestionnaire)
+                    backendRepository.filledQuestionnaireApi.insertFilledQuestionnaire(mongoFilledQuestionnaire)
                 }
             }.onSuccess { response ->
                 if (response.responseType != InsertFilledQuestionnaireResponseType.NOT_ACKNOWLEDGED) {

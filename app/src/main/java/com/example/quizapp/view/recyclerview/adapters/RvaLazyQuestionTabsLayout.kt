@@ -69,7 +69,7 @@ class RvaLazyQuestionTabsLayout(
 
                 if (isShowSolutionScreen) {
                     tabTextColor = if (!isPositionSelected) getColor(R.color.white) else getThemeColor(R.attr.colorControlNormal)
-                    tabBackgroundTint = getColor(if (predicateCurrent) R.color.green else R.color.red)
+                    tabBackgroundTint = getColor(if (predicateCurrent) R.color.hfuBrightGreen else R.color.red)
                     tabSelectedStrokeColor = getColorStateList(tabBackgroundTint)
                     tabSelectedBackgroundColor = getColorStateList(getThemeColor(R.attr.colorOnPrimary))
                 } else {
@@ -146,7 +146,7 @@ class RvaLazyQuestionTabsLayout(
 
             return if (isShowSolutionScreen) {
                 when {
-                    predicateOther && predicateCurrent -> binding.getColor(R.color.green)
+                    predicateOther && predicateCurrent -> binding.getColor(R.color.hfuBrightGreen)
                     predicateOther == predicateCurrent -> binding.getColor(R.color.red)
                     else -> binding.getThemeColor(R.attr.colorOnPrimary)
                 }

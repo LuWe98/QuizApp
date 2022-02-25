@@ -41,11 +41,13 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
                 btnLanguage.onClick(vmSettings::onLanguageButtonClicked)
                 btnShuffleType.onClick(vmSettings::onShuffleTypeButtonClicked)
                 btnPreferredCos.onClick(vmSettings::onPreferredCourseOfStudiesButtonClicked)
+                canShareQuestionnaireWithLayout.onClick(vmSettings::onCanShareQuestionnaireWithClicked)
             }
 
             userLayout.apply {
                 btnLogout.onClick(vmSettings::onLogoutClicked)
                 btnChangePassword.onClick(vmSettings::onChangePasswordCardClicked)
+                btnDeleteSelf.onClick(vmSettings::onDeleteAccountClicked)
             }
 
             synchronizationLayout.apply {
@@ -62,6 +64,8 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
         setFragmentResultEventListener(vmSettings::onCourseOfStudiesSelectionResultReceived)
 
         setFragmentResultEventListener(vmSettings::onLogoutConfirmationResultReceived)
+
+        setFragmentResultEventListener(vmSettings::onDeleteAccountConfirmationResultReceived)
 
         setFragmentResultEventListener(vmSettings::onLanguageSelectionResultReceived)
 
@@ -90,6 +94,10 @@ class FragmentSettings : BindingFragment<FragmentSettingsBinding>() {
 
         vmSettings.shuffleTypeNameResFlow.collectWhenStarted(viewLifecycleOwner) { stringRes ->
             binding.preferencesLayout.btnShuffleType.text = stringRes?.let(::getString) ?: "-"
+        }
+
+        vmSettings.userCanShareQuestionnaireWithFlow.collectWhenStarted(viewLifecycleOwner) {
+            binding.preferencesLayout.canShareQuestionnaireWithSwitch.isChecked = it
         }
 
         vmSettings.preferredCoursesOfStudiesFlow.collectWhenStarted(viewLifecycleOwner) {

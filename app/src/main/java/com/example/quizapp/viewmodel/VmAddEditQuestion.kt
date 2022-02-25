@@ -150,10 +150,6 @@ class VmAddEditQuestion @Inject constructor(
         navigationDispatcher.dispatch(FromAddEditQuestionToAddEditAnswer(null))
     }
 
-    fun onClearAnswersButtonClicked() {
-        setAnswerList(emptyList())
-    }
-
     fun onAnswerItemDragged(from: Int, to: Int) {
         answers.toMutableList().apply {
             add(to, removeAt(from))

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
 import com.example.quizapp.model.databases.room.RoomListLoadStatus
 import com.example.quizapp.model.databases.room.asRoomListLoadStatus
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
@@ -41,7 +42,7 @@ class VmCourseOfStudiesSelection @Inject constructor(
     val searchQuery get() = searchQueryMutableStateFlow.value
 
 
-    val facultyFlow = localRepository.allFacultiesFlow.mapNotNull { it }
+    val facultyFlow = localRepository.getAllFacultiesFlow().mapNotNull { it }
 
     fun isCourseOfStudySelected(courseOfStudiesId: String) = selectedCoursesOfStudiesIds.contains(courseOfStudiesId)
 

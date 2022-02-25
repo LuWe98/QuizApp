@@ -7,11 +7,11 @@ import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
-import com.example.quizapp.view.fragments.searchscreen.filterselection.BsdfBrowseQuestionnaireFilterSelectionArgs
+import com.example.quizapp.view.fragments.searchscreen.BsdfSearchQuestionnaireFilterSelectionArgs
 import com.example.quizapp.viewmodel.VmBrowseQuestionnaireFilterSelection.FilterEvent
 import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
@@ -26,11 +26,11 @@ import javax.inject.Inject
 @HiltViewModel
 class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     private val localRepository: LocalRepository,
-    private val preferencesRepository: PreferencesRepository,
+    private val preferenceRepository: PreferenceRepository,
     private val state: SavedStateHandle
 ) : EventViewModel<FilterEvent>() {
 
-    private val args = BsdfBrowseQuestionnaireFilterSelectionArgs.fromSavedStateHandle(state)
+    private val args = BsdfSearchQuestionnaireFilterSelectionArgs.fromSavedStateHandle(state)
 
     private val selectedAuthorsMutableStateFlow = state.getMutableStateFlow(SELECTED_AUTHORS_KEY, args.selectedAuthors.toSet())
 
@@ -40,7 +40,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
 
 
     private val selectedCourseOfStudiesIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_COURSE_OF_STUDIES_ID_KEY, runBlocking(IO) {
-        preferencesRepository.getBrowsableCosIds()
+        preferenceRepository.getBrowsableFilteredCosIds()
     })
 
     val selectedCourseOfStudiesStateFlow = selectedCourseOfStudiesIdsMutableStateFlow.map {
@@ -51,7 +51,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
 
 
     private val selectedFacultyIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_FACULTY_ID_KEY, runBlocking(IO) {
-        preferencesRepository.getBrowsableFacultyIds()
+        preferenceRepository.getBrowsableFilteredFacultyIds()
     })
 
     val selectedFacultyStateFlow = selectedFacultyIdsMutableStateFlow.map {
@@ -61,7 +61,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     private val selectedFacultyIds get() = selectedFacultyIdsMutableStateFlow.value
 
 
-    private val orderByMutableStateFlow = state.getMutableStateFlow(SELECTED_ORDER_BY_KEY, runBlocking(IO) { preferencesRepository.getBrowsableOrderBy() })
+    private val orderByMutableStateFlow = state.getMutableStateFlow(SELECTED_ORDER_BY_KEY, runBlocking(IO) { preferenceRepository.getBrowsableOrderBy() })
 
     val orderByStateFlow = orderByMutableStateFlow.asStateFlow()
 
@@ -69,7 +69,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
 
 
     private val orderAscendingMutableStateFlow =
-        state.getMutableStateFlow(SELECTED_ORDER_ASCENDING_KEY, runBlocking(IO) { preferencesRepository.getBrowsableAscendingOrder() })
+        state.getMutableStateFlow(SELECTED_ORDER_ASCENDING_KEY, runBlocking(IO) { preferenceRepository.getBrowsableAscendingOrder() })
 
     val orderAscendingStateFlow = orderAscendingMutableStateFlow.asStateFlow()
 
@@ -136,20 +136,6 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
         navigationDispatcher.dispatch(ToRemoteAuthorSelectionDialog(selectedAuthors))
     }
 
-
-    fun onClearAuthorFilterClicked() {
-        setAuthorIdList(emptySet())
-    }
-
-    fun onClearCourseOfStudiesFilterClicked() {
-        setCosIdList(emptySet())
-    }
-
-    fun onClearFacultyFilterClicked() {
-        setFacultyIdList(emptySet())
-    }
-
-
     fun onCollapseButtonClicked() =  launch(IO) {
         navigationDispatcher.dispatch(NavigateBack)
     }
@@ -172,7 +158,7 @@ class VmBrowseQuestionnaireFilterSelection @Inject constructor(
     }
 
     fun onApplyButtonClicked() = launch(IO) {
-        preferencesRepository.updateRemoteFilters(
+        preferenceRepository.updateRemoteFilters(
             orderBy,
             orderAscending,
             selectedCourseOfStudiesIds,

@@ -78,8 +78,9 @@ abstract class QuestionnaireDao : BaseDao<Questionnaire>(Questionnaire.TABLE_NAM
     @Query("SELECT DISTINCT userId, userName FROM questionnaireTable")
     abstract fun getAllLocalAuthorsFlow(): Flow<List<AuthorInfo>>
 
-    @get:Query("SELECT * FROM questionnaireTable")
-    abstract val allCompleteQuestionnairesFlow: Flow<List<CompleteQuestionnaire>>
+    @Transaction
+    @Query("SELECT * FROM questionnaireTable")
+    abstract fun getAllCompleteQuestionnairesFlow(): Flow<List<CompleteQuestionnaire>>
 
     @Transaction
     @RawQuery(
@@ -95,77 +96,4 @@ abstract class QuestionnaireDao : BaseDao<Questionnaire>(Questionnaire.TABLE_NAM
     )
     abstract fun rawQueryGetFilteredCompleteQuestionnaireFlow(query: SimpleSQLiteQuery): Flow<List<CompleteQuestionnaire>>
 
-    //TODO -> Performance anschauen für das Progress order by
-    fun getFilteredCompleteQuestionnaireFlow(
-        searchQuery: String,
-        orderBy: LocalQuestionnaireOrderBy,
-        ascending: Boolean,
-        authorIds: Set<String>,
-        cosIds: Set<String>,
-        facultyIds: Set<String>,
-        hideCompleted: Boolean
-    ): Flow<List<CompleteQuestionnaire>> {
-        val args = mutableListOf<Any>("%$searchQuery%")
-
-        val queryBuilder = StringBuilder(
-            "SELECT DISTINCT q.*, COUNT(*) as questionCount " +
-                    "FROM questionnaireTable as q " +
-                    "LEFT JOIN questionnaireCourseOfStudiesRelationTable as qc " +
-                    "ON(q.questionnaireId = qc.questionnaireId) " +
-                    "LEFT JOIN courseOfStudiesTable as c " +
-                    "ON(qc.courseOfStudiesId = c.courseOfStudiesId) " +
-                    "LEFT JOIN facultyCourseOfStudiesRelationTable as fc " +
-                    "ON(fc.courseOfStudiesId = c.courseOfStudiesId) " +
-                    "LEFT JOIN facultyTable as f " +
-                    "ON(fc.facultyId = f.facultyId) " +
-                    "LEFT JOIN questionTable as qt " +
-                    "ON(q.questionnaireId = qt.questionnaireId) " +
-                    "WHERE q.title LIKE $PLACEHOLDER"
-        )
-
-        if (authorIds.isNotEmpty()) {
-            queryBuilder.append(" AND q.userId IN(${authorIds.asRawQueryPlaceHolderString()})")
-            args.addAll(authorIds)
-        }
-
-        if (cosIds.isNotEmpty()) {
-            queryBuilder.append(" AND c.courseOfStudiesId IN(${cosIds.asRawQueryPlaceHolderString()})")
-            args.addAll(cosIds)
-        }
-
-        if (facultyIds.isNotEmpty()) {
-            queryBuilder.append(" AND f.facultyId IN(${facultyIds.asRawQueryPlaceHolderString()})")
-            args.addAll(facultyIds)
-        }
-
-        queryBuilder.append(" GROUP BY q.questionnaireId")
-
-        val order = if (ascending) " ASC" else " DESC"
-
-        queryBuilder.append(" ORDER BY ").append(
-            when (orderBy) {
-                TITLE, PROGRESS -> "q.title $order"
-                AUTHOR_NAME -> "q.userName $order, q.title ASC"
-                QUESTION_COUNT -> "questionCount $order, q.title ASC"
-                LAST_UPDATED -> "q.lastModifiedTimestamp $order, q.title ASC"
-            }
-        )
-
-        queryBuilder.append(";")
-
-        return rawQueryGetFilteredCompleteQuestionnaireFlow(SimpleSQLiteQuery(queryBuilder.toString(), args.toTypedArray())).let { questionnairesFlow ->
-            questionnairesFlow.map { questionnaires ->
-                val list = if(orderBy == PROGRESS) {
-                    if (ascending) {
-                        questionnaires.sortedBy(CompleteQuestionnaire::answeredQuestionsPercentage)
-                    } else {
-                        questionnaires.sortedByDescending(CompleteQuestionnaire::answeredQuestionsPercentage)
-                    }
-                } else {
-                    questionnaires
-                }
-                return@map (if (hideCompleted) list.filter(CompleteQuestionnaire::isAnyQuestionNotCorrectlyAnswered) else list)
-            }
-        }
-    }
 }

@@ -18,9 +18,8 @@ import com.example.quizapp.model.databases.room.entities.Questionnaire
 import com.example.quizapp.model.databases.room.entities.QuestionnaireCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.QuestionWithAnswers
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
 import com.example.quizapp.model.ktor.BackendRepository
-import com.example.quizapp.model.ktor.BackendResponse.*
 import com.example.quizapp.model.ktor.BackendResponse.InsertQuestionnairesResponse.*
 import com.example.quizapp.model.ktor.status.SyncStatus.*
 import com.example.quizapp.utils.CsvDocumentFilePicker.*
@@ -35,12 +34,9 @@ import com.example.quizapp.viewmodel.VmAddEditQuestionnaire.AddEditQuestionnaire
 import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.http.cio.*
-import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import org.bson.types.ObjectId
@@ -50,7 +46,7 @@ import javax.inject.Inject
 class VmAddEditQuestionnaire @Inject constructor(
     private val applicationScope: CoroutineScope,
     private val localRepository: LocalRepository,
-    private val preferencesRepository: PreferencesRepository,
+    private val preferenceRepository: PreferenceRepository,
     private val backendRepository: BackendRepository,
     private val dataMapper: DataMapper,
     private val state: SavedStateHandle,
@@ -81,7 +77,7 @@ class VmAddEditQuestionnaire @Inject constructor(
     private val parsedCourseOfStudiesIds
         get() = args.completeQuestionnaire?.allCoursesOfStudies
             ?.map(CourseOfStudies::id)?.toMutableSet()
-            ?: runBlocking(IO) { preferencesRepository.getPreferredCourseOfStudiesId() }
+            ?: runBlocking(IO) { preferenceRepository.getPreferredCourseOfStudiesId() }
 
     private val parsedQuestionsWithAnswers
         get() = args.completeQuestionnaire?.questionsWithAnswers
@@ -146,7 +142,7 @@ class VmAddEditQuestionnaire @Inject constructor(
 
 
 
-    val userRoleFlow = preferencesRepository.userFlow.map(User::role::get).stateIn(viewModelScope, SharingStarted.Lazily, null)
+    val userRoleFlow = preferenceRepository.userFlow.map(User::role::get).stateIn(viewModelScope, SharingStarted.Lazily, null)
 
 
     private fun setQuestionWithAnswersWithoutPositionUpdate(questionsWithAnswers: List<QuestionWithAnswers>) {
@@ -189,10 +185,6 @@ class VmAddEditQuestionnaire @Inject constructor(
 
     fun onCourseOfStudiesButtonClicked() = launch(IO) {
         navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(coursesOfStudiesIdsMutableStateFlow.value))
-    }
-
-    fun onClearCourseOfStudiesClicked() {
-        setCoursesOfStudiesIds(emptySet())
     }
 
     fun onPublishCardClicked() {
@@ -292,7 +284,7 @@ class VmAddEditQuestionnaire @Inject constructor(
         val questionnaire = Questionnaire(
             id = parsedQuestionnaireId,
             title = questionnaireTitle,
-            authorInfo = preferencesRepository.getOwnAuthorInfo(),
+            authorInfo = preferenceRepository.getOwnAuthorInfo(),
             subject = questionnaireSubject,
             syncStatus = SYNCING,
             visibility = if (publishQuestionnaire) PUBLIC else PRIVATE
@@ -332,7 +324,7 @@ class VmAddEditQuestionnaire @Inject constructor(
 
         runCatching {
             localRepository.findCompleteQuestionnaireWith(parsedQuestionnaireId)!!.let(dataMapper::mapRoomQuestionnaireToMongoQuestionnaire).let {
-                backendRepository.insertQuestionnaire(it)
+                backendRepository.questionnaireApi.insertQuestionnaire(it)
             }
         }.onSuccess {
             localRepository.update(questionnaire.copy(syncStatus = if (it.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) SYNCED else UNSYNCED))
@@ -376,9 +368,7 @@ class VmAddEditQuestionnaire @Inject constructor(
 
         when (result) {
             is CsvDocumentFilePickerResult.Success -> {
-                eventChannel.send(SetQuestionnaireTitle(result.questionnaire.title))
-                eventChannel.send(SetQuestionnaireSubject(result.questionnaire.subject))
-                setQuestionWithAnswers(result.qwa)
+                setQuestionWithAnswers(result.questionsWithAnswers)
                 eventChannel.send(ShowMessageSnackBarEvent(R.string.successfullyLoadedCsvData))
             }
             is CsvDocumentFilePickerResult.Error -> {
@@ -392,8 +382,6 @@ class VmAddEditQuestionnaire @Inject constructor(
         class ShowMessageSnackBarWithStringEvent(val message: String) : AddEditQuestionnaireEvent()
         object ShowPopupMenu : AddEditQuestionnaireEvent()
         object StartCsvDocumentFilePicker : AddEditQuestionnaireEvent()
-        class SetQuestionnaireTitle(val title: String) : AddEditQuestionnaireEvent()
-        class SetQuestionnaireSubject(val subject: String) : AddEditQuestionnaireEvent()
     }
 
     sealed class AddEditQuestionnaireQuestionListEvent {

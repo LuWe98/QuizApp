@@ -8,6 +8,7 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
 import com.example.quizapp.model.databases.room.RoomListLoadStatus
 import com.example.quizapp.model.databases.room.asRoomListLoadStatus
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
@@ -28,7 +29,6 @@ import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -48,7 +48,7 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
 
 
     fun getFacultiesWithPlaceholder(context: Context) = runBlocking(IO) {
-        localRepository.allFacultiesFlow.first().toMutableList().apply {
+        localRepository.getAllFacultiesFlow().first().toMutableList().apply {
             add(
                 Faculty(
                     id = NO_FACULTY_ID,
@@ -83,7 +83,7 @@ class VmAdminManageCoursesOfStudies @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.deletingCourseOfStudies))
 
         runCatching {
-            backendRepository.deleteCourseOfStudies(result.courseOfStudies.id)
+            backendRepository.courseOfStudiesApi.deleteCourseOfStudies(result.courseOfStudies.id)
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->

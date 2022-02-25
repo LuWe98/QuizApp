@@ -22,11 +22,6 @@ import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 
-//TODO -> SHARE QUESTIONNAIRE VLLT MIT LISTE IN EINEM FRAGEBOGEN ÜBERARBEITEN, in der Liste stehen alle User mit denen der geteilt wurde, man kann den dann auch bearbeiten
-//TODO -> THEME COLORS
-//TODO -> RVI_LAYOUTS
-//TODO -> RAW QUERY FÜR MAINSCREEN ANSCHAUEN
-
 @AndroidEntryPoint
 class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDestinationChangedListener {
 
@@ -40,11 +35,6 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
     private val vmQuizActivity: VmMainActivity by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-//        window.apply {
-//            WindowCompat.setDecorFitsSystemWindows(this, false)
-//            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-//        }
-
         super.onCreate(savedInstanceState)
         initSplashScreen(savedInstanceState)
         initViews(savedInstanceState)
@@ -58,7 +48,7 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
 
         installSplashScreen().apply {
             setKeepVisibleCondition {
-                vmQuizActivity.test
+                vmQuizActivity.showSplashScreen
             }
         }
     }
@@ -93,6 +83,18 @@ class QuizActivity : BindingActivity<ActivityQuizBinding>(), NavController.OnDes
             when (event) {
                 is ShowMessageSnackBar -> showSnackBar(event.messageRes)
             }
+        }
+
+        vmQuizActivity.locallyPresentAuthorsFlow.collectWhenStarted(this) {
+            vmQuizActivity.onLocallyPresentAuthorsChanged(it)
+        }
+
+        vmQuizActivity.locallyPresentFacultiesFlow.collectWhenStarted(this) {
+            vmQuizActivity.onLocallyPresentFacultiesChanges(it)
+        }
+
+        vmQuizActivity.locallyPresentCoursesOfStudiesFlow.collectWhenStarted(this) {
+            vmQuizActivity.onLocallyPresentCoursesOfStudiesChanged(it)
         }
     }
 

@@ -4,7 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.properties.Role
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
+import com.example.quizapp.model.datastore.PreferenceRepositoryImpl
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.ToSelectionDialog
@@ -21,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class VmManageUsersFilterSelection @Inject constructor(
-    private val preferencesRepository: PreferencesRepository,
+    private val preferenceRepository: PreferenceRepository,
     private val state: SavedStateHandle
 ) : EventViewModel<ManageUsersFilterSelectionEvent>() {
 
@@ -35,7 +36,7 @@ class VmManageUsersFilterSelection @Inject constructor(
     private val selectedRoles get() = selectedRolesMutableStateFlow.value
 
 
-    private val selectedOrderByMutableStateFlow = state.getMutableStateFlow(SELECTED_ORDER_BY_KEY, runBlocking(IO) { preferencesRepository.getManageUsersOrderBy() })
+    private val selectedOrderByMutableStateFlow = state.getMutableStateFlow(SELECTED_ORDER_BY_KEY, runBlocking(IO) { preferenceRepository.getManageUsersOrderBy() })
 
     val selectedOrderByStateFlow = selectedOrderByMutableStateFlow.asStateFlow()
 
@@ -43,7 +44,7 @@ class VmManageUsersFilterSelection @Inject constructor(
 
 
     private val selectedOrderAscendingMutableStateFlow =
-        state.getMutableStateFlow(SELECTED_ORDER_ASCENDING_KEY, runBlocking(IO) { preferencesRepository.getManageUsersAscendingOrder() })
+        state.getMutableStateFlow(SELECTED_ORDER_ASCENDING_KEY, runBlocking(IO) { preferenceRepository.getManageUsersAscendingOrder() })
 
     val selectedOrderAscendingStateFlow = selectedOrderAscendingMutableStateFlow.asStateFlow()
 
@@ -81,8 +82,8 @@ class VmManageUsersFilterSelection @Inject constructor(
     }
 
     fun onApplyButtonClicked() = launch(IO) {
-        preferencesRepository.updateManageUsersOrderBy(selectedOrderBy)
-        preferencesRepository.updateManageUsersAscendingOrder(selectedOrderAscending)
+        preferenceRepository.updateManageUsersOrderBy(selectedOrderBy)
+        preferenceRepository.updateManageUsersAscendingOrder(selectedOrderAscending)
         fragmentResultDispatcher.dispatch(FragmentResult.ManageUsersFilterResult(selectedRoles.toSet()))
         navigationDispatcher.dispatch(NavigateBack)
     }

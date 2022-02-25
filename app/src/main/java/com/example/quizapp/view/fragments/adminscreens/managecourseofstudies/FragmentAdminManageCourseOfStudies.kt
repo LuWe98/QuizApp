@@ -60,17 +60,14 @@ class FragmentAdminManageCourseOfStudies : BindingFragment<FragmentAdminManageCo
 
     private fun updateTabs(newPosition: Int){
         binding.tabLayout.forEachTab { tab, i ->
-            val factors = if (i == newPosition) 1f else 0f
-            val duration = if (i == newPosition) 300L else 150L
-
             TabLayoutViewFacultyBinding.bind(tab.customView!!).apply {
                 val textColor = if(i == newPosition) getColor(R.color.white) else getThemeColor(R.attr.colorControlNormal)
                 tvText.setTextColor(textColor)
                 selectedView.animate()
-                    .scaleX(factors)
-                    .scaleY(factors)
-                    .alpha(factors)
-                    .setDuration(duration)
+                    .alpha(if (i == newPosition) 1f else 0f)
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(if (i == newPosition) 650L else 0L)
                     .setInterpolator(DecelerateInterpolator())
                     .start()
             }

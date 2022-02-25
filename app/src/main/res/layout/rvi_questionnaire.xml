@@ -68,7 +68,6 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:id="@+id/btnSync"
-                    tools:tint="@color/green"
                     app:layout_constraintTop_toTopOf="@+id/textLayout"
                     app:srcCompat="@drawable/ic_cloud_done"
                     android:padding="4dp"

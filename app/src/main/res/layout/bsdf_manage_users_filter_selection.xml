@@ -28,7 +28,7 @@
             android:id="@+id/tvTitle"
             style="@style/Style.QuizApp.BottomSheetHeading.TextAppearance"
             android:textStyle="bold"
-            android:text="@string/userSearchFilters"
+            android:text="@string/searchFilters"
             android:gravity="center_vertical"
             android:layout_marginHorizontal="@dimen/grid_4"
             app:layout_constraintTop_toTopOf="parent"
@@ -52,139 +52,146 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:id="@+id/orderByCard"
-                    android:background="@drawable/background_round_corners_7_5dp"
-                    android:backgroundTint="?colorOnPrimary"
-                    android:paddingVertical="@dimen/grid_3"
-                    android:layout_marginHorizontal="@dimen/grid_6"
-                    android:layout_marginTop="@dimen/grid_4"
+                    android:background="@drawable/ripple_round_corners_10_dp"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
+                    android:layout_marginHorizontal="@dimen/grid_6"
+                    android:layout_marginTop="@dimen/grid_6">
 
-                <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="match_parent"
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:id="@+id/orderFilterHeader"
-                        android:text="@string/orderByTypeSelection"
-                        android:background="@drawable/background_round_corners_10dp"
-                        android:backgroundTint="@color/transparent"
-                        android:gravity="center_vertical"
-                        android:layout_marginHorizontal="@dimen/grid_6"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/hfuBrightGreen"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:id="@+id/ivOrderBy"
-                        app:srcCompat="@drawable/ic_title"
-                        android:padding="5dp"
-                        android:elevation="@dimen/grid_2"
-                        android:layout_marginStart="@dimen/grid_2"
-                        app:layout_constraintStart_toStartOf="@id/tvOrderBy"
-                        app:layout_constraintTop_toTopOf="@id/tvOrderBy"
-                        app:layout_constraintBottom_toBottomOf="@id/tvOrderBy" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:srcCompat="@drawable/ic_filter"
+                        android:layout_marginStart="@dimen/grid_1"
+                        android:padding="10dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:id="@+id/roleIcon" />
 
                 <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:background="@drawable/ripple_round_corners_10_dp"
-                        android:backgroundTint="?android:colorBackground"
-                        android:text="@string/title"
-                        android:id="@+id/tvOrderBy"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:text="Order by"
+                        android:layout_marginStart="@dimen/grid_2"
                         android:gravity="center_vertical"
-                        android:textSize="16sp"
-                        android:paddingHorizontal="@dimen/grid_12"
-                        android:layout_marginHorizontal="@dimen/grid_4"
-                        android:layout_marginTop="@dimen/grid_2"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/orderFilterHeader" />
+                        android:textSize="15sp"
+                        app:layout_constraintEnd_toStartOf="@+id/orderByText"
+                        app:layout_constraintStart_toEndOf="@+id/roleIcon" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:srcCompat="@drawable/ic_arrow_down"
                         android:padding="5dp"
-                        android:layout_marginEnd="@dimen/grid_2"
-                        app:layout_constraintEnd_toEndOf="@id/tvOrderBy"
-                        app:layout_constraintTop_toTopOf="@id/tvOrderBy"
-                        app:layout_constraintBottom_toBottomOf="@id/tvOrderBy" />
-
-
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:id="@+id/ivOrderAscending"
-                        app:srcCompat="@drawable/ic_arrow_drop_down"
-                        android:elevation="@dimen/grid_2"
-                        android:layout_marginStart="@dimen/grid_2"
-                        app:layout_constraintStart_toStartOf="@id/tvOrderAscending"
-                        app:layout_constraintTop_toTopOf="@id/tvOrderAscending"
-                        app:layout_constraintBottom_toBottomOf="@id/tvOrderAscending" />
+                        android:layout_marginEnd="@dimen/grid_3"
+                        android:id="@+id/appCompatImageView4" />
 
                 <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:background="@drawable/ripple_round_corners_10_dp"
-                        android:backgroundTint="?android:colorBackground"
-                        android:text="@string/orderAscending"
-                        android:id="@+id/tvOrderAscending"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/orderByText"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:text="Title"
+                        android:textColor="@color/hfuDarkGreen"
                         android:gravity="center_vertical"
-                        android:textSize="16sp"
-                        android:paddingHorizontal="@dimen/grid_12"
-                        android:layout_marginTop="@dimen/grid_2"
-                        android:layout_marginHorizontal="@dimen/grid_4"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvOrderBy" />
+                        android:layout_marginStart="@dimen/grid_5"
+                        android:textSize="15sp"
+                        android:layout_marginEnd="@dimen/grid_2"
+                        app:layout_constraintEnd_toStartOf="@+id/appCompatImageView4" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/facultyCard"
-                    android:background="@drawable/background_round_corners_7_5dp"
-                    android:backgroundTint="?colorOnPrimary"
-                    android:paddingVertical="@dimen/grid_3"
-                    android:layout_marginTop="@dimen/grid_4"
+                    android:layout_height="60dp"
+                    android:id="@+id/ascendingLayout"
+                    android:layout_marginTop="@dimen/grid_6"
                     android:layout_marginHorizontal="@dimen/grid_6"
-                    app:layout_constraintTop_toBottomOf="@id/orderByCard"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
+                    app:layout_constraintTop_toBottomOf="@+id/orderByCard"
+                    android:background="@drawable/ripple_round_corners_10_dp"
+                    android:backgroundTint="?colorOnPrimary"
+                    tools:layout_editor_absoluteX="24dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:srcCompat="@drawable/ic_order_ascending_descending"
+                        android:layout_marginStart="@dimen/grid_1"
+                        android:padding="10dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:id="@+id/ascendingIcon" />
 
                 <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:id="@+id/facultyFilterHeader"
-                        android:text="@string/selectedRoles"
-                        android:background="@drawable/background_round_corners_10dp"
-                        android:backgroundTint="@color/transparent"
-                        android:gravity="center_vertical"
-                        android:layout_marginHorizontal="@dimen/grid_6"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/hfuBrightGreen"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                <com.google.android.material.chip.ChipGroup
                         android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:id="@+id/ascendingText"
+                        android:text="Ascending ?"
+                        android:layout_marginStart="@dimen/grid_2"
+                        android:gravity="center_vertical"
+                        android:textSize="15sp"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/ascendingIcon"
+                        app:layout_constraintEnd_toStartOf="@+id/ascendingSwitch" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:animateLayoutChanges="true"
-                        android:id="@+id/roleChipGroup"
-                        app:singleSelection="false"
-                        app:selectionRequired="true"
-                        app:layout_constraintTop_toBottomOf="@id/facultyFilterHeader"
-                        android:layout_marginTop="@dimen/grid_1"
-                        android:layout_marginHorizontal="@dimen/grid_3"
-                        app:layout_constraintStart_toStartOf="@id/facultyFilterHeader"
-                        app:layout_constraintEnd_toEndOf="@id/facultyFilterHeader"/>
+                        android:id="@+id/ascendingSwitch"
+                        android:scaleX="0.75"
+                        android:scaleY="0.75"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:thumb="@drawable/switch_thump"
+                        app:thumbTint="?android:colorBackground"
+                        app:track="@drawable/switch_track"
+                        app:trackTint="@color/switch_color_selector"
+                        android:layout_marginEnd="@dimen/grid_1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/authors"
+                    android:id="@+id/tvRole"
+                    android:textStyle="bold"
+                    android:textColor="@color/hfuBrightGreen"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="@dimen/grid_8"
+                    android:layout_marginTop="@dimen/grid_4"
+                    app:layout_constraintTop_toBottomOf="@+id/ascendingLayout" />
+
+            <com.google.android.material.chip.ChipGroup
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:id="@+id/roleChipGroup"
+                    app:singleSelection="false"
+                    app:selectionRequired="true"
+                    app:layout_constraintTop_toBottomOf="@id/tvRole"
+                    android:layout_marginTop="@dimen/grid_4"
+                    app:layout_constraintStart_toStartOf="@id/tvRole"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

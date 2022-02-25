@@ -8,7 +8,7 @@
 
     <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:padding="5dp"
             app:tint="?colorPrimary"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +30,7 @@
             android:gravity="center"
             android:textStyle="bold"
             android:textColor="?dominantTextColor"
-            android:textSize="20sp"/>
+            android:textSize="17sp"/>
 
     <com.google.android.material.textview.MaterialTextView
             android:layout_width="0dp"
@@ -43,6 +43,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:gravity="center"
-            android:textSize="15sp"/>
+            android:textSize="14sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

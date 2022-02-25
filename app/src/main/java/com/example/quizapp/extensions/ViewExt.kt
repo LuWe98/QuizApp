@@ -3,7 +3,6 @@ package com.example.quizapp.extensions
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -16,17 +15,12 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewpager2.widget.ViewPager2
 import com.example.quizapp.R
-import com.example.quizapp.databinding.ChipEntryBinding
-import com.example.quizapp.view.recyclerview.impl.SimpleItemTouchHelper
-import com.google.android.material.chip.ChipGroup
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -238,33 +232,6 @@ fun View.enableViewAndChildren(enable: Boolean) {
     if (this is ViewGroup) {
         for (index in 0..childCount) {
             getChildAt(index)?.enableViewAndChildren(enable)
-        }
-    }
-}
-
-
-inline fun <reified T> ChipGroup.setUpChipsForChipGroup(
-    list: Collection<T>,
-    crossinline textProvider: (T) -> (String),
-    crossinline onClickCallback: (T) -> (Unit) = {},
-    crossinline onLongClickCallback: (T) -> (Unit) = {}
-) {
-    val mapped: Set<T> = children.mapNotNull { if (it.tag is T) it.tag as T else null }.toSet()
-    val itemsToInsert: Set<T> = list.toSet() - mapped
-    val itemsToRemove: Set<T> = mapped - list.toSet() - itemsToInsert
-
-    itemsToRemove.forEach { tagToFind ->
-        children.firstOrNull { it.tag == tagToFind }?.let(::removeView)
-    }
-
-    itemsToInsert.forEach { entry ->
-        ChipEntryBinding.inflate(LayoutInflater.from(context)).root.apply {
-            tag = entry
-            text = textProvider.invoke(entry)
-            onClick { onClickCallback.invoke(this.tag as T) }
-            onLongClick { onLongClickCallback.invoke(this.tag as T) }
-        }.let {
-            addView(it, 0)
         }
     }
 }

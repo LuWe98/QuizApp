@@ -38,11 +38,17 @@ inline fun <reified T> Flow<T>.collectWhen(
     onLifeCycleState: Lifecycle.State,
     crossinline collector: suspend (T) -> Unit
 ) {
-    lifecycleOwner.lifecycleScope.launchWhenStarted {
+    val block: suspend CoroutineScope.() -> Unit = {
         delay(firstTimeDelay)
         lifecycleOwner.lifecycle.repeatOnLifecycle(onLifeCycleState) {
             collect(collector)
         }
+    }
+    when(onLifeCycleState) {
+        Lifecycle.State.CREATED -> lifecycleOwner.lifecycleScope.launchWhenCreated(block)
+        Lifecycle.State.STARTED -> lifecycleOwner.lifecycleScope.launchWhenStarted(block)
+        Lifecycle.State.RESUMED -> lifecycleOwner.lifecycleScope.launchWhenResumed(block)
+        else -> throw IllegalArgumentException("Illegal Lifecycle State!")
     }
 }
 

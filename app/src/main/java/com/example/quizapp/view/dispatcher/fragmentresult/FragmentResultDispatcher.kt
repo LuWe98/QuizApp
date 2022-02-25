@@ -109,6 +109,9 @@ class FragmentResultDispatcher @Inject constructor(
         class LogoutConfirmationResult(override val confirmed: Boolean) : ConfirmationResult()
 
         @Parcelize
+        class DeleteAccountConfirmationResult(override val confirmed: Boolean) : ConfirmationResult()
+
+        @Parcelize
         class LoadCsvFileConfirmationResult(override val confirmed: Boolean) : ConfirmationResult()
 
     }

@@ -1,20 +1,20 @@
 package com.example.quizapp.di
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.quizapp.QuizApplication
 import com.example.quizapp.extensions.dataStore
 import com.example.quizapp.model.databases.DataMapper
-import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.datastore.PreferenceRepositoryImpl
+import com.example.quizapp.model.ktor.BackendRepositoryImpl
 import com.example.quizapp.model.ktor.apiclasses.*
 import com.example.quizapp.model.ktor.client.KtorClientAuth
 import com.example.quizapp.model.ktor.client.KtorClientExceptionHandler
 import com.example.quizapp.model.databases.room.LocalDatabase
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
+import com.example.quizapp.model.datastore.PreferenceRepository
+import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
 import com.example.quizapp.utils.ConnectivityHelper
 import com.example.quizapp.utils.Constants
@@ -50,24 +50,22 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePreferencesRepository(@ApplicationContext context: Context) = PreferencesRepository(context.dataStore)
+    fun providePreferencesRepository(@ApplicationContext context: Context) : PreferenceRepository = PreferenceRepositoryImpl(context.dataStore)
 
 
     @Provides
     @Singleton
     fun provideRoomDatabase(
         @ApplicationContext context: Context,
-        callback: LocalDatabase.Callback
     ) = Room.databaseBuilder(context, LocalDatabase::class.java, Constants.ROOM_DATABASE_NAME)
         .fallbackToDestructiveMigration()
-        .addCallback(callback)
         .build()
 
     @Provides
     @Singleton
     fun provideRoomRepository(
         roomDatabase: LocalDatabase
-    ) = LocalRepository(
+    ) : LocalRepository = LocalRepositoryImpl(
         roomDatabase,
         roomDatabase.getQuestionaryDao(),
         roomDatabase.getQuestionDao(),
@@ -88,13 +86,11 @@ object AppModule {
     @Singleton
     @Provides
     fun provideKtorClientAuth(
-        applicationScope: CoroutineScope,
-        preferencesRepository: PreferencesRepository,
+        preferenceRepository: PreferenceRepository,
         ktorClientProvider: Provider<HttpClient>,
-        userApiProvider: Provider<UserApi>
+        userApiProvider: Provider<UserApiImpl>
     ) = KtorClientAuth(
-        applicationScope,
-        preferencesRepository,
+        preferenceRepository,
         ktorClientProvider,
         userApiProvider
     )
@@ -102,7 +98,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideBackendExceptionHandler(preferencesRepository: PreferencesRepository) = KtorClientExceptionHandler(preferencesRepository)
+    fun provideBackendExceptionHandler(preferenceRepository: PreferenceRepository) = KtorClientExceptionHandler(preferenceRepository)
 
 
     @Provides
@@ -128,7 +124,6 @@ object AppModule {
             serializer = KotlinxSerializer(Json {
                 prettyPrint = true
                 isLenient = true
-                ignoreUnknownKeys = false
             })
         }
 
@@ -137,35 +132,35 @@ object AppModule {
         }
 
         engine {
-            connectTimeout = 20_000
-            socketTimeout = 20_000
+            connectTimeout = 25_000
+            socketTimeout = 25_000
         }
 
         HttpResponseValidator {
-            validateResponse { ktorClientExceptionHandler.validateResponse(it) }
-            handleResponseException { ktorClientExceptionHandler.handleException(it) }
+            validateResponse(ktorClientExceptionHandler::validateResponse)
+            handleResponseException(ktorClientExceptionHandler::handleException)
         }
     }
 
     @Provides
     @Singleton
-    fun provideUserApi(ktorClient: HttpClient) = UserApi(ktorClient)
+    fun provideUserApi(ktorClient: HttpClient) : UserApi = UserApiImpl(ktorClient)
 
     @Provides
     @Singleton
-    fun provideQuestionnaireApi(ktorClient: HttpClient) = QuestionnaireApi(ktorClient)
+    fun provideQuestionnaireApi(ktorClient: HttpClient) : QuestionnaireApi = QuestionnaireApiImpl(ktorClient)
 
     @Provides
     @Singleton
-    fun provideFilledQuestionnaireApi(ktorClient: HttpClient) = FilledQuestionnaireApi(ktorClient)
+    fun provideFilledQuestionnaireApi(ktorClient: HttpClient) : FilledQuestionnaireApi = FilledQuestionnaireApiImpl(ktorClient)
 
     @Provides
     @Singleton
-    fun provideFacultyApi(ktorClient: HttpClient) = FacultyApi(ktorClient)
+    fun provideFacultyApi(ktorClient: HttpClient) : FacultyApi = FacultyApiImpl(ktorClient)
 
     @Provides
     @Singleton
-    fun provideCourseOfStudiesApi(ktorClient: HttpClient) = CourseOfStudiesApi(ktorClient)
+    fun provideCourseOfStudiesApi(ktorClient: HttpClient) : CourseOfStudiesApi = CourseOfStudiesApiImpl(ktorClient)
 
 
     @Provides
@@ -175,13 +170,13 @@ object AppModule {
         questionnaireApi: QuestionnaireApi,
         filledQuestionnaireApi: FilledQuestionnaireApi,
         facultyApi: FacultyApi,
-        courseOfStudiesApi: CourseOfStudiesApi
-    ) = BackendRepository(
+        courseOfStudiesApiImpl: CourseOfStudiesApi
+    ) : BackendRepository = BackendRepositoryImpl(
         userApi,
         questionnaireApi,
         filledQuestionnaireApi,
         facultyApi,
-        courseOfStudiesApi
+        courseOfStudiesApiImpl
     )
 
 
@@ -193,15 +188,14 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSyncHelper(
-        preferencesRepository: PreferencesRepository,
+        preferenceRepository: PreferenceRepository,
         localRepository: LocalRepository,
         backendRepository: BackendRepository,
         dataMapper: DataMapper
     ) = BackendSyncer(
-        preferencesRepository,
+        preferenceRepository,
         localRepository,
         backendRepository,
         dataMapper
     )
-
 }

@@ -4,27 +4,44 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="?android:colorBackground"
+        app:cardBackgroundColor="?colorOnPrimary"
         app:cardElevation="0dp"
         android:layout_marginTop="@dimen/grid_3"
-        app:cardCornerRadius="@dimen/itemCardCornerRadius">
+        app:cardCornerRadius="@dimen/defaultCardCornerRadius">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp">
+            android:layout_height="75dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="40sp"
+                android:layout_height="40sp"
+                app:srcCompat="@drawable/ic_person"
+                android:background="@drawable/background_round_corners_18_5dp"
+                android:backgroundTint="@color/hfuLightGreen"
+                android:layout_marginStart="@dimen/grid_3"
+                app:tint="?colorOnPrimary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:padding="12.5dp"
+                android:id="@+id/roleIcon" />
+
         <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/tvName"
                 android:gravity="center_vertical"
                 android:lines="1"
                 android:ellipsize="end"
                 tools:text="@string/authorName"
-                android:textColor="?dominantTextColor"
                 android:textSize="14sp"
-                android:layout_marginStart="@dimen/grid_4"
+                android:textColor="?dominantTextColor"
                 android:layout_marginEnd="@dimen/grid_2"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="@dimen/grid_3"
+                app:layout_constraintStart_toEndOf="@+id/roleIcon"
+                app:layout_constraintTop_toTopOf="@+id/roleIcon"
+                app:layout_constraintBottom_toBottomOf="@+id/roleIcon"
                 app:layout_constraintEnd_toStartOf="@+id/btnRemove" />
 
         <androidx.appcompat.widget.AppCompatImageView

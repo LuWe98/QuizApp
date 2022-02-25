@@ -6,10 +6,10 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
 import com.example.quizapp.model.databases.room.entities.Faculty
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.InsertFacultyResponse.*
-import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.adminscreens.managefaculties.FragmentAdminAddEditFacultiesArgs
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
@@ -18,10 +18,8 @@ import com.example.quizapp.viewmodel.VmAdminAddEditFaculty.AddEditFacultyEvent.*
 import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import org.bson.types.ObjectId
 import javax.inject.Inject
 
@@ -31,7 +29,7 @@ class VmAdminAddEditFaculty @Inject constructor(
     private val backendRepository: BackendRepository,
     private val dataMapper: DataMapper,
     private val applicationScope: CoroutineScope,
-    private val state: SavedStateHandle
+    state: SavedStateHandle
 ) : EventViewModel<AddEditFacultyEvent>() {
 
     private val args = FragmentAdminAddEditFacultiesArgs.fromSavedStateHandle(state)
@@ -84,7 +82,7 @@ class VmAdminAddEditFaculty @Inject constructor(
 
         runCatching {
             dataMapper.mapRoomFacultyToMongoFaculty(updatedFaculty).let { mongoFaculty ->
-                backendRepository.insertFaculty(mongoFaculty)
+                backendRepository.facultyApi.insertFaculty(mongoFaculty)
             }
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)

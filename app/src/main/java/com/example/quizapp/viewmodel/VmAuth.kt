@@ -4,10 +4,11 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
+import com.example.quizapp.model.datastore.PreferenceRepository
+import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.LoginUserResponse.*
 import com.example.quizapp.model.ktor.BackendResponse.RegisterUserResponse
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
@@ -18,19 +19,18 @@ import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
 class VmAuth @Inject constructor(
     private val backendRepository: BackendRepository,
-    private val preferencesRepository: PreferencesRepository,
+    private val preferenceRepository: PreferenceRepository,
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle,
 ) : EventViewModel<FragmentAuthEvent>() {
 
     fun checkIfLoggedIn() = launch(IO) {
-        if (preferencesRepository.isUserLoggedIn()) {
+        if (preferenceRepository.isUserLoggedIn()) {
             navigationDispatcher.dispatch(FromAuthToHomeScreen)
         } else {
             eventChannel.send(ShowLoginScreen)
@@ -68,24 +68,24 @@ class VmAuth @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.loggingIn))
 
         runCatching {
-            backendRepository.loginUser(currentLoginUserName, currentLoginPassword)
+            backendRepository.userApi.loginUser(currentLoginUserName, currentLoginPassword)
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             if (response.responseType == LoginUserResponseType.LOGIN_SUCCESSFUL) {
                 User(
                     id = response.userId!!,
-                    userName = currentLoginUserName,
+                    name = currentLoginUserName,
                     password = currentLoginPassword,
                     role = response.role!!,
                     lastModifiedTimestamp = response.lastModifiedTimeStamp!!
                 ).let { user ->
-                    if (user.id != preferencesRepository.getUserId()) {
+                    if (user.id != preferenceRepository.getUserId()) {
                         localRepository.deleteAllUserData()
-                        preferencesRepository.wipePreferenceData()
+                        preferenceRepository.wipePreferenceData()
                     }
-                    preferencesRepository.updateUserCredentials(user)
-                    preferencesRepository.updateJwtToken(response.token)
+                    preferenceRepository.updateUserCredentials(user)
+                    preferenceRepository.updateJwtToken(response.token)
                 }
                 navigationDispatcher.dispatch(FromAuthToHomeScreen)
             }
@@ -151,7 +151,7 @@ class VmAuth @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.registering))
 
         runCatching {
-            backendRepository.registerUser(currentRegisterUserName, currentRegisterPassword)
+            backendRepository.userApi.registerUser(currentRegisterUserName, currentRegisterPassword)
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->

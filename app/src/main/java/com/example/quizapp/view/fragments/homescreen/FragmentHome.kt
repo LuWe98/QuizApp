@@ -50,10 +50,10 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
         binding.apply {
             ivSettings.onClick(vmHome::onSettingsButtonClicked)
             ivSearch.onClick(vmHome::onRemoteSearchButtonClicked)
-            btnAdd.onClick(vmHome::onAddQuestionnaireButtonClicked)
             ivFilter.onClick(vmHome::onFilterButtonClicked)
+            btnAdd.onClick(vmHome::onAddQuestionnaireButtonClicked)
             swipeRefreshLayout.setOnRefreshListener(vmHome::onSwipeRefreshTriggered)
-            statisticsCard.onClick(vmHome::onStatisticsCardClicked)
+            //statisticsCard.onClick(vmHome::onStatisticsCardClicked)
         }
     }
 
@@ -83,10 +83,6 @@ class FragmentHome : BindingFragment<FragmentHomeBinding>() {
 
         vmHome.searchQueryStateFlow.collectWhenStarted(viewLifecycleOwner) {
 
-        }
-
-        vmHome.locallyPresentAuthors.collectWhenStarted(viewLifecycleOwner) {
-            vmHome.onLocallyPresentAuthorsChanged(it)
         }
 
         vmHome.userNameFlow.collectWhenStarted(viewLifecycleOwner) {

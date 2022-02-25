@@ -8,8 +8,7 @@ import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.RoomListLoadStatus
 import com.example.quizapp.model.databases.room.asRoomListLoadStatus
-import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
+import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.FragmentResult
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.NavigateBack
 import com.example.quizapp.view.fragments.dialogs.authorselection.BsdfLocalAuthorSelectionArgs
 import com.example.quizapp.viewmodel.VmLocalAuthorSelection.LocalAuthorSelectionEvent
@@ -27,7 +26,6 @@ import javax.inject.Inject
 @HiltViewModel
 class VmLocalAuthorSelection @Inject constructor(
     private val localRepository: LocalRepository,
-    private val preferencesRepository: PreferencesRepository,
     private val state: SavedStateHandle
 ) : EventViewModel<LocalAuthorSelectionEvent>() {
 
@@ -48,16 +46,7 @@ class VmLocalAuthorSelection @Inject constructor(
 
 
     val filteredAuthorInfos = searchQueryMutableStateFlow.map { query ->
-        val authors = localRepository.getAuthorInfosWithName(query)
-        preferencesRepository.getOwnAuthorInfo().let { ownAuthorInfo ->
-            if (ownAuthorInfo !in authors && ownAuthorInfo.userName.lowercase().contains(query)) {
-                authors.toMutableList().apply {
-                    add(ownAuthorInfo)
-                }.sortedBy(AuthorInfo::userName)
-            } else {
-                authors
-            }
-        }.asRoomListLoadStatus(query::isNotEmpty)
+         localRepository.getAuthorInfosWithName(query).asRoomListLoadStatus(query::isNotEmpty)
     }.stateIn(viewModelScope, SharingStarted.Lazily, RoomListLoadStatus.DataFound(emptyList()))
 
 

@@ -17,9 +17,6 @@ import com.example.quizapp.viewmodel.VmAddEditQuestion.FragmentAddEditQuestionEv
 import com.example.quizapp.viewmodel.VmAddEditQuestionnaire
 import dagger.hilt.android.AndroidEntryPoint
 
-//TODO -> Antworten schön anzeigen und add edit Answer DialogFragment einbauen
-//TODO -> Long Click auf answer einbauen
-
 @AndroidEntryPoint
 class FragmentAddEditQuestion : BindingFragment<FragmentAddEditQuestionBinding>() {
 
@@ -56,7 +53,7 @@ class FragmentAddEditQuestion : BindingFragment<FragmentAddEditQuestionBinding>(
             onSwiped = vmAddEditQuestion::onAnswerItemSwiped
         }
 
-        rvAdapter = RvaAddEditAnswer(vmAddEditQuestion).apply {
+        rvAdapter = RvaAddEditAnswer().apply {
             onItemClick = vmAddEditQuestion::onAnswerClicked
             onItemLongClicked = vmAddEditQuestion::onAnswerLongClicked
             onDragHandleTouched = itemTouchHelper::startDrag
@@ -72,13 +69,13 @@ class FragmentAddEditQuestion : BindingFragment<FragmentAddEditQuestionBinding>(
 
     private fun initListeners() {
         binding.apply {
-            contentLayout.etQuestionText.onTextChanged(vmAddEditQuestion::onQuestionTextChanged)
             btnBack.onClick(vmAddEditQuestion::onBackButtonClicked)
             tvSave.onClick(vmAddEditQuestion::onSaveButtonClicked)
-            contentLayout.multipleChoiceCard.onClick(vmAddEditQuestion::onChangeQuestionTypeClicked)
             contentLayout.apply {
-                //btnClearAnswers.onClick(vmAddEditQuestion::onClearAnswersButtonClicked)
+                etQuestionText.onTextChanged(vmAddEditQuestion::onQuestionTextChanged)
+                multipleChoiceCard.onClick(vmAddEditQuestion::onChangeQuestionTypeClicked)
                 btnAddAnswer.onClick(vmAddEditQuestion::onAddAnswerButtonClicked)
+                tvNoAssigned.onClick(vmAddEditQuestion::onAddAnswerButtonClicked)
             }
         }
     }

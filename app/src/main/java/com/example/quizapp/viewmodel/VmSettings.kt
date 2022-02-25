@@ -6,20 +6,25 @@ import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.room.LocalRepository
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
+import com.example.quizapp.model.datastore.PreferenceRepository
 import com.example.quizapp.model.datastore.datawrappers.QuestionnaireShuffleType
 import com.example.quizapp.model.datastore.datawrappers.QuizAppLanguage
 import com.example.quizapp.model.datastore.datawrappers.QuizAppTheme
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.BackendResponse
+import com.example.quizapp.model.ktor.BackendResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.DeleteUserResponse.*
 import com.example.quizapp.model.ktor.BackendResponse.SyncUserDataResponse.*
+import com.example.quizapp.model.ktor.BackendResponse.UpdateUserCanShareQuestionnaireWithResponse.*
 import com.example.quizapp.model.ktor.backendsyncer.BackendSyncer
 import com.example.quizapp.model.ktor.backendsyncer.SyncFacultyAndCourseOfStudiesResultType.*
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
-import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.ConfirmationRequestType
-import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher
+import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
+import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.viewmodel.VmSettings.*
 import com.example.quizapp.viewmodel.VmSettings.FragmentSettingsEvent.*
 import com.example.quizapp.viewmodel.customimplementations.EventViewModel
@@ -28,7 +33,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -36,31 +40,31 @@ import javax.inject.Inject
 @HiltViewModel
 class VmSettings @Inject constructor(
     private val applicationScope: CoroutineScope,
-    private val preferencesRepository: PreferencesRepository,
+    private val preferenceRepository: PreferenceRepository,
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
     private val backendSyncer: BackendSyncer
 ) : EventViewModel<FragmentSettingsEvent>() {
 
-    private val userFlow = preferencesRepository.userFlow.flowOn(IO).distinctUntilChanged()
+    val userRoleFlow = preferenceRepository.userRoleFlow.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val userRoleFlow = userFlow.map(User::role::get).stateIn(viewModelScope, SharingStarted.Lazily, null)
+    val userNameFlow = preferenceRepository.userNameFlow.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val userNameFlow = userFlow.map(User::userName::get).stateIn(viewModelScope, SharingStarted.Lazily, null)
+    val userCanShareQuestionnaireWithFlow = preferenceRepository.userCanShareQuestionnaireWith.stateIn(viewModelScope, SharingStarted.Lazily, false)
 
-    val themeNameResFlow = preferencesRepository.themeFlow
+    val themeNameResFlow = preferenceRepository.themeFlow
         .map(QuizAppTheme::textRes::get)
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val languageNameResFlow = preferencesRepository.languageFlow
+    val languageNameResFlow = preferenceRepository.languageFlow
         .map(QuizAppLanguage::textRes::get)
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val shuffleTypeNameResFlow = preferencesRepository.shuffleTypeFlow
+    val shuffleTypeNameResFlow = preferenceRepository.shuffleTypeFlow
         .map(QuestionnaireShuffleType::textRes::get)
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    val preferredCoursesOfStudiesFlow = preferencesRepository.preferredCourseOfStudiesIdFlow
+    val preferredCoursesOfStudiesFlow = preferenceRepository.preferredCourseOfStudiesIdFlow
         .map(Set<String>::toList)
         .map(localRepository::getCoursesOfStudiesNameWithIds)
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
@@ -68,6 +72,10 @@ class VmSettings @Inject constructor(
 
     fun onLogoutClicked() = launch(IO) {
         navigationDispatcher.dispatch(ToConfirmationDialog(ConfirmationRequestType.LogoutConfirmationRequest))
+    }
+
+    fun onDeleteAccountClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToConfirmationDialog(ConfirmationRequestType.DeleteAccountConfirmationRequest))
     }
 
     fun onGoToManageUsersClicked() = launch(IO) {
@@ -83,35 +91,35 @@ class VmSettings @Inject constructor(
     }
 
     fun onPreferredCourseOfStudiesButtonClicked() = launch(IO) {
-        preferencesRepository.getPreferredCourseOfStudiesId().let {
+        preferenceRepository.getPreferredCourseOfStudiesId().let {
             navigationDispatcher.dispatch(ToCourseOfStudiesSelectionDialog(it))
         }
     }
 
     fun onCourseOfStudiesSelectionResultReceived(result: FragmentResult.CourseOfStudiesSelectionResult) = launch(IO) {
-        preferencesRepository.updatePreferredCourseOfStudiesIds(result.courseOfStudiesIds.toList())
+        preferenceRepository.updatePreferredCourseOfStudiesIds(result.courseOfStudiesIds.toList())
     }
 
 
     fun onLanguageButtonClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.LanguageSelection(preferencesRepository.getLanguage())))
+        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.LanguageSelection(preferenceRepository.getLanguage())))
     }
 
     fun onLanguageSelectionResultReceived(result: SelectionResult.LanguageSelectionResult) = launch(IO) {
-        if (preferencesRepository.getLanguage() != result.selectedItem) {
-            preferencesRepository.updateLanguage(result.selectedItem)
+        if (preferenceRepository.getLanguage() != result.selectedItem) {
+            preferenceRepository.updateLanguage(result.selectedItem)
             eventChannel.send(RecreateActivityEvent)
         }
     }
 
 
     fun onThemeButtonClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.ThemeSelection(preferencesRepository.getTheme())))
+        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.ThemeSelection(preferenceRepository.getTheme())))
     }
 
     fun onThemeSelectionResultReceived(result: SelectionResult.ThemeSelectionResult) = launch(IO) {
-        if (preferencesRepository.getTheme() != result.selectedItem) {
-            preferencesRepository.updateTheme(result.selectedItem)
+        if (preferenceRepository.getTheme() != result.selectedItem) {
+            preferenceRepository.updateTheme(result.selectedItem)
             withContext(Main) {
                 AppCompatDelegate.setDefaultNightMode(result.selectedItem.appCompatId)
             }
@@ -119,11 +127,32 @@ class VmSettings @Inject constructor(
     }
 
     fun onShuffleTypeButtonClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.ShuffleTypeSelection(preferencesRepository.getShuffleType())))
+        navigationDispatcher.dispatch(ToSelectionDialog(SelectionRequestType.ShuffleTypeSelection(preferenceRepository.getShuffleType())))
     }
 
     fun onShuffleTypeSelectionResultReceived(result: SelectionResult.ShuffleTypeSelectionResult) = launch(IO) {
-        preferencesRepository.updateShuffleType(result.selectedItem)
+        preferenceRepository.updateShuffleType(result.selectedItem)
+    }
+
+    fun onCanShareQuestionnaireWithClicked() = launch(IO) {
+        navigationDispatcher.dispatch(ToLoadingDialog(R.string.updatingPreference))
+
+        runCatching {
+            backendRepository.userApi.updateUserCanShareQuestionnaireWith()
+        }.also {
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+        }.onSuccess { response ->
+            when(response.responseType) {
+                UpdateUserCanShareQuestionnaireWithResponseType.SUCCESSFUL -> {
+                    preferenceRepository.updateUserCanShareQuestionnaireWith(response.newValue)
+                }
+                UpdateUserCanShareQuestionnaireWithResponseType.NOT_ACKNOWLEDGED -> {
+                    eventChannel.send(ShowMessageSnackBarEvent(R.string.errorCouldNotChangePreference))
+                }
+            }
+        }.onFailure {
+            eventChannel.send(ShowMessageSnackBarEvent(R.string.errorCouldNotChangePreference))
+        }
     }
 
     fun onLogoutConfirmationResultReceived(result: ConfirmationResult.LogoutConfirmationResult) = launch(IO) {
@@ -132,13 +161,27 @@ class VmSettings @Inject constructor(
         }
     }
 
+    fun onDeleteAccountConfirmationResultReceived(result: ConfirmationResult.DeleteAccountConfirmationResult) = launch(IO) {
+        if(!result.confirmed) return@launch
+
+        navigationDispatcher.dispatch(ToLoadingDialog(R.string.deletingAccount))
+
+        runCatching {
+            backendRepository.userApi.deleteSelf()
+        }.also {
+            navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
+        }.onSuccess { response ->
+            if(response.responseType == DeleteUserResponseType.SUCCESSFUL) {
+                eventChannel.send(LogoutEvent)
+            }
+        }
+    }
 
     fun syncUserDataClicked() = launch(IO, applicationScope) {
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.syncingUserData))
-        val user = preferencesRepository.userFlow.first()
 
         runCatching {
-            backendRepository.syncUserData(user.id)
+            backendRepository.userApi.syncUserData()
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
@@ -148,15 +191,8 @@ class VmSettings @Inject constructor(
                 }
                 SyncUserDataResponseType.DATA_CHANGED -> {
                     eventChannel.send(ShowMessageSnackBarEvent(R.string.userDataUpdated))
-                    User(
-                        id = user.id,
-                        userName = user.userName,
-                        password = user.password,
-                        role = response.role!!,
-                        lastModifiedTimestamp = response.lastModifiedTimestamp!!
-                    ).let { user ->
-                        preferencesRepository.updateUserCredentials(user)
-                    }
+                    preferenceRepository.updateUserRole(response.role!!)
+                    preferenceRepository.updateUserLastModifiedTimeStamp(response.lastModifiedTimestamp!!)
                 }
             }
         }.onFailure {

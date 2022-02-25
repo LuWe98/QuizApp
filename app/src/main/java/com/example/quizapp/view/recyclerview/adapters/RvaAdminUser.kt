@@ -43,7 +43,7 @@ class RvaAdminUser : BindingPagingDataAdapter<User, RviUserBinding>(User.DIFF_CA
                 Role.CREATOR -> roleIcon.setImageDrawable(R.drawable.ic_edit)
                 Role.USER -> roleIcon.setImageDrawable(R.drawable.ic_person)
             }
-            tvName.text = item.userName
+            tvName.text = item.name
         }
     }
 

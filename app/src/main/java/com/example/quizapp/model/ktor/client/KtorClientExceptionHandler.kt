@@ -1,6 +1,7 @@
 package com.example.quizapp.model.ktor.client
 
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
+import com.example.quizapp.model.datastore.PreferenceRepositoryImpl
 import com.example.quizapp.model.ktor.client.KtorClientExceptionHandler.UserCredentialsErrorType.*
 import io.ktor.client.call.*
 import io.ktor.client.features.*
@@ -11,7 +12,7 @@ import javax.inject.Singleton
 
 @Singleton
 class KtorClientExceptionHandler @Inject constructor(
-    private val preferencesRepository: PreferencesRepository
+    private val preferenceRepository: PreferenceRepository
 ) {
 
     suspend fun validateResponse(response: HttpResponse) {
@@ -34,7 +35,7 @@ class KtorClientExceptionHandler @Inject constructor(
     suspend fun handleException(throwable: Throwable) {
         when(throwable){
             is UserCredentialsChangedException, is UserDoesNotExistException -> {
-                preferencesRepository.clearPreferenceDataOnLogout()
+                preferenceRepository.clearPreferenceDataOnLogout()
             }
         }
     }

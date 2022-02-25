@@ -86,7 +86,12 @@
                 android:id="@+id/multipleChoiceSwitch"
                 android:scaleX="0.75"
                 android:scaleY="0.75"
+                android:checked="true"
                 android:clickable="false"
+                android:thumb="@drawable/switch_thump"
+                app:thumbTint="?android:colorBackground"
+                app:track="@drawable/switch_track"
+                app:trackTint="@color/switch_color_selector"
                 android:layout_marginEnd="@dimen/grid_1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -108,13 +113,15 @@
             android:layout_marginStart="@dimen/grid_8" />
 
     <com.google.android.material.textview.MaterialTextView
-            android:layout_width="50dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:paddingStart="@dimen/grid_5"
+            android:paddingEnd="0dp"
             android:text="@string/add"
             android:id="@+id/btnAddAnswer"
             android:textStyle="bold"
-            android:textColor="@color/hfuDarkerGreen"
-            android:drawableTint="?dominantTextColor"
+            android:textSize="13sp"
+            android:textColor="@color/hfuDarkGreen"
             android:gravity="center_vertical|end"
             app:layout_constraintTop_toTopOf="@+id/tvQuestionnaires"
             app:layout_constraintBottom_toBottomOf="@id/tvQuestionnaires"
@@ -142,7 +149,7 @@
                 android:paddingBottom="@dimen/grid_2"
                 android:paddingHorizontal="@dimen/grid_6"
                 android:clipToPadding="false" />
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
                 android:id="@+id/tvNoAssigned"
@@ -151,12 +158,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginHorizontal="@dimen/grid_8"
-                android:background="@drawable/background_round_dashed_corners_15dp"
-                android:text="Nothing assigned"
+                android:background="@drawable/ripple_dashed_corners_15dp"
+                app:srcCompat="@drawable/ic_add"
+                app:tint="@color/hfuDarkGreen"
+                android:padding="27.5dp"
                 android:gravity="center"
                 android:fontFamily="@font/mallanna_regular"
                 android:textSize="15sp"
-                android:textColor="@color/hfuDarkerGreen"
+                android:textColor="@color/hfuDarkGreen"
                 android:textStyle="bold"
                 android:layout_marginTop="@dimen/grid_3" />
     </androidx.constraintlayout.widget.ConstraintLayout>

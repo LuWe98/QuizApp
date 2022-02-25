@@ -11,7 +11,7 @@ import com.example.quizapp.model.databases.dto.MongoBrowsableQuestionnaire
 import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
 import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
 import com.example.quizapp.model.datastore.datawrappers.BrowsableQuestionnaireOrderBy
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse
@@ -30,7 +30,6 @@ import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -39,7 +38,7 @@ class VmSearch @Inject constructor(
     private val backendRepository: BackendRepository,
     private val localRepository: LocalRepository,
     private val dataMapper: DataMapper,
-    private val preferencesRepository: PreferencesRepository,
+    private val preferenceRepository: PreferenceRepository,
     private val state: SavedStateHandle
 ) : EventViewModel<SearchEvent>() {
 
@@ -57,47 +56,34 @@ class VmSearch @Inject constructor(
 
 
     val filteredPagedData = combine(
-        preferencesRepository.browsableOrderByFlow,
-        preferencesRepository.browsableAscendingOrderFlow,
+        preferenceRepository.browsableOrderByFlow,
+        preferenceRepository.browsableAscendingOrderFlow,
         searchQueryMutableStateFlow,
         selectedAuthorsMutableStateFlow,
-        preferencesRepository.browsableCosIdsFlow,
-        preferencesRepository.browsableFacultyIdsFlow,
+        preferenceRepository.browsableCosIdsFlow,
+        preferenceRepository.browsableFacultyIdsFlow,
     ) { orderBy: BrowsableQuestionnaireOrderBy,
         ascending: Boolean,
         searchQuery: String,
         authors: Set<AuthorInfo>,
         cosIds: Set<String>,
         facultyIds: Set<String> ->
-//        PagingConfigValues.getDefaultPager { page ->
-//            backendRepository.getPagedQuestionnaires(
-//                page = page,
-//                searchString = searchQuery,
-//                questionnaireIdsToIgnore = localRepository.getAllQuestionnaireIds(),
-//                facultyIds = facultyIds.toList(),
-//                courseOfStudiesIds = cosIds.toList(),
-//                authorIds = authors.map(AuthorInfo::userId),
-//                orderBy = orderBy,
-//                ascending = ascending
-//            )
-//        }
-
-        val questionnairesToIgnore = localRepository.getAllQuestionnaireIds()
-
         Pager(
             config = PagingConfigUtil.defaultPagingConfig,
             pagingSourceFactory = {
-                BrowseQuestionnairePagingSource(
-                    backendRepository,
-                    limit = 30,
-                    searchString = searchQuery,
-                    questionnaireIdsToIgnore = questionnairesToIgnore,
-                    facultyIds = facultyIds.toList(),
-                    courseOfStudiesIds = cosIds.toList(),
-                    authorIds = authors.map(AuthorInfo::userId),
-                    orderBy = orderBy,
-                    ascending = ascending
-                )
+                BrowseQuestionnairePagingSource(orderBy) {
+                    backendRepository.questionnaireApi.getPagedQuestionnaires(
+                        lastPageKeys = it,
+                        limit = 30,
+                        searchString = searchQuery,
+                        questionnaireIdsToIgnore = localRepository.getAllQuestionnaireIds(),
+                        facultyIds = facultyIds.toList(),
+                        courseOfStudiesIds = cosIds.toList(),
+                        authorIds = authors.map(AuthorInfo::userId),
+                        orderBy = orderBy,
+                        ascending = ascending
+                    )
+                }
             }
         )
     }.flatMapLatest(Pager<BrowsableQuestionnairePageKeys, MongoBrowsableQuestionnaire>::flow::get)
@@ -113,7 +99,7 @@ class VmSearch @Inject constructor(
     }
 
     fun onClearSearchQueryClicked() = launch(IO) {
-        navigationDispatcher.dispatch(ToVoiceSearchDialog)
+        //navigationDispatcher.dispatch(ToVoiceSearchDialog)
 
         if (searchQuery.isNotEmpty()) {
             eventChannel.send(ClearSearchQueryEvent)
@@ -143,12 +129,11 @@ class VmSearch @Inject constructor(
         }
     }
 
-    //TODO -> Ist nur temporär um zu testen wegen main screen
     fun onItemDownLoadButtonClicked(questionnaireId: String) = launch(IO) {
         eventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, DOWNLOADING))
 
         runCatching {
-            backendRepository.downloadQuestionnaire(questionnaireId)
+            backendRepository.questionnaireApi.downloadQuestionnaire(questionnaireId)
         }.onSuccess { response ->
             when (response.responseType) {
                 GetQuestionnaireResponseType.SUCCESSFUL -> {
@@ -193,7 +178,7 @@ class VmSearch @Inject constructor(
         eventChannel.send(ChangeItemDownloadStatusEvent(questionnaireId, NOT_DOWNLOADED))
 
         runCatching {
-            backendRepository.deleteFilledQuestionnaire(listOf(questionnaireId))
+            backendRepository.filledQuestionnaireApi.deleteFilledQuestionnaire(listOf(questionnaireId))
         }.onSuccess {
             if (it.responseType == BackendResponse.DeleteFilledQuestionnaireResponse.DeleteFilledQuestionnaireResponseType.SUCCESSFUL) {
                 localRepository.delete(LocallyDeletedQuestionnaire.notAsOwner(questionnaireId))
@@ -205,7 +190,7 @@ class VmSearch @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.downloadingQuestionnaire))
 
         runCatching {
-            backendRepository.downloadQuestionnaire(questionnaireId)
+            backendRepository.questionnaireApi.downloadQuestionnaire(questionnaireId)
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
@@ -242,8 +227,8 @@ class VmSearch @Inject constructor(
         ) {
             searchQuery.isNotEmpty()
                     || selectedAuthors.isNotEmpty()
-                    || preferencesRepository.getBrowsableCosIds().isNotEmpty()
-                    || preferencesRepository.getBrowsableFacultyIds().isNotEmpty()
+                    || preferenceRepository.getBrowsableFilteredCosIds().isNotEmpty()
+                    || preferenceRepository.getBrowsableFilteredFacultyIds().isNotEmpty()
         }.also { state ->
             state?.let(::NewPagingUiStateEvent)?.let {
                 eventChannel.send(it)

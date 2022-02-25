@@ -17,7 +17,7 @@
                 android:id="@+id/tvTitle"
                 style="@style/Style.QuizApp.Heading.TextAppearance"
                 android:textStyle="bold"
-                tools:text="@string/deletionConfirmationTile"
+                tools:text="@string/confirmDeletionTitle"
                 android:gravity="center_vertical"
                 android:layout_marginTop="@dimen/grid_2"
                 app:layout_constraintTop_toTopOf="parent"
@@ -31,7 +31,7 @@
                 android:id="@+id/tvText"
                 android:layout_marginTop="@dimen/grid_3"
                 android:layout_marginHorizontal="@dimen/grid_6"
-                tools:text="@string/warningFacultyDeletion"
+                tools:text="@string/confirmFacultyDeletionText"
                 app:layout_constraintTop_toBottomOf="@id/tvTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />

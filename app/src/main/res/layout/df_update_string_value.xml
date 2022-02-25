@@ -19,7 +19,7 @@
                 android:id="@+id/tvTitle"
                 style="@style/Style.QuizApp.Heading.TextAppearance"
                 android:textStyle="bold"
-                android:text="@string/updateQuestionnaireTitle"
+                tools:text="Update"
                 android:gravity="center_vertical"
                 android:layout_marginTop="@dimen/grid_2"
                 app:layout_constraintTop_toTopOf="parent"

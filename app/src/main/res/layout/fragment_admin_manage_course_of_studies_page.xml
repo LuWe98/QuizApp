@@ -24,7 +24,7 @@
             tools:visibility="visible"
             app:layout_constraintVertical_bias="0.25"
             app:availabilityIcon="@drawable/ic_search_no_results"
-            app:availabilityTitle="@string/noCourseOfStudiesResultsFoundTitle"
+            app:availabilityTitle="@string/noResults"
             app:availabilityText="@string/noCourseOfStudiesResultsFoundText"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -55,7 +55,7 @@ class FragmentQuizResult: BindingFragment<FragmentQuizResultBinding>() {
                 val resultIcon: Drawable?
 
                 if(it.correctQuestionsPercentage > 80){
-                    color = getColor(R.color.green)
+                    color = getColor(R.color.hfuBrightGreen)
                     resultIcon = getDrawable(R.drawable.ic_check)
                 } else {
                     color = getColor(R.color.red)
@@ -69,12 +69,6 @@ class FragmentQuizResult: BindingFragment<FragmentQuizResultBinding>() {
                     spannableText.setSpan(ForegroundColorSpan(color), 0, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     tvScoreText.text = spannableText
                 }
-            }
-        }
-
-        vmQuizResult.eventChannelFlow.collectWhenStarted(viewLifecycleOwner) { event ->
-            when(event){
-
             }
         }
     }

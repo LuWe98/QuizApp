@@ -6,6 +6,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         app:cardBackgroundColor="?colorOnPrimary"
         app:cardElevation="2dp"
+        app:strokeColor="@color/transparent"
+        app:strokeWidth="2dp"
         android:layout_marginTop="@dimen/grid_3"
         app:cardCornerRadius="12.5dp">
 
@@ -19,7 +21,7 @@
                 android:layout_height="30dp"
                 android:id="@+id/tvQuestionIndex"
                 android:background="@drawable/shape_circle"
-                android:backgroundTint="@color/green"
+                android:backgroundTint="@color/hfuLightGreen"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -41,11 +43,20 @@
                 tools:text="@string/answerText"
                 android:textSize="14.5sp"
                 android:layout_marginStart="@dimen/grid_3"
-                android:layout_marginEnd="@dimen/grid_1"
                 android:layout_marginVertical="@dimen/grid_1_5"
                 android:background="@android:color/transparent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/tvQuestionIndex" />
+                app:layout_constraintStart_toEndOf="@id/tvQuestionIndex"
+                app:layout_constraintEnd_toStartOf="@+id/isSelectedIndicator" />
 
+        <View
+                android:layout_width="6.5dp"
+                android:layout_height="0dp"
+                android:id="@+id/isSelectedIndicator"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@color/hfuLightGreen"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

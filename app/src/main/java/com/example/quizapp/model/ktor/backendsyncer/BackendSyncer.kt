@@ -1,16 +1,16 @@
 package com.example.quizapp.model.ktor.backendsyncer
 
-import com.example.quizapp.extensions.log
 import com.example.quizapp.model.databases.DataMapper
 import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
 import com.example.quizapp.model.databases.mongodb.documents.MongoFilledQuestionnaire
 import com.example.quizapp.model.databases.mongodb.documents.MongoQuestionnaire
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
 import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.*
 import com.example.quizapp.model.ktor.BackendResponse.DeleteFilledQuestionnaireResponse.*
@@ -24,9 +24,6 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-//TODO -> Filled Questionnaires sollen vom backend runtergeladen werden, wenn lokal kein [LocallyFilledQuestionnaireToUpload] vorhanden ist
-// Wenn es vorhanden ist, werden stattdessen die Antworten hochgeladen
-
 //TODO ->
 // Wenn lokal ein unsynced Questionnaire ist:
 // Abgleich mit der Remote Datenbank, von dort wird auch der Timestamp zurückgegeben um den den Fragebögen zuzuordnen
@@ -37,7 +34,7 @@ import javax.inject.Singleton
 
 @Singleton
 class BackendSyncer @Inject constructor(
-    private val preferencesRepository: PreferencesRepository,
+    private val preferenceRepository: PreferenceRepository,
     private val localRepository: LocalRepository,
     private val backendRepository: BackendRepository,
     private val dataMapper: DataMapper
@@ -96,20 +93,20 @@ class BackendSyncer @Inject constructor(
     }
 
     private suspend fun getSyncFacultiesResponse() = try {
-        backendRepository.getFacultySynchronizationData(localRepository.getFacultyIdsWithTimestamp())
+        backendRepository.facultyApi.getFacultySynchronizationData(localRepository.getFacultyIdsWithTimestamp())
     } catch (e: Exception) {
         null
     }
 
     private suspend fun getSyncCourseOfStudiesResponse() = try {
-        backendRepository.getCourseOfStudiesSynchronizationData(localRepository.getCourseOfStudiesIdsWithTimestamp())
+        backendRepository.courseOfStudiesApi.getCourseOfStudiesSynchronizationData(localRepository.getCourseOfStudiesIdsWithTimestamp())
     } catch (e: Exception) {
         null
     }
 
 
-    //TODO -> Die müssen auch ignoriert werden beim runterladen von den Antworten
-    //TODO -> IGNORE bei finden von den MongoFilledQuestionnaires
+    //Die müssen auch ignoriert werden beim runterladen von den Antworten
+    //IGNORE bei finden von den MongoFilledQuestionnaires
     //val locallyDeletedFilledQuestionnaireIds = localRepository.getLocallyDeletedFilledQuestionnaireIds()
     /**
      * returns if the requests were successful or not to display something to the user.
@@ -161,7 +158,7 @@ class BackendSyncer @Inject constructor(
         val syncedQuestionnaires = localRepository.findAllSyncedQuestionnaires()
 
         runCatching {
-            backendRepository.getQuestionnairesForSyncronization(
+            backendRepository.questionnaireApi.getQuestionnairesForSyncronization(
                 syncedQuestionnaires.map(CompleteQuestionnaire::asQuestionnaireIdWithTimestamp),
                 unsyncedQuestionnaireIdsProvider(),
                 locallyDeletedQuestionnairesProvider()
@@ -254,13 +251,13 @@ class BackendSyncer @Inject constructor(
 
             val mongoQuestionnaires = localRepository.findCompleteQuestionnairesWith(
                 unsyncedQuestionnaireIds,
-                preferencesRepository.getUserId()
+                preferenceRepository.getUserId()
             ).map(dataMapper::mapRoomQuestionnaireToMongoQuestionnaire)
 
             if (mongoQuestionnaires.isEmpty()) return@withContext true
 
             runCatching {
-                backendRepository.insertQuestionnaires(mongoQuestionnaires)
+                backendRepository.questionnaireApi.insertQuestionnaires(mongoQuestionnaires)
             }.onSuccess { response ->
                 if (response.responseType == InsertQuestionnairesResponseType.SUCCESSFUL) {
                     localRepository.setStatusToSynced(unsyncedQuestionnaireIds)
@@ -298,7 +295,7 @@ class BackendSyncer @Inject constructor(
         if (createdQuestionnaires.isEmpty()) return true
 
         runCatching {
-            backendRepository.deleteQuestionnaire(createdQuestionnaires.map(LocallyDeletedQuestionnaire::questionnaireId))
+            backendRepository.questionnaireApi.deleteQuestionnaire(createdQuestionnaires.map(LocallyDeletedQuestionnaire::questionnaireId))
         }.onSuccess { response ->
             if (response.responseType == DeleteQuestionnaireResponseType.SUCCESSFUL) {
                 localRepository.delete(createdQuestionnaires)
@@ -312,7 +309,7 @@ class BackendSyncer @Inject constructor(
         if (cachedQuestionnaires.isEmpty()) return true
 
         runCatching {
-            backendRepository.deleteFilledQuestionnaire(cachedQuestionnaires.map(LocallyDeletedQuestionnaire::questionnaireId))
+            backendRepository.filledQuestionnaireApi.deleteFilledQuestionnaire(cachedQuestionnaires.map(LocallyDeletedQuestionnaire::questionnaireId))
         }.onSuccess { response ->
             if (response.responseType == DeleteFilledQuestionnaireResponseType.SUCCESSFUL) {
                 localRepository.delete(cachedQuestionnaires)
@@ -338,7 +335,7 @@ class BackendSyncer @Inject constructor(
                 if (filledQuestionnaires.isEmpty()) return@withContext true
 
                 runCatching {
-                    backendRepository.insertFilledQuestionnaires(filledQuestionnaires)
+                    backendRepository.filledQuestionnaireApi.insertFilledQuestionnaires(filledQuestionnaires)
                 }.onSuccess { response ->
                     if (response.responseType == InsertFilledQuestionnairesResponseType.SUCCESSFUL) {
                         localRepository.delete(filledQuestionnaires.map(MongoFilledQuestionnaire::asLocallyFilledQuestionnaireToUpload))

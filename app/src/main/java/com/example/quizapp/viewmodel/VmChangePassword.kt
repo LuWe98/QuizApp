@@ -4,7 +4,8 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
+import com.example.quizapp.model.datastore.PreferenceRepositoryImpl
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.ChangePasswordResponse.*
 import com.example.quizapp.model.ktor.client.KtorClientAuth
@@ -16,12 +17,11 @@ import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
 class VmChangePassword @Inject constructor(
-    private val preferencesRepository: PreferencesRepository,
+    private val preferenceRepository: PreferenceRepository,
     private val backendRepository: BackendRepository,
     private val auth: KtorClientAuth,
     private val state: SavedStateHandle
@@ -57,7 +57,7 @@ class VmChangePassword @Inject constructor(
     }
 
     fun onConfirmButtonClicked() = launch(IO) {
-        if(currentPw != preferencesRepository.getUserPassword()) {
+        if(currentPw != preferenceRepository.getUserPassword()) {
             eventChannel.send(ShowMessageSnackBar(R.string.errorCurrentPasswordIsWrong))
             return@launch
         }
@@ -70,13 +70,13 @@ class VmChangePassword @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.changingPassword))
 
         runCatching {
-            backendRepository.updateUserPassword(newPw)
+            backendRepository.userApi.updateUserPassword(newPw)
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
             if(response.responseType == ChangePasswordResponseType.SUCCESSFUL) {
-                preferencesRepository.updateUserPassword(newPw)
-                preferencesRepository.updateJwtToken(response.newToken)
+                preferenceRepository.updateUserPassword(newPw)
+                preferenceRepository.updateJwtToken(response.newToken)
                 auth.resetJwtAuth()
 
                 navigationDispatcher.dispatch(NavigateBack)

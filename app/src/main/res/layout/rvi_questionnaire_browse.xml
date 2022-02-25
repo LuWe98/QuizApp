@@ -27,7 +27,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:srcCompat="@drawable/ic_cloud_download"
+                    app:srcCompat="@drawable/ic_download"
                     android:padding="12.5dp"
                     app:tint="?colorOnPrimary"
                     android:layout_marginStart="@dimen/grid_3"
@@ -37,6 +37,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     app:indicatorSize="30dp"
+                    android:visibility="gone"
                     android:id="@+id/downLoadProgress"
                     app:layout_constraintTop_toTopOf="@id/btnDownload"
                     app:layout_constraintStart_toStartOf="@id/btnDownload"
@@ -77,23 +78,6 @@
                         android:layout_below="@id/tvTitle" />
 
             </RelativeLayout>
-
-
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:id="@+id/btnSync"
-                    tools:tint="@color/green"
-                    app:layout_constraintTop_toTopOf="@+id/textLayout"
-                    app:srcCompat="@drawable/ic_cloud_done"
-                    android:padding="4dp"
-                    android:visibility="invisible"
-                    android:layout_marginEnd="@dimen/grid_2"
-                    android:background="@drawable/shape_circle"
-                    android:backgroundTint="?android:colorBackground"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="@+id/textLayout" />
-
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="35dp"

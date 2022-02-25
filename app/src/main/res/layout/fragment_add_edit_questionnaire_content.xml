@@ -117,6 +117,10 @@
                 android:scaleX="0.75"
                 android:scaleY="0.75"
                 android:clickable="false"
+                android:thumb="@drawable/switch_thump"
+                app:thumbTint="?android:colorBackground"
+                app:track="@drawable/switch_track"
+                app:trackTint="@color/switch_color_selector"
                 android:layout_marginEnd="@dimen/grid_1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -133,20 +137,22 @@
             android:textStyle="bold"
             android:textColor="@color/hfuBrightGreen"
             android:gravity="center_vertical"
-            android:textSize="17.5sp"
+            android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/publishLayout"
             android:layout_marginTop="@dimen/grid_10"
             android:layout_marginStart="@dimen/grid_8" />
 
     <com.google.android.material.textview.MaterialTextView
-            android:layout_width="50dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:paddingStart="@dimen/grid_5"
+            android:paddingEnd="0dp"
             android:text="@string/add"
             android:id="@+id/btnAddCos"
             android:textStyle="bold"
-            android:textColor="@color/hfuDarkerGreen"
-            android:drawableTint="?dominantTextColor"
+            android:textColor="@color/hfuDarkGreen"
+            android:textSize="13sp"
             android:gravity="center_vertical|end"
             app:layout_constraintTop_toTopOf="@+id/tvQuestionnaires"
             app:layout_constraintBottom_toBottomOf="@id/tvQuestionnaires"
@@ -167,15 +173,15 @@
                 android:layout_height="wrap_content"
                 android:overScrollMode="never"
                 android:id="@+id/rvCos"
-                tools:listitem="@layout/rvi_course_of_studies_choice_new"
-                tools:itemCount="2"
+                tools:listitem="@layout/rvi_course_of_studies_choice"
+                tools:itemCount="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:paddingBottom="@dimen/grid_2"
                 android:paddingHorizontal="@dimen/grid_6"
                 android:clipToPadding="false" />
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
                 android:id="@+id/tvNoAssigned"
@@ -184,12 +190,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginHorizontal="@dimen/grid_8"
-                android:background="@drawable/background_round_dashed_corners_15dp"
-                android:text="Nothing assigned"
+                android:background="@drawable/ripple_dashed_corners_15dp"
+                app:srcCompat="@drawable/ic_add"
+                app:tint="@color/hfuDarkGreen"
+                android:padding="27.5dp"
                 android:gravity="center"
                 android:fontFamily="@font/mallanna_regular"
                 android:textSize="15sp"
-                android:textColor="@color/hfuDarkerGreen"
+                android:textColor="@color/hfuDarkGreen"
                 android:textStyle="bold"
                 android:layout_marginTop="@dimen/grid_3" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -202,20 +210,22 @@
             android:textStyle="bold"
             android:textColor="@color/hfuBrightGreen"
             android:gravity="center_vertical"
-            android:textSize="17.5sp"
+            android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rvContainer"
             android:layout_marginTop="@dimen/grid_6"
             android:layout_marginStart="@dimen/grid_8" />
 
     <com.google.android.material.textview.MaterialTextView
-            android:layout_width="45dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:text="@string/add"
+            android:paddingStart="@dimen/grid_5"
+            android:paddingEnd="0dp"
             android:id="@+id/btnAddQuestion"
             android:textStyle="bold"
-            android:textColor="@color/hfuDarkerGreen"
-            android:drawableTint="?dominantTextColor"
+            android:textColor="@color/hfuDarkGreen"
+            android:textSize="13sp"
             android:gravity="center_vertical|end"
             app:layout_constraintTop_toTopOf="@+id/tvQuestions"
             app:layout_constraintBottom_toBottomOf="@id/tvQuestions"
@@ -223,16 +233,29 @@
             android:layout_marginEnd="@dimen/grid_8" />
 
     <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/btnListQuestions"
             android:background="?actionBarItemBackground"
-            android:padding="6dp"
+            android:padding="12.5dp"
             app:layout_constraintTop_toTopOf="@+id/btnAddQuestion"
             app:srcCompat="@drawable/ic_list"
-            app:tint="@color/hfuDarkerGreen"
+            app:tint="@color/hfuDarkGreen"
             app:layout_constraintBottom_toBottomOf="@+id/btnAddQuestion"
             app:layout_constraintEnd_toStartOf="@+id/btnAddQuestion" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/btnCsvLoad"
+            android:background="?actionBarItemBackground"
+            android:padding="12.5dp"
+            android:layout_marginEnd="@dimen/grid_1"
+            app:layout_constraintTop_toTopOf="@+id/btnAddQuestion"
+            app:srcCompat="@drawable/ic_outline_folder"
+            app:tint="@color/hfuDarkGreen"
+            app:layout_constraintBottom_toBottomOf="@+id/btnAddQuestion"
+            app:layout_constraintEnd_toStartOf="@+id/btnListQuestions" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
@@ -245,6 +268,7 @@
             android:visibility="visible"
             tools:visibility="visible"
             android:background="@drawable/background_round_corners_15dp"
+            android:backgroundTint="?colorOnPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvQuestions">

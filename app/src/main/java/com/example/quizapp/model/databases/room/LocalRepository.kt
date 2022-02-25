@@ -1,108 +1,113 @@
 package com.example.quizapp.model.databases.room
 
-import androidx.room.withTransaction
-import com.example.quizapp.extensions.div
-import com.example.quizapp.model.databases.room.dao.*
-import com.example.quizapp.model.databases.room.entities.Answer
-import com.example.quizapp.model.databases.room.entities.CourseOfStudies
-import com.example.quizapp.model.databases.room.entities.EntityMarker
-import com.example.quizapp.model.databases.room.entities.Faculty
-import com.example.quizapp.model.databases.room.entities.FacultyCourseOfStudiesRelation
-import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionnaireToUpload
-import com.example.quizapp.model.databases.room.entities.Question
-import com.example.quizapp.model.databases.room.entities.Questionnaire
-import com.example.quizapp.model.databases.room.entities.QuestionnaireCourseOfStudiesRelation
+import com.example.quizapp.model.databases.dto.CourseOfStudiesIdWithTimeStamp
+import com.example.quizapp.model.databases.dto.FacultyIdWithTimeStamp
+import com.example.quizapp.model.databases.properties.AuthorInfo
+import com.example.quizapp.model.databases.room.entities.*
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
+import com.example.quizapp.model.databases.room.junctions.CourseOfStudiesWithFaculties
 import com.example.quizapp.model.datastore.datawrappers.LocalQuestionnaireOrderBy
-import com.example.quizapp.model.ktor.status.SyncStatus
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.reflect.KClass
+import kotlinx.coroutines.flow.Flow
+
+interface LocalRepository {
+
+    suspend fun <T : EntityMarker> insert(entity: T): Long?
+
+    suspend fun <T : EntityMarker> insert(entities: Collection<T>): LongArray?
+
+    suspend fun <T : EntityMarker> update(entity: T): Int?
+
+    suspend fun <T : EntityMarker> update(entities: Collection<T>): Int?
+
+    suspend fun <T : EntityMarker> delete(entity: T) : Unit?
+
+    suspend fun <T : EntityMarker> delete(entities: Collection<T>): Unit?
 
 
-@Singleton
-class LocalRepository @Inject constructor(
-    private val localDatabase: LocalDatabase,
-    private val questionnaireDao: QuestionnaireDao,
-    private val questionDao: QuestionDao,
-    private val answerDao: AnswerDao,
-    private val facultyDao: FacultyDao,
-    private val courseOfStudiesDao: CourseOfStudiesDao,
-    private val questionnaireCourseOfStudiesRelationDao: QuestionnaireCourseOfStudiesRelationDao,
-    private val facultyCourseOfStudiesRelationDao: FacultyCourseOfStudiesRelationDao,
-    private val locallyDeletedQuestionnaireDao: LocallyDeletedQuestionnaireDao,
-    private val locallyFilledQuestionnaireToUploadDao: LocallyFilledQuestionnaireToUploadDao
-) {
+    suspend fun insertCompleteQuestionnaire(completeQuestionnaire: CompleteQuestionnaire)
 
-    //Das nicht inline machen
-    suspend inline fun <reified T : EntityMarker> insert(entity: T) = getBaseDaoWith(T::class).insert(entity)
+    suspend fun insertCompleteQuestionnaires(completeQuestionnaires: List<CompleteQuestionnaire>)
 
-    suspend inline fun <reified T : EntityMarker> insert(entity: Collection<T>) = getBaseDaoWith(T::class).insert(entity)
+    suspend fun deleteAllUserData()
 
-    suspend inline fun <reified T : EntityMarker> update(entity: T) = getBaseDaoWith(T::class).update(entity)
+    suspend fun deleteQuestionnairesWith(questionnaireIds: List<String>)
 
-    suspend inline fun <reified T : EntityMarker> update(entity: Collection<T>) = getBaseDaoWith(T::class).update(entity)
+    suspend fun deleteQuestionnaireWith(questionnaireId: String)
 
-    suspend inline fun <reified T : EntityMarker> delete(entity: T) = getBaseDaoWith(T::class).delete(entity)
+    suspend fun deleteLocallyDeletedQuestionnaireWith(questionnaireId: String)
 
-    suspend inline fun <reified T : EntityMarker> delete(entity: Collection<T>) = getBaseDaoWith(T::class).delete(entity)
+    suspend fun deleteFacultiesWith(facultyIds: List<String>)
+
+    suspend fun deleteWhereAbbreviation(abb: String)
+
+    suspend fun deleteCoursesOfStudiesWith(courseOfStudiesIds: List<String>)
+
+    suspend fun deleteFacultyCourseOfStudiesRelationsWith(courseOfStudiesId: String)
+
+    suspend fun setStatusToSynced(questionnaireIdsToSync: List<String>)
+
+    suspend fun unsyncAllSyncingQuestionnaires()
 
 
-    /**
-     * This method returns the DAO object for the given Entity Class
-     */
-    @Suppress("UNCHECKED_CAST")
-    fun <T : EntityMarker> getBaseDaoWith(entity: KClass<T>) : BaseDao<T> = when (entity) {
-        Answer::class -> answerDao
-        Question::class -> questionDao
-        Questionnaire::class -> questionnaireDao
-        Faculty::class -> facultyDao
-        CourseOfStudies::class -> courseOfStudiesDao
-        QuestionnaireCourseOfStudiesRelation::class -> questionnaireCourseOfStudiesRelationDao
-        FacultyCourseOfStudiesRelation::class -> facultyCourseOfStudiesRelationDao
-        LocallyDeletedQuestionnaire::class -> locallyDeletedQuestionnaireDao
-        LocallyFilledQuestionnaireToUpload::class -> locallyFilledQuestionnaireToUploadDao
-        else -> throw IllegalArgumentException("Entity DAO for entity class '${entity.simpleName}' could not be found! Did you add it to the 'getBaseDaoWith' Method?")
-    } as BaseDao<T>
+
+    fun getAllLocalAuthorsFlow() : Flow<List<AuthorInfo>>
+
+    fun getAllFacultiesFlow() : Flow<List<Faculty>>
+
+    fun getAllCoursesOfStudiesFlow(): Flow<List<CourseOfStudies>>
+
+    fun getAllCompleteQuestionnairesFlow() : Flow<List<CompleteQuestionnaire>>
+
+    suspend fun findAllUnsyncedQuestionnaireIds() : List<String>
+
+    suspend fun findAllSyncedQuestionnaires() : List<CompleteQuestionnaire>
+
+    suspend fun findAllSyncingQuestionnaires() : List<Questionnaire>
+
+    suspend fun getAllQuestionnaireIds() : List<String>
+
+    suspend fun getLocallyDeletedQuestionnaireIds() : List<LocallyDeletedQuestionnaire>
+
+    suspend fun getLocallyAnsweredCompleteQuestionnaires(): List<CompleteQuestionnaire>
+
+    suspend fun getCourseOfStudiesIdsWithTimestamp() : List<CourseOfStudiesIdWithTimeStamp>
+
+    suspend fun getFacultyIdsWithTimestamp() : List<FacultyIdWithTimeStamp>
 
 
-    suspend fun deleteAllUserData() {
-        localDatabase.withTransaction {
-            questionnaireDao.deleteAll()
-            locallyFilledQuestionnaireToUploadDao.deleteAll()
-            locallyDeletedQuestionnaireDao.deleteAll()
-        }
-    }
 
-    //QUESTIONNAIRE
-    suspend fun insertCompleteQuestionnaire(completeQuestionnaire: CompleteQuestionnaire) {
-        localDatabase.withTransaction {
-            deleteQuestionnaireWith(completeQuestionnaire.questionnaire.id)
-            insert(completeQuestionnaire.questionnaire)
-            insert(completeQuestionnaire.allQuestions)
-            insert(completeQuestionnaire.allAnswers)
-            insert(completeQuestionnaire.asQuestionnaireCourseOfStudiesRelations)
-        }
-    }
+    fun findCompleteQuestionnaireAsFlowWith(questionnaireId: String) : Flow<CompleteQuestionnaire>
 
-    suspend fun insertCompleteQuestionnaires(completeQuestionnaires: List<CompleteQuestionnaire>) {
-        localDatabase.withTransaction {
-            deleteQuestionnairesWith(completeQuestionnaires.map(CompleteQuestionnaire::questionnaire / Questionnaire::id))
-            insert(completeQuestionnaires.map(CompleteQuestionnaire::questionnaire))
-            insert(completeQuestionnaires.flatMap(CompleteQuestionnaire::allQuestions))
-            insert(completeQuestionnaires.flatMap(CompleteQuestionnaire::allAnswers))
-            insert(completeQuestionnaires.flatMap(CompleteQuestionnaire::asQuestionnaireCourseOfStudiesRelations))
-        }
-    }
+    suspend fun findCompleteQuestionnaireWith(questionnaireId: String) : CompleteQuestionnaire?
 
-    private suspend fun deleteQuestionnairesWith(questionnaireIds: List<String>) {
-        delete(findQuestionnairesWith(questionnaireIds))
-    }
+    suspend fun findCompleteQuestionnairesWith(questionnaireIds: List<String>) : List<CompleteQuestionnaire>
 
-    val allCompleteQuestionnairesFlow = questionnaireDao.allCompleteQuestionnairesFlow
+    suspend fun findCompleteQuestionnairesWith(questionnaireIds: List<String>, userId: String) : List<CompleteQuestionnaire>
 
-    suspend fun getAllQuestionnaireIds() = questionnaireDao.getAllQuestionnaireIds()
+    suspend fun findQuestionnaireWith(questionnaireId: String) : Questionnaire?
+
+    suspend fun findQuestionnairesWith(questionnaireIds: List<String>) : List<Questionnaire>
+
+    suspend fun getAuthorInfosWithName(searchQuery: String): List<AuthorInfo>
+
+    suspend fun getAuthorInfosWithIds(authorIds: Set<String>): List<AuthorInfo>
+
+    suspend fun isLocallyFilledQuestionnaireToUploadPresent(questionnaireId: String) : Boolean
+
+    suspend fun getFacultiesWithIds(facultyIds: List<String>) : List<Faculty>
+
+    fun findFacultiesWithNameFlow(nameToSearch: String) : Flow<List<Faculty>>
+
+    suspend fun getCoursesOfStudiesWithIds(courseOfStudiesIds: Collection<String>) : List<CourseOfStudies>
+
+    suspend fun getCoursesOfStudiesNameWithIds(courseOfStudiesIds: List<String>): List<String>
+
+    suspend fun getCourseOfStudiesWithFaculties(courseOfStudiesId: String) : CourseOfStudiesWithFaculties
+
+    fun getCoursesOfStudiesNotAssociatedWithFacultyFlow(searchQuery: String) : Flow<List<CourseOfStudies>>
+
+    fun getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId: String, searchQuery: String) : Flow<List<CourseOfStudies>>
+
 
     fun getFilteredCompleteQuestionnaireFlow(
         searchQuery: String,
@@ -112,143 +117,5 @@ class LocalRepository @Inject constructor(
         cosIds: Set<String>,
         facultyIds: Set<String>,
         hideCompleted: Boolean
-    ) = questionnaireDao.getFilteredCompleteQuestionnaireFlow(
-        searchQuery = searchQuery,
-        orderBy = orderBy,
-        ascending = ascending,
-        authorIds = authorIds,
-        cosIds = cosIds,
-        facultyIds = facultyIds,
-        hideCompleted = hideCompleted
-    )
-
-    suspend fun findCompleteQuestionnaireWith(questionnaireId: String) = questionnaireDao.findCompleteQuestionnaireWith(questionnaireId)
-
-    suspend fun findCompleteQuestionnairesWith(questionnaireIds: List<String>) = questionnaireDao.findCompleteQuestionnairesWith(questionnaireIds)
-
-    suspend fun findCompleteQuestionnairesWith(questionnaireIds: List<String>, userId: String) = questionnaireDao.findCompleteQuestionnairesWith(questionnaireIds, userId)
-
-    fun findCompleteQuestionnaireAsFlowWith(questionnaireId: String) = questionnaireDao.findCompleteQuestionnaireAsFlowWith(questionnaireId)
-
-    suspend fun findQuestionnaireWith(questionnaireId: String) = questionnaireDao.findQuestionnaireWith(questionnaireId)
-
-    suspend fun findQuestionnairesWith(questionnaireIds: List<String>) = questionnaireDao.findQuestionnairesWith(questionnaireIds)
-
-    suspend fun findAllUnsyncedQuestionnaireIds() = questionnaireDao.findAllNonSyncedQuestionnaireIds()
-
-    suspend fun findAllSyncedQuestionnaires() = questionnaireDao.findAllSyncedQuestionnaires()
-
-    suspend fun findAllSyncingQuestionnaires() = questionnaireDao.findAllSyncingQuestionnaires()
-
-    suspend fun unsyncAllSyncingQuestionnaires() {
-        findAllSyncingQuestionnaires().let { questionnaires ->
-            if (questionnaires.isEmpty()) return@let
-            questionnaireDao.update(questionnaires.map { it.copy(syncStatus = SyncStatus.UNSYNCED) })
-        }
-    }
-
-    suspend fun setStatusToSynced(questionnaireIdsToSync: List<String>) = questionnaireDao.setStatusToSynced(questionnaireIdsToSync)
-
-    suspend fun deleteQuestionnaireWith(questionnaireId: String) {
-        findQuestionnaireWith(questionnaireId)?.let {
-            delete(it)
-        }
-    }
-
-    suspend fun getAuthorInfosWithName(searchQuery: String) = questionnaireDao.getAuthorInfosWithName(searchQuery)
-
-    suspend fun getAuthorInfosWithIds(authorIds: Set<String>) = questionnaireDao.getAuthorInfosWithIds(authorIds)
-
-    fun getAllLocalAuthorsFlow() = questionnaireDao.getAllLocalAuthorsFlow()
-
-
-    //LOCALLY DELETED QUESTIONNAIRE
-    suspend fun getLocallyDeletedQuestionnaireIds() = locallyDeletedQuestionnaireDao.getLocallyDeletedQuestionnaireIds()
-
-    suspend fun deleteLocallyDeletedQuestionnaireWith(questionnaireId: String) =
-        locallyDeletedQuestionnaireDao.deleteLocallyDeletedQuestionnaireWith(questionnaireId)
-
-
-    //LOCALLY ANSWERED QUESTIONNAIRES
-    suspend fun getLocallyAnsweredCompleteQuestionnaires(): List<CompleteQuestionnaire> {
-        val locallyAnsweredQuestionnaireIds = locallyFilledQuestionnaireToUploadDao.getAllLocallyFilledQuestionnairesToUploadIds()
-
-        locallyAnsweredQuestionnaireIds.map(LocallyFilledQuestionnaireToUpload::questionnaireId).let { locallyAnswered ->
-            if (locallyAnswered.isEmpty()) return emptyList()
-
-            val foundCompleteQuestionnaires = findCompleteQuestionnairesWith(locallyAnswered)
-
-            (locallyAnswered - foundCompleteQuestionnaires.map(CompleteQuestionnaire::questionnaire / Questionnaire::id).toSet()).let { deletedQuestionnaireIds ->
-                if (deletedQuestionnaireIds.isNotEmpty()) {
-                    locallyFilledQuestionnaireToUploadDao.deleteLocallyFilledQuestionnaireToUploadWith(deletedQuestionnaireIds)
-                }
-            }
-
-            return foundCompleteQuestionnaires
-        }
-    }
-
-    suspend fun isLocallyFilledQuestionnaireToUploadPresent(questionnaireId: String) =
-        locallyFilledQuestionnaireToUploadDao.isLocallyFilledQuestionnaireToUploadPresent(questionnaireId) == 1
-
-    suspend fun getLocallyAnsweredQuestionnaire(questionnaireId: String) = locallyFilledQuestionnaireToUploadDao.getLocallyFilledQuestionnaireToUploadId(questionnaireId)
-
-
-    //FACULTY
-    suspend fun getFacultyIdsWithTimestamp() = facultyDao.getFacultyIdsWithTimestamp()
-
-    val allFacultiesFlow = facultyDao.allFacultiesFlow
-
-    suspend fun getFacultyWithCourseOfStudies(facultyId: String) = facultyDao.getFacultyWithCourseOfStudies(facultyId)
-
-    fun getFacultyWithCourseOfStudiesFlow(facultyId: String) = facultyDao.getFacultyWithCourseOfStudiesFlow(facultyId)
-
-    suspend fun getFacultyWithId(facultyId: String) = facultyDao.getFacultyWithId(facultyId)
-
-    suspend fun getFacultiesWithCourseOfStudiesIds(courseOfStudiesIds: List<String>) = facultyDao.getFacultiesWithCourseOfStudiesIds(courseOfStudiesIds)
-
-    suspend fun getFacultiesWithIds(facultyIds: List<String>) = facultyDao.getFacultiesWithIds(facultyIds)
-
-    suspend fun deleteFacultiesWith(facultyIds: List<String>) = facultyDao.deleteFacultiesWith(facultyIds)
-
-    fun findFacultiesWithNameFlow(nameToSearch: String) = facultyDao.findFacultiesWithNameFlow(nameToSearch)
-
-
-    //COURSE OF STUDIES
-    suspend fun getCourseOfStudiesIdsWithTimestamp() = courseOfStudiesDao.getCourseOfStudiesIdsWithTimestamp()
-
-    val allCoursesOfStudiesFlow = courseOfStudiesDao.getAllCourseOfStudiesFlow()
-
-    suspend fun getCoursesOfStudiesWithIds(courseOfStudiesIds: Collection<String>) = courseOfStudiesDao.getCoursesOfStudiesWithIds(courseOfStudiesIds)
-
-    suspend fun deleteWhereAbbreviation(abb: String) = courseOfStudiesDao.deleteWhereAbbreviation(abb)
-
-    suspend fun getCourseOfStudiesNameWithId(courseOfStudiesId: String) = courseOfStudiesDao.getCourseOfStudiesNameWithId(courseOfStudiesId)
-
-    suspend fun getCoursesOfStudiesNameWithIds(courseOfStudiesIds: List<String>) = courseOfStudiesDao.getCoursesOfStudiesNameWithIds(courseOfStudiesIds)
-
-    suspend fun getCourseOfStudiesWithId(courseOfStudiesId: String) = courseOfStudiesDao.getCourseOfStudiesWithId(courseOfStudiesId)
-
-    suspend fun getCourseOfStudiesWithFaculties(courseOfStudiesId: String) = courseOfStudiesDao.getCourseOfStudiesWithFaculties(courseOfStudiesId)
-
-    suspend fun deleteCoursesOfStudiesWith(courseOfStudiesIds: List<String>) = courseOfStudiesDao.deleteCoursesOfStudiesWith(courseOfStudiesIds)
-
-    fun getCoursesOfStudiesNotAssociatedWithFacultyFlow(searchQuery: String) = courseOfStudiesDao.getCoursesOfStudiesNotAssociatedWithFacultyFlow(searchQuery)
-
-    fun getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId: String, searchQuery: String) =
-        courseOfStudiesDao.getCoursesOfStudiesAssociatedWithFacultyFlow(facultyId, searchQuery)
-
-
-    //QUESTIONNAIRE COURSE OF STUDIES RELATION
-    suspend fun getQuestionnaireCourseOfStudiesRelationWith(questionnaireId: String) =
-        questionnaireCourseOfStudiesRelationDao.getQuestionnaireCourseOfStudiesRelationWith(questionnaireId)
-
-    suspend fun getQuestionnaireCourseOfStudiesRelationWithCosId(courseOfStudiesId: String) =
-        questionnaireCourseOfStudiesRelationDao.getQuestionnaireCourseOfStudiesRelationWithCosId(courseOfStudiesId)
-
-
-    //FACULTY COURSE OF STUDIES RELATION
-    suspend fun deleteFacultyCourseOfStudiesRelationsWith(courseOfStudiesId: String) =
-        facultyCourseOfStudiesRelationDao.deleteFacultyCourseOfStudiesRelationsWith(courseOfStudiesId)
-
+    ): Flow<List<CompleteQuestionnaire>>
 }

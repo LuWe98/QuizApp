@@ -8,7 +8,8 @@ import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.mongodb.documents.User
 import com.example.quizapp.model.databases.properties.Role
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
+import com.example.quizapp.model.datastore.PreferenceRepositoryImpl
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.DeleteUserResponse.*
 import com.example.quizapp.model.ktor.paging.PagingConfigUtil
@@ -26,15 +27,14 @@ import com.example.quizapp.viewmodel.customimplementations.EventViewModel
 import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
 class VmAdminManageUsers @Inject constructor(
     private val backendRepository: BackendRepository,
-    preferencesRepository: PreferencesRepository,
-    private val state: SavedStateHandle
+    private val state: SavedStateHandle,
+    preferenceRepository: PreferenceRepository
 ) : EventViewModel<ManageUsersEvent>() {
 
     private val searchQueryMutableStatFlow = state.getMutableStateFlow(SEARCH_QUERY_KEY, "")
@@ -53,14 +53,15 @@ class VmAdminManageUsers @Inject constructor(
     val filteredPagedDataStateFlow = combine(
         searchQueryMutableStatFlow,
         selectedRolesMutableStateFlow,
-        preferencesRepository.manageUsersOrderByFlow,
-        preferencesRepository.manageUsersAscendingOrderFlow
+        preferenceRepository.manageUsersOrderByFlow,
+        preferenceRepository.manageUsersAscendingOrderFlow
     ) { query, roles, orderBy, ascending ->
         Pager(
             config = PagingConfigUtil.defaultPagingConfig,
             pagingSourceFactory = {
                 SimplePagingSource { page ->
-                    backendRepository.getPagedUsersAdmin(
+                    backendRepository.userApi.getPagedUsersAdmin(
+                        limit = PagingConfigUtil.DEFAULT_LIMIT,
                         page = page,
                         searchString = query,
                         roles = roles,
@@ -113,12 +114,12 @@ class VmAdminManageUsers @Inject constructor(
     }
 
     fun onDeleteUserConfirmationResultReceived(result: ConfirmationResult.DeleteUserConfirmationResult) = launch(IO) {
-        if(!result.confirmed) return@launch
+        if (!result.confirmed) return@launch
 
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.deletingUser))
 
         runCatching {
-            backendRepository.deleteUser(result.user.id)
+            backendRepository.userApi.deleteUser(result.user.id)
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->
@@ -132,18 +133,18 @@ class VmAdminManageUsers @Inject constructor(
     }
 
     fun onLocalUserHidden(snapshot: ItemSnapshotList<User>) = launch(IO) {
-        if(snapshot.all { it?.lastModifiedTimestamp == User.UNKNOWN_TIMESTAMP }){
+        if (snapshot.all { it?.lastModifiedTimestamp == User.UNKNOWN_TIMESTAMP }) {
             eventChannel.send(NewPagingUiStateEvent(PagingUiState.PageNotLoading.EmptyListFiltered))
         }
     }
 
     fun onLocalUserRoleUpdated(snapshot: ItemSnapshotList<User>) = launch(IO) {
-        if(snapshot.none { it?.role in selectedRoles }){
+        if (snapshot.none { it?.role in selectedRoles }) {
             eventChannel.send(NewPagingUiStateEvent(PagingUiState.PageNotLoading.EmptyListFiltered))
         }
     }
 
-    fun onMangeUsersFilterUpdateReceived(result: FragmentResult.ManageUsersFilterResult){
+    fun onMangeUsersFilterUpdateReceived(result: FragmentResult.ManageUsersFilterResult) {
         result.selectedRoles.let { selectedRoles ->
             state.set(SELECTED_ROLES_KEY, selectedRoles)
             selectedRolesMutableStateFlow.value = selectedRoles
@@ -165,7 +166,7 @@ class VmAdminManageUsers @Inject constructor(
         previousPagerRefreshState = loadStates.source.refresh
     }
 
-    sealed class ManageUsersEvent: UiEventMarker {
+    sealed class ManageUsersEvent : UiEventMarker {
         class UpdateUserRoleEvent(val userId: String, val newRole: Role) : ManageUsersEvent()
         class HideUserEvent(val userId: String) : ManageUsersEvent()
         class ShowMessageSnackBarEvent(@StringRes val messageRes: Int) : ManageUsersEvent()

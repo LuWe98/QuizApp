@@ -2,6 +2,7 @@ package com.example.quizapp.view.fragments.searchscreen
 
 import android.os.Bundle
 import android.view.View
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizapp.R
 import com.example.quizapp.databinding.FragmentSearchBinding

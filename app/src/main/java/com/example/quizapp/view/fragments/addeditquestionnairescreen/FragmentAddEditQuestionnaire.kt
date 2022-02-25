@@ -69,17 +69,14 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
             btnMoreOptions.onClick(vmAddEdit::onMoreOptionsClicked)
 
             contentLayout.apply {
-                //btnClearCos.onClick(vmAddEdit::onClearCourseOfStudiesClicked)
                 btnAddCos.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
+                tvNoAssigned.onClick(vmAddEdit::onCourseOfStudiesButtonClicked)
                 publishLayout.onClick(vmAddEdit::onPublishCardClicked)
                 editTextTitle.onTextChanged(vmAddEdit::onTitleUpdated)
                 editTextSubject.onTextChanged(vmAddEdit::onSubjectUpdated)
-            }
-
-            //TODO -> Question Dialog nochmal Testen aber mit Look von dem jetzigen BottomSheet
-            contentLayout.apply {
                 btnAddQuestion.onClick(vmAddEdit::onAddQuestionButtonClicked)
                 btnListQuestions.onClick(vmAddEdit::onQuestionCardClicked)
+                btnCsvLoad.onClick(vmAddEdit::onLoadCsvFilePopupMenuItemClicked)
             }
         }
     }
@@ -138,13 +135,10 @@ class FragmentAddEditQuestionnaire : BindingFragment<FragmentAddEditQuestionnair
                     vmAddEdit::onValidCsvFileSelected,
                     vmAddEdit::onCsvFilePickerResultReceived
                 )
-                is SetQuestionnaireSubject -> binding.contentLayout.editTextSubject.setText(event.subject)
-                is SetQuestionnaireTitle -> binding.contentLayout.editTextTitle.setText(event.title)
             }
         }
     }
 
-    //TODO -> Clicks implementieren
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         return item?.let {
             when (it.itemId) {

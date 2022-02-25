@@ -14,13 +14,12 @@ import com.example.quizapp.model.databases.properties.QuestionnaireVisibility
 import com.example.quizapp.model.databases.properties.QuestionnaireVisibility.PRIVATE
 import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
 import com.example.quizapp.model.databases.room.RoomListLoadStatus
 import com.example.quizapp.model.databases.room.asRoomListLoadStatus
-import com.example.quizapp.model.databases.room.entities.LocallyDeletedQuestionnaire
-import com.example.quizapp.model.databases.room.entities.LocallyFilledQuestionnaireToUpload
-import com.example.quizapp.model.databases.room.entities.Questionnaire
+import com.example.quizapp.model.databases.room.entities.*
 import com.example.quizapp.model.databases.room.junctions.CompleteQuestionnaire
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
 import com.example.quizapp.model.ktor.BackendRepository
 import com.example.quizapp.model.ktor.BackendResponse.ChangeQuestionnaireVisibilityResponse.*
 import com.example.quizapp.model.ktor.BackendResponse.DeleteFilledQuestionnaireResponse.*
@@ -38,7 +37,6 @@ import com.example.quizapp.viewmodel.customimplementations.UiEventMarker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -50,7 +48,7 @@ class VmHome @Inject constructor(
     private val backendRepository: BackendRepository,
     private val dataMapper: DataMapper,
     private val backendSyncer: BackendSyncer,
-    private val preferencesRepository: PreferencesRepository,
+    preferenceRepository: PreferenceRepository,
     private val state: SavedStateHandle,
     app: QuizApplication
 ) : EventViewModel<FragmentHomeEvent>() {
@@ -71,30 +69,16 @@ class VmHome @Inject constructor(
 
     val searchQuery get() = searchQueryMutableStateFlow.value
 
-    val userNameFlow = preferencesRepository.userNameFlow.stateIn(viewModelScope, SharingStarted.Lazily, "")
-
-
-    val locallyPresentAuthors = localRepository.getAllLocalAuthorsFlow()
-        .distinctUntilChanged()
-
-    fun onLocallyPresentAuthorsChanged(locallyPresentAuthors: List<AuthorInfo>) = launch(IO) {
-        preferencesRepository.getLocalFilteredAuthorIds().let { savedIds ->
-            savedIds.filter { locallyPresentAuthors.none { author -> author.userId == it } }.let { notAvailableAuthorIds ->
-                if (notAvailableAuthorIds.isNotEmpty()) {
-                    preferencesRepository.updateLocalFilteredAuthorIds(savedIds - notAvailableAuthorIds.toSet())
-                }
-            }
-        }
-    }
+    val userNameFlow = preferenceRepository.userNameFlow.stateIn(viewModelScope, SharingStarted.Lazily, "")
 
     val completeQuestionnaireFlow = combine(
         searchQueryMutableStateFlow,
-        preferencesRepository.localOrderByFlow,
-        preferencesRepository.localAscendingOrderFlow,
-        preferencesRepository.localFilteredAuthorIdsFlow,
-        preferencesRepository.localFilteredCosIdsFlow,
-        preferencesRepository.localFilteredFacultyIdsFlow,
-        preferencesRepository.localFilterHideCompletedFlow
+        preferenceRepository.localOrderByFlow,
+        preferenceRepository.localAscendingOrderFlow,
+        preferenceRepository.localFilteredAuthorIdsFlow,
+        preferenceRepository.localFilteredCosIdsFlow,
+        preferenceRepository.localFilteredFacultyIdsFlow,
+        preferenceRepository.localFilterHideCompletedFlow
     ) { query, orderBy, ascending, authorIds, cosIds, facultyIds, hideCompleted ->
         localRepository.getFilteredCompleteQuestionnaireFlow(
             searchQuery = query,
@@ -111,7 +95,7 @@ class VmHome @Inject constructor(
         }
     }.flatMapLatest { it }.stateIn(viewModelScope, SharingStarted.Lazily, RoomListLoadStatus.DataFound(emptyList()))
 
-    val allQuestionnairesFlow = localRepository.allCompleteQuestionnairesFlow
+    val allQuestionnairesFlow = localRepository.getAllCompleteQuestionnairesFlow()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
 
@@ -148,7 +132,7 @@ class VmHome @Inject constructor(
 
             val result = try {
                 dataMapper.mapRoomQuestionnaireToMongoQuestionnaire(completeQuestionnaire).let { mongoQuestionnaire ->
-                    backendRepository.insertQuestionnaire(mongoQuestionnaire)
+                    backendRepository.questionnaireApi.insertQuestionnaire(mongoQuestionnaire)
                 }
             } catch (e: Exception) {
                 null
@@ -185,7 +169,7 @@ class VmHome @Inject constructor(
         val questionnaireId = completeQuestionnaire.questionnaire.id
 
         runCatching {
-            backendRepository.deleteQuestionnaire(listOf(questionnaireId))
+            backendRepository.questionnaireApi.deleteQuestionnaire(listOf(questionnaireId))
         }.onSuccess {
             if (it.responseType == DeleteQuestionnaireResponse.DeleteQuestionnaireResponseType.SUCCESSFUL) {
                 localRepository.delete(LocallyDeletedQuestionnaire.asOwner(questionnaireId))
@@ -219,7 +203,7 @@ class VmHome @Inject constructor(
         val questionnaireId = completeQuestionnaire.questionnaire.id
 
         runCatching {
-            backendRepository.deleteFilledQuestionnaire(listOf(questionnaireId))
+            backendRepository.filledQuestionnaireApi.deleteFilledQuestionnaire(listOf(questionnaireId))
         }.onSuccess {
             if (it.responseType == DeleteFilledQuestionnaireResponseType.SUCCESSFUL) {
                 localRepository.delete(LocallyDeletedQuestionnaire.notAsOwner(questionnaireId))
@@ -253,7 +237,7 @@ class VmHome @Inject constructor(
 
     private fun onDeleteFilledQuestionnaireConfirmed(completeQuestionnaire: CompleteQuestionnaire) = launch(IO) {
         runCatching {
-            backendRepository.insertFilledQuestionnaire(dataMapper.mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(completeQuestionnaire))
+            backendRepository.filledQuestionnaireApi.insertFilledQuestionnaire(dataMapper.mapRoomQuestionnaireToEmptyMongoFilledMongoEntity(completeQuestionnaire))
         }.onSuccess { response ->
             if (response.responseType != InsertFilledQuestionnaireResponseType.NOT_ACKNOWLEDGED) {
                 localRepository.delete(LocallyFilledQuestionnaireToUpload(completeQuestionnaire.questionnaire.id))
@@ -270,7 +254,7 @@ class VmHome @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.changingVisibility))
 
         runCatching {
-            backendRepository.changeQuestionnaireVisibility(questionnaireId, newVisibility)
+            backendRepository.questionnaireApi.changeQuestionnaireVisibility(questionnaireId, newVisibility)
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->

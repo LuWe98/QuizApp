@@ -105,11 +105,11 @@ class DialogFragmentVoiceSearch : BindingDialogFragment<DfVoiceSearchBinding>(),
                 binding.apply {
                     voiceIcon.apply {
                         setImageDrawable(getDrawable(R.drawable.ic_check))
-                        imageTintList = getColorStateListWithRes(R.color.green)
+                        imageTintList = getColorStateListWithRes(R.color.hfuBrightGreen)
                     }
                     searchQuery.apply {
                         text = get(0)
-                        setTextColor(getColorStateListWithRes(R.color.green))
+                        setTextColor(getColorStateListWithRes(R.color.hfuBrightGreen))
                     }
                 }
             } else {

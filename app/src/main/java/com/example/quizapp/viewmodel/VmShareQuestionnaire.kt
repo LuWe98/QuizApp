@@ -5,6 +5,7 @@ import com.example.quizapp.QuizApplication
 import com.example.quizapp.R
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.ktor.BackendRepository
+import com.example.quizapp.model.ktor.BackendRepositoryImpl
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.fragments.dialogs.loadingdialog.DfLoading
 import com.example.quizapp.view.fragments.dialogs.sharequestionnaire.DfShareQuestionnaireArgs
@@ -40,7 +41,7 @@ class VmShareQuestionnaire @Inject constructor(
         navigationDispatcher.dispatch(ToLoadingDialog(R.string.sharingQuestionnaire))
 
         runCatching {
-            backendRepository.shareQuestionnaireWithUser(args.questionnaireId, userName, false)
+            backendRepository.questionnaireApi.shareQuestionnaireWithUser(args.questionnaireId, userName, false)
         }.also {
             navigationDispatcher.dispatchDelayed(PopLoadingDialog, DfLoading.LOADING_DIALOG_DISMISS_DELAY)
         }.onSuccess { response ->

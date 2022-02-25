@@ -38,7 +38,7 @@ class BsdfUserRoleChange : BindingBottomSheetDialogFragment<BsdfUserRoleSelectio
 
     private fun initViews(){
         binding.apply {
-            tvTitle.text = getString(R.string.changeRoleForUser, args.user.userName)
+            tvTitle.text = getString(R.string.changeRoleForUser, args.user.name)
 
             roleRadioGroup.apply {
                 Role.values().forEach { role ->

@@ -1,67 +1,56 @@
 package com.example.quizapp.model.ktor.client
 
 import com.auth0.jwt.JWT
+import com.auth0.jwt.interfaces.Claim
 import com.example.quizapp.extensions.log
-import com.example.quizapp.model.datastore.PreferencesRepository
-import com.example.quizapp.model.ktor.apiclasses.UserApi
-import com.example.quizapp.model.databases.properties.Role
+import com.example.quizapp.model.datastore.PreferenceRepository
+import com.example.quizapp.model.ktor.apiclasses.UserApiImpl
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.features.auth.*
 import io.ktor.client.features.auth.providers.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
 
 @Singleton
 class KtorClientAuth @Inject constructor(
-    private val applicationScope: CoroutineScope,
-    private val preferencesRepository: PreferencesRepository,
+    private val preferenceRepository: PreferenceRepository,
     private val ktorClientProvider: Provider<HttpClient>,
-    private val userApiProvider: Provider<UserApi>
+    private val userApiProvider: Provider<UserApiImpl>
 ) {
 
     companion object {
-        const val EMPTY_TOKEN = ""
-        const val CLAIM_USER_ROLE = "userRole"
+        private const val EMPTY_TOKEN = ""
+        const val CLAIM_USER_ROLE = "userRoleClaim"
+        const val CLAIM_CAN_SHARE_QUESTIONNAIRE_WITH = "canShareQuestionnaireWithClaim"
     }
 
     private val client get() = ktorClientProvider.get()
     private val clientAuth get() = client.feature(Auth)
     private val userApi get() = userApiProvider.get()
 
-    fun registerJwtAuth(auth: Auth) {
-        auth.bearer {
-            loadTokens {
-                (preferencesRepository.getJwtToken() ?: EMPTY_TOKEN).let { token ->
-                    BearerTokens(token, token)
-                }
+    fun registerJwtAuth(auth: Auth) = auth.bearer {
+        loadTokens {
+            (preferenceRepository.getJwtToken() ?: EMPTY_TOKEN).let { token ->
+                BearerTokens(token, token)
             }
+        }
 
-            refreshTokens {
-                runCatching {
-                    userApi.refreshJwtToken(
-                        preferencesRepository.getUserName(),
-                        preferencesRepository.getUserPassword()
-                    )
-                }.onSuccess { response ->
-                    log("NEW TOKEN: ${response.token}")
-                    updateUserRole(response.token)
-
-                    preferencesRepository.updateJwtToken(response.token)
-
-                    (response.token ?: EMPTY_TOKEN).let { token ->
-                        return@refreshTokens BearerTokens(token, token)
-                    }
-                }.onFailure {
-                    preferencesRepository.updateJwtToken(EMPTY_TOKEN)
-                }
-
-                BearerTokens(EMPTY_TOKEN, EMPTY_TOKEN)
+        refreshTokens {
+            runCatching {
+                userApi.refreshJwtToken(
+                    preferenceRepository.getUserName(),
+                    preferenceRepository.getUserPassword()
+                )
+            }.onSuccess { response ->
+                log("NEW TOKEN: ${response.token}")
+                preferenceRepository.updateJwtToken(response.token)
+                return@refreshTokens BearerTokens(response.token, response.token)
+            }.onFailure {
+                preferenceRepository.updateJwtToken(EMPTY_TOKEN)
             }
+            BearerTokens(EMPTY_TOKEN, EMPTY_TOKEN)
         }
     }
 
@@ -71,20 +60,10 @@ class KtorClientAuth @Inject constructor(
             registerJwtAuth(auth)
         }
     }
-
-    private fun updateUserRole(token: String?) {
-        if (token == null) return
-
-        applicationScope.launch(IO) {
-            JWT.decode(token).getClaim(CLAIM_USER_ROLE).asString().let { roleString ->
-                if(roleString.isNotBlank()) {
-                    runCatching {
-                        Role.valueOf(roleString)
-                    }.onSuccess { role ->
-                        preferencesRepository.updateUserRole(role)
-                    }
-                }
-            }
-        }
-    }
 }
+
+fun String.claimAsBoolean(claimKey: String): Boolean = getClaimFromToken(claimKey).asBoolean()
+
+fun String.claimAsString(claimKey: String): String = getClaimFromToken(claimKey).asString()
+
+fun String.getClaimFromToken(claimKey: String) : Claim = JWT.decode(this).getClaim(claimKey)

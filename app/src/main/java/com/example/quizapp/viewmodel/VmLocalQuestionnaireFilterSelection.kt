@@ -6,9 +6,10 @@ import com.example.quizapp.extensions.getMutableStateFlow
 import com.example.quizapp.extensions.launch
 import com.example.quizapp.model.databases.properties.AuthorInfo
 import com.example.quizapp.model.databases.room.LocalRepository
+import com.example.quizapp.model.databases.room.LocalRepositoryImpl
 import com.example.quizapp.model.databases.room.entities.CourseOfStudies
 import com.example.quizapp.model.databases.room.entities.Faculty
-import com.example.quizapp.model.datastore.PreferencesRepository
+import com.example.quizapp.model.datastore.PreferenceRepository
 import com.example.quizapp.view.dispatcher.fragmentresult.FragmentResultDispatcher.*
 import com.example.quizapp.view.dispatcher.navigation.NavigationDispatcher.NavigationEvent.*
 import com.example.quizapp.view.dispatcher.fragmentresult.requests.selection.SelectionRequestType
@@ -23,13 +24,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class VmLocalQuestionnaireFilterSelection @Inject constructor(
-    private val preferencesRepository: PreferencesRepository,
+    private val preferenceRepository: PreferenceRepository,
     private val localRepository: LocalRepository,
     private val state: SavedStateHandle
 ) : EventViewModel<LocalQuestionnaireFilterSelectionEvent>() {
 
     private val selectedOrderByMutableStateFlow = state.getMutableStateFlow(SELECTED_ORDER_BY_KEY, runBlocking(IO) {
-        preferencesRepository.getLocalQuestionnaireOrderBy()
+        preferenceRepository.getLocalQuestionnaireOrderBy()
     })
 
     val selectedOrderByStateFlow = selectedOrderByMutableStateFlow.asStateFlow()
@@ -38,7 +39,7 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
 
 
     private val selectedOrderAscendingMutableStateFlow = state.getMutableStateFlow(SELECTED_ORDER_ASCENDING_KEY, runBlocking(IO) {
-        preferencesRepository.getLocalAscendingOrder()
+        preferenceRepository.getLocalAscendingOrder()
     })
 
     val selectedOrderAscendingStateFlow = selectedOrderAscendingMutableStateFlow.asStateFlow()
@@ -47,7 +48,7 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
 
 
     private val selectedAuthorIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_AUTHORS_KEY, runBlocking(IO) {
-        preferencesRepository.getLocalFilteredAuthorIds()
+        preferenceRepository.getLocalFilteredAuthorIds()
     })
 
     val selectedAuthorsStateFlow = selectedAuthorIdsMutableStateFlow.map {
@@ -58,7 +59,7 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
 
 
     private val selectedHideCompletedMutableStateFlow = state.getMutableStateFlow(SELECTED_HIDE_COMPLETED_KEY, runBlocking(IO) {
-        preferencesRepository.getLocalFilterHideCompleted()
+        preferenceRepository.getLocalFilterHideCompleted()
     })
 
     val selectedHideCompletedStateFlow = selectedHideCompletedMutableStateFlow.asStateFlow()
@@ -67,7 +68,7 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
 
 
     private val selectedCosIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_COS_IDS_KEY, runBlocking(IO) {
-        preferencesRepository.getLocalFilteredCosIds()
+        preferenceRepository.getLocalFilteredCosIds()
     })
 
     val selectedCosStateFlow = selectedCosIdsMutableStateFlow.map {
@@ -78,7 +79,7 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
 
 
     private val selectedFacultyIdsMutableStateFlow = state.getMutableStateFlow(SELECTED_FACULTY_IDS_KEY, runBlocking(IO) {
-        preferencesRepository.getLocalFilteredFacultyIds()
+        preferenceRepository.getLocalFilteredFacultyIds()
     })
 
     val selectedFacultyStateFlow = selectedFacultyIdsMutableStateFlow.map {
@@ -188,7 +189,7 @@ class VmLocalQuestionnaireFilterSelection @Inject constructor(
     }
 
     fun onApplyButtonClicked() = launch(IO) {
-        preferencesRepository.updateLocalFilters(
+        preferenceRepository.updateLocalFilters(
             selectedOrderBy,
             selectedOrderAscending,
             selectedAuthorIds,

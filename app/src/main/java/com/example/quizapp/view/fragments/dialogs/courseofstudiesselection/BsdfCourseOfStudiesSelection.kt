@@ -78,18 +78,13 @@ class BsdfCourseOfStudiesSelection : BindingBottomSheetDialogFragment<BsdfCourse
 
     private fun updateTabs(newPosition: Int){
         binding.tabLayout.forEachTab { tab, i ->
-            val factors = if (i == newPosition) 1f else 0f
-            val duration = if (i == newPosition) 300L else 150L
-
             TabLayoutViewFacultyBinding.bind(tab.customView!!).let { tabBinding ->
                 val textColor = if(i == newPosition) getColor(R.color.white) else getThemeColor(R.attr.colorControlNormal)
                 tabBinding.tvText.setTextColor(textColor)
 
                 tabBinding.selectedView.animate()
-                    .scaleX(factors)
-                    .scaleY(factors)
-                    .alpha(factors)
-                    .setDuration(duration)
+                    .alpha(if (i == newPosition) 1f else 0f)
+                    .setDuration(if (i == newPosition) 650L else 0L)
                     .setInterpolator(DecelerateInterpolator())
                     .start()
             }

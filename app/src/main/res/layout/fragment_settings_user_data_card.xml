@@ -35,7 +35,7 @@
                 android:id="@+id/btnUserName"
                 app:icon="@drawable/ic_person"
                 app:title="@string/userName"
-                tools:text="Value"
+                tools:text="-"
                 app:layout_constraintTop_toTopOf="parent"/>
 
         <com.example.quizapp.view.customimplementations.settings.SettingsItemTextLayout
@@ -44,7 +44,7 @@
                 android:id="@+id/btnRole"
                 app:icon="@drawable/ic_role_badge"
                 app:title="@string/role"
-                tools:text="Value"
+                tools:text="-"
                 app:layout_constraintTop_toBottomOf="@+id/btnUserName" />
 
         <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
@@ -62,6 +62,13 @@
                 app:icon="@drawable/ic_logout"
                 app:title="@string/logout"
                 app:layout_constraintTop_toBottomOf="@id/btnChangePassword" />
+        <com.example.quizapp.view.customimplementations.settings.SettingsItemActionLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnDeleteSelf"
+                app:icon="@drawable/ic_delete"
+                app:title="@string/deleteAccount"
+                app:layout_constraintTop_toBottomOf="@id/btnLogout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

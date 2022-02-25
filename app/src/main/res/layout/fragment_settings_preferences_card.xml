@@ -62,6 +62,7 @@
         <com.example.quizapp.view.customimplementations.settings.SettingsItemDropDownLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:id="@+id/btnPreferredCos"
                 app:icon="@drawable/ic_course_of_studies"
                 app:title="@string/courseOfStudies"
@@ -72,8 +73,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_height="wrap_content"
                 android:minHeight="60dp"
+                android:id="@+id/canShareQuestionnaireWithLayout"
                 android:layout_width="match_parent"
-                android:background="?attr/selectableItemBackground"
+                android:background="@drawable/ripple_round_corners_15_dp"
                 app:layout_constraintTop_toBottomOf="@id/btnPreferredCos">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -100,7 +102,7 @@
                     android:layout_marginStart="@dimen/grid_2"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/icon"
-                    app:layout_constraintEnd_toStartOf="@id/switchButton"/>
+                    app:layout_constraintEnd_toStartOf="@id/canShareQuestionnaireWithSwitch"/>
 
             <com.google.android.material.textview.MaterialTextView
                     android:layout_width="0dp"
@@ -110,7 +112,8 @@
                     android:gravity="top"
                     android:textSize="13sp"
                     android:paddingBottom="@dimen/grid_2"
-                    app:layout_constraintEnd_toStartOf="@id/switchButton"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    app:layout_constraintEnd_toStartOf="@id/canShareQuestionnaireWithSwitch"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title"
                     app:layout_constraintStart_toStartOf="@+id/title" />
@@ -118,9 +121,16 @@
             <com.google.android.material.switchmaterial.SwitchMaterial
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/switchButton"
+                    android:id="@+id/canShareQuestionnaireWithSwitch"
+                    android:clickable="false"
+                    android:focusable="false"
                     android:scaleY="0.75"
                     android:scaleX="0.75"
+                    android:layout_marginEnd="@dimen/grid_2"
+                    android:thumb="@drawable/switch_thump"
+                    app:thumbTint="?android:colorBackground"
+                    app:track="@drawable/switch_track"
+                    app:trackTint="@color/switch_color_selector"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />

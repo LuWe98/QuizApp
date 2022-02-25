@@ -56,7 +56,8 @@ class VmRemoteAuthorSelection @Inject constructor(
             config = PagingConfigUtil.defaultPagingConfig,
             pagingSourceFactory = {
                 SimplePagingSource { page ->
-                    backendRepository.getPagedAuthors(
+                    backendRepository.userApi.getPagedAuthors(
+                        limit = PagingConfigUtil.DEFAULT_LIMIT,
                         page = page,
                         searchString = query
                     )
